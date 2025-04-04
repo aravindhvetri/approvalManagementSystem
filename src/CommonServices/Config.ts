@@ -3,6 +3,7 @@ import {
   IActionBooleans,
   IApprovalDetailsPatch,
   IApprovalFlowValidation,
+  ICategoryEmailConfigDetails,
   IDropdownDetails,
   IEmailTemplateConfigDetails,
   IFinalSubmitDetails,
@@ -141,5 +142,12 @@ export namespace Config {
       customApprover: null,
     },
     dynamicSectionWithField: [],
+  };
+
+  //CategoryEmail Config Details :
+  export const CategoryEmailConfigDefault: ICategoryEmailConfigDetails = {
+    templateName: "",
+    emailBody: "",
+    status: null,
   };
 }

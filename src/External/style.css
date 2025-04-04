@@ -388,6 +388,7 @@ li.p-highlight .p-tabview-nav-link {
   border: 0;
   border-radius: 10px;
   margin-top: 30px;
+  margin-bottom: 30px;
   h1 {
     font-size: var(--fontSizebig);
     font-family: "Courier New", Courier, monospace;

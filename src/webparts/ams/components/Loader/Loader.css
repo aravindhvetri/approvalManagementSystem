@@ -1,0 +1,17 @@
+.loader-container {
+    position: fixed;  /* Keeps the spinner centered */
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1000;  /* Ensures it's above other elements */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(255, 255, 255, 0.8); /* Optional overlay */
+}
+
+.p-progress-spinner-circle {
+    stroke: green !important; /* Applies green color */
+}

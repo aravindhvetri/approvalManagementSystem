@@ -25,6 +25,7 @@ import {
 } from "../../../../../CommonServices/interface";
 import { Config } from "../../../../../CommonServices/Config";
 import SPServices from "../../../../../CommonServices/SPServices";
+import { notesContainerDetails } from "../../../../../CommonServices/CommonTemplates";
 
 const CustomApprover = ({
   categoryClickingID,
@@ -49,7 +50,11 @@ const CustomApprover = ({
   const [approvalType, setApprovalType] = useState<IDropdownDetails>({
     ...Config.initialConfigDrop,
   });
-
+  const notes = [
+    {
+      info: "You can able to edit Approval process only on Approval Workflow",
+    },
+  ];
   //Get rejectionFlowChoice Choices
   const getRejectionFlowChoices = () => {
     SPServices.SPGetChoices({
@@ -344,7 +349,7 @@ const CustomApprover = ({
             onChange={(e) => onChangeHandle("apprvalFlowName", e.target.value)}
             placeholder="Workflow Name"
             style={{ width: "100%" }}
-            disabled={actionBooleans?.isView}
+            disabled={actionBooleans?.isEdit || actionBooleans?.isView}
           />
         </div>
         <div className={`${CustomApproverStyles.rejectDiv}`}>
@@ -360,7 +365,7 @@ const CustomApprover = ({
             onChange={(e) => onChangeHandle("rejectionFlow", e.value?.name)}
             placeholder="Select Reject Type"
             style={{ width: "100%" }}
-            disabled={actionBooleans?.isView}
+            disabled={actionBooleans?.isEdit || actionBooleans?.isView}
           />
         </div>
       </div>
@@ -382,7 +387,7 @@ const CustomApprover = ({
                   <PeoplePicker
                     context={context}
                     personSelectionLimit={3}
-                    disabled={actionBooleans?.isView}
+                    disabled={actionBooleans?.isEdit || actionBooleans?.isView}
                     groupName={""}
                     showtooltip={true}
                     ensureUser={true}
@@ -406,7 +411,7 @@ const CustomApprover = ({
                         e?.id ===
                         approvalFlowDetails?.stages[stageIndex].approvalProcess
                     )}
-                    disabled={actionBooleans?.isView}
+                    disabled={actionBooleans?.isEdit || actionBooleans?.isView}
                     options={approvalType?.approvalFlowType}
                     optionLabel="name"
                     onChange={(e) =>
@@ -416,7 +421,7 @@ const CustomApprover = ({
                     style={{ marginTop: "0.5rem" }}
                   />
                 </div>
-                {actionBooleans?.isView == false ? (
+                {!(actionBooleans?.isEdit || actionBooleans?.isView) ? (
                   <div className={`${CustomApproverStyles.deleteDiv}`}>
                     <FaRegTrashAlt onClick={() => removeStage(stageIndex)} />
                   </div>
@@ -433,7 +438,7 @@ const CustomApprover = ({
           </>
         );
       })}
-      {actionBooleans?.isView == false && actionBooleans?.isEdit == false ? (
+      {!(actionBooleans?.isEdit || actionBooleans?.isView) ? (
         <div className={`${CustomApproverStyles.addStageButton}`}>
           <Button
             style={{ padding: "5px" }}
@@ -444,6 +449,9 @@ const CustomApprover = ({
         </div>
       ) : (
         ""
+      )}
+      {actionBooleans?.isEdit && (
+        <div>{notesContainerDetails("Notes", notes)}</div>
       )}
     </>
   );

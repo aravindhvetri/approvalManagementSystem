@@ -32,6 +32,7 @@ import EmailContainer from "./EmailTemplate/EmailContainer";
 const CategoryConfig = ({
   context,
   setCategorySideBarContent,
+  ApprovalConfigSideBarVisible,
   setCategorySideBarVisible,
 }) => {
   //state variables:
@@ -87,14 +88,9 @@ const CategoryConfig = ({
   };
 
   //Handle View and Edit Actions:
-  const handleActionClick = (rowData: ICategoryDetails, action: string) => {
-    setCategoryInputs(rowData.category);
-    setSelectedCategoryId(rowData.id);
-    setActionsBooleans((prev) => ({
-      ...prev,
-      isView: action === "view",
-      isEdit: action === "edit",
-    }));
+  const handleActionClick = async (rowData: ICategoryDetails) => {
+    setCategoryInputs(rowData?.category);
+    await setSelectedCategoryId(rowData?.id);
     setCategorySideBarVisible(true);
   };
 
@@ -103,17 +99,29 @@ const CategoryConfig = ({
     {
       label: "View",
       icon: "pi pi-eye",
-      command: () => handleActionClick(rowData, "view"),
+      command: async () => {
+        await setActionsBooleans((prev) => ({
+          ...prev,
+          isView: true,
+        }));
+        handleActionClick(rowData);
+      },
     },
     {
       label: "Edit",
       icon: "pi pi-pencil ",
-      command: () => handleActionClick(rowData, "edit"),
+      command: async () => {
+        await setActionsBooleans((prev) => ({
+          ...prev,
+          isEdit: true,
+        }));
+        handleActionClick(rowData);
+      },
     },
     {
       label: "Delete",
       icon: "pi pi-trash",
-      command: () => {},
+      command: () => isDeleteCategory(rowData?.id),
     },
   ];
 
@@ -121,6 +129,19 @@ const CategoryConfig = ({
   const renderActionColumn = (rowData: ICategoryDetails) => {
     const menuModel = actionsWithIcons(rowData);
     return <ActionsMenu items={menuModel} />;
+  };
+
+  //IsDelete update for categroy
+  const isDeleteCategory = (itemID: number) => {
+    SPServices.SPUpdateItem({
+      Listname: Config.ListNames.CategoryConfig,
+      ID: itemID,
+      RequestJSON: {
+        IsDelete: true,
+      },
+    }).then((res) => {
+      getCategoryConfigDetails();
+    });
   };
 
   //CategoryRightSideBar Contents:
@@ -156,6 +177,7 @@ const CategoryConfig = ({
                       name="approver"
                       value="existing"
                       onChange={(e) => {
+                        sessionStorage.removeItem("approvalFlowDetails");
                         setSelectedApprover(e?.value);
                       }}
                       checked={selectedApprover === "existing"}
@@ -172,7 +194,10 @@ const CategoryConfig = ({
                       inputId="custom"
                       name="approver"
                       value="custom"
-                      onChange={(e) => setSelectedApprover(e?.value)}
+                      onChange={(e) => {
+                        sessionStorage.removeItem("selectedFlow");
+                        setSelectedApprover(e?.value);
+                      }}
                       checked={selectedApprover === "custom"}
                     />
                     <label
@@ -227,6 +252,8 @@ const CategoryConfig = ({
             ) : nextStageFromCategory.EmailTemplateSection ? (
               <EmailContainer
                 setFinalSubmit={setFinalSubmit}
+                actionBooleans={actionsBooleans}
+                categoryClickingID={selectedCategoryId}
                 getCategoryConfigDetails={getCategoryConfigDetails}
                 finalSubmit={finalSubmit}
                 setNextStageFromCategory={setNextStageFromCategory}
@@ -244,14 +271,7 @@ const CategoryConfig = ({
                 icon="pi pi-times"
                 label="Cancel"
                 onClick={() => {
-                  sessionStorage.clear();
                   setCategorySideBarVisible(false);
-                  setSelectedApprover("");
-                  setNextStageFromCategory({
-                    ...Config.NextStageFromCategorySideBar,
-                  });
-                  setCategoryInputs("");
-                  setActionsBooleans({ ...Config.InitialActionsBooleans });
                 }}
                 className="customCancelButton"
               />
@@ -281,23 +301,33 @@ const CategoryConfig = ({
 
   useEffect(() => {
     getCategoryConfigDetails();
-    //Handle ReLoad Browser then clear session Storage:
-    const handleBeforeUnload = () => {
-      sessionStorage.clear();
-    };
-
-    window.addEventListener("beforeunload", handleBeforeUnload);
-    return () => {
-      window.removeEventListener("beforeunload", handleBeforeUnload);
-    };
   }, []);
+
+  useEffect(() => {
+    if (!ApprovalConfigSideBarVisible) {
+      sessionStorage.clear();
+      setSelectedApprover("");
+      setNextStageFromCategory({
+        ...Config.NextStageFromCategorySideBar,
+      });
+      setCategoryInputs("");
+      setSelectedCategoryId(null)
+      setActionsBooleans({ ...Config.InitialActionsBooleans });
+    }
+  }, [ApprovalConfigSideBarVisible]);
 
   useEffect(() => {
     setCategorySideBarContent((prev: IRightSideBarContents) => ({
       ...prev,
       categoryConfigContent: categoryConfigSideBarContents(),
     }));
-  }, [categoryInputs, selectedApprover, nextStageFromCategory]);
+  }, [
+    categoryInputs,
+    selectedApprover,
+    nextStageFromCategory,
+    selectedCategoryId,
+    actionsBooleans,
+  ]);
 
   return (
     <>

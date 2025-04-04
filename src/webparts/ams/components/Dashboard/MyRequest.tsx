@@ -24,6 +24,7 @@ import WorkflowActionButtons from "../WorkflowButtons/WorkflowActionButtons";
 import AttachmentUploader from "../AttachmentUploader/AttachmentUploader";
 import RequestsFields from "../DynamicsRequests/RequestsFields";
 import moment from "moment";
+import Loader from "../Loader/Loader";
 
 const MyRequestPage = ({
   filterCategory,
@@ -41,6 +42,8 @@ const MyRequestPage = ({
   // const [selectedCategoryId, setSelectedCategoryId] = useState<number>(null);
   const [currentRecord, setCurrentRecord] = useState<IRequestHubDetails>();
   const [navigateFrom, setNavigateFrom] = useState<string>("");
+  const [showLoader,setShowLoader] = useState<boolean>(true);
+  
   //Set Actions PopUp:
   const actionsWithIcons = (rowData: IRequestHubDetails) => [
     {
@@ -108,6 +111,7 @@ const MyRequestPage = ({
         })
       );
       filterCategory ? filterRecords(temArr) : setRequestsDetails([...temArr]);
+      setShowLoader(false);
     } catch (e) {
       console.log("RequestsHub Error", e);
     }
@@ -119,6 +123,7 @@ const MyRequestPage = ({
       (item) => item?.CategoryId === filterCategory.id
     );
     setRequestsDetails([...filterTempArr]);
+    setShowLoader(false);
   };
 
   //Render Status Column:
@@ -210,7 +215,9 @@ const MyRequestPage = ({
     getRequestsHubDetails();
     setNavigateFrom("MyRequest");
   }, [null, sideBarVisible, filterCategory]);
-  return (
+  return (<>
+    {
+      showLoader?<Loader/>:
     <>
       <div className="customDataTableContainer">
         <DataTable
@@ -292,6 +299,8 @@ const MyRequestPage = ({
           </div>
         )}
       </div> */}
+    </>
+    }
     </>
   );
 };

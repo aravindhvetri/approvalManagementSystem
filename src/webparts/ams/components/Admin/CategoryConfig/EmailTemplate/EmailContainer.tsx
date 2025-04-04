@@ -19,7 +19,9 @@ import SPServices from "../../../../../../CommonServices/SPServices";
 import { sp } from "@pnp/sp";
 
 const EmailContainer = ({
+  actionBooleans,
   setFinalSubmit,
+  categoryClickingID,
   setNextStageFromCategory,
   setSelectedApprover,
   setCategoryInputs,
@@ -30,7 +32,6 @@ const EmailContainer = ({
   const [selectedEmail, setSelectedEmail] = useState<string>("");
   const [existingEmailData, setExistingEmailData] = useState([]);
   const [customEmailData, setCustomEmailData] = useState([]);
-  console.log(customEmailData, "customEmailData");
 
   //Get ExistingEmailTempalte Datas:
   const getExistingEmailTemlateData = (ExistingEmailData: []) => {
@@ -66,184 +67,307 @@ const EmailContainer = ({
 
   //Add Datas to Sharepoint List:
   const finalHandleSubmit = async () => {
-    try {
-      if (finalSubmit?.categoryConfig?.category !== "") {
-        const res = await SPServices.SPAddItem({
+    if (categoryClickingID) {
+      //Update categoryConfig Details
+      try {
+        const res = await SPServices.SPUpdateItem({
           Listname: Config.ListNames.CategoryConfig,
+          ID: categoryClickingID,
           RequestJSON: {
             Category: finalSubmit?.categoryConfig?.category,
           },
         });
-
-        if (res?.data?.ID) {
-          const newCategoryId = res?.data?.ID; // Use a variable instead of state
-
-          if (finalSubmit?.categoryConfig?.ExistingApprover !== null) {
-            const existingApprovalConfig: any = await SPServices.SPReadItems({
-              Listname: Config.ListNames.ApprovalConfig,
-              Select: "ID,CategoryId",
-              Filter: [
-                {
-                  FilterKey: "ID",
-                  Operator: "eq",
-                  FilterValue:
-                    finalSubmit?.categoryConfig?.ExistingApprover.toString(),
+        //Get and Isdelete Category Section Details
+        try {
+          const resCategorySections = await SPServices.SPReadItems({
+            Listname: Config.ListNames.CategorySectionConfig,
+            Select: "*,Category/Id",
+            Expand: "Category",
+            Filter: [
+              {
+                FilterKey: "CategoryId",
+                Operator: "eq",
+                FilterValue: categoryClickingID?.toString(),
+              },
+              {
+                FilterKey: "IsDelete",
+                Operator: "eq",
+                FilterValue: "false",
+              },
+            ],
+          });
+          resCategorySections?.forEach((item: any) => {
+            if (
+              finalSubmit?.dynamicSectionWithField.some(
+                (e: any) => e?.name === item?.SectionName
+              )
+            ) {
+              SPServices.SPReadItems({
+                Listname: Config.ListNames.SectionColumnsConfig,
+                Select: "*,ParentSection/Id",
+                Expand: "ParentSection",
+                Filter: [
+                  {
+                    FilterKey: "ParentSectionId",
+                    Operator: "eq",
+                    FilterValue: item?.ID,
+                  },
+                  {
+                    FilterKey: "IsDelete",
+                    Operator: "eq",
+                    FilterValue: "false",
+                  },
+                ],
+              }).then(
+                (res: any) =>
+                  // res?.forEach((item:any)=>{ finalSubmit?.dynamicSectionWithField.find(
+                  //   (e: any) => e?.name === item?.SectionName
+                  // )?.columns?.some((e)=>e?.name===item?.)})
+                  "Pending"
+              );
+            } else {
+              SPServices.SPUpdateItem({
+                Listname: Config.ListNames.CategorySectionConfig,
+                ID: item?.ID,
+                RequestJSON: {
+                  IsDelete: true,
                 },
-              ],
-            });
-
-            let existingCategories =
-              existingApprovalConfig[0]?.CategoryId || [];
-            existingCategories.push(newCategoryId);
-
-            await SPServices.SPUpdateItem({
-              Listname: Config.ListNames.ApprovalConfig,
-              ID: finalSubmit?.categoryConfig?.ExistingApprover,
-              RequestJSON: {
-                CategoryId: { results: existingCategories },
-              },
-            });
-          }
-
-          if (finalSubmit?.categoryConfig?.customApprover !== null) {
-            const customApprovalConfigRes = await SPServices.SPAddItem({
-              Listname: Config.ListNames.ApprovalConfig,
-              RequestJSON: {
-                CategoryId: { results: [newCategoryId] },
-                ApprovalFlowName:
-                  finalSubmit?.categoryConfig?.customApprover?.apprvalFlowName,
-                TotalStages:
-                  finalSubmit?.categoryConfig?.customApprover?.totalStages,
-                RejectionFlow:
-                  finalSubmit?.categoryConfig?.customApprover?.rejectionFlow,
-              },
-            });
-
-            await finalSubmit?.categoryConfig?.customApprover?.stages?.forEach(
-              (stage) =>
-                addApprovalStageConfigDetails(
-                  customApprovalConfigRes?.data.ID,
-                  stage
-                )
-            );
-          }
-
-          if (finalSubmit?.dynamicSectionWithField?.length > 0) {
-            const list = sp.web.lists.getByTitle("RequestsHub");
-
-            for (const section of finalSubmit.dynamicSectionWithField) {
-              let categorySectionId = null;
-
-              for (const column of section.columns) {
-                let fieldTypeKind;
-                const columnTypeMap = {
-                  text: 2,
-                  textarea: 3,
-                  Choice: 6,
-                };
-
-                fieldTypeKind = columnTypeMap[column.type];
-                if (!fieldTypeKind) {
-                  console.log("Invalid column type:", column.type);
-                  continue;
-                }
-
-                await addColumnToList(
-                  list,
-                  fieldTypeKind,
-                  column.name,
-                  column.choices || []
+              })
+                .then((res: any) => {
+                  SPServices.SPReadItems({
+                    Listname: Config.ListNames.SectionColumnsConfig,
+                    Select: "*,ParentSection/Id",
+                    Expand: "ParentSection",
+                    Filter: [
+                      {
+                        FilterKey: "ParentSectionId",
+                        Operator: "eq",
+                        FilterValue: item?.ID,
+                      },
+                      {
+                        FilterKey: "IsDelete",
+                        Operator: "eq",
+                        FilterValue: "false",
+                      },
+                    ],
+                  })
+                    .then((res: any) => {
+                      SPServices.SPUpdateItem({
+                        Listname: Config.ListNames.SectionColumnsConfig,
+                        ID: res?.ID,
+                        RequestJSON: {
+                          IsDelete: true,
+                        },
+                      });
+                    })
+                    .catch((err) =>
+                      console.log("Read SectionColumnsConfig err", err)
+                    );
+                })
+                .catch((err) =>
+                  console.log("update CategorySectionConfig Isdelete err", err)
                 );
+            }
+          });
+        } catch {
+          (err) =>
+            console.log("Get and Isdelete Category Section Details error", err);
+        }
+        alert("Process completed successfully!");
+        sessionStorage.clear();
+        setNextStageFromCategory({ ...Config.NextStageFromCategorySideBar });
+        setEmailContainerFieldSideBarVisible(false);
+        setSelectedApprover("");
+        setCategoryInputs("");
+        setFinalSubmit({ ...Config.finalSubmitDetails });
+        getCategoryConfigDetails();
+      } catch {
+        (err) => console.log("Update categoryConfig Details error", err);
+      }
+    } else {
+      try {
+        if (finalSubmit?.categoryConfig?.category !== "") {
+          const res = await SPServices.SPAddItem({
+            Listname: Config.ListNames.CategoryConfig,
+            RequestJSON: {
+              Category: finalSubmit?.categoryConfig?.category,
+            },
+          });
 
-                if (categorySectionId === null) {
-                  const CategorySecionConfigRes = await SPServices.SPAddItem({
-                    Listname: Config.ListNames?.CategorySectionConfig,
-                    RequestJSON: {
-                      CategoryId: newCategoryId,
-                      SectionName: section.name,
-                    },
-                  });
+          if (res?.data?.ID) {
+            const newCategoryId = res?.data?.ID; // Use a variable instead of state
 
-                  if (CategorySecionConfigRes?.data?.ID) {
-                    categorySectionId = CategorySecionConfigRes?.data?.ID;
+            if (finalSubmit?.categoryConfig?.ExistingApprover !== null) {
+              const existingApprovalConfig: any = await SPServices.SPReadItems({
+                Listname: Config.ListNames.ApprovalConfig,
+                Select: "ID,CategoryId",
+                Filter: [
+                  {
+                    FilterKey: "ID",
+                    Operator: "eq",
+                    FilterValue:
+                      finalSubmit?.categoryConfig?.ExistingApprover.toString(),
+                  },
+                ],
+              });
+
+              let existingCategories =
+                existingApprovalConfig[0]?.CategoryId || [];
+              existingCategories.push(newCategoryId);
+
+              await SPServices.SPUpdateItem({
+                Listname: Config.ListNames.ApprovalConfig,
+                ID: finalSubmit?.categoryConfig?.ExistingApprover,
+                RequestJSON: {
+                  CategoryId: { results: existingCategories },
+                },
+              });
+            }
+
+            if (finalSubmit?.categoryConfig?.customApprover !== null) {
+              const customApprovalConfigRes = await SPServices.SPAddItem({
+                Listname: Config.ListNames.ApprovalConfig,
+                RequestJSON: {
+                  CategoryId: { results: [newCategoryId] },
+                  ApprovalFlowName:
+                    finalSubmit?.categoryConfig?.customApprover
+                      ?.apprvalFlowName,
+                  TotalStages:
+                    finalSubmit?.categoryConfig?.customApprover?.totalStages,
+                  RejectionFlow:
+                    finalSubmit?.categoryConfig?.customApprover?.rejectionFlow,
+                },
+              });
+
+              await finalSubmit?.categoryConfig?.customApprover?.stages?.forEach(
+                (stage) =>
+                  addApprovalStageConfigDetails(
+                    customApprovalConfigRes?.data.ID,
+                    stage
+                  )
+              );
+            }
+
+            if (finalSubmit?.dynamicSectionWithField?.length > 0) {
+              const list = sp.web.lists.getByTitle("RequestsHub");
+
+              for (const section of finalSubmit.dynamicSectionWithField) {
+                let categorySectionId = null;
+
+                for (const column of section.columns) {
+                  let fieldTypeKind;
+                  const columnTypeMap = {
+                    text: 2,
+                    textarea: 3,
+                    Choice: 6,
+                  };
+
+                  fieldTypeKind = columnTypeMap[column.type];
+                  if (!fieldTypeKind) {
+                    console.log("Invalid column type:", column.type);
+                    continue;
                   }
-                }
 
-                if (categorySectionId) {
-                  await SPServices.SPAddItem({
-                    Listname: Config.ListNames?.SectionColumnsConfig,
-                    RequestJSON: {
-                      ParentSectionId: categorySectionId,
-                      ColumnInternalName: column?.name,
-                      ColumnExternalName: column?.name,
-                      ColumnType:
-                        column?.type == "text"
-                          ? "Singleline"
-                          : column?.type == "textarea"
-                          ? "Multiline"
-                          : column?.type,
-                      IsRequired: column?.required,
-                      ViewStage: `[{"Stage": ${JSON.stringify(
-                        column?.stages
-                          .map((item) => parseInt(item.split(" ")[1]))
-                          .sort((x, y) => x - y)
-                      )}}]`,
-                    },
-                  });
+                  await addColumnToList(
+                    list,
+                    fieldTypeKind,
+                    column.name,
+                    column.choices || []
+                  );
+
+                  if (categorySectionId === null) {
+                    const CategorySecionConfigRes = await SPServices.SPAddItem({
+                      Listname: Config.ListNames?.CategorySectionConfig,
+                      RequestJSON: {
+                        CategoryId: newCategoryId,
+                        SectionName: section.name,
+                      },
+                    });
+
+                    if (CategorySecionConfigRes?.data?.ID) {
+                      categorySectionId = CategorySecionConfigRes?.data?.ID;
+                    }
+                  }
+
+                  if (categorySectionId) {
+                    await SPServices.SPAddItem({
+                      Listname: Config.ListNames?.SectionColumnsConfig,
+                      RequestJSON: {
+                        ParentSectionId: categorySectionId,
+                        ColumnInternalName: column?.name,
+                        ColumnExternalName: column?.name,
+                        ColumnType:
+                          column?.type == "text"
+                            ? "Singleline"
+                            : column?.type == "textarea"
+                            ? "Multiline"
+                            : column?.type,
+                        IsRequired: column?.required,
+                        ViewStage: `[{"Stage": ${JSON.stringify(
+                          column?.stages
+                            .map((item) => parseInt(item.split(" ")[1]))
+                            .sort((x, y) => x - y)
+                        )}}]`,
+                        ChoiceValues: `[{"Options":${JSON.stringify(
+                          column?.choices
+                        )}}]`,
+                      },
+                    });
+                  }
                 }
               }
             }
-          }
 
-          if (existingEmailData.length > 0) {
-            for (const ExistingEmailTemplatedata of existingEmailData) {
-              await SPServices.SPAddItem({
-                Listname: Config.ListNames?.CategoryEmailConfig,
-                RequestJSON: {
-                  CategoryId: newCategoryId,
-                  Process: ExistingEmailTemplatedata?.process,
-                  ParentTemplateId: ExistingEmailTemplatedata?.id,
-                },
-              });
-            }
-          }
-
-          if (customEmailData.length > 0) {
-            for (const customEmailTemplateData of customEmailData) {
-              const EmailTemplateConfigRes = await SPServices.SPAddItem({
-                Listname: Config.ListNames?.EmailTemplateConfig,
-                RequestJSON: {
-                  TemplateName: customEmailTemplateData?.templateName,
-                  EmailBody: customEmailTemplateData?.emailBody,
-                },
-              });
-
-              if (EmailTemplateConfigRes?.data?.ID) {
+            if (existingEmailData.length > 0) {
+              for (const ExistingEmailTemplatedata of existingEmailData) {
                 await SPServices.SPAddItem({
                   Listname: Config.ListNames?.CategoryEmailConfig,
                   RequestJSON: {
                     CategoryId: newCategoryId,
-                    Process: customEmailTemplateData?.status,
-                    ParentTemplateId: EmailTemplateConfigRes?.data?.ID,
+                    Process: ExistingEmailTemplatedata?.process,
+                    ParentTemplateId: ExistingEmailTemplatedata?.id,
                   },
                 });
               }
             }
+
+            if (customEmailData.length > 0) {
+              for (const customEmailTemplateData of customEmailData) {
+                const EmailTemplateConfigRes = await SPServices.SPAddItem({
+                  Listname: Config.ListNames?.EmailTemplateConfig,
+                  RequestJSON: {
+                    TemplateName: customEmailTemplateData?.templateName,
+                    EmailBody: customEmailTemplateData?.emailBody,
+                  },
+                });
+
+                if (EmailTemplateConfigRes?.data?.ID) {
+                  await SPServices.SPAddItem({
+                    Listname: Config.ListNames?.CategoryEmailConfig,
+                    RequestJSON: {
+                      CategoryId: newCategoryId,
+                      Process: customEmailTemplateData?.status,
+                      ParentTemplateId: EmailTemplateConfigRes?.data?.ID,
+                    },
+                  });
+                }
+              }
+            }
           }
         }
-      }
 
-      alert("Process completed successfully!");
-      sessionStorage.clear();
-      setNextStageFromCategory({ ...Config.NextStageFromCategorySideBar });
-      setEmailContainerFieldSideBarVisible(false);
-      setSelectedApprover("");
-      setCategoryInputs("");
-      setFinalSubmit({ ...Config.finalSubmitDetails });
-      getCategoryConfigDetails();
-    } catch (err) {
-      console.error("Error in handleSubmit:", err);
-      alert("An error occurred while processing the request.");
+        alert("Process completed successfully!");
+        sessionStorage.clear();
+        setNextStageFromCategory({ ...Config.NextStageFromCategorySideBar });
+        setEmailContainerFieldSideBarVisible(false);
+        setSelectedApprover("");
+        setCategoryInputs("");
+        setFinalSubmit({ ...Config.finalSubmitDetails });
+        getCategoryConfigDetails();
+      } catch (err) {
+        console.error("Error in handleSubmit:", err);
+        alert("An error occurred while processing the request.");
+      }
     }
   };
 
@@ -286,42 +410,46 @@ const EmailContainer = ({
   return (
     <>
       <div className={EmailContainerStyles.heading}>Email template</div>
-      <div className={`${EmailContainerStyles.radioContainer}`}>
-        <div className={`${EmailContainerStyles.radioDiv}`}>
-          <RadioButton
-            inputId="existing"
-            name="email"
-            value="existing"
-            onChange={(e) => {
-              setSelectedEmail(e?.value);
-            }}
-            checked={selectedEmail === "existing"}
-          />
-          <label
-            className={`${EmailContainerStyles.radioDivLabel}`}
-            htmlFor="existing"
-          >
-            Existing template
-          </label>
+      {!(actionBooleans?.isView || actionBooleans?.isEdit) && (
+        <div className={`${EmailContainerStyles.radioContainer}`}>
+          <div className={`${EmailContainerStyles.radioDiv}`}>
+            <RadioButton
+              inputId="existing"
+              name="email"
+              value="existing"
+              onChange={(e) => {
+                setSelectedEmail(e?.value);
+              }}
+              checked={selectedEmail === "existing"}
+            />
+            <label
+              className={`${EmailContainerStyles.radioDivLabel}`}
+              htmlFor="existing"
+            >
+              Existing template
+            </label>
+          </div>
+          <div className={`${EmailContainerStyles.radioDiv}`}>
+            <RadioButton
+              inputId="custom"
+              name="email"
+              value="custom"
+              onChange={(e) => setSelectedEmail(e?.value)}
+              checked={selectedEmail === "custom"}
+            />
+            <label className={`${EmailContainerStyles.radioDivLabel}`}>
+              Custom template
+            </label>
+          </div>
         </div>
-        <div className={`${EmailContainerStyles.radioDiv}`}>
-          <RadioButton
-            inputId="custom"
-            name="email"
-            value="custom"
-            onChange={(e) => setSelectedEmail(e?.value)}
-            checked={selectedEmail === "custom"}
-          />
-          <label className={`${EmailContainerStyles.radioDivLabel}`}>
-            Custom template
-          </label>
-        </div>
-      </div>
+      )}
       <div>
         {selectedEmail == "existing" ? (
           <ExistingEmail ExisitingEmailData={getExistingEmailTemlateData} />
-        ) : selectedEmail == "custom" ? (
+        ) : selectedEmail == "custom" || categoryClickingID !== null ? (
           <CustomEmail
+            actionBooleans={actionBooleans}
+            categoryClickingID={categoryClickingID}
             customEmailData={getCustomEmailTemlateData}
             setCustomEmailTemplateSideBarVisible={
               setEmailContainerFieldSideBarVisible
@@ -349,28 +477,47 @@ const EmailContainer = ({
           />
         </div>
         <div className={`${EmailContainerStyles.FlowSideBarButtons}`}>
-          <Button
-            icon="pi pi-times"
-            label="Cancel"
-            className="customCancelButton"
-            onClick={() => {
-              setEmailContainerFieldSideBarVisible(false);
-              setSelectedApprover("");
-              setNextStageFromCategory({
-                ...Config.NextStageFromCategorySideBar,
-              });
-              sessionStorage.clear();
-            }}
-          />
-
-          <Button
-            icon="pi pi-save"
-            label="Submit"
-            onClick={() => {
-              finalHandleSubmit();
-            }}
-            className="customSubmitButton"
-          />
+          {actionBooleans?.isView && (
+            <Button
+              icon="pi pi-times"
+              label="Close"
+              className="customCancelButton"
+              onClick={() => {
+                setEmailContainerFieldSideBarVisible(false);
+                setSelectedApprover("");
+                setNextStageFromCategory({
+                  ...Config.NextStageFromCategorySideBar,
+                });
+                sessionStorage.clear();
+              }}
+            />
+          )}
+          {(actionBooleans?.isEdit || categoryClickingID === null) && (
+            <>
+              {" "}
+              <Button
+                icon="pi pi-times"
+                label="Cancel"
+                className="customCancelButton"
+                onClick={() => {
+                  setEmailContainerFieldSideBarVisible(false);
+                  setSelectedApprover("");
+                  setNextStageFromCategory({
+                    ...Config.NextStageFromCategorySideBar,
+                  });
+                  sessionStorage.clear();
+                }}
+              />
+              <Button
+                icon="pi pi-save"
+                label="Submit"
+                onClick={() => {
+                  finalHandleSubmit();
+                }}
+                className="customSubmitButton"
+              />
+            </>
+          )}
         </div>
       </div>
     </>

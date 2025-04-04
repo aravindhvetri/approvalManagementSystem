@@ -23,6 +23,7 @@ import {
 import WorkflowActionButtons from "../WorkflowButtons/WorkflowActionButtons";
 import AttachmentUploader from "../AttachmentUploader/AttachmentUploader";
 import RequestsFields from "../DynamicsRequests/RequestsFields";
+import Loader from "../Loader/Loader";
 
 const AllRequestPage = ({
   searchValue,
@@ -32,6 +33,7 @@ const AllRequestPage = ({
   setRequestsDashBoardContent,
   setDynamicRequestsSideBarVisible,
 }) => {
+  const [showLoader, setShowLoader] = useState<boolean>(true);
   //State Variables:
   const [requestsDetails, setRequestsDetails] = useState<IRequestHubDetails[]>(
     []
@@ -106,6 +108,7 @@ const AllRequestPage = ({
       );
       // filterCategory ? filterRecords(temArr) : setRequestsDetails([...temArr]);
       setRequestsDetails([...temArr]);
+      setShowLoader(false);
     } catch (e) {
       console.log("RequestsHub Error", e);
     }
@@ -208,64 +211,72 @@ const AllRequestPage = ({
 
   return (
     <>
-      <div className="customDataTableContainer">
-        <DataTable
-          globalFilter={searchValue}
-          value={requestsDetails}
-          tableStyle={{ minWidth: "50rem" }}
-          emptyMessage={
-            <>
-              <p style={{ textAlign: "center" }}>No Records Found</p>
-            </>
-          }
-        >
-          <Column
-            className={dashboardStyles.highlightedRequestId}
-            field="requestId"
-            header="Request id"
-          ></Column>
-          <Column field="category" header="Category"></Column>
-          <Column
-            field="approvalJson"
-            header="Current Stage"
-            body={(e) => renderStagelevelApproverColumns(e, 4)}
-          ></Column>
-          <Column
-            field="approvalJson"
-            header="Approvers"
-            body={(e) => renderStagelevelApproverColumns(e, 1)}
-          ></Column>
-          <Column
-            field="approvalJson"
-            header="Pending Approval"
-            body={(e) => renderStagelevelApproverColumns(e, 2)}
-          ></Column>
-          <Column
-            field="approvalJson"
-            header="Approved by"
-            body={(e) => renderStagelevelApproverColumns(e, 3)}
-          ></Column>
-          <Column
-            field="status"
-            header="Status"
-            body={renderStatusColumn}
-            style={{ width: "10rem" }}
-          ></Column>
-          <Column field="Action" body={renderActionColumn}></Column>
-        </DataTable>
-      </div>
-      {currentRecord && (
-        <RequestsFields
-          context={context}
-          requestsDetails={requestsDetails}
-          setRequestsDetails={setRequestsDetails}
-          sideBarVisible={sideBarVisible}
-          currentRecord={currentRecord}
-          recordAction={recordAction}
-          navigateFrom={navigateFrom}
-          setRequestsDashBoardContent={setRequestsDashBoardContent}
-          setDynamicRequestsSideBarVisible={setDynamicRequestsSideBarVisible}
-        />
+      {showLoader ? (
+        <Loader />
+      ) : (
+        <>
+          <div className="customDataTableContainer">
+            <DataTable
+              globalFilter={searchValue}
+              value={requestsDetails}
+              tableStyle={{ minWidth: "50rem" }}
+              emptyMessage={
+                <>
+                  <p style={{ textAlign: "center" }}>No Records Found</p>
+                </>
+              }
+            >
+              <Column
+                className={dashboardStyles.highlightedRequestId}
+                field="requestId"
+                header="Request id"
+              ></Column>
+              <Column field="category" header="Category"></Column>
+              <Column
+                field="approvalJson"
+                header="Current Stage"
+                body={(e) => renderStagelevelApproverColumns(e, 4)}
+              ></Column>
+              <Column
+                field="approvalJson"
+                header="Approvers"
+                body={(e) => renderStagelevelApproverColumns(e, 1)}
+              ></Column>
+              <Column
+                field="approvalJson"
+                header="Pending Approval"
+                body={(e) => renderStagelevelApproverColumns(e, 2)}
+              ></Column>
+              <Column
+                field="approvalJson"
+                header="Approved by"
+                body={(e) => renderStagelevelApproverColumns(e, 3)}
+              ></Column>
+              <Column
+                field="status"
+                header="Status"
+                body={renderStatusColumn}
+                style={{ width: "10rem" }}
+              ></Column>
+              <Column field="Action" body={renderActionColumn}></Column>
+            </DataTable>
+          </div>
+          {currentRecord && (
+            <RequestsFields
+              context={context}
+              requestsDetails={requestsDetails}
+              setRequestsDetails={setRequestsDetails}
+              sideBarVisible={sideBarVisible}
+              currentRecord={currentRecord}
+              recordAction={recordAction}
+              navigateFrom={navigateFrom}
+              setRequestsDashBoardContent={setRequestsDashBoardContent}
+              setDynamicRequestsSideBarVisible={
+                setDynamicRequestsSideBarVisible
+              }
+            />
+          )}
+        </>
       )}
     </>
   );
