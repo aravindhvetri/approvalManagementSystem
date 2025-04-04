@@ -46,7 +46,7 @@ export default class AmsWebPart extends BaseClientSideWebPart<IAmsWebPartProps> 
   //Prime React Default Styles SetUp:
   public constructor() {
     super();
-    SPComponentLoader.loadCss("https://unpkg.com/primeicons/primeicons.css");
+    SPComponentLoader.loadCss("https://cdnjs.cloudflare.com/ajax/libs/primeicons/7.0.0/primeicons.css");
     SPComponentLoader.loadCss(
       "https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap"
     );

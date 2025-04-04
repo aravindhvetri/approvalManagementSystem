@@ -18,6 +18,7 @@ const ApprovalConfig = ({
   setApprovalConfigSideBarContent,
   setApprovalConfigSideBarVisible,
 }) => {
+
   return (
     <>
       <div className="tabViewContents">
@@ -26,6 +27,7 @@ const ApprovalConfig = ({
             context={context}
             setCategorySideBarContent={setApprovalConfigSideBarContent}
             setCategorySideBarVisible={setApprovalConfigSideBarVisible}
+            ApprovalConfigSideBarVisible={ApprovalConfigSideBarVisible}
           />
         ) : setTabView == 1 ? (
           <ApprovalDashboard

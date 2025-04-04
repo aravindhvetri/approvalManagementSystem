@@ -52,6 +52,11 @@ const AddRequestsFields = ({
           Operator: "eq",
           FilterValue: selectedCategory?.id.toString(),
         },
+        {
+          FilterKey: "IsDelete",
+          Operator: "eq",
+          FilterValue: "false",
+        },
       ],
     })
       .then((res: any) => {

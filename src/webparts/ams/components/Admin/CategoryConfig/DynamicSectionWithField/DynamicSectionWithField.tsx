@@ -52,10 +52,9 @@ const DynamicSectionWithField = ({
     stages: [],
     choices: [],
   });
-
   const [previewVisible, setPreviewVisible] = useState(false);
   const [previewFields, setPreviewFields] = useState<any>([]);
-
+  const [approvalStage, setApprovalStage] = useState([]);
   const addDynamicSection = () => {
     setSections([...sections, { name: "", columns: [] }]);
   };
@@ -200,19 +199,105 @@ const DynamicSectionWithField = ({
       Select: "*",
       Filter: [
         {
-          FilterKey: "Category",
+          FilterKey: "CategoryId",
           Operator: "eq",
           FilterValue: categoryClickingID.toString(),
         },
+        {
+          FilterKey: "IsDelete",
+          Operator: "eq",
+          FilterValue: "false",
+        },
       ],
+      FilterCondition: "and",
+      Orderby: "ID",
+      Orderbydecorasc: true,
     })
-      .then((res: any) => {})
+      .then((res: any) => {
+        const tempSectionArr = [];
+        res?.forEach(async (section, index) => {
+          tempSectionArr.push({
+            name: section?.SectionName,
+            columns: await getSectionsColumnsConfig(section?.ID, index),
+          });
+          setSections([...tempSectionArr]);
+        });
+      })
       .catch((err) => {
         console.log(err, "Get CategorySectionConfig Details error");
       });
   };
 
+  // Get Sections Columns Config
+  const getSectionsColumnsConfig = async (parentSectionID, index) => {
+    try {
+      const res = await SPServices.SPReadItems({
+        Listname: Config.ListNames.SectionColumnsConfig,
+        Select: "*,ParentSection/Id",
+        Expand: "ParentSection",
+        Filter: [
+          {
+            FilterKey: "ParentSectionId",
+            Operator: "eq",
+            FilterValue: parentSectionID.toString(),
+          },
+          {
+            FilterKey: "IsDelete",
+            Operator: "eq",
+            FilterValue: "false",
+          },
+        ],
+        Orderby: "ID",
+        Orderbydecorasc: true,
+      });
+      return res?.flatMap((column: any) => ({
+        sectionIndex: index,
+        name: column?.ColumnExternalName,
+        type:
+          column?.ColumnType === "Singleline"
+            ? "text"
+            : column?.ColumnType === "Multiline"
+            ? "textarea"
+            : column?.ColumnType,
+        required: column?.IsRequired,
+        stages: JSON.parse(column?.ViewStage)[0]?.Stage.map(
+          (e) => "Stage " + e
+        ),
+        choices: column?.ChoiceValues
+          ? JSON.parse(column?.ChoiceValues)[0]?.Options
+          : [],
+      }));
+    } catch {
+      (err) => console.log("getSectionsColumnsConfig error", err);
+    }
+  };
+
+  //Get Approval Stage Count
+  const getApprovalStageCount = async () => {
+    var totalStages = 0;
+    if (sessionStorage.getItem("approvalFlowDetails")) {
+      totalStages = JSON.parse(sessionStorage.getItem("approvalFlowDetails"))
+        ?.stages.length;
+    } else if (sessionStorage.getItem("selectedFlowID")) {
+      const flowID = Number(sessionStorage.getItem("selectedFlowID"));
+      await SPServices.SPReadItemUsingID({
+        Listname: Config.ListNames.ApprovalConfig,
+        SelectedId: flowID,
+      })
+        .then((res: any) => {
+          return (totalStages = res?.TotalStages);
+        })
+        .catch((err) => console.log("ApprovalConfig get error", err));
+    }
+    const tempStageArr = [];
+    for (let i = 1; i <= totalStages; i++) {
+      tempStageArr.push("Stage " + i);
+      setApprovalStage([...tempStageArr]);
+    }
+  };
+
   useEffect(() => {
+    getApprovalStageCount();
     const storedSections = sessionStorage.getItem("dynamicSections");
     if (storedSections) {
       setSections(JSON.parse(storedSections));
@@ -237,25 +322,41 @@ const DynamicSectionWithField = ({
   }, [sections]);
 
   useEffect(() => {
-    if (categoryClickingID) {
+    if (categoryClickingID && !sessionStorage.getItem("categoryClickingID")) {
+      sessionStorage.setItem("categoryClickingID", categoryClickingID);
       getCategorySectionConfigDetails();
     }
   }, [categoryClickingID]);
+  useEffect(() => {
+    if (!showPopup) {
+      setNewField({
+        sectionIndex: null,
+        name: "",
+        type: null,
+        required: false,
+        stages: [],
+        choices: [],
+        rowIndex: undefined,
+      });
+    }
+  }, [showPopup]);
 
   return (
     <>
       <div className={DynamicSectionWithFieldStyles.heading}>Fields</div>
       <div className={`${DynamicSectionWithFieldStyles.container} container`}>
-        <Button
-          icon={
-            <IoIosAddCircle
-              className={DynamicSectionWithFieldStyles.addSectionBtnIcon}
-            />
-          }
-          label="Add Section"
-          onClick={addDynamicSection}
-          className={DynamicSectionWithFieldStyles.addButton}
-        />
+        {(actionBooleans?.isEdit || categoryClickingID === null) && (
+          <Button
+            icon={
+              <IoIosAddCircle
+                className={DynamicSectionWithFieldStyles.addSectionBtnIcon}
+              />
+            }
+            label="Add Section"
+            onClick={addDynamicSection}
+            className={DynamicSectionWithFieldStyles.addButton}
+          />
+        )}
         {sections.map((section, sectionIndex) => (
           <div
             key={sectionIndex}
@@ -265,6 +366,7 @@ const DynamicSectionWithField = ({
               Section name
             </Label>
             <InputText
+              disabled={actionBooleans?.isView && categoryClickingID !== null}
               value={section.name}
               onChange={(e) => {
                 const updatedSections = [...sections];
@@ -294,31 +396,37 @@ const DynamicSectionWithField = ({
                     header="Approver"
                     body={(row) => stageBodyTemplate(row)}
                   ></Column>
-                  <Column
-                    header="Action"
-                    body={(row, { rowIndex }) =>
-                      ActionBodyTemplate(row, sectionIndex, rowIndex)
-                    }
-                  ></Column>
+                  {(actionBooleans?.isEdit || categoryClickingID === null) && (
+                    <Column
+                      header="Action"
+                      body={(row, { rowIndex }) =>
+                        ActionBodyTemplate(row, sectionIndex, rowIndex)
+                      }
+                    ></Column>
+                  )}
                 </DataTable>
               </div>
             ) : (
               ""
             )}
             <div style={{ display: "flex", justifyContent: "space-between" }}>
-              <Button
-                icon={
-                  <IoIosAddCircle
-                    className={DynamicSectionWithFieldStyles.addSectionBtnIcon}
-                  />
-                }
-                label="Add Field"
-                onClick={() => {
-                  setNewField({ ...newField, sectionIndex });
-                  setShowPopup(true);
-                }}
-                className={DynamicSectionWithFieldStyles.addFieldButton}
-              />
+              {(actionBooleans?.isEdit || categoryClickingID === null) && (
+                <Button
+                  icon={
+                    <IoIosAddCircle
+                      className={
+                        DynamicSectionWithFieldStyles.addSectionBtnIcon
+                      }
+                    />
+                  }
+                  label="Add Field"
+                  onClick={() => {
+                    setNewField({ ...newField, sectionIndex });
+                    setShowPopup(true);
+                  }}
+                  className={DynamicSectionWithFieldStyles.addFieldButton}
+                />
+              )}
               {section.columns?.length > 3 ? (
                 <Button
                   icon={
@@ -434,7 +542,7 @@ const DynamicSectionWithField = ({
               <Label className={DynamicSectionWithFieldStyles.label}>
                 Need to show on
               </Label>
-              {["Stage 1", "Stage 2", "Stage 3", "Stage 4"].map((stage) => (
+              {approvalStage?.map((stage) => (
                 <div
                   className={`${DynamicSectionWithFieldStyles.stageContainer} stageContainer`}
                   key={stage}
@@ -544,7 +652,6 @@ const DynamicSectionWithField = ({
               setNextStageFromCategory({
                 ...Config.NextStageFromCategorySideBar,
               });
-              // sessionStorage.removeItem("dynamicSections");
               sessionStorage.clear();
               setSections([]); // Clear state
             }}

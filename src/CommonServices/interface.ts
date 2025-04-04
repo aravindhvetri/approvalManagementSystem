@@ -207,3 +207,10 @@ export interface IFinalSubmitDetails {
   };
   dynamicSectionWithField: [];
 }
+
+//CategoryEmailConfigDetails Interface
+export interface ICategoryEmailConfigDetails {
+  templateName: string;
+  emailBody: string;
+  status: number;
+}

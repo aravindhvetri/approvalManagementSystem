@@ -303,7 +303,6 @@ export const generateRequestID = (value, count, char) => {
   return value.toString().padStart(count, char);
 };
 
-
 //Notes Container
 export const notesContainerDetails = (header, data) => {
   return (
@@ -358,4 +357,3 @@ const getColor = (stage: string) => {
   };
   return colors[stage] || "#000";
 };
-

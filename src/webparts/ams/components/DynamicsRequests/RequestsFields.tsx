@@ -72,6 +72,11 @@ const RequestsFields = ({
           Operator: "eq",
           FilterValue: currentRecord.CategoryId.toString(),
         },
+        {
+          FilterKey: "IsDelete",
+          Operator: "eq",
+          FilterValue: "false",
+        },
       ],
     })
       .then((res: any) => {
@@ -148,7 +153,7 @@ const RequestsFields = ({
         console.log("Get Current Record from RequestHup Details error", e);
       });
   };
-  
+
   //Get Approval History
   const getApprovalHistory = () => {
     SPServices.SPReadItems({
