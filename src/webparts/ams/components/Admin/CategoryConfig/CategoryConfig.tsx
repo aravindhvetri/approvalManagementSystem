@@ -60,12 +60,8 @@ const CategoryConfig = ({
   const [finalSubmit, setFinalSubmit] = useState<IFinalSubmitDetails>({
     ...Config.finalSubmitDetails,
   });
-<<<<<<<<< Temporary merge branch 1
+
   const [showLoader, setShowLoader] = useState<boolean>(true);
-=========
-  console.log("finalSubmit", finalSubmit);
-  console.log("validateError", validateError);
->>>>>>>>> Temporary merge branch 2
 
   //Get Category Config Details:
   const getCategoryConfigDetails = () => {
