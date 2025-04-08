@@ -53,11 +53,16 @@ const CategoryConfig = ({
     useState<INextStageFromCategorySideBar>({
       ...Config.NextStageFromCategorySideBar,
     });
+  const [validateError, setValidateError] = useState({
+    categoryName: "",
+    approversSelected: "",
+  });
   const [finalSubmit, setFinalSubmit] = useState<IFinalSubmitDetails>({
     ...Config.finalSubmitDetails,
   });
-  const [showLoader, setShowLoader] = useState<boolean>(true);
 
+  const [showLoader, setShowLoader] = useState<boolean>(true);
+    
   //Get Category Config Details:
   const getCategoryConfigDetails = () => {
     SPServices.SPReadItems({
@@ -150,6 +155,41 @@ const CategoryConfig = ({
     });
   };
 
+  //Validations
+  const finalValidation = () => {
+    if (finalSubmit?.categoryConfig?.category === "") {
+      debugger;
+      validateError.categoryName = "Category name is mandatory";
+      setValidateError({
+        ...validateError,
+      });
+    } else if (
+      finalSubmit?.categoryConfig.ExistingApprover === null &&
+      finalSubmit?.categoryConfig.customApprover === null
+    ) {
+      validateError.categoryName = "";
+      validateError.approversSelected =
+        "Approval flow is mandatory for approval process";
+      setValidateError({
+        ...validateError,
+      });
+    }
+    if (
+      validateError?.categoryName === "" &&
+      validateError?.approversSelected === ""
+    ) {
+      setValidateError({
+        categoryName: "",
+        approversSelected: "",
+      });
+      setNextStageFromCategory((prev: INextStageFromCategorySideBar) => ({
+        ...prev,
+        dynamicSectionWithField: true,
+        ApproverSection: false,
+      }));
+    }
+  };
+
   //CategoryRightSideBar Contents:
   const categoryConfigSideBarContents = () => {
     return (
@@ -163,7 +203,7 @@ const CategoryConfig = ({
               <div className={`${categoryConfigStyles.inputContainer}`}>
                 <div style={{ paddingBottom: "10px" }}>
                   <Label className={`${categoryConfigStyles.label}`}>
-                    Category
+                    Category<span className="required">*</span>
                   </Label>
                 </div>
                 <InputText
@@ -173,6 +213,9 @@ const CategoryConfig = ({
                   placeholder="Enter Category"
                   onChange={(e) => setCategoryInputs(e.target.value)}
                 />
+                <div>
+                  <span className="errorMsg">{validateError.categoryName}</span>
+                </div>
               </div>
               {actionsBooleans?.isEdit == false &&
               actionsBooleans?.isView == false ? (
@@ -271,6 +314,9 @@ const CategoryConfig = ({
               <></>
             )}
           </div>
+          <div>
+            <span className="errorMsg">{validateError?.approversSelected}</span>
+          </div>
           {nextStageFromCategory.ApproverSection ? (
             <div className={`${categoryConfigStyles.FlowSideBarButtons}`}>
               <Button
@@ -287,13 +333,7 @@ const CategoryConfig = ({
                 label="Next"
                 className="customSubmitButton"
                 onClick={() => {
-                  setNextStageFromCategory(
-                    (prev: INextStageFromCategorySideBar) => ({
-                      ...prev,
-                      dynamicSectionWithField: true,
-                      ApproverSection: false,
-                    })
-                  );
+                  finalValidation();
                 }}
               />
             </div>
@@ -306,7 +346,20 @@ const CategoryConfig = ({
   };
 
   useEffect(() => {
+    setFinalSubmit((prev: IFinalSubmitDetails) => ({
+      ...prev,
+      categoryConfig: {
+        ...prev.categoryConfig,
+        category: categoryInputs,
+      },
+    }));
+  }, [categoryInputs]);
+  useEffect(() => {
     getCategoryConfigDetails();
+    setValidateError({
+      categoryName: "",
+      approversSelected: "",
+    });
   }, []);
 
   useEffect(() => {
@@ -346,6 +399,7 @@ const CategoryConfig = ({
     selectedApprover,
     nextStageFromCategory,
     selectedCategoryId,
+    validateError,
     actionsBooleans,
     showLoader, // include this so it rerenders only after loader is false
   ]);

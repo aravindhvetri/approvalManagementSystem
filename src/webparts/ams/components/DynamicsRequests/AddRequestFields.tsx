@@ -39,7 +39,7 @@ const AddRequestsFields = ({
   const [selectedCategory, setSelectedCategory] =
     useState<IBasicFilterCategoryDrop>();
   const [showLoader, setShowLoader] = useState<boolean>(false);
-
+    
   //CategorySectionConfig List
   const getCategorySectionConfigDetails = () => {
     SPServices.SPReadItems({
@@ -101,9 +101,14 @@ const AddRequestsFields = ({
             id: item?.ID,
             sectionName: secionName,
             columnName: item?.ColumnInternalName,
+            columnDisplayName: item?.ColumnExternalName,
             columnType: item?.ColumnType,
             isRequired: item?.IsRequired,
             viewStage: JSON.parse(item?.ViewStage),
+            choices:
+              (JSON.parse(item?.ChoiceValues) &&
+                JSON.parse(item?.ChoiceValues)[0].Options) ||
+              [],
           });
         });
         setDynamicFields((prevFields) => [...prevFields, ...tempArr]);
@@ -195,7 +200,7 @@ const AddRequestsFields = ({
     const newErrors = {};
     dynamicFields.forEach((field) => {
       if (field.isRequired && !formData[field.columnName]?.trim()) {
-        newErrors[field.columnName] = `${field.columnName} is required.`;
+        newErrors[field.columnName] = `${field.columnDisplayName} is required.`;
       }
     });
     setErrors(newErrors);
@@ -264,7 +269,7 @@ const AddRequestsFields = ({
                     className={dynamicFieldsStyles.inputField}
                   >
                     <Label className={dynamicFieldsStyles.label}>
-                      {field.columnName}
+                      {field?.columnDisplayName}
                       {field?.isRequired && <span className="required">*</span>}
                     </Label>
                     <InputText
@@ -273,6 +278,39 @@ const AddRequestsFields = ({
                       onChange={(e) =>
                         handleInputChange(field.columnName, e.target.value)
                       }
+                    />
+                    {errors[field.columnName] && (
+                      <span className={dynamicFieldsStyles.errorMsg}>
+                        {errors[field.columnName]}
+                      </span>
+                    )}
+                  </div>
+                ))}
+            </div>
+            <div className={dynamicFieldsStyles.singlelineFields}>
+              {dynamicFields
+                .filter((f) => f.columnType === "Choice")
+                .map((field) => (
+                  <div
+                    key={field.id}
+                    className={dynamicFieldsStyles.inputField}
+                  >
+                    <Label className={dynamicFieldsStyles.label}>
+                      {field.columnDisplayName}{" "}
+                      {field?.isRequired && <span className="required">*</span>}
+                    </Label>
+                    <Dropdown
+                      value={field?.choices.find(
+                        (e) => e === formData[field.columnName]
+                      )}
+                      showClear
+                      options={field?.choices}
+                      onChange={(e) => {
+                        handleInputChange(field.columnName, e.value);
+                      }}
+                      filter
+                      placeholder={field.columnName}
+                      className="w-full md:w-14rem"
                     />
                     {errors[field.columnName] && (
                       <span className={dynamicFieldsStyles.errorMsg}>
@@ -291,7 +329,7 @@ const AddRequestsFields = ({
                     className={dynamicFieldsStyles.inputField}
                   >
                     <Label className={dynamicFieldsStyles.label}>
-                      {field.columnName}{" "}
+                      {field.columnDisplayName}{" "}
                       {field?.isRequired && <span className="required">*</span>}
                     </Label>
                     <InputTextarea

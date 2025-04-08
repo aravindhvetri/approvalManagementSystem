@@ -94,9 +94,11 @@ export namespace Config {
     id: null,
     sectionName: "",
     columnName: "",
+    columnDisplayName: "",
     columnType: "",
     isRequired: false,
     viewStage: [],
+    choices: [],
   };
 
   //TabViewContent Config
