@@ -120,8 +120,6 @@ const EmailContainer = ({
     }
   };
 
-<<<<<<< HEAD
-=======
   //Update sectionConfigList
   const addSectionConfigList = async (dataJson: {}) => {
     try {
@@ -174,7 +172,6 @@ const EmailContainer = ({
       .catch((err) => console.log("updatesectionColumnsConfigList err", err));
   };
 
->>>>>>> fbe2b36bba42b26533f69c860e221e5dcbec3679
   //Add Datas to Sharepoint List:
   const finalHandleSubmit = async () => {
     if (categoryClickingID) {
@@ -188,7 +185,7 @@ const EmailContainer = ({
           },
         });
         //Get and Isdelete Category Section Details
-<<<<<<< HEAD
+
         try {
           const resCategorySections = await getCategorySectionDetails(
             categoryClickingID
@@ -240,7 +237,9 @@ const EmailContainer = ({
         }
         // For new section addtion
         const categorySections = await getCategorySectionDetails(
-=======
+          categoryClickingID
+        );
+
         const columnTypeMap = {
           text: 2,
           textarea: 3,
@@ -248,7 +247,6 @@ const EmailContainer = ({
         };
         const list = sp.web.lists.getByTitle("RequestsHub");
         const sectionsDetails = await getCategorySectionDetails(
->>>>>>> fbe2b36bba42b26533f69c860e221e5dcbec3679
           categoryClickingID
         );
         finalSubmit?.dynamicSectionWithField?.forEach(async (section: any) => {

@@ -39,11 +39,16 @@ const AddRequestsFields = ({
   const [selectedCategory, setSelectedCategory] =
     useState<IBasicFilterCategoryDrop>();
 <<<<<<< HEAD
+<<<<<<< HEAD
   const [showLoader, setShowLoader] = useState<boolean>(false);
 =======
   console.log("dynamicFields", dynamicFields);
 >>>>>>> fbe2b36bba42b26533f69c860e221e5dcbec3679
 
+=======
+  const [showLoader, setShowLoader] = useState<boolean>(false);
+    
+>>>>>>> 07ce6d36839d808d31b012e802fc7d08a73babe5
   //CategorySectionConfig List
   const getCategorySectionConfigDetails = () => {
     SPServices.SPReadItems({
