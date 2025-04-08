@@ -17,6 +17,7 @@ import ExistingEmail from "./EmailChildTemplates/ExistingEmail";
 import CustomEmail from "./EmailChildTemplates/CustomEmail";
 import SPServices from "../../../../../../CommonServices/SPServices";
 import { sp } from "@pnp/sp";
+import Loader from "../../../Loader/Loader";
 
 const EmailContainer = ({
   actionBooleans,
@@ -32,7 +33,7 @@ const EmailContainer = ({
   const [selectedEmail, setSelectedEmail] = useState<string>("");
   const [existingEmailData, setExistingEmailData] = useState([]);
   const [customEmailData, setCustomEmailData] = useState([]);
-  console.log("finalSubmit", finalSubmit);
+  const [showLoader, setShowLoader] = useState<boolean>(false);
 
   //Get ExistingEmailTempalte Datas:
   const getExistingEmailTemlateData = (ExistingEmailData: []) => {
@@ -117,6 +118,7 @@ const EmailContainer = ({
       (err) => console.log("getCategorySectionDetails error", err);
     }
   };
+
   //Add Datas to Sharepoint List:
   const finalHandleSubmit = async () => {
     if (categoryClickingID) {
@@ -161,7 +163,9 @@ const EmailContainer = ({
                           RequestJSON: {
                             IsDelete: true,
                           },
-                        }).then(()=>{}).catch()
+                        })
+                          .then(() => {})
+                          .catch();
                       });
                     })
                     .catch((err) =>
@@ -256,8 +260,10 @@ const EmailContainer = ({
         setCategoryInputs("");
         setFinalSubmit({ ...Config.finalSubmitDetails });
         getCategoryConfigDetails();
+        setShowLoader(false);
       } catch {
         (err) => console.log("Update categoryConfig Details error", err);
+        setShowLoader(false);
       }
     } else {
       try {
@@ -439,9 +445,11 @@ const EmailContainer = ({
         setCategoryInputs("");
         setFinalSubmit({ ...Config.finalSubmitDetails });
         getCategoryConfigDetails();
+        setShowLoader(false);
       } catch (err) {
         console.error("Error in handleSubmit:", err);
         alert("An error occurred while processing the request.");
+        setShowLoader(false);
       }
     }
   };
@@ -588,6 +596,7 @@ const EmailContainer = ({
                 label="Submit"
                 onClick={() => {
                   finalHandleSubmit();
+                  setShowLoader(true);
                 }}
                 className="customSubmitButton"
               />
@@ -595,6 +604,7 @@ const EmailContainer = ({
           )}
         </div>
       </div>
+      {showLoader ? <Loader /> : ""}
     </>
   );
 };

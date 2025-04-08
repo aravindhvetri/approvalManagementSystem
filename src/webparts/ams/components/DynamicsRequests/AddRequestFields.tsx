@@ -23,6 +23,7 @@ import dynamicFieldsStyles from "./RequestsFields.module.scss";
 import "../../../../External/style.css";
 import WorkflowActionButtons from "../WorkflowButtons/WorkflowActionButtons";
 import { Dropdown } from "primereact/dropdown";
+import Loader from "../Loader/Loader";
 
 const AddRequestsFields = ({
   categoryFilterValue,
@@ -37,6 +38,7 @@ const AddRequestsFields = ({
   const [errors, setErrors] = useState({});
   const [selectedCategory, setSelectedCategory] =
     useState<IBasicFilterCategoryDrop>();
+  const [showLoader, setShowLoader] = useState<boolean>(false);
 
   //CategorySectionConfig List
   const getCategorySectionConfigDetails = () => {
@@ -202,12 +204,13 @@ const AddRequestsFields = ({
 
   const handleSubmit = async () => {
     if (validateForm()) {
-      // Call update function here
+      setShowLoader(true);
       await SPServices.SPAddItem({
         Listname: Config.ListNames.RequestsHub,
         RequestJSON: formData,
       })
         .then(async (e) => {
+          setShowLoader(false);
           SPServices.SPUpdateItem({
             Listname: Config.ListNames.RequestsHub,
             ID: e.data.ID,
@@ -215,13 +218,18 @@ const AddRequestsFields = ({
               RequestID: `R-${generateRequestID(e.data.ID, 5, 0)}`,
             },
           })
-            .then(() => setDynamicRequestsSideBarVisible(false))
+            .then(() => {
+              setDynamicRequestsSideBarVisible(false);
+              setShowLoader(false);
+            })
             .catch((err) => {
               console.log("update item in requesthub error", err);
+              setShowLoader(false);
             });
         })
         .catch((err) => {
           console.log("Add item in requesthub error", err);
+          setShowLoader(false);
         });
     }
   };
@@ -351,7 +359,7 @@ const AddRequestsFields = ({
     }));
   }, [dynamicFields, formData, errors, selectedCategory]);
 
-  return <></>;
+  return <>{showLoader ? <Loader /> : ""}</>;
 };
 
 export default AddRequestsFields;

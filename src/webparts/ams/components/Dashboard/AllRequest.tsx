@@ -274,6 +274,7 @@ const AllRequestPage = ({
               setDynamicRequestsSideBarVisible={
                 setDynamicRequestsSideBarVisible
               }
+              setShowLoader={setShowLoader}
             />
           )}
         </>

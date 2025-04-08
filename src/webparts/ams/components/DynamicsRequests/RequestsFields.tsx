@@ -41,6 +41,7 @@ const RequestsFields = ({
   navigateFrom,
   setRequestsDashBoardContent,
   setDynamicRequestsSideBarVisible,
+  setShowLoader,
 }) => {
   const [dynamicFields, setDynamicFields] = useState<ISectionColumnsConfig[]>(
     []
@@ -443,6 +444,7 @@ const RequestsFields = ({
       ...prev,
       RequestsDashBoardContent: DynamicRequestsFieldsSideBarContent(),
     }));
+    setShowLoader(false);
   }, [dynamicFields, formData, errors, approvalDetails]);
 
   useEffect(() => {

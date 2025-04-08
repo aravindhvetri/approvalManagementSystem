@@ -42,8 +42,8 @@ const MyRequestPage = ({
   // const [selectedCategoryId, setSelectedCategoryId] = useState<number>(null);
   const [currentRecord, setCurrentRecord] = useState<IRequestHubDetails>();
   const [navigateFrom, setNavigateFrom] = useState<string>("");
-  const [showLoader,setShowLoader] = useState<boolean>(true);
-  
+  const [showLoader, setShowLoader] = useState<boolean>(true);
+
   //Set Actions PopUp:
   const actionsWithIcons = (rowData: IRequestHubDetails) => [
     {
@@ -52,6 +52,7 @@ const MyRequestPage = ({
       className: "customView",
       command: () => {
         setRecordAction("View");
+        setShowLoader(true);
         setCurrentRecord(rowData);
         // setSelectedCategoryId(rowData.CategoryId);
         setDynamicRequestsSideBarVisible(true);
@@ -215,78 +216,85 @@ const MyRequestPage = ({
     getRequestsHubDetails();
     setNavigateFrom("MyRequest");
   }, [null, sideBarVisible, filterCategory]);
-  return (<>
-    {
-      showLoader?<Loader/>:
+  return (
     <>
-      <div className="customDataTableContainer">
-        <DataTable
-          value={requestsDetails}
-          tableStyle={{ minWidth: "50rem" }}
-          emptyMessage={
-            <>
-              <p style={{ textAlign: "center" }}>No Records Found</p>
-            </>
-          }
-        >
-          <Column
-            className={dashboardStyles.highlightedRequestId}
-            field="requestId"
-            header="Request id"
-          ></Column>
-          <Column field="category" header="Category"></Column>
-          <Column
-            field="createdDate"
-            body={(rowData) => moment(rowData.createdDate).format("DD/MM/YYYY")}
-            header="Request date"
-          ></Column>
-          <Column
-            hidden
-            field="approvalJson"
-            header="Current Stage"
-            body={(e) => renderStagelevelApproverColumns(e, 4)}
-          ></Column>
-          <Column
-            hidden
-            field="approvalJson"
-            header="Approvers"
-            body={(e) => renderStagelevelApproverColumns(e, 1)}
-          ></Column>
-          <Column
-            hidden
-            field="approvalJson"
-            header="Pending Approval"
-            body={(e) => renderStagelevelApproverColumns(e, 2)}
-          ></Column>
-          <Column
-            hidden
-            field="approvalJson"
-            header="Approved by"
-            body={(e) => renderStagelevelApproverColumns(e, 3)}
-          ></Column>
-          <Column
-            field="status"
-            header="Status"
-            body={renderStatusColumn}
-            style={{ width: "10rem" }}
-          ></Column>
-          <Column field="Action" body={renderActionColumn}></Column>
-        </DataTable>
-      </div>
-      {currentRecord && (
-        <RequestsFields
-          context={context}
-          requestsDetails={requestsDetails}
-          setRequestsDetails={setRequestsDetails}
-          sideBarVisible={sideBarVisible}
-          currentRecord={currentRecord}
-          navigateFrom={navigateFrom}
-          recordAction={recordAction}
-          setRequestsDashBoardContent={setRequestsDashBoardContent}
-          setDynamicRequestsSideBarVisible={setDynamicRequestsSideBarVisible}
-        />
-      )}
-      {/* <div>
+      {showLoader ? (
+        <Loader />
+      ) : (
+        <>
+          <div className="customDataTableContainer">
+            <DataTable
+              value={requestsDetails}
+              tableStyle={{ minWidth: "50rem" }}
+              emptyMessage={
+                <>
+                  <p style={{ textAlign: "center" }}>No Records Found</p>
+                </>
+              }
+            >
+              <Column
+                className={dashboardStyles.highlightedRequestId}
+                field="requestId"
+                header="Request id"
+              ></Column>
+              <Column field="category" header="Category"></Column>
+              <Column
+                field="createdDate"
+                body={(rowData) =>
+                  moment(rowData.createdDate).format("DD/MM/YYYY")
+                }
+                header="Request date"
+              ></Column>
+              <Column
+                hidden
+                field="approvalJson"
+                header="Current Stage"
+                body={(e) => renderStagelevelApproverColumns(e, 4)}
+              ></Column>
+              <Column
+                hidden
+                field="approvalJson"
+                header="Approvers"
+                body={(e) => renderStagelevelApproverColumns(e, 1)}
+              ></Column>
+              <Column
+                hidden
+                field="approvalJson"
+                header="Pending Approval"
+                body={(e) => renderStagelevelApproverColumns(e, 2)}
+              ></Column>
+              <Column
+                hidden
+                field="approvalJson"
+                header="Approved by"
+                body={(e) => renderStagelevelApproverColumns(e, 3)}
+              ></Column>
+              <Column
+                field="status"
+                header="Status"
+                body={renderStatusColumn}
+                style={{ width: "10rem" }}
+              ></Column>
+              <Column field="Action" body={renderActionColumn}></Column>
+            </DataTable>
+          </div>
+          {currentRecord && (
+            <RequestsFields
+              context={context}
+              requestsDetails={requestsDetails}
+              setRequestsDetails={setRequestsDetails}
+              sideBarVisible={sideBarVisible}
+              currentRecord={currentRecord}
+              navigateFrom={navigateFrom}
+              recordAction={recordAction}
+              setRequestsDashBoardContent={setRequestsDashBoardContent}
+              setDynamicRequestsSideBarVisible={
+                setDynamicRequestsSideBarVisible
+              }
+              setShowLoader={setShowLoader}
+            />
+          )}
+          {/* <div>
         {requestsDetails?.length > 0 && (
           <div>
             <WorkflowActionButtons
@@ -299,8 +307,8 @@ const MyRequestPage = ({
           </div>
         )}
       </div> */}
-    </>
-    }
+        </>
+      )}
     </>
   );
 };
