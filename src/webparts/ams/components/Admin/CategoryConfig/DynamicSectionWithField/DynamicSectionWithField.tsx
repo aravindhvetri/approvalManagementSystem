@@ -45,6 +45,7 @@ const DynamicSectionWithField = ({
   const [showPopup, setShowPopup] = useState(false);
   const [newChoice, setNewChoice] = useState("");
   const [newField, setNewField] = useState<any>({
+    columnID: null,
     sectionIndex: null,
     name: "",
     type: null,
@@ -56,15 +57,16 @@ const DynamicSectionWithField = ({
   const [previewFields, setPreviewFields] = useState<any>([]);
   const [approvalStage, setApprovalStage] = useState([]);
   const addDynamicSection = () => {
-    setSections([...sections, { name: "", columns: [] }]);
+    setSections([...sections, { name: "", sectionID: null, columns: [] }]);
   };
-
+  console.log("sections", sections);
   const handleSaveField = () => {
     const updatedSections = [...sections];
     if (newField.sectionIndex !== null) {
       if (newField.rowIndex !== undefined) {
         // Update existing field
         updatedSections[newField.sectionIndex].columns[newField.rowIndex] = {
+          columnID: newField.columnID || null,
           name: newField.name,
           type: newField.type,
           required: newField.required,
@@ -74,6 +76,7 @@ const DynamicSectionWithField = ({
       } else {
         // Add new field
         updatedSections[newField.sectionIndex].columns.push({
+          columnID: newField.columnID || null,
           name: newField.name,
           type: newField.type,
           required: newField.required,
@@ -86,6 +89,7 @@ const DynamicSectionWithField = ({
 
     // Reset state:
     setNewField({
+      columnID: null,
       sectionIndex: null,
       name: "",
       type: null,
@@ -217,6 +221,7 @@ const DynamicSectionWithField = ({
         const tempSectionArr = [];
         res?.forEach(async (section, index) => {
           tempSectionArr.push({
+            sectionID: section?.ID,
             name: section?.SectionName,
             columns: await getSectionsColumnsConfig(section?.ID, index),
           });
@@ -252,6 +257,7 @@ const DynamicSectionWithField = ({
       });
       return res?.flatMap((column: any) => ({
         sectionIndex: index,
+        columnID: column?.ID,
         name: column?.ColumnExternalName,
         type:
           column?.ColumnType === "Singleline"
@@ -330,6 +336,7 @@ const DynamicSectionWithField = ({
   useEffect(() => {
     if (!showPopup) {
       setNewField({
+        columnID: null,
         sectionIndex: null,
         name: "",
         type: null,
