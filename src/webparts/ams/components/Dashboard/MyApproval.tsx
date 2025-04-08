@@ -304,6 +304,7 @@ const MyApprovalPage = ({
               setDynamicRequestsSideBarVisible={
                 setDynamicRequestsSideBarVisible
               }
+              setShowLoader={setShowLoader}
             />
           )}
         </>

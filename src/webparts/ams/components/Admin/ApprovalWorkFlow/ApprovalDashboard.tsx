@@ -19,6 +19,7 @@ import {
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 import ApprovalWorkFlow from "./ApprovalWorkFlow";
+import Loader from "../../Loader/Loader";
 
 const ApprovalDashboard = ({
   setApprovalSideBarContent,
@@ -32,7 +33,7 @@ const ApprovalDashboard = ({
   >([]);
   const [isEdit, setIsEdit] = useState<boolean>(true);
   const [currentRecord, setCurrentRecord] = useState<IApprovalConfigDetails>();
-  console.log("approvalConfigDetails", approvalConfigDetails);
+  const [showLoader, setShowLoader] = useState<boolean>(true);
 
   //Set Actions PopUp:
   const actionsWithIcons = (rowData) => [
@@ -100,6 +101,7 @@ const ApprovalDashboard = ({
             stages: await getApprovalStageConfig(item?.ID),
           });
           setApprovalConfigDetails([...tempArr]);
+          setShowLoader(false);
         });
       })
       .catch((err) => console.log("getApprovalConfig", err));
@@ -194,31 +196,35 @@ const ApprovalDashboard = ({
         setApprovalSideBarVisible={setApprovalSideBarVisible}
         context={context}
       />
-      <div className="customDataTableContainer">
-        <DataTable
-          value={approvalConfigDetails}
-          tableStyle={{ minWidth: "50rem" }}
-          emptyMessage={
-            <>
-              <p style={{ textAlign: "center" }}>No Records Found</p>
-            </>
-          }
-        >
-          <Column field="apprvalFlowName" header="name"></Column>
-          <Column
-            field="stages"
-            header="Approvers"
-            body={renderApproversColumn}
-          ></Column>
-          <Column
-            field="rejectionFlow"
-            body={renderRejectionFlowColumn}
-            style={{ width: "15rem" }}
-            header="Rejection flow"
-          ></Column>
-          <Column field="Action" body={renderActionColumn}></Column>
-        </DataTable>
-      </div>
+      {showLoader ? (
+        <Loader />
+      ) : (
+        <div className="customDataTableContainer">
+          <DataTable
+            value={approvalConfigDetails}
+            tableStyle={{ minWidth: "50rem" }}
+            emptyMessage={
+              <>
+                <p style={{ textAlign: "center" }}>No Records Found</p>
+              </>
+            }
+          >
+            <Column field="apprvalFlowName" header="name"></Column>
+            <Column
+              field="stages"
+              header="Approvers"
+              body={renderApproversColumn}
+            ></Column>
+            <Column
+              field="rejectionFlow"
+              body={renderRejectionFlowColumn}
+              style={{ width: "15rem" }}
+              header="Rejection flow"
+            ></Column>
+            <Column field="Action" body={renderActionColumn}></Column>
+          </DataTable>
+        </div>
+      )}
     </>
   );
 };

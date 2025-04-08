@@ -25,6 +25,7 @@ import "react-quill/dist/quill.snow.css";
 import EmailWorkFlowStyles from "./EmailWorkFlow.module.scss";
 import "./EmailWorkFlowStyle.css";
 import "../../../../../External/style.css";
+import Loader from "../../Loader/Loader";
 
 const EmailWorkFlow = ({
   setEmailWorkFlowSideBarContent,
@@ -51,6 +52,7 @@ const EmailWorkFlow = ({
       info: " Enter [$RequestBriefDetails] for replace of Request entire details",
     },
   ];
+  const [showLoader, setShowLoader] = useState<boolean>(true);
 
   //Get Email Template Contents:
   const getEmailTemplateContents = () => {
@@ -74,6 +76,7 @@ const EmailWorkFlow = ({
           emailBody: item?.EmailBody,
         }));
         setEmailTemplateContent(tempEmailTemplateContentsArr);
+        setShowLoader(false);
       })
       .catch((err) => console.log("Error in getEmailTemplateContents", err));
   };
@@ -126,6 +129,7 @@ const EmailWorkFlow = ({
 
   //Submit the Email Template:
   const handleSubmit = () => {
+    setShowLoader(true);
     if (actionsBooleans.isEdit && templateData.id) {
       const json = {
         TemplateName: templateData.templateName,
@@ -141,6 +145,7 @@ const EmailWorkFlow = ({
           setEmailWorkFlowSideBarVisible(false);
           setActionsBooleans({ ...Config.InitialActionsBooleans });
           setTemplateData({ ...Config?.EmailTemplateConfigDetails });
+          setShowLoader(false);
         })
         .catch((err) => console.log("Error in Updating Email Template", err));
     } else {
@@ -157,6 +162,7 @@ const EmailWorkFlow = ({
           setEmailWorkFlowSideBarVisible(false);
           setActionsBooleans({ ...Config.InitialActionsBooleans });
           setTemplateData({ ...Config?.EmailTemplateConfigDetails });
+          setShowLoader(false);
         })
         .catch((err) => console.log("Error in Creating Email Template", err));
     }
@@ -296,24 +302,32 @@ const EmailWorkFlow = ({
   }, [actionsBooleans, templateData, isValidation]);
 
   return (
-    <div className="customDataTableContainer">
-      <DataTable
-        value={getEmailTemplateContent}
-        tableStyle={{ minWidth: "50rem" }}
-        emptyMessage={<p style={{ textAlign: "center" }}>No Records Found</p>}
-      >
-        <Column
-          style={{ width: "80%" }}
-          field="templateName"
-          header="Template Name"
-        ></Column>
-        <Column
-          style={{ width: "20%" }}
-          field="Action"
-          body={renderActionColumn}
-        ></Column>
-      </DataTable>
-    </div>
+    <>
+      {showLoader ? (
+        <Loader />
+      ) : (
+        <div className="customDataTableContainer">
+          <DataTable
+            value={getEmailTemplateContent}
+            tableStyle={{ minWidth: "50rem" }}
+            emptyMessage={
+              <p style={{ textAlign: "center" }}>No Records Found</p>
+            }
+          >
+            <Column
+              style={{ width: "80%" }}
+              field="templateName"
+              header="Template Name"
+            ></Column>
+            <Column
+              style={{ width: "20%" }}
+              field="Action"
+              body={renderActionColumn}
+            ></Column>
+          </DataTable>
+        </div>
+      )}
+    </>
   );
 };
 

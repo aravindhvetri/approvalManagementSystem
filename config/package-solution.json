@@ -30,7 +30,11 @@
         "title": "approval-management-system Feature",
         "description": "The feature that activates elements of the approval-management-system solution.",
         "id": "c2ade27b-7557-433b-939c-2d6cd7637dd5",
-        "version": "1.0.0.0"
+        "version": "1.0.0.0",
+        "assets": {
+          "elementManifests": ["element.xml"],
+          "elementFiles": ["CategoryConfig.xml"]
+        }
       }
     ]
   },

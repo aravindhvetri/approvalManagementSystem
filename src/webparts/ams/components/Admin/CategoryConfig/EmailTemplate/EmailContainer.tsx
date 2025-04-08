@@ -17,6 +17,7 @@ import ExistingEmail from "./EmailChildTemplates/ExistingEmail";
 import CustomEmail from "./EmailChildTemplates/CustomEmail";
 import SPServices from "../../../../../../CommonServices/SPServices";
 import { sp } from "@pnp/sp";
+import Loader from "../../../Loader/Loader";
 
 const EmailContainer = ({
   actionBooleans,
@@ -32,7 +33,7 @@ const EmailContainer = ({
   const [selectedEmail, setSelectedEmail] = useState<string>("");
   const [existingEmailData, setExistingEmailData] = useState([]);
   const [customEmailData, setCustomEmailData] = useState([]);
-  console.log("finalSubmit", finalSubmit);
+  const [showLoader, setShowLoader] = useState<boolean>(false);
 
   //Get ExistingEmailTempalte Datas:
   const getExistingEmailTemlateData = (ExistingEmailData: []) => {
@@ -171,6 +172,7 @@ const EmailContainer = ({
       .catch((err) => console.log("updatesectionColumnsConfigList err", err));
   };
 
+
   //Add Datas to Sharepoint List:
   const finalHandleSubmit = async () => {
     if (categoryClickingID) {
@@ -184,6 +186,57 @@ const EmailContainer = ({
           },
         });
         //Get and Isdelete Category Section Details
+        try {
+          const resCategorySections = await getCategorySectionDetails(
+            categoryClickingID
+          );
+          resCategorySections?.forEach(async (item: any) => {
+            if (
+              finalSubmit?.dynamicSectionWithField.some(
+                (e: any) => e?.name === item?.SectionName
+              )
+            ) {
+              const getcolumns = await getCategorySectionColumnsDetails(
+                item?.ID
+              );
+            } else {
+              SPServices.SPUpdateItem({
+                Listname: Config.ListNames.CategorySectionConfig,
+                ID: item?.ID,
+                RequestJSON: {
+                  IsDelete: true,
+                },
+              })
+                .then((res: any) => {
+                  getCategorySectionColumnsDetails(item?.ID)
+                    .then((res: any) => {
+                      res.forEach((colums: any) => {
+                        SPServices.SPUpdateItem({
+                          Listname: Config.ListNames.SectionColumnsConfig,
+                          ID: colums?.ID,
+                          RequestJSON: {
+                            IsDelete: true,
+                          },
+                        })
+                          .then(() => {})
+                          .catch();
+                      });
+                    })
+                    .catch((err) =>
+                      console.log("Read SectionColumnsConfig err", err)
+                    );
+                })
+                .catch((err) =>
+                  console.log("update CategorySectionConfig Isdelete err", err)
+                );
+            }
+          });
+        } catch {
+          (err) =>
+            console.log("Get and Isdelete Category Section Details error", err);
+        }
+        // For new section addtion
+        const categorySections = await getCategorySectionDetails(
         const columnTypeMap = {
           text: 2,
           textarea: 3,
@@ -361,8 +414,10 @@ const EmailContainer = ({
         setCategoryInputs("");
         setFinalSubmit({ ...Config.finalSubmitDetails });
         getCategoryConfigDetails();
+        setShowLoader(false);
       } catch {
         (err) => console.log("Update categoryConfig Details error", err);
+        setShowLoader(false);
       }
     } else {
       try {
@@ -545,9 +600,11 @@ const EmailContainer = ({
         setCategoryInputs("");
         setFinalSubmit({ ...Config.finalSubmitDetails });
         getCategoryConfigDetails();
+        setShowLoader(false);
       } catch (err) {
         console.error("Error in handleSubmit:", err);
         alert("An error occurred while processing the request.");
+        setShowLoader(false);
       }
     }
   };
@@ -694,6 +751,7 @@ const EmailContainer = ({
                 label="Submit"
                 onClick={() => {
                   finalHandleSubmit();
+                  setShowLoader(true);
                 }}
                 className="customSubmitButton"
               />
@@ -701,6 +759,7 @@ const EmailContainer = ({
           )}
         </div>
       </div>
+      {showLoader ? <Loader /> : ""}
     </>
   );
 };

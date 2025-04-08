@@ -27,6 +27,7 @@ import {
 } from "../../../../../CommonServices/interface";
 import { sp } from "@pnp/sp";
 import { Config } from "../../../../../CommonServices/Config";
+import Loader from "../../Loader/Loader";
 
 const ApprovalWorkFlow = ({
   currentRec,
@@ -53,6 +54,7 @@ const ApprovalWorkFlow = ({
   const [validation, setValidation] = useState<IApprovalFlowValidation>({
     ...Config.ApprovalFlowValidation,
   });
+  const [showLoader, setShowLoader] = useState<boolean>(false);
 
   //ApprovalConfig Details Patch
   const addApprovalConfigDetails = (addData: IApprovalDetailsPatch) => {
@@ -71,8 +73,12 @@ const ApprovalWorkFlow = ({
         setApprovalFlowDetails({ ...Config.ApprovalConfigDefaultDetails });
         await approvalTableRender();
         setApprovalSideBarVisible(false);
+        await setShowLoader(false);
       })
-      .catch((err) => console.log("addApprovalConfigDetails error", err));
+      .catch((err) => {
+        console.log("addApprovalConfigDetails error", err);
+        setShowLoader(false);
+      });
   };
 
   //ApprovalStageConfig Details Patch
@@ -110,6 +116,7 @@ const ApprovalWorkFlow = ({
       })
       .catch((err) => {
         console.log("updateApprovalStageConfig error", err);
+        setShowLoader(false);
       });
   };
 
@@ -138,7 +145,8 @@ const ApprovalWorkFlow = ({
       setTimeout(async () => {
         setApprovalFlowDetails({ ...Config.ApprovalConfigDefaultDetails });
         await approvalTableRender();
-        setApprovalSideBarVisible(false);
+        await setApprovalSideBarVisible(false);
+        setShowLoader(false);
       }, 3000);
     } catch (err) {
       console.log("getApprovalStageConfigDelete error", err);
@@ -305,6 +313,13 @@ const ApprovalWorkFlow = ({
           : "";
       }
     }
+    if (
+      action == "submit" &&
+      !validation?.approvalConfigValidation &&
+      !validation?.stageValidation
+    ) {
+      setShowLoader(true);
+    }
   };
   ///ApprovalConfigFlowContent
   const ApprovalConfigSidebarContent = () => (
@@ -444,7 +459,9 @@ const ApprovalWorkFlow = ({
                 className="customSubmitButton"
                 label="Submit"
                 icon="pi pi-save"
-                onClick={() => validRequiredField("submit")}
+                onClick={() => {
+                  validRequiredField("submit");
+                }}
               />
             </>
           )}
@@ -494,7 +511,7 @@ const ApprovalWorkFlow = ({
     validation,
   ]);
 
-  return <></>;
+  return <>{showLoader ? <Loader /> : ""}</>;
 };
 
 export default ApprovalWorkFlow;

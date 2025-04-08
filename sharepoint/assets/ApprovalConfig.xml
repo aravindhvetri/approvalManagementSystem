@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<List xmlns:ows="Microsoft SharePoint" Title="ApprovalConfig" Direction="LTR" Url="Lists/ApprovalConfig" BaseType="0" Type="100">
+    <MetaData>
+        <Fields>
+            <Field ID="{5e0a8eb2-658a-4fef-bb0b-bb9af140037f}" Name="Title" DisplayName="$Resources:core,Title;" Type="Text" Required="FALSE" SourceID="http://schemas.microsoft.com/sharepoint/v3" StaticName="Title" MaxLength="255"/>
+            <Field ID="{670da46b-9cbe-45b7-a28f-a10d218ae2ab}" Name="Category" DisplayName="Category" Type="LookupMulti" Required="FALSE" List="Lists/CategoryConfig"  Group="SPFx Columns" ShowField="ID"/>
+            <Field ID="{72fe9cfe-b18f-4c8b-8f55-81dd93c1e59c}" Name="ApprovalFlowName" DisplayName="ApprovalFlowName" Type="Text" Required="FALSE" Group="SPFx Columns"/>
+            <Field 
+              ID="{943E7530-5E2B-4C02-8259-CCD93A9ECB18}" 
+              Name="RejectionFlow"
+              DisplayName="RejectionFlow"
+              Type="Choice"
+              Required="FALSE"
+              Group="SPFx Columns">
+              <CHOICES>
+                <CHOICE>Restart from first stage</CHOICE>
+                <CHOICE>Restart from rejected stage</CHOICE>
+                <CHOICE>Resubmission not allowed</CHOICE>
+              </CHOICES>
+            <Field/>
+            <Field ID="{b318cd56-db4c-45e5-b21b-f72a9cef61b3}" Name="IsDelete" DisplayName="IsDelete" Type="Boolean" Required="FALSE" Group="SPFx Columns"/>
+            <Field ID="{c40ebd18-ab99-4c20-ba8c-b30540eebe05}" Name="TotalStages" DisplayName="TotalStages" Type="Number" Required="FALSE" Group="SPFx Columns"/>
+        </Fields>
+
+        <!-- Views Definition -->
+        <Views>
+            <View BaseViewID="1" Type="HTML" WebPartZoneID="Main" DisplayName="$Resources:core,objectiv_schema_mwsidcamlidC24;" DefaultView="TRUE" MobileView="TRUE" MobileDefaultView="TRUE" SetupPath="pages\viewpage.aspx" ImageUrl="/_layouts/images/generic.png" Url="AllItems.aspx">
+                <XslLink Default="TRUE">main.xsl</XslLink>
+                <JSLink>clienttemplates.js</JSLink>
+                <RowLimit Paged="TRUE">30</RowLimit>
+                <Toolbar Type="Standard" />
+
+                <ViewFields>
+                    <FieldRef Name="Title"/>
+                    <FieldRef Name="Category"/>
+                    <FieldRef Name="ApprovalFlowName"/>
+                    <FieldRef Name="RejectionFlow"/>
+                    <FieldRef Name="TotalStages"/>
+                    <FieldRef Name="IsDelete"/>
+                </ViewFields>
+                <Query>
+                    <OrderBy>
+                        <FieldRef Name="ID" />
+                    </OrderBy>
+                </Query>
+            </View>
+        </Views>
+
+        <!-- Forms Definition (Display, Edit, New) -->
+        <Forms>
+            <Form Type="DisplayForm" Url="DispForm.aspx" SetupPath="pages\form.aspx" WebPartZoneID="Main" />
+            <Form Type="EditForm" Url="EditForm.aspx" SetupPath="pages\form.aspx" WebPartZoneID="Main" />
+            <Form Type="NewForm" Url="NewForm.aspx" SetupPath="pages\form.aspx" WebPartZoneID="Main" />
+        </Forms>
+
+    </MetaData>
+</List>

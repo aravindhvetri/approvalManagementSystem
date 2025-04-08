@@ -28,6 +28,7 @@ import { Button } from "primereact/button";
 //Component Imports:
 import DynamicSectionWithField from "./DynamicSectionWithField/DynamicSectionWithField";
 import EmailContainer from "./EmailTemplate/EmailContainer";
+import Loader from "../../Loader/Loader";
 
 const CategoryConfig = ({
   context,
@@ -59,9 +60,9 @@ const CategoryConfig = ({
   const [finalSubmit, setFinalSubmit] = useState<IFinalSubmitDetails>({
     ...Config.finalSubmitDetails,
   });
-  console.log("finalSubmit", finalSubmit);
-  console.log("validateError", validateError);
 
+  const [showLoader, setShowLoader] = useState<boolean>(true);
+    
   //Get Category Config Details:
   const getCategoryConfigDetails = () => {
     SPServices.SPReadItems({
@@ -87,17 +88,11 @@ const CategoryConfig = ({
           });
         });
         setCategoryDetails([...tempCategoryArray]);
+        setShowLoader(false);
       })
       .catch((err) => {
         console.log("Get Category Config Error", err);
       });
-  };
-
-  //Handle View and Edit Actions:
-  const handleActionClick = async (rowData: ICategoryDetails) => {
-    setCategoryInputs(rowData?.category);
-    await setSelectedCategoryId(rowData?.id);
-    setCategorySideBarVisible(true);
   };
 
   //Set Actions PopUp:
@@ -130,6 +125,16 @@ const CategoryConfig = ({
       command: () => isDeleteCategory(rowData?.id),
     },
   ];
+
+  //Handle View and Edit Actions:
+  const handleActionClick = async (rowData: ICategoryDetails) => {
+    // setShowLoader(true);
+    // await new Promise((resolve) => setTimeout(resolve, 100));
+    setCategoryInputs(rowData?.category);
+    await setSelectedCategoryId(rowData?.id);
+    setCategorySideBarVisible(true);
+    // setShowLoader(false);
+  };
 
   //Render Action Column:
   const renderActionColumn = (rowData: ICategoryDetails) => {
@@ -370,11 +375,25 @@ const CategoryConfig = ({
     }
   }, [ApprovalConfigSideBarVisible]);
 
+  // useEffect(() => {
+  //   setCategorySideBarContent((prev: IRightSideBarContents) => ({
+  //     ...prev,
+  //     categoryConfigContent: categoryConfigSideBarContents(),
+  //   }));
+  // }, [
+  //   categoryInputs,
+  //   selectedApprover,
+  //   nextStageFromCategory,
+  //   selectedCategoryId,
+  //   actionsBooleans,
+  // ]);
   useEffect(() => {
-    setCategorySideBarContent((prev: IRightSideBarContents) => ({
-      ...prev,
-      categoryConfigContent: categoryConfigSideBarContents(),
-    }));
+    if (!showLoader) {
+      setCategorySideBarContent((prev: IRightSideBarContents) => ({
+        ...prev,
+        categoryConfigContent: categoryConfigSideBarContents(),
+      }));
+    }
   }, [
     categoryInputs,
     selectedApprover,
@@ -382,33 +401,40 @@ const CategoryConfig = ({
     selectedCategoryId,
     validateError,
     actionsBooleans,
+    showLoader, // include this so it rerenders only after loader is false
   ]);
 
   return (
     <>
       <Toast ref={toast} />
-      <div className="customDataTableContainer">
-        <DataTable
-          value={categoryDetails}
-          tableStyle={{ minWidth: "50rem" }}
-          emptyMessage={
-            <>
-              <p style={{ textAlign: "center" }}>No Records Found</p>
-            </>
-          }
-        >
-          <Column
-            style={{ width: "80%" }}
-            field="category"
-            header="Category"
-          ></Column>
-          <Column
-            style={{ width: "20%" }}
-            field="Action"
-            body={renderActionColumn}
-          ></Column>
-        </DataTable>
-      </div>
+      {showLoader ? (
+        <Loader />
+      ) : (
+        <>
+          <div className="customDataTableContainer">
+            <DataTable
+              value={categoryDetails}
+              tableStyle={{ minWidth: "50rem" }}
+              emptyMessage={
+                <>
+                  <p style={{ textAlign: "center" }}>No Records Found</p>
+                </>
+              }
+            >
+              <Column
+                style={{ width: "80%" }}
+                field="category"
+                header="Category"
+              ></Column>
+              <Column
+                style={{ width: "20%" }}
+                field="Action"
+                body={renderActionColumn}
+              ></Column>
+            </DataTable>
+          </div>
+        </>
+      )}
     </>
   );
 };
