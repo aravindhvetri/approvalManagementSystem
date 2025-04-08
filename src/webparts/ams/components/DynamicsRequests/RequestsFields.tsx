@@ -30,6 +30,7 @@ import {
   statusTemplate,
 } from "../../../../CommonServices/CommonTemplates";
 import { orderBy } from "lodash";
+import { Dropdown } from "primereact/dropdown";
 
 const RequestsFields = ({
   context,
@@ -56,6 +57,7 @@ const RequestsFields = ({
     status: "",
     comments: "",
   });
+  console.log("formData", formData);
   const [approvalHistoryDetails, setApprovalHistoryDetails] =
     useState<IApprovalHistoryDetails[]>();
   //CategorySectionConfig List
@@ -119,9 +121,14 @@ const RequestsFields = ({
             id: item?.ID,
             sectionName: secionName,
             columnName: item?.ColumnInternalName,
+            columnDisplayName: item?.ColumnExternalName,
             columnType: item?.ColumnType,
             isRequired: item?.IsRequired,
             viewStage: JSON.parse(item?.ViewStage),
+            choices:
+              (JSON.parse(item?.ChoiceValues) &&
+                JSON.parse(item?.ChoiceValues)[0].Options) ||
+              [],
           });
         });
         setDynamicFields((prevFields) => [...prevFields, ...tempArr]);
@@ -221,7 +228,7 @@ const RequestsFields = ({
     const newErrors = {};
     dynamicFields.forEach((field) => {
       if (field.isRequired && !formData[field.columnName]?.trim()) {
-        newErrors[field.columnName] = `${field.columnName} is required.`;
+        newErrors[field.columnName] = `${field.columnDisplayName} is required.`;
       }
     });
     setErrors(newErrors);
@@ -265,7 +272,7 @@ const RequestsFields = ({
                       className={dynamicFieldsStyles.inputField}
                     >
                       <Label className={dynamicFieldsStyles.label}>
-                        {field.columnName}
+                        {field.columnDisplayName}
                         {field?.isRequired && (
                           <span className="required">*</span>
                         )}
@@ -293,6 +300,52 @@ const RequestsFields = ({
                   )
               )}
           </div>
+          <div className={dynamicFieldsStyles.singlelineFields}>
+            {dynamicFields
+              .filter((f) => f.columnType === "Choice")
+              .map(
+                (field) =>
+                  showColumnsByStage(field) && (
+                    <div
+                      key={field.id}
+                      className={dynamicFieldsStyles.inputField}
+                    >
+                      <Label className={dynamicFieldsStyles.label}>
+                        {field.columnDisplayName}{" "}
+                        {field?.isRequired && (
+                          <span className="required">*</span>
+                        )}
+                      </Label>
+                      <Dropdown
+                        value={field?.choices.find(
+                          (e) => e === formData[field.columnName]
+                        )}
+                        showClear
+                        disabled={
+                          !(
+                            recordAction === "Edit" &&
+                            author?.email === loginUser &&
+                            navigateFrom === "MyRequest"
+                          )
+                        }
+                        options={field?.choices}
+                        onChange={(e) => {
+                          handleInputChange(field.columnName, e.value);
+                        }}
+                        filter
+                        placeholder={field.columnName}
+                        className="w-full md:w-14rem"
+                      />
+
+                      {errors[field.columnName] && (
+                        <span className={dynamicFieldsStyles.errorMsg}>
+                          {errors[field.columnName]}
+                        </span>
+                      )}
+                    </div>
+                  )
+              )}
+          </div>
           <div className={dynamicFieldsStyles.multilineFields}>
             {dynamicFields
               .filter((f) => f.columnType === "Multiline")
@@ -304,7 +357,7 @@ const RequestsFields = ({
                       className={dynamicFieldsStyles.inputField}
                     >
                       <Label className={dynamicFieldsStyles.label}>
-                        {field.columnName}{" "}
+                        {field.columnDisplayName}{" "}
                         {field?.isRequired && (
                           <span className="required">*</span>
                         )}

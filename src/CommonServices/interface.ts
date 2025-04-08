@@ -144,9 +144,11 @@ export interface ISectionColumnsConfig {
   id: number;
   sectionName: string;
   columnName: string;
+  columnDisplayName: string;
   columnType: string;
   isRequired: boolean;
   viewStage: IViewStage[];
+  choices:[]
 }
 interface IViewStage {
   Stage: [];
