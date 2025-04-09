@@ -44,7 +44,7 @@ const AddRequestsFields = ({
 
   const [emailContent, setEmailContent] =
     useState<IEmailTemplateConfigDetails>();
-
+  console.log("emailContent", emailContent);
 
   //CategorySectionConfig List
   const getCategorySectionConfigDetails = () => {
@@ -252,12 +252,12 @@ const AddRequestsFields = ({
                 res?.forEach((element: any) => {
                   SPServices.SPReadItemUsingId({
                     Listname: Config.ListNames.EmailTemplateConfig,
-                    SelectedId: res?.ParentTemplateId,
-                  }).then(async (res: any) => {
+                    SelectedId: element?.ParentTemplateId,
+                  }).then(async (template: any) => {
                     const tempEmailArr = {
                       id: null,
-                      templateName: res?.TemplateName,
-                      emailBody: res?.EmailBody,
+                      templateName: template?.TemplateName,
+                      emailBody: template?.EmailBody,
                     };
                     await setEmailContent(tempEmailArr);
                   });

@@ -169,99 +169,99 @@ const CategoryConfig = ({
     } else {
       validateError.categoryName = "";
     }
-
-    // Approver validation
-    if (selectedApprover === "") {
-      validateError.approversSelected =
-        "Approval flow is mandatory for approval process";
-      isValid = false;
-    } else {
-      if (selectedApprover === "existing") {
-        const selectedFlow = sessionStorage.getItem("selectedFlow");
-        if (!selectedFlow) {
-          // validateError.approversSelected = "Please select an existing flow";
-          toast.current.show({
-            severity: "warn",
-            summary: "Warning",
-            content: (prop) =>
-              toastNotify({
-                iconName: "pi-exclamation-triangle",
-                ClsName: "toast-imgcontainer-warning",
-                type: "Warning",
-                msg: "Please select an existing flow",
-              }),
-            life: 3000,
-          });
-          isValid = false;
-        } else {
-          validateError.approversSelected = "";
-        }
-      }
-
-      if (selectedApprover === "custom") {
-        const approvalFlowDetails = sessionStorage.getItem(
-          "approvalFlowDetails"
-        );
-        if (!approvalFlowDetails) {
-          validateError.approversSelected =
-            "Please configure custom approver flow";
-          isValid = false;
-        } else {
-          try {
-            const parsedDetails = JSON.parse(approvalFlowDetails);
-            const { apprvalFlowName, totalStages, rejectionFlow, stages } =
-              parsedDetails;
-            if (!apprvalFlowName || !rejectionFlow) {
-              // validateError.approversSelected =
-              //   "Incomplete custom approver configuration";
-              toast.current.show({
-                severity: "warn",
-                summary: "Warning",
-                content: (prop) =>
-                  toastNotify({
-                    iconName: "pi-exclamation-triangle",
-                    ClsName: "toast-imgcontainer-warning",
-                    type: "Warning",
-                    msg: "Incomplete custom approver configuration",
-                  }),
-                life: 3000,
-              });
-              isValid = false;
-            } else if (
-              !totalStages ||
-              stages.length === 0 ||
-              stages.some(
-                (stage: any) =>
-                  !stage.approvalProcess || stage.approver.length === 0
-              )
-            ) {
-              // validateError.approversSelected =
-              //   "No stages found in custom approver configuration";
-              toast.current.show({
-                severity: "warn",
-                summary: "Warning",
-                content: (prop) =>
-                  toastNotify({
-                    iconName: "pi-exclamation-triangle",
-                    ClsName: "toast-imgcontainer-warning",
-                    type: "Warning",
-                    msg: "Each stage must include both an approver and a process. Please complete the custom approver configuration.",
-                  }),
-                life: 3000,
-              });
-              isValid = false;
-            } else {
-              validateError.approversSelected = "";
-            }
-          } catch (err) {
-            validateError.approversSelected =
-              "Error reading custom approver configuration";
+    if (!actionsBooleans?.isEdit && !actionsBooleans?.isView) {
+      // Approver validation
+      if (selectedApprover === "") {
+        validateError.approversSelected =
+          "Approval flow is mandatory for approval process";
+        isValid = false;
+      } else {
+        if (selectedApprover === "existing") {
+          const selectedFlow = sessionStorage.getItem("selectedFlow");
+          if (!selectedFlow) {
+            // validateError.approversSelected = "Please select an existing flow";
+            toast.current.show({
+              severity: "warn",
+              summary: "Warning",
+              content: (prop) =>
+                toastNotify({
+                  iconName: "pi-exclamation-triangle",
+                  ClsName: "toast-imgcontainer-warning",
+                  type: "Warning",
+                  msg: "Please select an existing flow",
+                }),
+              life: 3000,
+            });
             isValid = false;
+          } else {
+            validateError.approversSelected = "";
+          }
+        }
+
+        if (selectedApprover === "custom") {
+          const approvalFlowDetails = sessionStorage.getItem(
+            "approvalFlowDetails"
+          );
+          if (!approvalFlowDetails) {
+            validateError.approversSelected =
+              "Please configure custom approver flow";
+            isValid = false;
+          } else {
+            try {
+              const parsedDetails = JSON.parse(approvalFlowDetails);
+              const { apprvalFlowName, totalStages, rejectionFlow, stages } =
+                parsedDetails;
+              if (!apprvalFlowName || !rejectionFlow) {
+                // validateError.approversSelected =
+                //   "Incomplete custom approver configuration";
+                toast.current.show({
+                  severity: "warn",
+                  summary: "Warning",
+                  content: (prop) =>
+                    toastNotify({
+                      iconName: "pi-exclamation-triangle",
+                      ClsName: "toast-imgcontainer-warning",
+                      type: "Warning",
+                      msg: "Incomplete custom approver configuration",
+                    }),
+                  life: 3000,
+                });
+                isValid = false;
+              } else if (
+                !totalStages ||
+                stages.length === 0 ||
+                stages.some(
+                  (stage: any) =>
+                    !stage.approvalProcess || stage.approver.length === 0
+                )
+              ) {
+                // validateError.approversSelected =
+                //   "No stages found in custom approver configuration";
+                toast.current.show({
+                  severity: "warn",
+                  summary: "Warning",
+                  content: (prop) =>
+                    toastNotify({
+                      iconName: "pi-exclamation-triangle",
+                      ClsName: "toast-imgcontainer-warning",
+                      type: "Warning",
+                      msg: "Each stage must include both an approver and a process. Please complete the custom approver configuration.",
+                    }),
+                  life: 3000,
+                });
+                isValid = false;
+              } else {
+                validateError.approversSelected = "";
+              }
+            } catch (err) {
+              validateError.approversSelected =
+                "Error reading custom approver configuration";
+              isValid = false;
+            }
           }
         }
       }
     }
-
     // Update the validation error state
     setValidateError({ ...validateError });
 
@@ -273,7 +273,6 @@ const CategoryConfig = ({
         ApproverSection: false,
       }));
     }
-
   };
 
   //CategoryRightSideBar Contents:
@@ -420,10 +419,6 @@ const CategoryConfig = ({
                 label="Cancel"
                 onClick={() => {
                   setCategorySideBarVisible(false);
-                  setValidateError({
-                    categoryName: "",
-                    approversSelected: "",
-                  });
                 }}
                 className="customCancelButton"
               />
@@ -433,7 +428,17 @@ const CategoryConfig = ({
                 label="Next"
                 className="customSubmitButton"
                 onClick={() => {
-                  finalValidation();
+                  actionsBooleans?.isEdit ||
+                  (actionsBooleans?.isEdit === false &&
+                    actionsBooleans?.isView === false)
+                    ? finalValidation()
+                    : setNextStageFromCategory(
+                        (prev: INextStageFromCategorySideBar) => ({
+                          ...prev,
+                          dynamicSectionWithField: true,
+                          ApproverSection: false,
+                        })
+                      );
                 }}
               />
             </div>
@@ -465,6 +470,10 @@ const CategoryConfig = ({
 
   useEffect(() => {
     if (!ApprovalConfigSideBarVisible) {
+      setValidateError({
+        categoryName: "",
+        approversSelected: "",
+      });
       sessionStorage.clear();
       setSelectedApprover("");
       setNextStageFromCategory({
