@@ -64,6 +64,7 @@ const DynamicSectionWithField = ({
     setSections([...sections, { name: "", sectionID: null, columns: [] }]);
   };
   const [isValidation, setIsValidation] = useState<boolean>(false);
+  const [choiceError, setChoiceError] = useState(false);
 
   const handleSaveField = () => {
     const updatedSections = [...sections];
@@ -104,6 +105,8 @@ const DynamicSectionWithField = ({
       rowIndex: undefined,
     });
     setShowPopup(false);
+    setChoiceError(false);
+    setIsValidation(false);
   };
 
   const RequiredBodyTemplate = (rowData) => {
@@ -522,28 +525,43 @@ const DynamicSectionWithField = ({
             </div>
             <div className={DynamicSectionWithFieldStyles.columnNameContainer}>
               {newField.type === "Choice" && (
-                <div className={DynamicSectionWithFieldStyles.choiceContainer}>
-                  <InputText
-                    value={newChoice}
-                    onChange={(e) => setNewChoice(e.target.value)}
-                    placeholder="Enter new choice"
-                    className={DynamicSectionWithFieldStyles.choiceInput}
-                  />
-                  <Button
-                    label="Add Choice"
-                    icon="pi pi-plus"
-                    onClick={() => {
-                      if (newChoice.trim() !== "") {
-                        setNewField({
-                          ...newField,
-                          choices: [...newField.choices, newChoice],
-                        });
-                        setNewChoice("");
-                      }
-                    }}
-                    className="customSubmitButton"
-                  />
-                </div>
+                <>
+                  <div
+                    className={DynamicSectionWithFieldStyles.choiceContainer}
+                  >
+                    <InputText
+                      value={newChoice}
+                      // onChange={(e) => setNewChoice(e.target.value)}
+                      onChange={(e) => {
+                        setNewChoice(e.target.value);
+                        if (e.target.value.trim() !== "") setChoiceError(false);
+                      }}
+                      placeholder="Enter new choice"
+                      className={DynamicSectionWithFieldStyles.choiceInput}
+                    />
+
+                    <Button
+                      label="Add Choice"
+                      icon="pi pi-plus"
+                      onClick={() => {
+                        if (newChoice.trim() !== "") {
+                          setNewField({
+                            ...newField,
+                            choices: [...newField.choices, newChoice],
+                          });
+                          setNewChoice("");
+                          setChoiceError(false);
+                        } else {
+                          setChoiceError(true);
+                        }
+                      }}
+                      className="customSubmitButton"
+                    />
+                  </div>
+                  {choiceError && (
+                    <span className="errorMsg">Choice cannot be empty</span>
+                  )}
+                </>
               )}
             </div>
 
@@ -592,6 +610,7 @@ const DynamicSectionWithField = ({
                 onClick={() => {
                   setShowPopup(false);
                   setIsValidation(false);
+                  setChoiceError(false);
                 }}
                 className="customCancelButton"
               />
@@ -605,6 +624,7 @@ const DynamicSectionWithField = ({
                 }}
                 autoFocus
                 className="customSubmitButton"
+                disabled={choiceError}
               />
             </div>
           </div>

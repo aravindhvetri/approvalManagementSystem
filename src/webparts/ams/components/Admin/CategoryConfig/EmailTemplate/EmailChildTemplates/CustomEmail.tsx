@@ -89,18 +89,20 @@ const CustomEmail = ({
   };
 
   const handleChange = (index, key, value) => {
-    const newTemplates = templates.map((t, i) =>
-      i === index ? { ...t, [key]: value } : t
-    );
-    setTemplates(newTemplates);
-    customEmailData(newTemplates);
-    sessionStorage.setItem("customTemplates", JSON.stringify(newTemplates));
+    if (actionBooleans?.isView == false && actionBooleans?.isEdit == false) {
+      const newTemplates = templates.map((t, i) =>
+        i === index ? { ...t, [key]: value } : t
+      );
+      setTemplates(newTemplates);
+      customEmailData(newTemplates);
+      sessionStorage.setItem("customTemplates", JSON.stringify(newTemplates));
 
-    // Clear errors on valid input
-    const newErrors = [...errors];
-    if (newErrors[index]) {
-      newErrors[index][key] = value ? "" : `This field is required`;
-      setErrors(newErrors);
+      // Clear errors on valid input
+      const newErrors = [...errors];
+      if (newErrors[index]) {
+        newErrors[index][key] = value ? "" : `This field is required`;
+        setErrors(newErrors);
+      }
     }
   };
 
@@ -137,7 +139,9 @@ const CustomEmail = ({
   }, [categoryClickingID]);
 
   useEffect(() => {
-    customEmailDataWithEmpty(templates);
+    if (actionBooleans?.isView == false && actionBooleans?.isEdit == false) {
+      customEmailDataWithEmpty(templates);
+    }
   }, [templates]);
   return (
     <div>
