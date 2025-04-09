@@ -38,8 +38,9 @@ const AddRequestsFields = ({
   const [errors, setErrors] = useState({});
   const [selectedCategory, setSelectedCategory] =
     useState<IBasicFilterCategoryDrop>();
+
   const [showLoader, setShowLoader] = useState<boolean>(false);
-    
+
   //CategorySectionConfig List
   const getCategorySectionConfigDetails = () => {
     SPServices.SPReadItems({

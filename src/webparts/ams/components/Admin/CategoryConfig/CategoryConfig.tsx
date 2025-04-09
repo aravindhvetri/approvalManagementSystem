@@ -11,7 +11,10 @@ import {
   INextStageFromCategorySideBar,
   IRightSideBarContents,
 } from "../../../../../CommonServices/interface";
-import { ActionsMenu } from "../../../../../CommonServices/CommonTemplates";
+import {
+  ActionsMenu,
+  toastNotify,
+} from "../../../../../CommonServices/CommonTemplates";
 //Styles Imports:
 import "../../../../../External/style.css";
 import categoryConfigStyles from "./CategoryConfig.module.scss";
@@ -61,8 +64,10 @@ const CategoryConfig = ({
     ...Config.finalSubmitDetails,
   });
 
+  console.log(finalSubmit, "setFinalSubmit");
+
   const [showLoader, setShowLoader] = useState<boolean>(true);
-    
+
   //Get Category Config Details:
   const getCategoryConfigDetails = () => {
     SPServices.SPReadItems({
@@ -155,33 +160,114 @@ const CategoryConfig = ({
     });
   };
 
-  //Validations
   const finalValidation = () => {
-    if (finalSubmit?.categoryConfig?.category === "") {
-      debugger;
+    let isValid = true;
+
+    // Category name validation
+    if (categoryInputs === "") {
       validateError.categoryName = "Category name is mandatory";
-      setValidateError({
-        ...validateError,
-      });
-    } else if (
-      finalSubmit?.categoryConfig.ExistingApprover === null &&
-      finalSubmit?.categoryConfig.customApprover === null
-    ) {
+      isValid = false;
+    } else {
       validateError.categoryName = "";
+    }
+
+    // Approver validation
+    if (selectedApprover === "") {
       validateError.approversSelected =
         "Approval flow is mandatory for approval process";
-      setValidateError({
-        ...validateError,
-      });
+      isValid = false;
+    } else {
+      if (selectedApprover === "existing") {
+        const selectedFlow = sessionStorage.getItem("selectedFlow");
+        if (!selectedFlow) {
+          // validateError.approversSelected = "Please select an existing flow";
+          toast.current.show({
+            severity: "warn",
+            summary: "Warning",
+            content: (prop) =>
+              toastNotify({
+                iconName: "pi-exclamation-triangle",
+                ClsName: "toast-imgcontainer-warning",
+                type: "Warning",
+                msg: "Please select an existing flow",
+              }),
+            life: 3000,
+          });
+          isValid = false;
+        } else {
+          validateError.approversSelected = "";
+        }
+      }
+
+      if (selectedApprover === "custom") {
+        const approvalFlowDetails = sessionStorage.getItem(
+          "approvalFlowDetails"
+        );
+        if (!approvalFlowDetails) {
+          validateError.approversSelected =
+            "Please configure custom approver flow";
+          isValid = false;
+        } else {
+          try {
+            const parsedDetails = JSON.parse(approvalFlowDetails);
+            const { apprvalFlowName, totalStages, rejectionFlow, stages } =
+              parsedDetails;
+            if (!apprvalFlowName || !rejectionFlow) {
+              // validateError.approversSelected =
+              //   "Incomplete custom approver configuration";
+              toast.current.show({
+                severity: "warn",
+                summary: "Warning",
+                content: (prop) =>
+                  toastNotify({
+                    iconName: "pi-exclamation-triangle",
+                    ClsName: "toast-imgcontainer-warning",
+                    type: "Warning",
+                    msg: "Incomplete custom approver configuration",
+                  }),
+                life: 3000,
+              });
+              isValid = false;
+            } else if (
+              !totalStages ||
+              stages.length === 0 ||
+              stages.some(
+                (stage: any) =>
+                  !stage.approvalProcess || stage.approver.length === 0
+              )
+            ) {
+              // validateError.approversSelected =
+              //   "No stages found in custom approver configuration";
+              toast.current.show({
+                severity: "warn",
+                summary: "Warning",
+                content: (prop) =>
+                  toastNotify({
+                    iconName: "pi-exclamation-triangle",
+                    ClsName: "toast-imgcontainer-warning",
+                    type: "Warning",
+                    msg: "Each stage must include both an approver and a process. Please complete the custom approver configuration.",
+                  }),
+                life: 3000,
+              });
+              isValid = false;
+            } else {
+              validateError.approversSelected = "";
+            }
+          } catch (err) {
+            validateError.approversSelected =
+              "Error reading custom approver configuration";
+            isValid = false;
+          }
+        }
+      }
     }
-    if (
-      validateError?.categoryName === "" &&
-      validateError?.approversSelected === ""
-    ) {
-      setValidateError({
-        categoryName: "",
-        approversSelected: "",
-      });
+
+    // Update the validation error state
+    setValidateError({ ...validateError });
+
+    // If everything is valid, move to next section
+    if (isValid) {
       setNextStageFromCategory((prev: INextStageFromCategorySideBar) => ({
         ...prev,
         dynamicSectionWithField: true,
@@ -213,9 +299,13 @@ const CategoryConfig = ({
                   placeholder="Enter Category"
                   onChange={(e) => setCategoryInputs(e.target.value)}
                 />
-                <div>
-                  <span className="errorMsg">{validateError.categoryName}</span>
-                </div>
+                {validateError && !categoryInputs && (
+                  <div>
+                    <span className="errorMsg">
+                      {validateError?.categoryName}
+                    </span>
+                  </div>
+                )}
               </div>
               {actionsBooleans?.isEdit == false &&
               actionsBooleans?.isView == false ? (
@@ -245,6 +335,7 @@ const CategoryConfig = ({
                       value="custom"
                       onChange={(e) => {
                         sessionStorage.removeItem("selectedFlow");
+                        sessionStorage.removeItem("selectedFlowID");
                         setSelectedApprover(e?.value);
                       }}
                       checked={selectedApprover === "custom"}
@@ -314,9 +405,14 @@ const CategoryConfig = ({
               <></>
             )}
           </div>
-          <div>
-            <span className="errorMsg">{validateError?.approversSelected}</span>
-          </div>
+          {validateError && !selectedApprover && (
+            <div>
+              <span className="errorMsg">
+                {validateError?.approversSelected}
+              </span>
+            </div>
+          )}
+
           {nextStageFromCategory.ApproverSection ? (
             <div className={`${categoryConfigStyles.FlowSideBarButtons}`}>
               <Button
@@ -324,6 +420,10 @@ const CategoryConfig = ({
                 label="Cancel"
                 onClick={() => {
                   setCategorySideBarVisible(false);
+                  setValidateError({
+                    categoryName: "",
+                    approversSelected: "",
+                  });
                 }}
                 className="customCancelButton"
               />
@@ -354,6 +454,7 @@ const CategoryConfig = ({
       },
     }));
   }, [categoryInputs]);
+
   useEffect(() => {
     getCategoryConfigDetails();
     setValidateError({
@@ -375,25 +476,11 @@ const CategoryConfig = ({
     }
   }, [ApprovalConfigSideBarVisible]);
 
-  // useEffect(() => {
-  //   setCategorySideBarContent((prev: IRightSideBarContents) => ({
-  //     ...prev,
-  //     categoryConfigContent: categoryConfigSideBarContents(),
-  //   }));
-  // }, [
-  //   categoryInputs,
-  //   selectedApprover,
-  //   nextStageFromCategory,
-  //   selectedCategoryId,
-  //   actionsBooleans,
-  // ]);
   useEffect(() => {
-    if (!showLoader) {
-      setCategorySideBarContent((prev: IRightSideBarContents) => ({
-        ...prev,
-        categoryConfigContent: categoryConfigSideBarContents(),
-      }));
-    }
+    setCategorySideBarContent((prev: IRightSideBarContents) => ({
+      ...prev,
+      categoryConfigContent: categoryConfigSideBarContents(),
+    }));
   }, [
     categoryInputs,
     selectedApprover,
@@ -401,7 +488,6 @@ const CategoryConfig = ({
     selectedCategoryId,
     validateError,
     actionsBooleans,
-    showLoader, // include this so it rerenders only after loader is false
   ]);
 
   return (
