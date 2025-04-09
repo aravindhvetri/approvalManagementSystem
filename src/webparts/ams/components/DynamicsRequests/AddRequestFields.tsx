@@ -43,7 +43,9 @@ const AddRequestsFields = ({
   const [showLoader, setShowLoader] = useState<boolean>(false);
 
   const [emailContent, setEmailContent] =
-    useState<IEmailTemplateConfigDetails>();
+    useState<IEmailTemplateConfigDetails>({
+      ...Config?.EmailTemplateConfigDetails
+    });
   console.log("emailContent", emailContent);
 
   //CategorySectionConfig List
@@ -248,21 +250,35 @@ const AddRequestsFields = ({
                   },
                 ],
                 FilterCondition: "and",
-              }).then((res: any) =>
-                res?.forEach((element: any) => {
-                  SPServices.SPReadItemUsingId({
-                    Listname: Config.ListNames.EmailTemplateConfig,
-                    SelectedId: element?.ParentTemplateId,
-                  }).then(async (template: any) => {
-                    const tempEmailArr = {
-                      id: null,
-                      templateName: template?.TemplateName,
-                      emailBody: template?.EmailBody,
-                    };
-                    await setEmailContent(tempEmailArr);
+              })
+                .then((res: any) => {
+                  console.log("CategoryEmailConfig", res);
+                  res?.forEach((element: any) => {
+                    SPServices.SPReadItemUsingID({
+                      Listname: Config.ListNames.EmailTemplateConfig,
+                      SelectedId: element?.ParentTemplateId,
+                      Select: "*",
+                    })
+                      .then(async (template: any) => {
+                        debugger;
+                        console.log("template", template);
+                        const tempEmailArr: IEmailTemplateConfigDetails =
+                          {
+                            id: null,
+                            templateName: template?.TemplateName,
+                            emailBody: template?.EmailBody,
+                          };
+                       
+                        setEmailContent({...tempEmailArr})
+                      })
+                      .catch((err) =>
+                        console.log("get EmailTemplateConfig error", err)
+                      );
                   });
                 })
-              );
+                .catch((err) =>
+                  console.log("get CategoryEmailConfig error", err)
+                );
               setDynamicRequestsSideBarVisible(false);
               setShowLoader(false);
             })

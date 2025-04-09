@@ -20,6 +20,7 @@ import SPServices from "../../../../../../CommonServices/SPServices";
 import { sp } from "@pnp/sp";
 import Loader from "../../../Loader/Loader";
 import { toastNotify } from "../../../../../../CommonServices/CommonTemplates";
+import { trim } from "lodash";
 
 const EmailContainer = ({
   actionBooleans,
@@ -409,7 +410,7 @@ const EmailContainer = ({
                   );
                   addsectionColumnsConfigList({
                     ParentSectionId: section?.sectionID,
-                    ColumnInternalName: column?.name,
+                    ColumnInternalName: (column?.name).replace(/\s/g, ""),
                     ColumnExternalName: column?.name,
                     ColumnType:
                       column?.type == "text"
@@ -465,7 +466,7 @@ const EmailContainer = ({
               );
               addsectionColumnsConfigList({
                 ParentSectionId: newSection?.data?.ID,
-                ColumnInternalName: column?.name,
+                ColumnInternalName: column?.name.replace(/\s/g, ""),
                 ColumnExternalName: column?.name,
                 ColumnType:
                   column?.type == "text"
@@ -632,7 +633,7 @@ const EmailContainer = ({
                       Listname: Config.ListNames?.SectionColumnsConfig,
                       RequestJSON: {
                         ParentSectionId: categorySectionId,
-                        ColumnInternalName: column?.name,
+                        ColumnInternalName: column?.name.replace(/\s/g, ""),
                         ColumnExternalName: column?.name,
                         ColumnType:
                           column?.type == "text"
@@ -716,11 +717,11 @@ const EmailContainer = ({
   const addColumnToList = async (list, fieldTypeKind, columnName, choices) => {
     try {
       if (fieldTypeKind === 2) {
-        await list.fields.addText(columnName); // For Single Line Text
+        await list.fields.addText(columnName.replace(/\s/g, "")); // For Single Line Text
       } else if (fieldTypeKind === 3) {
-        await list.fields.addMultilineText(columnName); // For Multiple Lines of Text
+        await list.fields.addMultilineText(columnName.replace(/\s/g, "")); // For Multiple Lines of Text
       } else if (fieldTypeKind === 6) {
-        await list.fields.addChoice(columnName, choices); // Pass choices array directly
+        await list.fields.addChoice(columnName.replace(/\s/g, ""), choices); // Pass choices array directly
       }
     } catch (error) {
       console.error(`Error adding column ${columnName}:`, error);
