@@ -1,9 +1,10 @@
 //Default Imports:
 import * as React from "react";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 //PrimeReact Imports:
 import { Button } from "primereact/button";
 import { RadioButton } from "primereact/radiobutton";
+import { Toast } from "primereact/toast";
 //Styles Imports:
 import EmailContainerStyles from "./EmailContainer.module.scss";
 //Commmon Service Imports:
@@ -18,6 +19,7 @@ import CustomEmail from "./EmailChildTemplates/CustomEmail";
 import SPServices from "../../../../../../CommonServices/SPServices";
 import { sp } from "@pnp/sp";
 import Loader from "../../../Loader/Loader";
+import { toastNotify } from "../../../../../../CommonServices/CommonTemplates";
 
 const EmailContainer = ({
   actionBooleans,
@@ -30,10 +32,16 @@ const EmailContainer = ({
   finalSubmit,
   getCategoryConfigDetails,
 }) => {
+  const toast = useRef<Toast>(null);
   const [selectedEmail, setSelectedEmail] = useState<string>("");
   const [existingEmailData, setExistingEmailData] = useState([]);
   const [customEmailData, setCustomEmailData] = useState([]);
+  const [customEmailDataWithEmpty, setCustomEmailDataWithEmpty] = useState([]);
+  console.log(customEmailDataWithEmpty, "customEmailData");
   const [showLoader, setShowLoader] = useState<boolean>(false);
+  const [validateError, setValidateError] = useState({
+    emailTemplateSelected: "",
+  });
 
   //Get ExistingEmailTempalte Datas:
   const getExistingEmailTemlateData = (ExistingEmailData: []) => {
@@ -43,6 +51,11 @@ const EmailContainer = ({
   //Get CustomEmailTempalte Datas:
   const getCustomEmailTemlateData = (CustomEmailData: []) => {
     setCustomEmailData([...CustomEmailData]);
+  };
+
+  //Get CustomEmailDataWithEmpty:
+  const getCustomEmailDataWithEmpty = (CustomEmailDataWithEmpty: []) => {
+    setCustomEmailDataWithEmpty([...CustomEmailDataWithEmpty]);
   };
 
   // Load sessionStorage data on mount
@@ -170,6 +183,97 @@ const EmailContainer = ({
         return res;
       })
       .catch((err) => console.log("updatesectionColumnsConfigList err", err));
+  };
+
+  const valiadateFunc = () => {
+    let isValid = true;
+    if (selectedEmail === "") {
+      validateError.emailTemplateSelected =
+        "Email flow is mandatory for Email process";
+      isValid = false;
+    } else {
+      if (selectedEmail === "existing") {
+        const selectedFlow = sessionStorage.getItem("selectedDropValues");
+        if (!selectedFlow) {
+          toast.current.show({
+            severity: "warn",
+            summary: "Warning",
+            content: (prop) =>
+              toastNotify({
+                iconName: "pi-exclamation-triangle",
+                ClsName: "toast-imgcontainer-warning",
+                type: "Warning",
+                msg: "Please select an existing email flow",
+              }),
+            life: 3000,
+          });
+          isValid = false;
+        } else {
+          try {
+            const flowArr = JSON.parse(selectedFlow);
+            const hasEmptyValue = flowArr.some(
+              (item) => item.process && item.value.trim() === ""
+            );
+            if (hasEmptyValue) {
+              toast.current.show({
+                severity: "warn",
+                summary: "Warning",
+                content: (prop) =>
+                  toastNotify({
+                    iconName: "pi-exclamation-triangle",
+                    ClsName: "toast-imgcontainer-warning",
+                    type: "Warning",
+                    msg: "One or more email templates are missing in the flow",
+                  }),
+                life: 3000,
+              });
+              isValid = false;
+            } else {
+              validateError.emailTemplateSelected = "";
+            }
+          } catch (err) {
+            console.error("Invalid JSON in sessionStorage", err);
+            isValid = false;
+          }
+        }
+      }
+
+      if (selectedEmail === "custom") {
+        const CustomEmailFlowDetails = customEmailDataWithEmpty;
+
+        const hasEmptyFields = CustomEmailFlowDetails.some(
+          (item) =>
+            !item.templateName?.trim() ||
+            !item.emailBody?.trim() ||
+            !item.status?.trim()
+        );
+
+        if (hasEmptyFields) {
+          toast.current.show({
+            severity: "warn",
+            summary: "Warning",
+            content: (prop) =>
+              toastNotify({
+                iconName: "pi-exclamation-triangle",
+                ClsName: "toast-imgcontainer-warning",
+                type: "Warning",
+                msg: "Please enter all fields",
+              }),
+            life: 3000,
+          });
+          isValid = false;
+        } else {
+          validateError.emailTemplateSelected = "";
+        }
+      }
+    }
+
+    setValidateError({ ...validateError });
+
+    if (isValid) {
+      setShowLoader(true);
+      finalHandleSubmit();
+    }
   };
 
   //Add Datas to Sharepoint List:
@@ -650,6 +754,7 @@ const EmailContainer = ({
 
   return (
     <>
+      <Toast ref={toast} />
       <div className={EmailContainerStyles.heading}>Email template</div>
       {!(actionBooleans?.isView || actionBooleans?.isEdit) && (
         <div className={`${EmailContainerStyles.radioContainer}`}>
@@ -660,6 +765,7 @@ const EmailContainer = ({
               value="existing"
               onChange={(e) => {
                 setSelectedEmail(e?.value);
+                sessionStorage.removeItem("customTemplates");
               }}
               checked={selectedEmail === "existing"}
             />
@@ -675,13 +781,23 @@ const EmailContainer = ({
               inputId="custom"
               name="email"
               value="custom"
-              onChange={(e) => setSelectedEmail(e?.value)}
+              onChange={(e) => {
+                setSelectedEmail(e?.value);
+                sessionStorage.removeItem("selectedDropValues");
+              }}
               checked={selectedEmail === "custom"}
             />
             <label className={`${EmailContainerStyles.radioDivLabel}`}>
               Custom template
             </label>
           </div>
+        </div>
+      )}
+      {validateError && !selectedEmail && (
+        <div style={{ marginBottom: "20px" }}>
+          <span className="errorMsg">
+            {validateError?.emailTemplateSelected}
+          </span>
         </div>
       )}
       <div>
@@ -692,6 +808,7 @@ const EmailContainer = ({
             actionBooleans={actionBooleans}
             categoryClickingID={categoryClickingID}
             customEmailData={getCustomEmailTemlateData}
+            customEmailDataWithEmpty={getCustomEmailDataWithEmpty}
             setCustomEmailTemplateSideBarVisible={
               setEmailContainerFieldSideBarVisible
             }
@@ -753,8 +870,8 @@ const EmailContainer = ({
                 icon="pi pi-save"
                 label="Submit"
                 onClick={() => {
-                  finalHandleSubmit();
-                  setShowLoader(true);
+                  valiadateFunc();
+                  // setShowLoader(true);
                 }}
                 className="customSubmitButton"
               />

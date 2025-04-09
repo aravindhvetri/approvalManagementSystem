@@ -1,5 +1,5 @@
 import * as React from "react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { InputText } from "primereact/inputtext";
 import { Dropdown } from "primereact/dropdown";
 import { Button } from "primereact/button";
@@ -16,7 +16,7 @@ const statusOptions = [
   { label: "Approval", value: "Approval" },
   { label: "Reject", value: "Reject" },
   { label: "ReSubmit", value: "ReSubmit" },
-  { label: "ReWork", value: "ReWork" },
+  { label: "Submit", value: "Submit" },
 ];
 
 const CustomEmail = ({
@@ -24,10 +24,16 @@ const CustomEmail = ({
   setCustomEmailTemplateSideBarVisible,
   customEmailData,
   categoryClickingID,
+  customEmailDataWithEmpty,
 }) => {
   const [templates, setTemplates] = useState<ICategoryEmailConfigDetails[]>([
     Config.CategoryEmailConfigDefault,
   ]);
+  console.log(templates, "templates");
+  const [errors, setErrors] = useState<
+    { templateName?: string; status?: string; emailBody?: string }[]
+  >([]);
+
   //Notes
   const notes = [
     {
@@ -83,34 +89,56 @@ const CustomEmail = ({
   };
 
   const handleChange = (index, key, value) => {
-    const newTemplates = [...templates];
-    newTemplates[index][key] = value;
+    const newTemplates = templates.map((t, i) =>
+      i === index ? { ...t, [key]: value } : t
+    );
     setTemplates(newTemplates);
     customEmailData(newTemplates);
+    sessionStorage.setItem("customTemplates", JSON.stringify(newTemplates));
+
+    // Clear errors on valid input
+    const newErrors = [...errors];
+    if (newErrors[index]) {
+      newErrors[index][key] = value ? "" : `This field is required`;
+      setErrors(newErrors);
+    }
   };
 
   const handleAdd = () => {
-    setTemplates([...templates, Config.CategoryEmailConfigDefault]);
-  };
+    const lastTemplate = templates[templates.length - 1];
+    const newErrors = {
+      templateName: !lastTemplate.templateName
+        ? "Template name is required"
+        : "",
+      status: !lastTemplate.status ? "Status is required" : "",
+      emailBody: !lastTemplate.emailBody ? "Email body is required" : "",
+    };
 
-  const handleSubmit = () => {
-    templates.forEach((template) => {
-      if (template.templateName && template.emailBody) {
-        SPServices.SPAddItem({
-          Listname: Config.ListNames?.EmailTemplateConfig,
-          RequestJSON: template,
-        }).catch((err) => console.log("Error in Creating Email Template", err));
-      }
-    });
-    setTemplates([Config.CategoryEmailConfigDefault]);
+    if (newErrors.templateName || newErrors.status || newErrors.emailBody) {
+      const updatedErrors = [...errors];
+      updatedErrors[templates.length - 1] = newErrors;
+      setErrors(updatedErrors);
+      return;
+    }
+
+    setTemplates([...templates, Config.CategoryEmailConfigDefault]);
+    setErrors([...errors, {}]);
   };
 
   //useEffects
-  React.useEffect(() => {
-    if (categoryClickingID) {
+  useEffect(() => {
+    const storedTemplates = sessionStorage.getItem("customTemplates");
+    if (storedTemplates) {
+      const parsedTemplates = JSON.parse(storedTemplates);
+      setTemplates(parsedTemplates);
+    } else if (categoryClickingID) {
       getCategoryEmailConfig();
     }
   }, [categoryClickingID]);
+
+  useEffect(() => {
+    customEmailDataWithEmpty(templates);
+  }, [templates]);
   return (
     <div>
       {templates.map((template, index) => (
@@ -127,6 +155,9 @@ const CustomEmail = ({
                 style={{ width: "38%" }}
                 className={customEmailStyles.input}
               />
+              {errors[index]?.templateName && (
+                <span className="errorMsg">{errors[index].templateName}</span>
+              )}
             </div>
             <div className={customEmailStyles.fieldsContainerChild}>
               <Label className={customEmailStyles.label}>Status</Label>
@@ -139,6 +170,9 @@ const CustomEmail = ({
                 style={{ width: "38%" }}
                 className={customEmailStyles.dropDown}
               />
+              {errors[index]?.status && (
+                <span className="errorMsg">{errors[index].status}</span>
+              )}
             </div>
           </div>
           <div className={`${customEmailStyles.EditorSection} card`}>
@@ -148,6 +182,9 @@ const CustomEmail = ({
               onChange={(value) => handleChange(index, "emailBody", value)}
               style={{ height: "100%" }}
             />
+            {errors[index]?.emailBody && (
+              <span className="errorMsg">{errors[index].emailBody}</span>
+            )}
           </div>
         </div>
       ))}

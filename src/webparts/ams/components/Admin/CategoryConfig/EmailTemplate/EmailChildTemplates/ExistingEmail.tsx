@@ -63,7 +63,7 @@ const ExistingEmail = ({ ExisitingEmailData }) => {
         { process: "Approval", value: "", id: null },
         { process: "Reject", value: "", id: null },
         { process: "ReSubmit", value: "", id: null },
-        { process: "ReWork", value: "", id: null },
+        { process: "Submit", value: "", id: null },
       ]);
     }
     getEmailTemplateConfigDetails();
