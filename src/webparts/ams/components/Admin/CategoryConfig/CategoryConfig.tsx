@@ -162,7 +162,6 @@ const CategoryConfig = ({
 
   const finalValidation = () => {
     let isValid = true;
-
     // Category name validation
     if (categoryInputs === "") {
       validateError.categoryName = "Category name is mandatory";
@@ -274,6 +273,7 @@ const CategoryConfig = ({
         ApproverSection: false,
       }));
     }
+
   };
 
   //CategoryRightSideBar Contents:

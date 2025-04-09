@@ -344,6 +344,7 @@ const EmailContainer = ({
           categoryClickingID
         );
 
+
         const columnTypeMap = {
           text: 2,
           textarea: 3,
