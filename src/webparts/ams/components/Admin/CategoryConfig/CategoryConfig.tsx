@@ -62,7 +62,7 @@ const CategoryConfig = ({
   });
 
   const [showLoader, setShowLoader] = useState<boolean>(true);
-    
+
   //Get Category Config Details:
   const getCategoryConfigDetails = () => {
     SPServices.SPReadItems({
@@ -157,37 +157,42 @@ const CategoryConfig = ({
 
   //Validations
   const finalValidation = () => {
-    if (finalSubmit?.categoryConfig?.category === "") {
-      debugger;
-      validateError.categoryName = "Category name is mandatory";
-      setValidateError({
-        ...validateError,
-      });
-    } else if (
-      finalSubmit?.categoryConfig.ExistingApprover === null &&
-      finalSubmit?.categoryConfig.customApprover === null
-    ) {
-      validateError.categoryName = "";
-      validateError.approversSelected =
-        "Approval flow is mandatory for approval process";
-      setValidateError({
-        ...validateError,
-      });
-    }
-    if (
-      validateError?.categoryName === "" &&
-      validateError?.approversSelected === ""
-    ) {
-      setValidateError({
-        categoryName: "",
-        approversSelected: "",
-      });
-      setNextStageFromCategory((prev: INextStageFromCategorySideBar) => ({
-        ...prev,
-        dynamicSectionWithField: true,
-        ApproverSection: false,
-      }));
-    }
+    setNextStageFromCategory((prev: INextStageFromCategorySideBar) => ({
+      ...prev,
+      dynamicSectionWithField: true,
+      ApproverSection: false,
+    }));
+    // if (finalSubmit?.categoryConfig?.category === "") {
+    //   debugger;
+    //   validateError.categoryName = "Category name is mandatory";
+    //   setValidateError({
+    //     ...validateError,
+    //   });
+    // } else if (
+    //   finalSubmit?.categoryConfig.ExistingApprover === null &&
+    //   finalSubmit?.categoryConfig.customApprover === null
+    // ) {
+    //   validateError.categoryName = "";
+    //   validateError.approversSelected =
+    //     "Approval flow is mandatory for approval process";
+    //   setValidateError({
+    //     ...validateError,
+    //   });
+    // }
+    // if (
+    //   validateError?.categoryName === "" &&
+    //   validateError?.approversSelected === ""
+    // ) {
+    //   setValidateError({
+    //     categoryName: "",
+    //     approversSelected: "",
+    //   });
+    //   setNextStageFromCategory((prev: INextStageFromCategorySideBar) => ({
+    //     ...prev,
+    //     dynamicSectionWithField: true,
+    //     ApproverSection: false,
+    //   }));
+    // }
   };
 
   //CategoryRightSideBar Contents:

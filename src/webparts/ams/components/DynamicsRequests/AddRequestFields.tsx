@@ -10,6 +10,7 @@ import {
   ISectionColumnsConfig,
   IApprovalDetails,
   IBasicFilterCategoryDrop,
+  IEmailTemplateConfigDetails,
 } from "../../../../CommonServices/interface";
 import { generateRequestID } from "../../../../CommonServices/CommonTemplates";
 //primeReact Imports:
@@ -39,7 +40,9 @@ const AddRequestsFields = ({
   const [selectedCategory, setSelectedCategory] =
     useState<IBasicFilterCategoryDrop>();
   const [showLoader, setShowLoader] = useState<boolean>(false);
-    
+  const [emailContent, setEmailContent] =
+    useState<IEmailTemplateConfigDetails>();
+
   //CategorySectionConfig List
   const getCategorySectionConfigDetails = () => {
     SPServices.SPReadItems({
@@ -223,7 +226,40 @@ const AddRequestsFields = ({
               RequestID: `R-${generateRequestID(e.data.ID, 5, 0)}`,
             },
           })
-            .then(() => {
+            .then(async () => {
+              console.log("AddreqRes", e);
+              await SPServices.SPReadItems({
+                Listname: Config.ListNames.CategoryEmailConfig,
+                Select: "*,Category/Id,ParentTemplate/Id",
+                Expand: "Category,ParentTemplate",
+                Filter: [
+                  {
+                    FilterKey: "CategoryId",
+                    Operator: "eq",
+                    FilterValue: e?.data?.CategoryId.toString(),
+                  },
+                  {
+                    FilterKey: "Process",
+                    Operator: "eq",
+                    FilterValue: "Submit",
+                  },
+                ],
+                FilterCondition: "and",
+              }).then((res: any) =>
+                res?.forEach((element: any) => {
+                  SPServices.SPReadItemUsingId({
+                    Listname: Config.ListNames.EmailTemplateConfig,
+                    SelectedId: res?.ParentTemplateId,
+                  }).then(async (res: any) => {
+                    const tempEmailArr = {
+                      id: null,
+                      templateName: res?.TemplateName,
+                      emailBody: res?.EmailBody,
+                    };
+                    await setEmailContent(tempEmailArr);
+                  });
+                })
+              );
               setDynamicRequestsSideBarVisible(false);
               setShowLoader(false);
             })
