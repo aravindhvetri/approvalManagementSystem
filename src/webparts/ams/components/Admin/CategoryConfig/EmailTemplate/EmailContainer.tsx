@@ -340,11 +340,6 @@ const EmailContainer = ({
             console.log("Get and Isdelete Category Section Details error", err);
         }
         // For new section addtion
-        const categorySections = await getCategorySectionDetails(
-          categoryClickingID
-        );
-
-
         const columnTypeMap = {
           text: 2,
           textarea: 3,
