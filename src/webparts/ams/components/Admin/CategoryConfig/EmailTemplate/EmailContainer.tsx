@@ -55,7 +55,9 @@ const EmailContainer = ({
 
   //Get CustomEmailDataWithEmpty:
   const getCustomEmailDataWithEmpty = (CustomEmailDataWithEmpty: []) => {
-    setCustomEmailDataWithEmpty([...CustomEmailDataWithEmpty]);
+    if (actionBooleans?.isView == false && actionBooleans?.isEdit == false) {
+      setCustomEmailDataWithEmpty([...CustomEmailDataWithEmpty]);
+    }
   };
 
   // Load sessionStorage data on mount
@@ -241,11 +243,11 @@ const EmailContainer = ({
       if (selectedEmail === "custom") {
         const CustomEmailFlowDetails = customEmailDataWithEmpty;
 
-        const hasEmptyFields = CustomEmailFlowDetails.some(
+        const hasEmptyFields = CustomEmailFlowDetails?.some(
           (item) =>
-            !item.templateName?.trim() ||
-            !item.emailBody?.trim() ||
-            !item.status?.trim()
+            !item?.templateName?.trim() ||
+            !item?.emailBody?.trim() ||
+            !item?.status?.trim()
         );
 
         if (hasEmptyFields) {
