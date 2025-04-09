@@ -1,6 +1,6 @@
 //Default Imports:
 import * as React from "react";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 //PrimeReact Imports:
 import { Button } from "primereact/button";
 import { InputText } from "primereact/inputtext";
@@ -24,6 +24,7 @@ import { Config } from "../../../../../../CommonServices/Config";
 import {
   columnTypes,
   stageBodyTemplate,
+  toastNotify,
 } from "../../../../../../CommonServices/CommonTemplates";
 import { Label } from "office-ui-fabric-react";
 import {
@@ -32,6 +33,7 @@ import {
 } from "../../../../../../CommonServices/interface";
 import { sp } from "@pnp/sp";
 import SPServices from "../../../../../../CommonServices/SPServices";
+import { Toast } from "primereact/toast";
 
 const DynamicSectionWithField = ({
   categoryClickingID,
@@ -41,7 +43,9 @@ const DynamicSectionWithField = ({
   setDynamicSectionWithFieldSideBarVisible,
   setFinalSubmit,
 }) => {
+  const toast = useRef<Toast>(null);
   const [sections, setSections] = useState([]);
+  console.log(sections, "sections");
   const [showPopup, setShowPopup] = useState(false);
   const [newChoice, setNewChoice] = useState("");
   const [newField, setNewField] = useState<any>({
@@ -59,7 +63,8 @@ const DynamicSectionWithField = ({
   const addDynamicSection = () => {
     setSections([...sections, { name: "", sectionID: null, columns: [] }]);
   };
-  console.log("sections", sections);
+  const [isValidation, setIsValidation] = useState<boolean>(false);
+
   const handleSaveField = () => {
     const updatedSections = [...sections];
     if (newField.sectionIndex !== null) {
@@ -143,57 +148,6 @@ const DynamicSectionWithField = ({
       columns: sections[sectionIndex].columns,
     });
     setPreviewVisible(true);
-  };
-
-  const handleSubmit = async () => {
-    try {
-      const list = sp.web.lists.getByTitle("RequestsHub");
-
-      // Loop through sections and columns
-      for (const section of sections) {
-        for (const column of section.columns) {
-          let fieldTypeKind = 0;
-          let columnName = column.name;
-          let columnType = column.type;
-          let choicesArray = column.choices || []; // Handle choices
-
-          // Check column type and assign appropriate values
-          if (columnType === "text") {
-            fieldTypeKind = 2; // Text type
-          } else if (columnType === "textarea") {
-            fieldTypeKind = 3; // Multiple lines of text
-          } else if (columnType === "Choice") {
-            fieldTypeKind = 6; // Choice type
-          } else {
-            console.log("Invalid column type:", columnType);
-            continue;
-          }
-
-          // Add column to SharePoint list
-          await addColumnToList(list, fieldTypeKind, columnName, choicesArray);
-        }
-      }
-
-      alert("Columns added successfully!");
-    } catch (error) {
-      console.error("Error:", error);
-      alert("An error occurred while adding the columns.");
-    }
-  };
-
-  // Function to add columns based on type
-  const addColumnToList = async (list, fieldTypeKind, columnName, choices) => {
-    try {
-      if (fieldTypeKind === 2) {
-        await list.fields.addText(columnName); // For Single Line Text
-      } else if (fieldTypeKind === 3) {
-        await list.fields.addMultilineText(columnName); // For Multiple Lines of Text
-      } else if (fieldTypeKind === 6) {
-        await list.fields.addChoice(columnName, choices); // Pass choices array directly
-      }
-    } catch (error) {
-      console.error(`Error adding column ${columnName}:`, error);
-    }
   };
 
   //Get CategorySectionConfigDetails:
@@ -348,8 +302,75 @@ const DynamicSectionWithField = ({
     }
   }, [showPopup]);
 
+  const validateFunction = () => {
+    let isValid = true;
+    if (sections?.length == 0) {
+      isValid = false;
+      toast.current.show({
+        severity: "warn",
+        summary: "Warning",
+        content: (prop) =>
+          toastNotify({
+            iconName: "pi-exclamation-triangle",
+            ClsName: "toast-imgcontainer-warning",
+            type: "Warning",
+            msg: "Atleast one section is required",
+          }),
+        life: 3000,
+      });
+    }
+    sections.forEach((section) => {
+      if (section.name.trim() === "") {
+        isValid = false;
+        toast.current.show({
+          severity: "warn",
+          summary: "Warning",
+          content: (prop) =>
+            toastNotify({
+              iconName: "pi-exclamation-triangle",
+              ClsName: "toast-imgcontainer-warning",
+              type: "Warning",
+              msg: "Please enter a section name",
+            }),
+          life: 3000,
+        });
+      } else if (section.columns?.length == 0) {
+        isValid = false;
+        toast.current.show({
+          severity: "warn",
+          summary: "Warning",
+          content: (prop) =>
+            toastNotify({
+              iconName: "pi-exclamation-triangle",
+              ClsName: "toast-imgcontainer-warning",
+              type: "Warning",
+              msg: "Atleast one Field is required",
+            }),
+          life: 3000,
+        });
+      }
+    });
+
+    if (isValid) {
+      setNextStageFromCategory((prev: INextStageFromCategorySideBar) => ({
+        ...prev,
+        EmailTemplateSection: true,
+        dynamicSectionWithField: false,
+      }));
+    }
+    return isValid;
+  };
+
+  const FieldValidateFunc = () => {
+    let isValidation =
+      !newField?.name || !newField?.type || newField?.stages?.length === 0;
+    setIsValidation(isValidation);
+    return !isValidation;
+  };
+
   return (
     <>
+      <Toast ref={toast} />
       <div className={DynamicSectionWithFieldStyles.heading}>Fields</div>
       <div className={`${DynamicSectionWithFieldStyles.container} container`}>
         {(actionBooleans?.isEdit || categoryClickingID === null) && (
@@ -472,6 +493,9 @@ const DynamicSectionWithField = ({
                 placeholder="Enter name"
                 className={DynamicSectionWithFieldStyles.columnNameInput}
               />
+              {isValidation && !newField?.name && (
+                <span className="errorMsg">Field Name is required</span>
+              )}
             </div>
             <div className={DynamicSectionWithFieldStyles.columnNameContainer}>
               <Label className={DynamicSectionWithFieldStyles.label}>
@@ -492,6 +516,9 @@ const DynamicSectionWithField = ({
                 style={{ padding: "4px" }}
                 className={DynamicSectionWithFieldStyles.columnNameInput}
               />
+              {isValidation && !newField?.type && (
+                <span className="errorMsg">Field type is required</span>
+              )}
             </div>
             <div className={DynamicSectionWithFieldStyles.columnNameContainer}>
               {newField.type === "Choice" && (
@@ -520,19 +547,6 @@ const DynamicSectionWithField = ({
               )}
             </div>
 
-            {/* {newField.type === "Choice" && newField.choices.length > 0 && (
-              <Dropdown
-                value={newField.stages}
-                options={newField.choices.map((choice) => ({
-                  name: choice,
-                  value: choice,
-                }))}
-                onChange={(e) => setNewField({ ...newField, stages: e.value })}
-                optionLabel="name"
-                placeholder="Select Choices"
-                multiple
-              />
-            )} */}
             <div className={DynamicSectionWithFieldStyles.columnNameContainer}>
               <Label className={DynamicSectionWithFieldStyles.label}>
                 Require that this column contains information
@@ -567,18 +581,28 @@ const DynamicSectionWithField = ({
                   <label>{stage}</label>
                 </div>
               ))}
+              {isValidation && newField?.stages?.length == 0 && (
+                <span className="errorMsg">Field stage is required</span>
+              )}
             </div>
             <div className={DynamicSectionWithFieldStyles.dialogButtons}>
               <Button
                 label="Cancel"
                 icon="pi pi-times"
-                onClick={() => setShowPopup(false)}
+                onClick={() => {
+                  setShowPopup(false);
+                  setIsValidation(false);
+                }}
                 className="customCancelButton"
               />
               <Button
                 label="Save"
                 icon="pi pi-save"
-                onClick={handleSaveField}
+                onClick={() => {
+                  if (FieldValidateFunc()) {
+                    handleSaveField();
+                  }
+                }}
                 autoFocus
                 className="customSubmitButton"
               />
@@ -668,13 +692,7 @@ const DynamicSectionWithField = ({
             icon="pi pi-angle-double-right"
             label="Next"
             onClick={() => {
-              setNextStageFromCategory(
-                (prev: INextStageFromCategorySideBar) => ({
-                  ...prev,
-                  EmailTemplateSection: true,
-                  dynamicSectionWithField: false,
-                })
-              );
+              validateFunction();
             }}
             className="customSubmitButton"
           />

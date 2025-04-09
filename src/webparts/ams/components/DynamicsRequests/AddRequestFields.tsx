@@ -39,9 +39,12 @@ const AddRequestsFields = ({
   const [errors, setErrors] = useState({});
   const [selectedCategory, setSelectedCategory] =
     useState<IBasicFilterCategoryDrop>();
+
   const [showLoader, setShowLoader] = useState<boolean>(false);
+
   const [emailContent, setEmailContent] =
     useState<IEmailTemplateConfigDetails>();
+
 
   //CategorySectionConfig List
   const getCategorySectionConfigDetails = () => {
