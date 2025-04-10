@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { Button } from "primereact/button";
 //CommonService Imports:
 import {
+  IemailMessage,
   IPeoplePickerDetails,
   IRequestHubDetails,
 } from "../../../../CommonServices/interface";
@@ -13,6 +14,12 @@ import { Config } from "../../../../CommonServices/Config";
 //Style Imports
 import styles from "./WorkFlowActionButtons.module.scss";
 import { Item } from "@pnp/sp/items";
+import { sp } from "@pnp/sp/presets/all";
+import {
+  generateRequestID,
+  sendNotification,
+} from "../../../../CommonServices/CommonTemplates";
+import moment from "moment";
 
 const WorkflowActionButtons = ({
   validateForm,
@@ -115,7 +122,7 @@ const WorkflowActionButtons = ({
             })),
             status: statusUpdate,
           };
-          updateSharePointList(updatedItem);
+          updateSharePointList(updatedItem, newStatusCode);
           return updatedItem;
         } else {
           return { ...item };
@@ -167,7 +174,7 @@ const WorkflowActionButtons = ({
               }),
             })),
           };
-          updateSharePointList(updatedItem);
+          updateSharePointList(updatedItem, newStatusCode);
           return updatedItem;
         } else {
           return { ...item };
@@ -269,8 +276,82 @@ const WorkflowActionButtons = ({
     );
   };
 
+  //Set status
+  const statusCodeDecode = (statusCode) => {
+    switch (statusCode) {
+      case 0:
+        return "ReSubmit";
+      case 1:
+        return "Approval";
+      case 2:
+        return "Reject";
+    }
+  };
+
+  //Get email content
+  const getEmailContent = async (
+    itemData,
+    emailSubject,
+    emailBody,
+    statusCode
+  ) => {
+    const tempApprovalJson = JSON.parse(itemData?.ApprovalJson);
+    const authorDetails = await sp.web.siteUsers
+      .getById(itemData?.AuthorId)
+      .get();
+    const approverDetails = await sp.web.siteUsers
+      .getByEmail(approvalDetails?.approverEmail)
+      .get();
+    console.log("authorDetails", authorDetails);
+    const tempEmailToPersons: string[] =
+      statusCode === 0
+        ? tempApprovalJson[0]?.stages
+            ?.find(
+              (stage) => stage?.stage === tempApprovalJson[0]?.Currentstage
+            )
+            ?.approvers?.map((element: any) => element) || []
+        : statusCode === 2
+        ? [
+            {
+              email: authorDetails?.Email,
+              id: authorDetails?.Id,
+              name: authorDetails?.Title,
+              statusCode: null,
+            },
+          ]
+        : [];
+    const replaceDynamicContentArr = {
+      "[$RequestID]": `R-${generateRequestID(itemData.ID, 5, 0)}`,
+      "[$Requestor]": authorDetails?.Title,
+      "[$RequestDate]": moment(itemData?.Created).format("DD-MM-YYYY"),
+      "[$RejectedBY]": approverDetails?.Title,
+      "[$ApprovedBY]": approverDetails?.Title,
+      "[$ApproverComments]": approvalDetails?.comments,
+      "[$Status]":
+        statusCode === 1 ? "Approved" : statusCode === 2 ? "Rejected" : "",
+    };
+    tempEmailToPersons.forEach((emailTo: any) => {
+      let finalBody = "";
+      replaceDynamicContentArr["[$ToPerson]"] = emailTo?.name;
+      Object.keys(replaceDynamicContentArr).forEach((key) => {
+        finalBody = emailBody.replace(/\[\$\w+\]/g, (matched) => {
+          return replaceDynamicContentArr[matched] || matched;
+        });
+      });
+      const tempMsgContent: IemailMessage = {
+        To: [`${emailTo?.email}`],
+        Subject: emailSubject,
+        Body: finalBody,
+      };
+      sendNotification(tempMsgContent);
+    });
+  };
+
   //Update SharePoint List
-  const updateSharePointList = async (updatedItem: IRequestHubDetails) => {
+  const updateSharePointList = async (
+    updatedItem: IRequestHubDetails,
+    statusCode
+  ) => {
     SPServices.SPUpdateItem({
       Listname: Config?.ListNames?.RequestsHub,
       RequestJSON: {
@@ -280,7 +361,58 @@ const WorkflowActionButtons = ({
       ID: updatedItem?.id,
     })
       .then(() => {
-        setRequestsSideBarVisible(false);
+        let Status = statusCodeDecode(statusCode);
+        SPServices.SPReadItemUsingId({
+          Listname: Config.ListNames.RequestsHub,
+          Select: "*,Author/ID,Author/Title,Author/EMail",
+          Expand: "Author",
+          SelectedId: updatedItem?.id,
+        })
+          .then(async (Item: any) => {
+            await SPServices.SPReadItems({
+              Listname: Config.ListNames.CategoryEmailConfig,
+              Select: "*,Category/Id,ParentTemplate/Id",
+              Expand: "Category,ParentTemplate",
+              Filter: [
+                {
+                  FilterKey: "CategoryId",
+                  Operator: "eq",
+                  FilterValue: Item?.CategoryId.toString(),
+                },
+                {
+                  FilterKey: "Process",
+                  Operator: "eq",
+                  FilterValue: Status,
+                },
+              ],
+              FilterCondition: "and",
+            })
+              .then((res: any) => {
+                res?.forEach((element: any) => {
+                  SPServices.SPReadItemUsingID({
+                    Listname: Config.ListNames.EmailTemplateConfig,
+                    SelectedId: element?.ParentTemplateId,
+                    Select: "*",
+                  })
+                    .then(async (template: any) => {
+                      await getEmailContent(
+                        Item,
+                        template?.TemplateName,
+                        template?.EmailBody,
+                        statusCode
+                      );
+                      setRequestsSideBarVisible(false);
+                    })
+                    .catch((err) =>
+                      console.log("get EmailTemplateConfig error", err)
+                    );
+                });
+              })
+              .catch((err) =>
+                console.log("get CategoryEmailConfig error", err)
+              );
+          })
+          .catch((err: any) => console.log("error getRequestHubDetails", err));
       })
       .catch((e) => {
         console.log("Error while updating SharePoint list", e);
