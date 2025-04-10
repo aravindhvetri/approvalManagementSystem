@@ -217,6 +217,8 @@ const AllRequestPage = ({
         <>
           <div className="customDataTableContainer">
             <DataTable
+              paginator
+              rows={5}
               globalFilter={searchValue}
               value={requestsDetails}
               tableStyle={{ minWidth: "50rem" }}

@@ -508,6 +508,8 @@ const CategoryConfig = ({
         <>
           <div className="customDataTableContainer">
             <DataTable
+              paginator
+              rows={5}
               value={categoryDetails}
               tableStyle={{ minWidth: "50rem" }}
               emptyMessage={

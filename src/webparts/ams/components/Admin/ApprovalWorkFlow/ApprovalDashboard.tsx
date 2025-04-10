@@ -2,6 +2,7 @@ import * as React from "react";
 import { useState, useEffect } from "react";
 //Styles import
 import "../../../../../External/commonStyles.module.scss";
+import "../../../../../External/style.css";
 //Common Service imports
 import SPServices from "../../../../../CommonServices/SPServices";
 import { Config } from "../../../../../CommonServices/Config";
@@ -201,6 +202,8 @@ const ApprovalDashboard = ({
       ) : (
         <div className="customDataTableContainer">
           <DataTable
+            paginator
+            rows={5}
             value={approvalConfigDetails}
             tableStyle={{ minWidth: "50rem" }}
             emptyMessage={

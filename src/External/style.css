@@ -431,3 +431,36 @@ li.p-highlight .p-tabview-nav-link {
   border: 1px solid var(--green);
   box-shadow: none;
 }
+
+/* Custom Common styles for the Paginators */
+.p-paginator .p-paginator-pages .p-paginator-page {
+  background-color: var(--liteGreen);
+  border-color: var(--liteGreen);
+  color: var(--green);
+  border-radius: 50%;
+  height: 30px;
+  width: 30px;
+  margin: 0px 10px 0 10px;
+  font-size: var(--dataTableHeaderFontSize);
+  min-width: 0;
+}
+.p-paginator .p-paginator-pages .p-paginator-page.p-highlight {
+  background: var(--green);
+  border-color: var(--green);
+  color: white;
+  border-radius: 50%;
+}
+.p-paginator .p-paginator-first,
+.p-paginator .p-paginator-prev,
+.p-paginator .p-paginator-next,
+.p-paginator .p-paginator-last {
+  color: var(--green);
+  border: 1px solid transparent;
+  margin: 0px 5px 0 5px;
+}
+.p-paginator .p-paginator-first:not(.p-disabled):not(.p-highlight):hover,
+.p-paginator .p-paginator-prev:not(.p-disabled):not(.p-highlight):hover,
+.p-paginator .p-paginator-next:not(.p-disabled):not(.p-highlight):hover,
+.p-paginator .p-paginator-last:not(.p-disabled):not(.p-highlight):hover {
+  background-color: #dcfce757;
+}

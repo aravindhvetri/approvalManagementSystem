@@ -458,7 +458,7 @@ const DynamicSectionWithField = ({
                   className={DynamicSectionWithFieldStyles.addFieldButton}
                 />
               )}
-              {section.columns?.length > 3 ? (
+              {section.columns?.length >= 2 ? (
                 <Button
                   icon={
                     <IoMdEye
