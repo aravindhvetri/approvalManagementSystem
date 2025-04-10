@@ -45,12 +45,15 @@ const EmailWorkFlow = ({
   );
   const [isValidation, setValidation] = useState<boolean>(false);
   const infoNotes = [
-    { info: " Enter [$ApproverName] for replace of approver name" },
-    { info: " Enter [$SubmitterName] for replace of submitter name" },
-    { info: " Enter [$SubmissionDate] for replace of Submission Date" },
-    {
-      info: " Enter [$RequestBriefDetails] for replace of Request entire details",
-    },
+    { info: " Enter [$ToPerson] for replace of approver name" },
+    { info: " Enter [$Requestor] for replace of Requestor name" },
+    { info: " Enter [$RequestID] for replace of RequestID" },
+    { info: " Enter [$RequestDetails] for replace of Request entire details" },
+    { info: " Enter [$RequestDate] for replace of Request date" },
+    { info: " Enter [$Status] for replace of Status" },
+    { info: " Enter [$ApprovedBY] for replace of Approved by" },
+    { info: " Enter [$RejectedBY] for replace of Rejected by" },
+    { info: " Enter [$ApproverComments] for replace of Approver comments" },
   ];
   const [showLoader, setShowLoader] = useState<boolean>(true);
 
@@ -308,6 +311,8 @@ const EmailWorkFlow = ({
       ) : (
         <div className="customDataTableContainer">
           <DataTable
+            paginator
+            rows={5}
             value={getEmailTemplateContent}
             tableStyle={{ minWidth: "50rem" }}
             emptyMessage={

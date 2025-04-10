@@ -412,6 +412,8 @@ const RequestsFields = ({
               Approval history
             </Label>
             <DataTable
+              paginator
+              rows={5}
               sortField="itemID"
               sortOrder={-1}
               scrollable

@@ -40,6 +40,17 @@ const CustomEmail = ({
       info: "You can able to edit Email templates only on Email Workflow",
     },
   ];
+  const infoNotes = [
+    { info: " Enter [$ToPerson] for replace of approver name" },
+    { info: " Enter [$Requestor] for replace of Requestor name" },
+    { info: " Enter [$RequestID] for replace of RequestID" },
+    { info: " Enter [$RequestDetails] for replace of Request entire details" },
+    { info: " Enter [$RequestDate] for replace of Request date" },
+    { info: " Enter [$Status] for replace of Status" },
+    { info: " Enter [$ApprovedBY] for replace of Approved by" },
+    { info: " Enter [$RejectedBY] for replace of Rejected by" },
+    { info: " Enter [$ApproverComments] for replace of Approver comments" },
+  ];
   //Get CategoryEmailConfig
   const getCategoryEmailConfig = () => {
     SPServices.SPReadItems({
@@ -144,65 +155,70 @@ const CustomEmail = ({
     }
   }, [templates]);
   return (
-    <div>
-      {templates.map((template, index) => (
-        <div key={index} className={customEmailStyles.templateContainer}>
-          <div className={customEmailStyles.fieldsContainer}>
-            <div className={customEmailStyles.fieldsContainerChild}>
-              <Label className={customEmailStyles.label}>Template Name</Label>
-              <InputText
-                disabled={actionBooleans?.isView || actionBooleans?.isEdit}
-                value={template.templateName}
-                onChange={(e) =>
-                  handleChange(index, "templateName", e.target.value)
-                }
-                style={{ width: "38%" }}
-                className={customEmailStyles.input}
-              />
-              {errors[index]?.templateName && (
-                <span className="errorMsg">{errors[index].templateName}</span>
-              )}
+    <>
+      <div>
+        {templates.map((template, index) => (
+          <div key={index} className={customEmailStyles.templateContainer}>
+            <div className={customEmailStyles.fieldsContainer}>
+              <div className={customEmailStyles.fieldsContainerChild}>
+                <Label className={customEmailStyles.label}>Template Name</Label>
+                <InputText
+                  disabled={actionBooleans?.isView || actionBooleans?.isEdit}
+                  value={template.templateName}
+                  onChange={(e) =>
+                    handleChange(index, "templateName", e.target.value)
+                  }
+                  style={{ width: "38%" }}
+                  className={customEmailStyles.input}
+                />
+                {errors[index]?.templateName && (
+                  <span className="errorMsg">{errors[index].templateName}</span>
+                )}
+              </div>
+              <div className={customEmailStyles.fieldsContainerChild}>
+                <Label className={customEmailStyles.label}>Status</Label>
+                <Dropdown
+                  disabled={actionBooleans?.isView || actionBooleans?.isEdit}
+                  value={template.status}
+                  options={statusOptions}
+                  onChange={(e) => handleChange(index, "status", e.value)}
+                  placeholder="Select Status"
+                  style={{ width: "38%" }}
+                  className={customEmailStyles.dropDown}
+                />
+                {errors[index]?.status && (
+                  <span className="errorMsg">{errors[index].status}</span>
+                )}
+              </div>
             </div>
-            <div className={customEmailStyles.fieldsContainerChild}>
-              <Label className={customEmailStyles.label}>Status</Label>
-              <Dropdown
-                disabled={actionBooleans?.isView || actionBooleans?.isEdit}
-                value={template.status}
-                options={statusOptions}
-                onChange={(e) => handleChange(index, "status", e.value)}
-                placeholder="Select Status"
-                style={{ width: "38%" }}
-                className={customEmailStyles.dropDown}
+            <div className={`${customEmailStyles.EditorSection} card`}>
+              <ReactQuill
+                readOnly={actionBooleans?.isView || actionBooleans?.isEdit}
+                value={template.emailBody}
+                onChange={(value) => handleChange(index, "emailBody", value)}
+                style={{ height: "100%" }}
               />
-              {errors[index]?.status && (
-                <span className="errorMsg">{errors[index].status}</span>
+              {errors[index]?.emailBody && (
+                <span className="errorMsg">{errors[index].emailBody}</span>
               )}
             </div>
           </div>
-          <div className={`${customEmailStyles.EditorSection} card`}>
-            <ReactQuill
-              readOnly={actionBooleans?.isView || actionBooleans?.isEdit}
-              value={template.emailBody}
-              onChange={(value) => handleChange(index, "emailBody", value)}
-              style={{ height: "100%" }}
-            />
-            {errors[index]?.emailBody && (
-              <span className="errorMsg">{errors[index].emailBody}</span>
-            )}
-          </div>
+        ))}
+        <div className={customEmailStyles.addbutton}>
+          <Button
+            visible={!(actionBooleans?.isView || actionBooleans?.isEdit)}
+            icon="pi pi-plus"
+            label="Add"
+            className="customSubmitButton"
+            onClick={handleAdd}
+          />
         </div>
-      ))}
-      <div className={customEmailStyles.addbutton}>
-        <Button
-          visible={!(actionBooleans?.isView || actionBooleans?.isEdit)}
-          icon="pi pi-plus"
-          label="Add"
-          className="customSubmitButton"
-          onClick={handleAdd}
-        />
+        {actionBooleans?.isEdit && notesContainerDetails("Notes", notes)}
       </div>
-      {actionBooleans?.isEdit && notesContainerDetails("Notes", notes)}
-    </div>
+      {!actionBooleans?.isView && !actionBooleans?.isEdit && (
+        <>{notesContainerDetails("Info notes", infoNotes)}</>
+      )}
+    </>
   );
 };
 

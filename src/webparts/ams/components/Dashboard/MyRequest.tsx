@@ -224,6 +224,8 @@ const MyRequestPage = ({
         <>
           <div className="customDataTableContainer">
             <DataTable
+              paginator
+              rows={5}
               value={requestsDetails}
               tableStyle={{ minWidth: "50rem" }}
               emptyMessage={
