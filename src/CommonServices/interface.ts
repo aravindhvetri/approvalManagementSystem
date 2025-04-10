@@ -148,7 +148,7 @@ export interface ISectionColumnsConfig {
   columnType: string;
   isRequired: boolean;
   viewStage: IViewStage[];
-  choices:[]
+  choices: [];
 }
 interface IViewStage {
   Stage: [];
@@ -215,4 +215,11 @@ export interface ICategoryEmailConfigDetails {
   templateName: string;
   emailBody: string;
   status: number;
+}
+
+//email Message details
+export interface IemailMessage {
+  To: string[];
+  Subject: string;
+  Body: string;
 }

@@ -11,8 +11,12 @@ import {
   IApprovalDetails,
   IBasicFilterCategoryDrop,
   IEmailTemplateConfigDetails,
+  IemailMessage,
 } from "../../../../CommonServices/interface";
-import { generateRequestID } from "../../../../CommonServices/CommonTemplates";
+import {
+  generateRequestID,
+  sendNotification,
+} from "../../../../CommonServices/CommonTemplates";
 //primeReact Imports:
 import { InputText } from "primereact/inputtext";
 import { InputTextarea } from "primereact/inputtextarea";
@@ -25,6 +29,8 @@ import "../../../../External/style.css";
 import WorkflowActionButtons from "../WorkflowButtons/WorkflowActionButtons";
 import { Dropdown } from "primereact/dropdown";
 import Loader from "../Loader/Loader";
+import { sp } from "@pnp/sp/presets/all";
+import moment from "moment";
 
 const AddRequestsFields = ({
   categoryFilterValue,
@@ -39,14 +45,7 @@ const AddRequestsFields = ({
   const [errors, setErrors] = useState({});
   const [selectedCategory, setSelectedCategory] =
     useState<IBasicFilterCategoryDrop>();
-
   const [showLoader, setShowLoader] = useState<boolean>(false);
-
-  const [emailContent, setEmailContent] =
-    useState<IEmailTemplateConfigDetails>({
-      ...Config?.EmailTemplateConfigDetails
-    });
-  console.log("emailContent", emailContent);
 
   //CategorySectionConfig List
   const getCategorySectionConfigDetails = () => {
@@ -196,6 +195,41 @@ const AddRequestsFields = ({
     }
   };
 
+  //Get email content
+  const getEmailContent = async (itemData, emailSubject, emailBody) => {
+    const tempApprovalJson = JSON.parse(itemData?.ApprovalJson);
+
+    const tempApprovers: string[] =
+      tempApprovalJson[0]?.stages
+        ?.find((stage) => stage?.stage === tempApprovalJson[0]?.Currentstage)
+        ?.approvers?.map((element: any) => element) || [];
+    console.log("tempApprovers", tempApprovers);
+
+    const authorDetails = await sp.web.siteUsers
+      .getById(itemData?.AuthorId)
+      .get();
+    const replaceDynamicContentArr = {
+      "[$RequestID]": `R-${generateRequestID(itemData.ID, 5, 0)}`,
+      "[$Requestor]": authorDetails?.Title,
+      "[$RequestDate]": moment(itemData?.Created).format("DD-MM-YYYY"),
+    };
+    tempApprovers.forEach((approver: any) => {
+      let finalBody = "";
+      replaceDynamicContentArr["[$ToPerson]"] = approver?.name;
+      Object.keys(replaceDynamicContentArr).forEach((key) => {
+        finalBody = emailBody.replace(/\[\$\w+\]/g, (matched) => {
+          return replaceDynamicContentArr[matched] || matched;
+        });
+      });
+      const tempMsgContent: IemailMessage = {
+        To: [`${approver?.email}`],
+        Subject: emailSubject,
+        Body: finalBody,
+      };
+      sendNotification(tempMsgContent);
+    });
+  };
+
   //handleInputChange
   const handleInputChange = (name, value) => {
     setFormData({ ...formData, [name]: value });
@@ -204,6 +238,7 @@ const AddRequestsFields = ({
     }
   };
 
+  //Validate form
   const validateForm = () => {
     const newErrors = {};
     dynamicFields.forEach((field) => {
@@ -215,6 +250,7 @@ const AddRequestsFields = ({
     return Object.keys(newErrors).length === 0;
   };
 
+  //Submission
   const handleSubmit = async () => {
     if (validateForm()) {
       setShowLoader(true);
@@ -232,7 +268,6 @@ const AddRequestsFields = ({
             },
           })
             .then(async () => {
-              console.log("AddreqRes", e);
               await SPServices.SPReadItems({
                 Listname: Config.ListNames.CategoryEmailConfig,
                 Select: "*,Category/Id,ParentTemplate/Id",
@@ -252,7 +287,6 @@ const AddRequestsFields = ({
                 FilterCondition: "and",
               })
                 .then((res: any) => {
-                  console.log("CategoryEmailConfig", res);
                   res?.forEach((element: any) => {
                     SPServices.SPReadItemUsingID({
                       Listname: Config.ListNames.EmailTemplateConfig,
@@ -260,16 +294,13 @@ const AddRequestsFields = ({
                       Select: "*",
                     })
                       .then(async (template: any) => {
-                        debugger;
-                        console.log("template", template);
-                        const tempEmailArr: IEmailTemplateConfigDetails =
-                          {
-                            id: null,
-                            templateName: template?.TemplateName,
-                            emailBody: template?.EmailBody,
-                          };
-                       
-                        setEmailContent({...tempEmailArr})
+                        await getEmailContent(
+                          e?.data,
+                          template?.TemplateName,
+                          template?.EmailBody
+                        );
+                        setDynamicRequestsSideBarVisible(false);
+                        setShowLoader(false);
                       })
                       .catch((err) =>
                         console.log("get EmailTemplateConfig error", err)
@@ -279,8 +310,6 @@ const AddRequestsFields = ({
                 .catch((err) =>
                   console.log("get CategoryEmailConfig error", err)
                 );
-              setDynamicRequestsSideBarVisible(false);
-              setShowLoader(false);
             })
             .catch((err) => {
               console.log("update item in requesthub error", err);

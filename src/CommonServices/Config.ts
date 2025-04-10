@@ -5,6 +5,7 @@ import {
   IApprovalFlowValidation,
   ICategoryEmailConfigDetails,
   IDropdownDetails,
+  IemailMessage,
   IEmailTemplateConfigDetails,
   IFinalSubmitDetails,
   ILibraryNames,
@@ -151,5 +152,12 @@ export namespace Config {
     templateName: "",
     emailBody: "",
     status: null,
+  };
+
+  //Email Message Config Details
+  export const emailMessageConfig: IemailMessage = {
+    To: [],
+    Subject: "",
+    Body: "",
   };
 }

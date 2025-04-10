@@ -2,7 +2,12 @@
 import * as React from "react";
 import { useRef } from "react";
 //PeoplePicker Imports;
-import { IPeoplePickerDetails, IToaster, ITabviewDetails } from "./interface";
+import {
+  IPeoplePickerDetails,
+  IToaster,
+  ITabviewDetails,
+  IemailMessage,
+} from "./interface";
 import {
   DirectionalHint,
   Label,
@@ -24,6 +29,8 @@ import { TabView, TabPanel } from "primereact/tabview";
 //Common Style Imports:
 import styles from "../External/commonStyles.module.scss";
 import "../External/style.css";
+import { sp } from "@pnp/sp/presets/all";
+import moment from "moment";
 
 //PeoplePicker Template:
 export const peoplePickerTemplate = (user: IPeoplePickerDetails) => {
@@ -356,4 +363,21 @@ const getColor = (stage: string) => {
     "Stage 4": "#512DA8",
   };
   return colors[stage] || "#000";
+};
+
+//Sent email notification
+export const sendNotification = async (emailProps: any): Promise<any> => {
+  debugger;
+  try {
+    await sp.utility
+      .sendEmail(emailProps)
+      .then((res: any) => {
+        console.log("mail res", res);
+      })
+      .catch((err: any) => {
+        console.log("mail err", err);
+      });
+  } catch (error) {
+    console.log("Error fetching access token:", error);
+  }
 };
