@@ -46,6 +46,7 @@ const AddRequestsFields = ({
   const [selectedCategory, setSelectedCategory] =
     useState<IBasicFilterCategoryDrop>();
   const [showLoader, setShowLoader] = useState<boolean>(false);
+  console.log("formData", formData);
 
   //CategorySectionConfig List
   const getCategorySectionConfigDetails = () => {

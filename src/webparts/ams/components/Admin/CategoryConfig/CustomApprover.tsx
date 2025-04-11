@@ -113,9 +113,7 @@ const CustomApprover = ({
         ApproverId: { results: tempApprovers },
       },
     })
-      .then((res: any) => {
-        console.log("addApprovalStageConfigDetails res", res);
-      })
+      .then((res: any) => {})
       .catch((err) => console.log("addApprovalStageConfigDetails error", err));
   };
 

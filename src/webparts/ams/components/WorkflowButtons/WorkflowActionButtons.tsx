@@ -296,6 +296,94 @@ const WorkflowActionButtons = ({
     }
   };
 
+  //Get CategoryEmailConfig
+  const getCategoryEmailConfig = async (Item, Status) => {
+    try {
+      const res: any = await SPServices.SPReadItems({
+        Listname: Config.ListNames.CategoryEmailConfig,
+        Select: "*,Category/Id,ParentTemplate/Id",
+        Expand: "Category,ParentTemplate",
+        Filter: [
+          {
+            FilterKey: "CategoryId",
+            Operator: "eq",
+            FilterValue: Item?.CategoryId.toString(),
+          },
+          {
+            FilterKey: "Process",
+            Operator: "eq",
+            FilterValue: Status,
+          },
+        ],
+        FilterCondition: "and",
+      });
+      console.log("getCategoryEmailConfig", res);
+      const emailContent = await getEmailTemplateConfig(res[0]);
+      console.log("emailContent", emailContent);
+      return emailContent;
+    } catch {
+      (err) => console.log("getCategoryEmailConfig err", err);
+    }
+  };
+
+  //Get EmailTemplateConfig
+  const getEmailTemplateConfig = async (categoryEmail) => {
+    try {
+      const res = await SPServices.SPReadItemUsingID({
+        Listname: Config.ListNames.EmailTemplateConfig,
+        SelectedId: categoryEmail?.ParentTemplateId,
+        Select: "*",
+      });
+      return res;
+    } catch {
+      (err) => console.log("getEmailTemplateConfig err", err);
+    }
+  };
+
+  //sent email to NextStageApprovers
+  const sentEmailtoNextStageApprovers = async (Item: any, statusCode) => {
+    const tempApprovalJson = JSON.parse(Item?.ApprovalJson);
+    const authorDetails = await sp.web.siteUsers.getById(Item?.AuthorId).get();
+    const approverDetails = await sp.web.siteUsers
+      .getByEmail(approvalDetails?.approverEmail)
+      .get();
+    const stageData = tempApprovalJson[0]?.stages?.find(
+      (stage) => stage?.stage === tempApprovalJson[0]?.Currentstage
+    );
+    const allPending = stageData?.approvers?.every(
+      (e: any) => e?.statusCode === 0
+    );
+    const tempEmailToPersons: string[] = allPending ? stageData?.approvers : [];
+    console.log("tempEmailToPersons", tempEmailToPersons);
+    const replaceDynamicContentArr = {
+      "[$RequestID]": `R-${generateRequestID(Item.ID, 5, 0)}`,
+      "[$Requestor]": authorDetails?.Title,
+      "[$RequestDate]": moment(Item?.Created).format("DD-MM-YYYY"),
+      "[$RejectedBY]": approverDetails?.Title,
+      "[$ApprovedBY]": approverDetails?.Title,
+      "[$ApproverComments]": approvalDetails?.comments,
+      "[$Status]":
+        statusCode === 1 ? "Approved" : statusCode === 2 ? "Rejected" : "",
+    };
+    let Status = statusCodeDecode(statusCode);
+    const template: any = await getCategoryEmailConfig(Item, "Submit");
+    tempEmailToPersons.forEach((emailTo: any) => {
+      let finalBody = "";
+      replaceDynamicContentArr["[$ToPerson]"] = emailTo?.name;
+      Object.keys(replaceDynamicContentArr).forEach((key) => {
+        finalBody = template?.EmailBody.replace(/\[\$\w+\]/g, (matched) => {
+          return replaceDynamicContentArr[matched] || matched;
+        });
+      });
+      const tempMsgContent: IemailMessage = {
+        To: [`${emailTo?.email}`],
+        Subject: template?.TemplateName,
+        Body: finalBody,
+      };
+      sendNotification(tempMsgContent);
+    });
+  };
+
   //Get email content
   const getEmailContent = async (
     itemData,
@@ -310,7 +398,7 @@ const WorkflowActionButtons = ({
     const approverDetails = await sp.web.siteUsers
       .getByEmail(approvalDetails?.approverEmail)
       .get();
-    console.log("authorDetails", authorDetails);
+
     const tempEmailToPersons: string[] =
       statusCode === 0
         ? tempApprovalJson[0]?.stages
@@ -318,7 +406,7 @@ const WorkflowActionButtons = ({
               (stage) => stage?.stage === tempApprovalJson[0]?.Currentstage
             )
             ?.approvers?.map((element: any) => element) || []
-        : statusCode === 2
+        : statusCode === 2 || statusCode === 1
         ? [
             {
               email: authorDetails?.Email,
@@ -328,6 +416,13 @@ const WorkflowActionButtons = ({
             },
           ]
         : [];
+    console.log("tempEmailToPersons", tempEmailToPersons);
+    console.log("emailBody", emailBody);
+    console.log("emailSubject", emailSubject);
+
+    if (statusCode === 1) {
+      await sentEmailtoNextStageApprovers(itemData, statusCode);
+    }
     const replaceDynamicContentArr = {
       "[$RequestID]": `R-${generateRequestID(itemData.ID, 5, 0)}`,
       "[$Requestor]": authorDetails?.Title,
@@ -342,7 +437,7 @@ const WorkflowActionButtons = ({
       let finalBody = "";
       replaceDynamicContentArr["[$ToPerson]"] = emailTo?.name;
       Object.keys(replaceDynamicContentArr).forEach((key) => {
-        finalBody = emailBody.replace(/\[\$\w+\]/g, (matched) => {
+        finalBody = emailBody?.replace(/\[\$\w+\]/g, (matched) => {
           return replaceDynamicContentArr[matched] || matched;
         });
       });
@@ -369,7 +464,6 @@ const WorkflowActionButtons = ({
       ID: updatedItem?.id,
     })
       .then(() => {
-        let Status = statusCodeDecode(statusCode);
         SPServices.SPReadItemUsingId({
           Listname: Config.ListNames.RequestsHub,
           Select: "*,Author/ID,Author/Title,Author/EMail",
@@ -377,49 +471,17 @@ const WorkflowActionButtons = ({
           SelectedId: updatedItem?.id,
         })
           .then(async (Item: any) => {
-            await SPServices.SPReadItems({
-              Listname: Config.ListNames.CategoryEmailConfig,
-              Select: "*,Category/Id,ParentTemplate/Id",
-              Expand: "Category,ParentTemplate",
-              Filter: [
-                {
-                  FilterKey: "CategoryId",
-                  Operator: "eq",
-                  FilterValue: Item?.CategoryId.toString(),
-                },
-                {
-                  FilterKey: "Process",
-                  Operator: "eq",
-                  FilterValue: Status,
-                },
-              ],
-              FilterCondition: "and",
-            })
-              .then((res: any) => {
-                res?.forEach((element: any) => {
-                  SPServices.SPReadItemUsingID({
-                    Listname: Config.ListNames.EmailTemplateConfig,
-                    SelectedId: element?.ParentTemplateId,
-                    Select: "*",
-                  })
-                    .then(async (template: any) => {
-                      await getEmailContent(
-                        Item,
-                        template?.TemplateName,
-                        template?.EmailBody,
-                        statusCode
-                      );
-                      setRequestsSideBarVisible(false);
-                      setShowLoader(false);
-                    })
-                    .catch((err) =>
-                      console.log("get EmailTemplateConfig error", err)
-                    );
-                });
-              })
-              .catch((err) =>
-                console.log("get CategoryEmailConfig error", err)
-              );
+            let Status = statusCodeDecode(statusCode);
+            const template: any = await getCategoryEmailConfig(Item, Status);
+            console.log("template", template);
+            await getEmailContent(
+              Item,
+              template?.TemplateName,
+              template?.EmailBody,
+              statusCode
+            );
+            setRequestsSideBarVisible(false);
+             setShowLoader(false);
           })
           .catch((err: any) => {
             console.log("error getRequestHubDetails", err);

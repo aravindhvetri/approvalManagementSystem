@@ -63,9 +63,6 @@ const CategoryConfig = ({
   const [finalSubmit, setFinalSubmit] = useState<IFinalSubmitDetails>({
     ...Config.finalSubmitDetails,
   });
-
-  console.log(finalSubmit, "setFinalSubmit");
-
   const [showLoader, setShowLoader] = useState<boolean>(true);
 
   //Get Category Config Details:
