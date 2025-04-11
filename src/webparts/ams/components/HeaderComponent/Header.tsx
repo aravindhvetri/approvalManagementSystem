@@ -141,6 +141,9 @@ const Header = ({ context, currentPage }) => {
     declareTabViewBar();
   }, []);
   useEffect(() => {
+    categoryFilter();
+  }, [currentPage]);
+  useEffect(() => {
     setGlobelSearchValue("");
   }, [activeTabViewBar]);
   useEffect(() => {

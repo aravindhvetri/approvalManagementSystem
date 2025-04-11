@@ -47,6 +47,7 @@ const DynamicSectionWithField = ({
   const [sections, setSections] = useState([]);
   const [showPopup, setShowPopup] = useState(false);
   const [newChoice, setNewChoice] = useState("");
+  console.log("sections", sections);
   const [newField, setNewField] = useState<any>({
     columnID: null,
     sectionIndex: null,
@@ -175,6 +176,7 @@ const DynamicSectionWithField = ({
       Orderbydecorasc: true,
     })
       .then((res: any) => {
+        console.log("getCategorySectionConfigDetails", res);
         const tempSectionArr = [];
         res?.forEach(async (section, index) => {
           tempSectionArr.push({
