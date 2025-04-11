@@ -1,5 +1,5 @@
 import * as React from "react";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { InputText } from "primereact/inputtext";
 import { Dropdown } from "primereact/dropdown";
 import { Button } from "primereact/button";
@@ -10,7 +10,11 @@ import { Label } from "office-ui-fabric-react";
 import { Config } from "../../../../../../../CommonServices/Config";
 import SPServices from "../../../../../../../CommonServices/SPServices";
 import { ICategoryEmailConfigDetails } from "../../../../../../../CommonServices/interface";
-import { notesContainerDetails } from "../../../../../../../CommonServices/CommonTemplates";
+import {
+  notesContainerDetails,
+  toastNotify,
+} from "../../../../../../../CommonServices/CommonTemplates";
+import { Toast } from "primereact/toast";
 
 const statusOptions = [
   { label: "Approval", value: "Approval" },
@@ -26,10 +30,10 @@ const CustomEmail = ({
   categoryClickingID,
   customEmailDataWithEmpty,
 }) => {
+  const toast = useRef<Toast>(null);
   const [templates, setTemplates] = useState<ICategoryEmailConfigDetails[]>([
     Config.CategoryEmailConfigDefault,
   ]);
-  console.log(templates, "templates");
   const [errors, setErrors] = useState<
     { templateName?: string; status?: string; emailBody?: string }[]
   >([]);
@@ -134,6 +138,30 @@ const CustomEmail = ({
       return;
     }
 
+    // Duplicate Template Name Check:
+    const isDuplicate = templates
+      .slice(0, -1)
+      .some(
+        (t) =>
+          t.templateName?.toLowerCase().trim() ===
+          lastTemplate.templateName?.toLowerCase().trim()
+      );
+    if (isDuplicate) {
+      toast.current.show({
+        severity: "warn",
+        summary: "Warning",
+        content: (prop) =>
+          toastNotify({
+            iconName: "pi-exclamation-triangle",
+            ClsName: "toast-imgcontainer-warning",
+            type: "Warning",
+            msg: "Template name already exists",
+          }),
+        life: 3000,
+      });
+      return false;
+    }
+
     setTemplates([...templates, Config.CategoryEmailConfigDefault]);
     setErrors([...errors, {}]);
   };
@@ -156,6 +184,7 @@ const CustomEmail = ({
   }, [templates]);
   return (
     <>
+      <Toast ref={toast} />
       <div>
         {templates.map((template, index) => (
           <div key={index} className={customEmailStyles.templateContainer}>

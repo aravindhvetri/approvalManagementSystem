@@ -57,6 +57,7 @@ const DynamicSectionWithField = ({
     stages: [],
     choices: [],
   });
+  console.log(newField, "newField");
   const [previewVisible, setPreviewVisible] = useState(false);
   const [previewFields, setPreviewFields] = useState<any>([]);
   const [approvalStage, setApprovalStage] = useState([]);
@@ -365,6 +366,27 @@ const DynamicSectionWithField = ({
   };
 
   const FieldValidateFunc = () => {
+    const isDuplicateName = sections
+      ?.flatMap((section) => section?.columns || [])
+      .some(
+        (field) => field.name?.toLowerCase() === newField?.name?.toLowerCase()
+      );
+    if (isDuplicateName) {
+      toast.current.show({
+        severity: "warn",
+        summary: "Warning",
+        content: (prop) =>
+          toastNotify({
+            iconName: "pi-exclamation-triangle",
+            ClsName: "toast-imgcontainer-warning",
+            type: "Warning",
+            msg: "Field name already exists",
+          }),
+        life: 3000,
+      });
+      return false;
+    }
+
     let isValidation =
       !newField?.name || !newField?.type || newField?.stages?.length === 0;
     setIsValidation(isValidation);
@@ -495,6 +517,7 @@ const DynamicSectionWithField = ({
                 }
                 placeholder="Enter name"
                 className={DynamicSectionWithFieldStyles.columnNameInput}
+                maxLength={25}
               />
               {isValidation && !newField?.name && (
                 <span className="errorMsg">Field Name is required</span>

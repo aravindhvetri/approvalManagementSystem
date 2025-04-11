@@ -182,6 +182,7 @@ const ApprovalWorkFlow = ({
           ...prev,
           rejectionFlowDrop: temArr,
         }));
+        setShowLoader(false);
       })
       .catch((err) => {
         console.log("getRejectionFlowChoices error", err);

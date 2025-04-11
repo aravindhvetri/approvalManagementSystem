@@ -20,6 +20,7 @@ import {
   sendNotification,
 } from "../../../../CommonServices/CommonTemplates";
 import moment from "moment";
+import Loader from "../Loader/Loader";
 
 const WorkflowActionButtons = ({
   validateForm,
@@ -42,6 +43,7 @@ const WorkflowActionButtons = ({
   //Variables
   const loginUser = context._pageContext._user.email;
   const currentRec = requestsHubDetails?.find((e) => e.id === itemID);
+  const [showLoader, setShowLoader] = useState<boolean>(false);
 
   //Get RequestHubDetails List
   const getRequestHubDetails = () => {
@@ -209,9 +211,11 @@ const WorkflowActionButtons = ({
     try {
       await addApprovalHistory("Approved");
       updateStatusByApprover(currentRec.approvalJson, loginUser, 1);
+      setShowLoader(false);
     } catch {
       (e) => {
         console.log("Approval history patch err", e);
+        setShowLoader(false);
       };
     }
   };
@@ -223,15 +227,18 @@ const WorkflowActionButtons = ({
       try {
         await addApprovalHistory("Rejected");
         updateStatusByApprover(currentRec.approvalJson, loginUser, 2);
+        setShowLoader(false);
       } catch {
         (e) => {
           console.log("Approval history patch err", e);
+          setShowLoader(false);
         };
       }
     } else {
       setApproverDescriptionErrMsg(
         "* Approver description is mandatory for rejection"
       );
+      setShowLoader(false);
     }
   };
 
@@ -244,9 +251,13 @@ const WorkflowActionButtons = ({
         RequestJSON: updatedRecord,
         ID: itemID,
       })
-        .then(() => updateStatusByUser(currentRec.approvalJson, loginUser, 0))
+        .then(() => {
+          updateStatusByUser(currentRec.approvalJson, loginUser, 0);
+          setShowLoader(false);
+        })
         .catch((err) => {
           console.log("Resubmission error", err);
+          setShowLoader(false);
         });
     }
   };
@@ -444,13 +455,19 @@ const WorkflowActionButtons = ({
               label="Reject"
               className="customRejectButton"
               icon="pi pi-times-circle"
-              onClick={onRejectionClick}
+              onClick={() => {
+                onRejectionClick();
+                setShowLoader(true);
+              }}
             />
             <Button
               label="Approve"
               className="customSubmitButton"
               icon="pi pi-check-circle"
-              onClick={onApprovalClick}
+              onClick={() => {
+                onApprovalClick();
+                setShowLoader(true);
+              }}
             />
           </>
         )}
@@ -459,10 +476,14 @@ const WorkflowActionButtons = ({
             label="Re_submit"
             className="customSubmitButton"
             icon="pi pi-save"
-            onClick={onResubmitClick}
+            onClick={() => {
+              onResubmitClick();
+              setShowLoader(true);
+            }}
           />
         )}
       </div>
+      {showLoader ? <Loader /> : ""}
     </>
   );
 };

@@ -105,7 +105,10 @@ const ApprovalDashboard = ({
           setShowLoader(false);
         });
       })
-      .catch((err) => console.log("getApprovalConfig", err));
+      .catch((err) => {
+        console.log("getApprovalConfig", err);
+        setShowLoader(false);
+      });
   };
 
   //get Approval Stage Config
