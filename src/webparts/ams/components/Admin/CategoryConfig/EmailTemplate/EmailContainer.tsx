@@ -38,7 +38,6 @@ const EmailContainer = ({
   const [existingEmailData, setExistingEmailData] = useState([]);
   const [customEmailData, setCustomEmailData] = useState([]);
   const [customEmailDataWithEmpty, setCustomEmailDataWithEmpty] = useState([]);
-  console.log(customEmailDataWithEmpty, "customEmailData");
   const [showLoader, setShowLoader] = useState<boolean>(false);
   const [validateError, setValidateError] = useState({
     emailTemplateSelected: "",
@@ -129,7 +128,6 @@ const EmailContainer = ({
           },
         ],
       });
-      console.log("res", dataID, res);
       return res;
     } catch {
       (err) => console.log("getCategorySectionDetails error", err);
@@ -438,10 +436,6 @@ const EmailContainer = ({
                 (e: any) =>
                   !section?.columns.map((e: any) => e?.columnID).includes(e?.ID)
               );
-              console.log("columnDetails", columnDetails);
-
-              console.log("deletedColumns", deletedColumns);
-
               if (deletedColumns.length > 0) {
                 deletedColumns?.forEach((item: any) => {
                   updatesectionColumnsConfigList(item?.ID, {
@@ -456,7 +450,6 @@ const EmailContainer = ({
               SectionName: section?.name,
             };
             const newSection: any = await addSectionConfigList(tempJson);
-            console.log("newSection", newSection);
             section?.columns?.forEach(async (column: any) => {
               let fieldTypeKind;
               fieldTypeKind = columnTypeMap[column.type];
@@ -745,9 +738,7 @@ const EmailContainer = ({
         ApproverId: { results: tempApprovers },
       },
     })
-      .then((res: any) => {
-        console.log("addApprovalStageConfigDetails res", res);
-      })
+      .then((res: any) => {})
       .catch((err) => console.log("addApprovalStageConfigDetails error", err));
   };
 

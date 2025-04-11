@@ -45,7 +45,6 @@ const DynamicSectionWithField = ({
 }) => {
   const toast = useRef<Toast>(null);
   const [sections, setSections] = useState([]);
-  console.log(sections, "sections");
   const [showPopup, setShowPopup] = useState(false);
   const [newChoice, setNewChoice] = useState("");
   const [newField, setNewField] = useState<any>({
