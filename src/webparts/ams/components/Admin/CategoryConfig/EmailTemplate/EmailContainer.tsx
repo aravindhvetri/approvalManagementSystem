@@ -315,57 +315,6 @@ const EmailContainer = ({
           },
         });
         //Get and Isdelete Category Section Details
-
-        try {
-          const resCategorySections = await getCategorySectionDetails(
-            categoryClickingID
-          );
-          resCategorySections?.forEach(async (item: any) => {
-            if (
-              finalSubmit?.dynamicSectionWithField.some(
-                (e: any) => e?.name === item?.SectionName
-              )
-            ) {
-              const getcolumns = await getCategorySectionColumnsDetails(
-                item?.ID
-              );
-            } else {
-              SPServices.SPUpdateItem({
-                Listname: Config.ListNames.CategorySectionConfig,
-                ID: item?.ID,
-                RequestJSON: {
-                  IsDelete: true,
-                },
-              })
-                .then((res: any) => {
-                  getCategorySectionColumnsDetails(item?.ID)
-                    .then((res: any) => {
-                      res.forEach((colums: any) => {
-                        SPServices.SPUpdateItem({
-                          Listname: Config.ListNames.SectionColumnsConfig,
-                          ID: colums?.ID,
-                          RequestJSON: {
-                            IsDelete: true,
-                          },
-                        })
-                          .then(() => {})
-                          .catch();
-                      });
-                    })
-                    .catch((err) =>
-                      console.log("Read SectionColumnsConfig err", err)
-                    );
-                })
-                .catch((err) =>
-                  console.log("update CategorySectionConfig Isdelete err", err)
-                );
-            }
-          });
-        } catch {
-          (err) =>
-            console.log("Get and Isdelete Category Section Details error", err);
-        }
-        // For new section addtion
         const columnTypeMap = {
           text: 2,
           textarea: 3,
