@@ -64,7 +64,8 @@ const DynamicSectionWithField = ({
     setSections([...sections, { name: "", sectionID: null, columns: [] }]);
   };
   const [isValidation, setIsValidation] = useState<boolean>(false);
-  const [choiceError, setChoiceError] = useState(false);
+  const [choiceError, setChoiceError] = useState<boolean>(false);
+  const [fieldEdit, setFieldEdit] = useState<boolean>(false);
 
   const handleSaveField = () => {
     const updatedSections = [...sections];
@@ -107,6 +108,7 @@ const DynamicSectionWithField = ({
     setShowPopup(false);
     setChoiceError(false);
     setIsValidation(false);
+    setFieldEdit(false);
   };
 
   const RequiredBodyTemplate = (rowData) => {
@@ -137,6 +139,7 @@ const DynamicSectionWithField = ({
       rowIndex,
     });
     setShowPopup(true);
+    setFieldEdit(true);
   };
 
   const handleDeleteField = (sectionIndex, rowIndex) => {
@@ -160,7 +163,7 @@ const DynamicSectionWithField = ({
       Select: "*",
       Filter: [
         {
-          FilterKey: "CategoryId",
+          FilterKey: "Category",
           Operator: "eq",
           FilterValue: categoryClickingID.toString(),
         },
@@ -175,6 +178,7 @@ const DynamicSectionWithField = ({
       Orderbydecorasc: true,
     })
       .then((res: any) => {
+        debugger;
         const tempSectionArr = [];
         res?.forEach(async (section, index) => {
           tempSectionArr.push({
@@ -370,7 +374,7 @@ const DynamicSectionWithField = ({
       .some(
         (field) => field.name?.toLowerCase() === newField?.name?.toLowerCase()
       );
-    if (isDuplicateName) {
+    if (isDuplicateName && !fieldEdit) {
       toast.current.show({
         severity: "warn",
         summary: "Warning",
@@ -633,6 +637,7 @@ const DynamicSectionWithField = ({
                   setShowPopup(false);
                   setIsValidation(false);
                   setChoiceError(false);
+                  setFieldEdit(false);
                 }}
                 className="customCancelButton"
               />

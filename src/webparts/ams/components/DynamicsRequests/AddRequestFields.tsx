@@ -371,8 +371,6 @@ const AddRequestsFields = ({
                     )}
                   </div>
                 ))}
-            </div>
-            <div className={dynamicFieldsStyles.singlelineFields}>
               {dynamicFields
                 .filter((f) => f.columnType === "Choice")
                 .map((field) => (
@@ -405,6 +403,39 @@ const AddRequestsFields = ({
                   </div>
                 ))}
             </div>
+            {/* <div className={dynamicFieldsStyles.singlelineFields}>
+              {dynamicFields
+                .filter((f) => f.columnType === "Choice")
+                .map((field) => (
+                  <div
+                    key={field.id}
+                    className={dynamicFieldsStyles.inputField}
+                  >
+                    <Label className={dynamicFieldsStyles.label}>
+                      {field.columnDisplayName}{" "}
+                      {field?.isRequired && <span className="required">*</span>}
+                    </Label>
+                    <Dropdown
+                      value={field?.choices.find(
+                        (e) => e === formData[field.columnName]
+                      )}
+                      showClear
+                      options={field?.choices}
+                      onChange={(e) => {
+                        handleInputChange(field.columnName, e.value);
+                      }}
+                      filter
+                      placeholder={field.columnName}
+                      className="w-full md:w-14rem"
+                    />
+                    {errors[field.columnName] && (
+                      <span className={dynamicFieldsStyles.errorMsg}>
+                        {errors[field.columnName]}
+                      </span>
+                    )}
+                  </div>
+                ))}
+            </div> */}
             <div className={dynamicFieldsStyles.multilineFields}>
               {dynamicFields
                 .filter((f) => f.columnType === "Multiline")
