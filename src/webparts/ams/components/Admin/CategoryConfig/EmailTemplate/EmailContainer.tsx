@@ -304,6 +304,7 @@ const EmailContainer = ({
   //Add Datas to Sharepoint List:
   const finalHandleSubmit = async () => {
     if (categoryClickingID) {
+      debugger;
       //Update categoryConfig Details
       try {
         const res = await SPServices.SPUpdateItem({
@@ -807,13 +808,16 @@ const EmailContainer = ({
           </div>
         </div>
       )}
-      {validateError && !selectedEmail && (
-        <div style={{ marginBottom: "20px" }}>
-          <span className="errorMsg">
-            {validateError?.emailTemplateSelected}
-          </span>
-        </div>
-      )}
+      {validateError &&
+        !selectedEmail &&
+        actionBooleans?.isView === false &&
+        actionBooleans?.isEdit === false && (
+          <div style={{ marginBottom: "20px" }}>
+            <span className="errorMsg">
+              {validateError?.emailTemplateSelected}
+            </span>
+          </div>
+        )}
       <div>
         {selectedEmail == "existing" ? (
           <ExistingEmail ExisitingEmailData={getExistingEmailTemlateData} />
@@ -884,8 +888,15 @@ const EmailContainer = ({
                 icon="pi pi-save"
                 label="Submit"
                 onClick={() => {
-                  valiadateFunc();
-                  // setShowLoader(true);
+                  if (
+                    actionBooleans?.isView === false &&
+                    actionBooleans?.isEdit === false
+                  ) {
+                    valiadateFunc();
+                  } else {
+                    setShowLoader(true);
+                    finalHandleSubmit();
+                  }
                 }}
                 className="customSubmitButton"
               />

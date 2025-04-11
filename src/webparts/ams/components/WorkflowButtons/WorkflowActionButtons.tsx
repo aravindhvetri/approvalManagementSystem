@@ -365,7 +365,6 @@ const WorkflowActionButtons = ({
       "[$Status]":
         statusCode === 1 ? "Approved" : statusCode === 2 ? "Rejected" : "",
     };
-    let Status = statusCodeDecode(statusCode);
     const template: any = await getCategoryEmailConfig(Item, "Submit");
     tempEmailToPersons.forEach((emailTo: any) => {
       let finalBody = "";
