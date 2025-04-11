@@ -211,7 +211,6 @@ const WorkflowActionButtons = ({
     try {
       await addApprovalHistory("Approved");
       updateStatusByApprover(currentRec.approvalJson, loginUser, 1);
-      setShowLoader(false);
     } catch {
       (e) => {
         console.log("Approval history patch err", e);
@@ -227,7 +226,6 @@ const WorkflowActionButtons = ({
       try {
         await addApprovalHistory("Rejected");
         updateStatusByApprover(currentRec.approvalJson, loginUser, 2);
-        setShowLoader(false);
       } catch {
         (e) => {
           console.log("Approval history patch err", e);
@@ -253,7 +251,6 @@ const WorkflowActionButtons = ({
       })
         .then(() => {
           updateStatusByUser(currentRec.approvalJson, loginUser, 0);
-          setShowLoader(false);
         })
         .catch((err) => {
           console.log("Resubmission error", err);
@@ -484,8 +481,12 @@ const WorkflowActionButtons = ({
               statusCode
             );
             setRequestsSideBarVisible(false);
+             setShowLoader(false);
           })
-          .catch((err: any) => console.log("error getRequestHubDetails", err));
+          .catch((err: any) => {
+            console.log("error getRequestHubDetails", err);
+            setShowLoader(false);
+          });
       })
       .catch((e) => {
         console.log("Error while updating SharePoint list", e);
