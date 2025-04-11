@@ -367,12 +367,10 @@ const getColor = (stage: string) => {
 
 //Sent email notification
 export const sendNotification = async (emailProps: any): Promise<any> => {
-  debugger;
   try {
     await sp.utility
       .sendEmail(emailProps)
       .then((res: any) => {
-        console.log("mail res", res);
       })
       .catch((err: any) => {
         console.log("mail err", err);
