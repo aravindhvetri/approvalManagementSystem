@@ -34,6 +34,7 @@ const CustomEmail = ({
   const [templates, setTemplates] = useState<ICategoryEmailConfigDetails[]>([
     Config.CategoryEmailConfigDefault,
   ]);
+
   const [errors, setErrors] = useState<
     { templateName?: string; status?: string; emailBody?: string }[]
   >([]);
@@ -233,15 +234,20 @@ const CustomEmail = ({
             </div>
           </div>
         ))}
-        <div className={customEmailStyles.addbutton}>
-          <Button
-            visible={!(actionBooleans?.isView || actionBooleans?.isEdit)}
-            icon="pi pi-plus"
-            label="Add"
-            className="customSubmitButton"
-            onClick={handleAdd}
-          />
-        </div>
+        {templates?.length == 4 ? (
+          ""
+        ) : (
+          <div className={customEmailStyles.addbutton}>
+            <Button
+              visible={!(actionBooleans?.isView || actionBooleans?.isEdit)}
+              icon="pi pi-plus"
+              label="Add"
+              className="customSubmitButton"
+              onClick={handleAdd}
+            />
+          </div>
+        )}
+
         {actionBooleans?.isEdit && notesContainerDetails("Notes", notes)}
       </div>
       {!actionBooleans?.isView && !actionBooleans?.isEdit && (
