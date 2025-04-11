@@ -244,6 +244,11 @@ const EmailContainer = ({
       if (selectedEmail === "custom") {
         const CustomEmailFlowDetails = customEmailDataWithEmpty;
 
+        const requiredStatuses = ["Approval", "Reject", "ReSubmit", "Submit"];
+        const actualStatuses = CustomEmailFlowDetails?.map((item) =>
+          item?.status?.trim()?.toLowerCase()
+        );
+
         const hasEmptyFields = CustomEmailFlowDetails?.some(
           (item) =>
             !item?.templateName?.trim() ||
@@ -251,7 +256,26 @@ const EmailContainer = ({
             !item?.status?.trim()
         );
 
-        if (hasEmptyFields) {
+        const allStatusesPresent = requiredStatuses.every((status) =>
+          actualStatuses.includes(status.toLowerCase())
+        );
+
+        if (
+          hasEmptyFields ||
+          CustomEmailFlowDetails.length < 4 ||
+          !allStatusesPresent
+        ) {
+          let errorMsg = "";
+
+          if (hasEmptyFields) {
+            errorMsg = "Please enter all fields";
+          } else if (CustomEmailFlowDetails.length < 4) {
+            errorMsg = "Minimum 4 custom templates are required";
+          } else if (!allStatusesPresent) {
+            errorMsg =
+              "Custom email templates must include all 4 statuses: Approval, Reject, ReSubmit, and Submit";
+          }
+
           toast.current.show({
             severity: "warn",
             summary: "Warning",
@@ -260,17 +284,17 @@ const EmailContainer = ({
                 iconName: "pi-exclamation-triangle",
                 ClsName: "toast-imgcontainer-warning",
                 type: "Warning",
-                msg: "Please enter all fields",
+                msg: errorMsg,
               }),
             life: 3000,
           });
+
           isValid = false;
         } else {
           validateError.emailTemplateSelected = "";
         }
       }
     }
-
     setValidateError({ ...validateError });
 
     if (isValid) {

@@ -1,6 +1,6 @@
 //Default Imports:
 import * as React from "react";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 //Common Services Imports:
 import SPServices from "../../../../../CommonServices/SPServices";
 import { Config } from "../../../../../CommonServices/Config";
@@ -12,6 +12,7 @@ import {
 import {
   ActionsMenu,
   notesContainerDetails,
+  toastNotify,
 } from "../../../../../CommonServices/CommonTemplates";
 //PrimeReact Imports:
 import { DataTable } from "primereact/datatable";
@@ -21,6 +22,7 @@ import { InputText } from "primereact/inputtext";
 import { Label } from "office-ui-fabric-react";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
+import { Toast } from "primereact/toast";
 //Styles Imports:
 import EmailWorkFlowStyles from "./EmailWorkFlow.module.scss";
 import "./EmailWorkFlowStyle.css";
@@ -31,6 +33,7 @@ const EmailWorkFlow = ({
   setEmailWorkFlowSideBarContent,
   setEmailWorkFlowSideBarVisible,
 }) => {
+  const toast = useRef<Toast>(null);
   //State Variables:
   const [getEmailTemplateContent, setEmailTemplateContent] = useState<
     IEmailTemplateConfigDetails[]
@@ -191,11 +194,46 @@ const EmailWorkFlow = ({
   ];
 
   //check validation:
+  // const validateFunction = () => {
+  //   let isValidation: boolean =
+  //     !templateData?.templateName || !templateData?.emailBody;
+  //   setValidation(isValidation);
+  //   return !isValidation;
+  // };
+
   const validateFunction = () => {
-    let isValidation: boolean =
-      !templateData?.templateName || !templateData?.emailBody;
-    setValidation(isValidation);
-    return !isValidation;
+    let isValidation: boolean = false;
+    if (!templateData?.templateName || !templateData?.emailBody) {
+      isValidation = true;
+      setValidation(true);
+      return false;
+    }
+
+    // Check for duplicate name:
+    const isDuplicateName = getEmailTemplateContent.some(
+      (item) =>
+        item?.templateName?.trim().toLowerCase() ===
+          templateData?.templateName?.trim().toLowerCase() &&
+        item?.id !== templateData?.id
+    );
+
+    if (isDuplicateName) {
+      toast.current?.show({
+        severity: "warn",
+        summary: "Warning",
+        content: (props) =>
+          toastNotify({
+            iconName: "pi-exclamation-triangle",
+            ClsName: "toast-imgcontainer-warning",
+            type: "Warning",
+            msg: "Template name already exists!",
+          }),
+        life: 3000,
+      });
+      return false;
+    }
+    setValidation(false);
+    return true;
   };
 
   //Render Action Column:
@@ -306,6 +344,7 @@ const EmailWorkFlow = ({
 
   return (
     <>
+      <Toast ref={toast} />
       {showLoader ? (
         <Loader />
       ) : (
