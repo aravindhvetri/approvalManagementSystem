@@ -304,7 +304,6 @@ const EmailContainer = ({
   //Add Datas to Sharepoint List:
   const finalHandleSubmit = async () => {
     if (categoryClickingID) {
-      debugger;
       //Update categoryConfig Details
       try {
         const res = await SPServices.SPUpdateItem({

@@ -204,8 +204,8 @@ const RequestsFields = ({
   const renderCommentsColumn = (rowData: IApprovalHistoryDetails) => {
     return (
       <div title={rowData?.comments}>
-        {rowData?.comments.length > 100
-          ? `${rowData?.comments.substring(0, 100)}...`
+        {rowData?.comments?.length > 100
+          ? `${rowData?.comments?.substring(0, 100)}...`
           : rowData?.comments}
       </div>
     );
@@ -254,6 +254,15 @@ const RequestsFields = ({
     }
   };
 
+  //Group dynamic fields by section name:
+  const groupedFields = dynamicFields.reduce((acc, field) => {
+    if (!acc[field.sectionName]) {
+      acc[field.sectionName] = [];
+    }
+    acc[field.sectionName].push(field);
+    return acc;
+  }, {});
+
   //DynamicRequestFieldsSideBarContent Return Function:
   const DynamicRequestsFieldsSideBarContent = () => {
     return (
@@ -262,7 +271,7 @@ const RequestsFields = ({
           <Label className={dynamicFieldsStyles.labelHeader}>
             Request details
           </Label>
-          <div className={dynamicFieldsStyles.singlelineFields}>
+          {/* <div className={dynamicFieldsStyles.singlelineFields}>
             {dynamicFields
               .filter((f) => f.columnType === "Singleline")
               .map(
@@ -387,7 +396,133 @@ const RequestsFields = ({
                     </div>
                   )
               )}
-          </div>
+          </div> */}
+          {Object.entries(groupedFields).map(
+            ([sectionName, fields]: [string, ISectionColumnsConfig[]]) => (
+              <div
+                key={sectionName}
+                className={dynamicFieldsStyles.formContainer}
+              >
+                <h3 className="overAllHeading">{sectionName}</h3>
+                <div className={dynamicFieldsStyles.singlelineFields}>
+                  {fields
+                    .filter((f) => f.columnType === "Singleline")
+                    .map((field) => (
+                      <div
+                        key={field.id}
+                        className={dynamicFieldsStyles.inputField}
+                      >
+                        <Label className={dynamicFieldsStyles.label}>
+                          {field.columnDisplayName}
+                          {field?.isRequired && (
+                            <span className="required">*</span>
+                          )}
+                        </Label>
+                        <InputText
+                          id={field.columnName}
+                          value={formData[field.columnName] || ""}
+                          onChange={(e) =>
+                            handleInputChange(field.columnName, e.target.value)
+                          }
+                          disabled={
+                            !(
+                              recordAction === "Edit" &&
+                              author?.email === loginUser &&
+                              navigateFrom === "MyRequest"
+                            )
+                          }
+                        />
+                        {errors[field.columnName] && (
+                          <span className={dynamicFieldsStyles.errorMsg}>
+                            {errors[field.columnName]}
+                          </span>
+                        )}
+                      </div>
+                    ))}
+
+                  {fields
+                    .filter((f) => f.columnType === "Choice")
+                    .map((field) => (
+                      <div
+                        key={field.id}
+                        className={dynamicFieldsStyles.inputField}
+                      >
+                        <Label className={dynamicFieldsStyles.label}>
+                          {field.columnDisplayName}
+                          {field?.isRequired && (
+                            <span className="required">*</span>
+                          )}
+                        </Label>
+                        <Dropdown
+                          value={field?.choices.find(
+                            (e) => e === formData[field.columnName]
+                          )}
+                          showClear
+                          options={field?.choices}
+                          onChange={(e) => {
+                            handleInputChange(field.columnName, e.value);
+                          }}
+                          filter
+                          placeholder={field.columnName}
+                          disabled={
+                            !(
+                              recordAction === "Edit" &&
+                              author?.email === loginUser &&
+                              navigateFrom === "MyRequest"
+                            )
+                          }
+                          className="w-full md:w-14rem"
+                        />
+                        {errors[field.columnName] && (
+                          <span className={dynamicFieldsStyles.errorMsg}>
+                            {errors[field.columnName]}
+                          </span>
+                        )}
+                      </div>
+                    ))}
+                </div>
+
+                <div className={dynamicFieldsStyles.multilineFields}>
+                  {fields
+                    .filter((f) => f.columnType === "Multiline")
+                    .map((field) => (
+                      <div
+                        key={field.id}
+                        className={dynamicFieldsStyles.inputField}
+                      >
+                        <Label className={dynamicFieldsStyles.label}>
+                          {field.columnDisplayName}
+                          {field?.isRequired && (
+                            <span className="required">*</span>
+                          )}
+                        </Label>
+                        <InputTextarea
+                          id={field.columnName}
+                          autoResize
+                          value={formData[field.columnName] || ""}
+                          onChange={(e) =>
+                            handleInputChange(field.columnName, e.target.value)
+                          }
+                          disabled={
+                            !(
+                              recordAction === "Edit" &&
+                              author?.email === loginUser &&
+                              navigateFrom === "MyRequest"
+                            )
+                          }
+                          rows={3}
+                        />
+                        {errors[field.columnName] && (
+                          <span className={dynamicFieldsStyles.errorMsg}>
+                            {errors[field.columnName]}
+                          </span>
+                        )}
+                      </div>
+                    ))}
+                </div>
+              </div>
+            )
+          )}
           {recordAction === "Edit" && navigateFrom === "MyApproval" && (
             <div className={dynamicFieldsStyles.approverSection}>
               <Label className={dynamicFieldsStyles.labelHeader}>
