@@ -102,8 +102,8 @@ const ApprovalDashboard = ({
             stages: await getApprovalStageConfig(item?.ID),
           });
           setApprovalConfigDetails([...tempArr]);
-          setShowLoader(false);
         });
+        setShowLoader(false);
       })
       .catch((err) => {
         console.log("getApprovalConfig", err);

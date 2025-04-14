@@ -464,3 +464,13 @@ li.p-highlight .p-tabview-nav-link {
 .p-paginator .p-paginator-last:not(.p-disabled):not(.p-highlight):hover {
   background-color: #dcfce757;
 }
+
+/* Custom styles for the heading */
+.overAllHeading {
+  margin: 0;
+  padding-bottom: 18px;
+  font-size: 14px;
+  color: var(--green);
+  text-decoration: underline;
+  text-underline-offset: 8px;
+}
