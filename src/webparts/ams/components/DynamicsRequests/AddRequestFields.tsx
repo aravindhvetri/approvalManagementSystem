@@ -41,6 +41,7 @@ const AddRequestsFields = ({
   const [dynamicFields, setDynamicFields] = useState<ISectionColumnsConfig[]>(
     []
   );
+  console.log("dynamicFields", dynamicFields);
   const [formData, setFormData] = useState({});
   const [errors, setErrors] = useState({});
   const [selectedCategory, setSelectedCategory] =
@@ -324,6 +325,15 @@ const AddRequestsFields = ({
     }
   };
 
+  //Group dynamic fields by section name:
+  const groupedFields = dynamicFields.reduce((acc, field) => {
+    if (!acc[field.sectionName]) {
+      acc[field.sectionName] = [];
+    }
+    acc[field.sectionName].push(field);
+    return acc;
+  }, {});
+
   //DynamicRequestFieldsSideBarContent Return Function:
   const DynamicRequestsFieldsSideBarContent = () => {
     return (
@@ -344,127 +354,226 @@ const AddRequestsFields = ({
           />
         </div>
         {dynamicFields.length > 0 && (
-          <div className={dynamicFieldsStyles.formContainer}>
-            <div className={dynamicFieldsStyles.singlelineFields}>
-              {dynamicFields
-                .filter((f) => f.columnType === "Singleline")
-                .map((field) => (
-                  <div
-                    key={field.id}
-                    className={dynamicFieldsStyles.inputField}
-                  >
-                    <Label className={dynamicFieldsStyles.label}>
-                      {field?.columnDisplayName}
-                      {field?.isRequired && <span className="required">*</span>}
-                    </Label>
-                    <InputText
-                      id={field.columnName}
-                      value={formData[field.columnName] || ""}
-                      onChange={(e) =>
-                        handleInputChange(field.columnName, e.target.value)
-                      }
-                    />
-                    {errors[field.columnName] && (
-                      <span className={dynamicFieldsStyles.errorMsg}>
-                        {errors[field.columnName]}
-                      </span>
-                    )}
+          // <div className={dynamicFieldsStyles.formContainer}>
+          //   <div className={dynamicFieldsStyles.singlelineFields}>
+          //     {dynamicFields
+          //       .filter((f) => f.columnType === "Singleline")
+          //       .map((field) => (
+          //         <div
+          //           key={field.id}
+          //           className={dynamicFieldsStyles.inputField}
+          //         >
+          //           <Label className={dynamicFieldsStyles.label}>
+          //             {field?.columnDisplayName}
+          //             {field?.isRequired && <span className="required">*</span>}
+          //           </Label>
+          //           <InputText
+          //             id={field.columnName}
+          //             value={formData[field.columnName] || ""}
+          //             onChange={(e) =>
+          //               handleInputChange(field.columnName, e.target.value)
+          //             }
+          //           />
+          //           {errors[field.columnName] && (
+          //             <span className={dynamicFieldsStyles.errorMsg}>
+          //               {errors[field.columnName]}
+          //             </span>
+          //           )}
+          //         </div>
+          //       ))}
+          //     {dynamicFields
+          //       .filter((f) => f.columnType === "Choice")
+          //       .map((field) => (
+          //         <div
+          //           key={field.id}
+          //           className={dynamicFieldsStyles.inputField}
+          //         >
+          //           <Label className={dynamicFieldsStyles.label}>
+          //             {field.columnDisplayName}{" "}
+          //             {field?.isRequired && <span className="required">*</span>}
+          //           </Label>
+          //           <Dropdown
+          //             value={field?.choices.find(
+          //               (e) => e === formData[field.columnName]
+          //             )}
+          //             showClear
+          //             options={field?.choices}
+          //             onChange={(e) => {
+          //               handleInputChange(field.columnName, e.value);
+          //             }}
+          //             filter
+          //             placeholder={field.columnName}
+          //             className="w-full md:w-14rem"
+          //           />
+          //           {errors[field.columnName] && (
+          //             <span className={dynamicFieldsStyles.errorMsg}>
+          //               {errors[field.columnName]}
+          //             </span>
+          //           )}
+          //         </div>
+          //       ))}
+          //   </div>
+          //   <div className={dynamicFieldsStyles.multilineFields}>
+          //     {dynamicFields
+          //       .filter((f) => f.columnType === "Multiline")
+          //       .map((field) => (
+          //         <div
+          //           key={field.id}
+          //           className={dynamicFieldsStyles.inputField}
+          //         >
+          //           <Label className={dynamicFieldsStyles.label}>
+          //             {field.columnDisplayName}{" "}
+          //             {field?.isRequired && <span className="required">*</span>}
+          //           </Label>
+          //           <InputTextarea
+          //             id={field.columnName}
+          //             autoResize
+          //             value={formData[field.columnName] || ""}
+          //             onChange={(e) =>
+          //               handleInputChange(field.columnName, e.target.value)
+          //             }
+          //             rows={3}
+          //           />
+          //           {errors[field.columnName] && (
+          //             <span className={dynamicFieldsStyles.errorMsg}>
+          //               {errors[field.columnName]}
+          //             </span>
+          //           )}
+          //         </div>
+          //       ))}
+          //   </div>
+
+          // <div className={`${dynamicFieldsStyles.sideBarButtonContainer}`}>
+          //   <>
+          //     <Button
+          //       icon="pi pi-times"
+          //       label="Cancel"
+          //       className="customCancelButton"
+          //       onClick={() => handleCancel()}
+          //     />
+          //     <Button
+          //       icon="pi pi-save"
+          //       label="Submit"
+          //       className="customSubmitButton"
+          //       onClick={() => {
+          //         handleSubmit();
+          //       }}
+          //     />
+          //   </>
+          // </div>
+          // </div>
+          <>
+            {Object.entries(groupedFields).map(
+              ([sectionName, fields]: [string, ISectionColumnsConfig[]]) => (
+                <div
+                  key={sectionName}
+                  className={dynamicFieldsStyles.formContainer}
+                >
+                  <h3 className="overAllHeading">{sectionName}</h3>
+                  <div className={dynamicFieldsStyles.singlelineFields}>
+                    {fields
+                      .filter((f) => f.columnType === "Singleline")
+                      .map((field) => (
+                        <div
+                          key={field.id}
+                          className={dynamicFieldsStyles.inputField}
+                        >
+                          <Label className={dynamicFieldsStyles.label}>
+                            {field.columnDisplayName}
+                            {field?.isRequired && (
+                              <span className="required">*</span>
+                            )}
+                          </Label>
+                          <InputText
+                            id={field.columnName}
+                            value={formData[field.columnName] || ""}
+                            onChange={(e) =>
+                              handleInputChange(
+                                field.columnName,
+                                e.target.value
+                              )
+                            }
+                          />
+                          {errors[field.columnName] && (
+                            <span className={dynamicFieldsStyles.errorMsg}>
+                              {errors[field.columnName]}
+                            </span>
+                          )}
+                        </div>
+                      ))}
+
+                    {fields
+                      .filter((f) => f.columnType === "Choice")
+                      .map((field) => (
+                        <div
+                          key={field.id}
+                          className={dynamicFieldsStyles.inputField}
+                        >
+                          <Label className={dynamicFieldsStyles.label}>
+                            {field.columnDisplayName}
+                            {field?.isRequired && (
+                              <span className="required">*</span>
+                            )}
+                          </Label>
+                          <Dropdown
+                            value={field?.choices.find(
+                              (e) => e === formData[field.columnName]
+                            )}
+                            showClear
+                            options={field?.choices}
+                            onChange={(e) => {
+                              handleInputChange(field.columnName, e.value);
+                            }}
+                            filter
+                            placeholder={field.columnName}
+                            className="w-full md:w-14rem"
+                          />
+                          {errors[field.columnName] && (
+                            <span className={dynamicFieldsStyles.errorMsg}>
+                              {errors[field.columnName]}
+                            </span>
+                          )}
+                        </div>
+                      ))}
                   </div>
-                ))}
-              {dynamicFields
-                .filter((f) => f.columnType === "Choice")
-                .map((field) => (
-                  <div
-                    key={field.id}
-                    className={dynamicFieldsStyles.inputField}
-                  >
-                    <Label className={dynamicFieldsStyles.label}>
-                      {field.columnDisplayName}{" "}
-                      {field?.isRequired && <span className="required">*</span>}
-                    </Label>
-                    <Dropdown
-                      value={field?.choices.find(
-                        (e) => e === formData[field.columnName]
-                      )}
-                      showClear
-                      options={field?.choices}
-                      onChange={(e) => {
-                        handleInputChange(field.columnName, e.value);
-                      }}
-                      filter
-                      placeholder={field.columnName}
-                      className="w-full md:w-14rem"
-                    />
-                    {errors[field.columnName] && (
-                      <span className={dynamicFieldsStyles.errorMsg}>
-                        {errors[field.columnName]}
-                      </span>
-                    )}
+
+                  <div className={dynamicFieldsStyles.multilineFields}>
+                    {fields
+                      .filter((f) => f.columnType === "Multiline")
+                      .map((field) => (
+                        <div
+                          key={field.id}
+                          className={dynamicFieldsStyles.inputField}
+                        >
+                          <Label className={dynamicFieldsStyles.label}>
+                            {field.columnDisplayName}
+                            {field?.isRequired && (
+                              <span className="required">*</span>
+                            )}
+                          </Label>
+                          <InputTextarea
+                            id={field.columnName}
+                            autoResize
+                            value={formData[field.columnName] || ""}
+                            onChange={(e) =>
+                              handleInputChange(
+                                field.columnName,
+                                e.target.value
+                              )
+                            }
+                            rows={3}
+                          />
+                          {errors[field.columnName] && (
+                            <span className={dynamicFieldsStyles.errorMsg}>
+                              {errors[field.columnName]}
+                            </span>
+                          )}
+                        </div>
+                      ))}
                   </div>
-                ))}
-            </div>
-            {/* <div className={dynamicFieldsStyles.singlelineFields}>
-              {dynamicFields
-                .filter((f) => f.columnType === "Choice")
-                .map((field) => (
-                  <div
-                    key={field.id}
-                    className={dynamicFieldsStyles.inputField}
-                  >
-                    <Label className={dynamicFieldsStyles.label}>
-                      {field.columnDisplayName}{" "}
-                      {field?.isRequired && <span className="required">*</span>}
-                    </Label>
-                    <Dropdown
-                      value={field?.choices.find(
-                        (e) => e === formData[field.columnName]
-                      )}
-                      showClear
-                      options={field?.choices}
-                      onChange={(e) => {
-                        handleInputChange(field.columnName, e.value);
-                      }}
-                      filter
-                      placeholder={field.columnName}
-                      className="w-full md:w-14rem"
-                    />
-                    {errors[field.columnName] && (
-                      <span className={dynamicFieldsStyles.errorMsg}>
-                        {errors[field.columnName]}
-                      </span>
-                    )}
-                  </div>
-                ))}
-            </div> */}
-            <div className={dynamicFieldsStyles.multilineFields}>
-              {dynamicFields
-                .filter((f) => f.columnType === "Multiline")
-                .map((field) => (
-                  <div
-                    key={field.id}
-                    className={dynamicFieldsStyles.inputField}
-                  >
-                    <Label className={dynamicFieldsStyles.label}>
-                      {field.columnDisplayName}{" "}
-                      {field?.isRequired && <span className="required">*</span>}
-                    </Label>
-                    <InputTextarea
-                      id={field.columnName}
-                      autoResize
-                      value={formData[field.columnName] || ""}
-                      onChange={(e) =>
-                        handleInputChange(field.columnName, e.target.value)
-                      }
-                      rows={3}
-                    />
-                    {errors[field.columnName] && (
-                      <span className={dynamicFieldsStyles.errorMsg}>
-                        {errors[field.columnName]}
-                      </span>
-                    )}
-                  </div>
-                ))}
-            </div>
+                </div>
+              )
+            )}
 
             <div className={`${dynamicFieldsStyles.sideBarButtonContainer}`}>
               <>
@@ -484,7 +593,7 @@ const AddRequestsFields = ({
                 />
               </>
             </div>
-          </div>
+          </>
         )}
       </>
     );

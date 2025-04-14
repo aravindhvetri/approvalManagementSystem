@@ -124,6 +124,7 @@ const WorkflowActionButtons = ({
             })),
             status: statusUpdate,
           };
+
           updateSharePointList(updatedItem, newStatusCode);
           return updatedItem;
         } else {
@@ -208,6 +209,7 @@ const WorkflowActionButtons = ({
   //On Approval Click
   const onApprovalClick = async () => {
     setApproverDescriptionErrMsg("");
+    setShowLoader(true);
     try {
       await addApprovalHistory("Approved");
       updateStatusByApprover(currentRec.approvalJson, loginUser, 1);
@@ -223,6 +225,7 @@ const WorkflowActionButtons = ({
   const onRejectionClick = async () => {
     if (approvalDetails?.comments.trim().length > 0) {
       setApproverDescriptionErrMsg("");
+      setShowLoader(true);
       try {
         await addApprovalHistory("Rejected");
         updateStatusByApprover(currentRec.approvalJson, loginUser, 2);
@@ -244,6 +247,7 @@ const WorkflowActionButtons = ({
   const onResubmitClick = async () => {
     const fieldsValidation: boolean = await validateForm();
     if (fieldsValidation) {
+      setShowLoader(true);
       SPServices.SPUpdateItem({
         Listname: Config.ListNames.RequestsHub,
         RequestJSON: updatedRecord,
@@ -480,7 +484,7 @@ const WorkflowActionButtons = ({
               statusCode
             );
             setRequestsSideBarVisible(false);
-             setShowLoader(false);
+            setShowLoader(false);
           })
           .catch((err: any) => {
             console.log("error getRequestHubDetails", err);
@@ -519,7 +523,6 @@ const WorkflowActionButtons = ({
               icon="pi pi-times-circle"
               onClick={() => {
                 onRejectionClick();
-                setShowLoader(true);
               }}
             />
             <Button
@@ -528,7 +531,6 @@ const WorkflowActionButtons = ({
               icon="pi pi-check-circle"
               onClick={() => {
                 onApprovalClick();
-                setShowLoader(true);
               }}
             />
           </>
@@ -540,7 +542,6 @@ const WorkflowActionButtons = ({
             icon="pi pi-save"
             onClick={() => {
               onResubmitClick();
-              setShowLoader(true);
             }}
           />
         )}

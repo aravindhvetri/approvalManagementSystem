@@ -471,7 +471,6 @@ const CategoryConfig = ({
 
   useEffect(() => {
     if (!ApprovalConfigSideBarVisible) {
-      debugger;
       setValidateError({
         categoryName: "",
         approversSelected: "",
