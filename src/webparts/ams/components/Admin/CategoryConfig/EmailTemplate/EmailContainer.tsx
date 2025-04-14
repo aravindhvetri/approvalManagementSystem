@@ -25,6 +25,7 @@ import { trim } from "lodash";
 const EmailContainer = ({
   actionBooleans,
   setFinalSubmit,
+  getCategoryFunction,
   categoryClickingID,
   setNextStageFromCategory,
   setSelectedApprover,
@@ -480,6 +481,7 @@ const EmailContainer = ({
 
         alert("Process completed successfully!");
         sessionStorage.clear();
+        getCategoryFunction();
         setNextStageFromCategory({ ...Config.NextStageFromCategorySideBar });
         setEmailContainerFieldSideBarVisible(false);
         setSelectedApprover("");
@@ -666,6 +668,7 @@ const EmailContainer = ({
 
         alert("Process completed successfully!");
         sessionStorage.clear();
+        getCategoryFunction();
         setNextStageFromCategory({ ...Config.NextStageFromCategorySideBar });
         setEmailContainerFieldSideBarVisible(false);
         setSelectedApprover("");
