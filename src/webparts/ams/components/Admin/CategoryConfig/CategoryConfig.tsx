@@ -35,6 +35,8 @@ import Loader from "../../Loader/Loader";
 
 const CategoryConfig = ({
   context,
+  getCategoryFunction,
+  selectedCategory,
   setCategorySideBarContent,
   ApprovalConfigSideBarVisible,
   setCategorySideBarVisible,
@@ -52,6 +54,7 @@ const CategoryConfig = ({
     null
   );
   const [selectedApprover, setSelectedApprover] = useState<string>("");
+  console.log("selectedCategory", selectedCategory);
   const [nextStageFromCategory, setNextStageFromCategory] =
     useState<INextStageFromCategorySideBar>({
       ...Config.NextStageFromCategorySideBar,
@@ -387,6 +390,7 @@ const CategoryConfig = ({
               />
             ) : nextStageFromCategory.EmailTemplateSection ? (
               <EmailContainer
+                getCategoryFunction={getCategoryFunction}
                 setFinalSubmit={setFinalSubmit}
                 actionBooleans={actionsBooleans}
                 categoryClickingID={selectedCategoryId}
@@ -467,7 +471,7 @@ const CategoryConfig = ({
 
   useEffect(() => {
     if (!ApprovalConfigSideBarVisible) {
-      debugger
+      debugger;
       setValidateError({
         categoryName: "",
         approversSelected: "",
@@ -506,6 +510,7 @@ const CategoryConfig = ({
         <>
           <div className="customDataTableContainer">
             <DataTable
+              globalFilter={selectedCategory?.name}
               paginator
               rows={5}
               value={categoryDetails}

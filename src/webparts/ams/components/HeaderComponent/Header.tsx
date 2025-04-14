@@ -141,9 +141,6 @@ const Header = ({ context, currentPage }) => {
     declareTabViewBar();
   }, []);
   useEffect(() => {
-    categoryFilter();
-  }, [currentPage]);
-  useEffect(() => {
     setGlobelSearchValue("");
   }, [activeTabViewBar]);
   useEffect(() => {
@@ -259,6 +256,8 @@ const Header = ({ context, currentPage }) => {
         ) : currentPage == Config.sideNavPageNames.ApproveConfig ? (
           <ApprovalConfig
             context={context}
+            getCategoryFunction={categoryFilter}
+            selectedCategory={selectedCategory}
             ApprovalConfigSideBarVisible={sideBarVisible}
             setTabView={activeTabView}
             setApprovalConfigSideBarContent={setSideBarContent}

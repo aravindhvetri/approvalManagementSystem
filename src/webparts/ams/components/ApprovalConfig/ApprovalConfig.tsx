@@ -14,16 +14,19 @@ import ApprovalDashboard from "../Admin/ApprovalWorkFlow/ApprovalDashboard";
 const ApprovalConfig = ({
   context,
   setTabView,
+  getCategoryFunction,
+  selectedCategory,
   ApprovalConfigSideBarVisible,
   setApprovalConfigSideBarContent,
   setApprovalConfigSideBarVisible,
 }) => {
-
   return (
     <>
       <div className="tabViewContents">
         {setTabView == 0 ? (
           <CategoryConfig
+          selectedCategory={selectedCategory}
+            getCategoryFunction={getCategoryFunction}
             context={context}
             setCategorySideBarContent={setApprovalConfigSideBarContent}
             setCategorySideBarVisible={setApprovalConfigSideBarVisible}
