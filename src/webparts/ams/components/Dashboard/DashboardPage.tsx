@@ -12,6 +12,7 @@ import AddRequestsFields from "../DynamicsRequests/AddRequestFields";
 import AllRequestPage from "./AllRequest";
 import MyRequestPage from "./MyRequest";
 import MyApprovalPage from "./MyApproval";
+import { sp } from "@pnp/sp";
 
 const DashboardPage = ({
   categoryFilterValue,
@@ -34,7 +35,7 @@ const DashboardPage = ({
           setDynamicRequestsSideBarVisible={setDynamicRequestsSideBarVisible}
         />
       )}
-      {activeTabViewBar === 0 && (
+      {activeTabViewBar === 2 && (
         <AllRequestPage
           searchValue={globelSearchValue}
           filterCategory={selectedCategory}
@@ -44,7 +45,7 @@ const DashboardPage = ({
           setDynamicRequestsSideBarVisible={setDynamicRequestsSideBarVisible}
         />
       )}
-      {activeTabViewBar === 1 && (
+      {activeTabViewBar === 0 && (
         <MyRequestPage
           filterCategory={selectedCategory}
           sideBarVisible={sideBarVisible}
@@ -53,7 +54,7 @@ const DashboardPage = ({
           setDynamicRequestsSideBarVisible={setDynamicRequestsSideBarVisible}
         />
       )}
-      {activeTabViewBar === 2 && (
+      {activeTabViewBar === 1 && (
         <MyApprovalPage
           searchValue={globelSearchValue}
           filterCategory={selectedCategory}

@@ -562,31 +562,35 @@ const DynamicSectionWithField = ({
                 <span className="errorMsg">Field Name is required</span>
               )}
             </div>
+            {newField?.columnID === null && (
+              <div
+                className={DynamicSectionWithFieldStyles.columnNameContainer}
+              >
+                <Label className={DynamicSectionWithFieldStyles.label}>
+                  Type
+                </Label>
+                <Dropdown
+                  value={newField.type}
+                  options={columnTypes}
+                  onChange={(e) =>
+                    setNewField({
+                      ...newField,
+                      type: e.value,
+                      choices: e.value === "Choice" ? [] : newField.choices,
+                    })
+                  }
+                  optionLabel="name"
+                  placeholder="Select Type"
+                  style={{ padding: "4px" }}
+                  className={DynamicSectionWithFieldStyles.columnNameInput}
+                />
+                {isValidation && !newField?.type && (
+                  <span className="errorMsg">Field type is required</span>
+                )}
+              </div>
+            )}
             <div className={DynamicSectionWithFieldStyles.columnNameContainer}>
-              <Label className={DynamicSectionWithFieldStyles.label}>
-                Type
-              </Label>
-              <Dropdown
-                value={newField.type}
-                options={columnTypes}
-                onChange={(e) =>
-                  setNewField({
-                    ...newField,
-                    type: e.value,
-                    choices: e.value === "Choice" ? [] : newField.choices,
-                  })
-                }
-                optionLabel="name"
-                placeholder="Select Type"
-                style={{ padding: "4px" }}
-                className={DynamicSectionWithFieldStyles.columnNameInput}
-              />
-              {isValidation && !newField?.type && (
-                <span className="errorMsg">Field type is required</span>
-              )}
-            </div>
-            <div className={DynamicSectionWithFieldStyles.columnNameContainer}>
-              {newField.type === "Choice" && (
+              {newField.type === "Choice" && newField?.columnID === null && (
                 <>
                   <div
                     className={DynamicSectionWithFieldStyles.choiceContainer}

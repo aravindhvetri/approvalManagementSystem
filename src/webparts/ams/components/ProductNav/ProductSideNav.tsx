@@ -8,8 +8,9 @@ import { ISideNavDetails } from "../../../../CommonServices/interface";
 import { Config } from "../../../../CommonServices/Config";
 //Fluentui Imports:
 import { TooltipHost } from "@fluentui/react";
+import { getSpGroupMembers } from "../../../../CommonServices/CommonTemplates";
 
-const ProductSideNav = ({ updatePage, currentPage }) => {
+const ProductSideNav = ({ context, updatePage, currentPage }) => {
   //Image Variables:
   const sampleImg: any = require("../../../../External/sidenavImages/sampleImg.png");
   const sampleImgBlue: any = require("../../../../External/sidenavImages/sampleImgBlue.png");
@@ -18,27 +19,31 @@ const ProductSideNav = ({ updatePage, currentPage }) => {
   const requestImgLight: any = require("../../../../External/sidenavImages/requestLight.png");
   const approvalImgDark: any = require("../../../../External/sidenavImages/approvalDark.png");
   const approvalImgLight: any = require("../../../../External/sidenavImages/approvalLight.png");
+  const [isAdmin, setIsAdmin] = useState<boolean>(false);
+  const loginUser = context._pageContext._user.email;
 
   //Get SideNav Details:
-  const sideNavContents: ISideNavDetails[] = [];
-  sideNavContents.push(
+  const sideNavContents: ISideNavDetails[] = [
     {
       img:
-        currentPage == Config.sideNavPageNames.Request
+        currentPage === Config.sideNavPageNames.Request
           ? requestImgLight
           : requestImgDark,
       name: "Request",
       pageName: Config.sideNavPageNames.Request,
     },
-    {
+  ];
+  if (isAdmin) {
+    sideNavContents.push({
       img:
-        currentPage == Config.sideNavPageNames.ApproveConfig
+        currentPage === Config.sideNavPageNames.ApproveConfig
           ? approvalImgLight
           : approvalImgDark,
       name: "Approval config",
       pageName: Config.sideNavPageNames.ApproveConfig,
-    }
-  );
+    });
+  }
+  console.log("sideNavContents", sideNavContents);
 
   //SetPagename :
   const updatePageUrl = (pageName: string) => {
@@ -50,6 +55,17 @@ const ProductSideNav = ({ updatePage, currentPage }) => {
     history.pushState(null, "", newUrl);
     updatePage(pageName);
   };
+
+  useEffect(() => {
+    getSpGroupMembers(Config.spGroupNames.RequestsAdmin).then(async (res) => {
+      debugger;
+      if (res?.some((e) => e?.email === loginUser)) {
+        await setIsAdmin(true);
+      } else {
+        false;
+      }
+    });
+  }, []);
 
   return (
     <>

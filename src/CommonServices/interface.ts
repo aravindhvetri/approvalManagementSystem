@@ -22,6 +22,10 @@ export interface IListNames {
   EmailTemplateConfig: string;
   CategoryEmailConfig: string;
 }
+//Sp Group Name Details
+export interface ISpGroupNames {
+  RequestsAdmin: string;
+}
 //CategoryConfig Details:
 export interface ICategoryDetails {
   id: number;

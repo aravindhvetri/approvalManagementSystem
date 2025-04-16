@@ -296,7 +296,9 @@ export const tabViewBar = (
   return (
     <TabView
       activeIndex={activeTabViewBar}
-      onTabChange={(e) => setActiveTabViewBar(e.index)}
+      onTabChange={(e) => {
+        setActiveTabViewBar(e.index);
+      }}
     >
       {data.map((e) => (
         <TabPanel header={e.name} />
@@ -370,12 +372,30 @@ export const sendNotification = async (emailProps: any): Promise<any> => {
   try {
     await sp.utility
       .sendEmail(emailProps)
-      .then((res: any) => {
-      })
+      .then((res: any) => {})
       .catch((err: any) => {
         console.log("mail err", err);
       });
   } catch (error) {
     console.log("Error fetching access token:", error);
+  }
+};
+
+//Get SP Group Members
+export const getSpGroupMembers = async (groupName) => {
+  try {
+    const res = await sp.web.siteGroups.getByName(groupName).users.get();
+    const groupMembers: IPeoplePickerDetails[] = [];
+    res?.forEach((user) => {
+      groupMembers.push({
+        id: user?.Id,
+        name: user?.Title,
+        email: user?.Email,
+      });
+    });
+    console.log("groupMembers", groupMembers);
+    return groupMembers;
+  } catch {
+    (err) => console.log("getSpGroupMembers err", err);
   }
 };
