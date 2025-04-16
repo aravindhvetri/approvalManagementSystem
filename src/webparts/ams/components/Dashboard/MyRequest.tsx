@@ -297,18 +297,8 @@ const MyRequestPage = ({
             />
           )}
           {/* <div>
-        {requestsDetails?.length > 0 && (
-          <div>
-            <WorkflowActionButtons
-              context={context}
-              requestsHubDetails={requestsDetails}
-              setRequestsHubDetails={setRequestsDetails}
-              itemID={1}
-            />
             <AttachmentUploader context={context} />
-          </div>
-        )}
-      </div> */}
+          </div> */}
         </>
       )}
     </>

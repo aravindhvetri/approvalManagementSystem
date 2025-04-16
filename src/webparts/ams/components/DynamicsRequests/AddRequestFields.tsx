@@ -5,12 +5,9 @@ import { useState, useEffect } from "react";
 import SPServices from "../../../../CommonServices/SPServices";
 import { Config } from "../../../../CommonServices/Config";
 import {
-  IPeoplePickerDetails,
   IRightSideBarContents,
   ISectionColumnsConfig,
-  IApprovalDetails,
   IBasicFilterCategoryDrop,
-  IEmailTemplateConfigDetails,
   IemailMessage,
 } from "../../../../CommonServices/interface";
 import {
@@ -22,7 +19,9 @@ import { InputText } from "primereact/inputtext";
 import { InputTextarea } from "primereact/inputtextarea";
 import { Button } from "primereact/button";
 import { Label } from "office-ui-fabric-react";
-import { classNames } from "primereact/utils";
+import { FileUpload } from "primereact/fileupload";
+import { Tag } from "primereact/tag";
+import { GiCancel } from "react-icons/gi";
 //Styles Imports:
 import dynamicFieldsStyles from "./RequestsFields.module.scss";
 import "../../../../External/style.css";
@@ -31,6 +30,8 @@ import { Dropdown } from "primereact/dropdown";
 import Loader from "../Loader/Loader";
 import { sp } from "@pnp/sp/presets/all";
 import moment from "moment";
+import attachmentStyles from "../AttachmentUploader/AttachmentUploader.module.scss";
+import "../../../../External/style.css";
 
 const AddRequestsFields = ({
   categoryFilterValue,
@@ -38,17 +39,17 @@ const AddRequestsFields = ({
   setRequestsDashBoardContent,
   setDynamicRequestsSideBarVisible,
 }) => {
+  const serverRelativeUrl = context?._pageContext?._site?.serverRelativeUrl;
+  const [files, setFiles] = useState([]);
   const [dynamicFields, setDynamicFields] = useState<ISectionColumnsConfig[]>(
     []
   );
-  console.log("dynamicFields", dynamicFields);
   const [formData, setFormData] = useState({});
   const [errors, setErrors] = useState({});
   const [selectedCategory, setSelectedCategory] =
     useState<IBasicFilterCategoryDrop>();
   const [showLoader, setShowLoader] = useState<boolean>(false);
-  console.log("formData", formData);
-
+  const [requestIdFormat, setRequestIdFormat] = useState<string>("");
   //CategorySectionConfig List
   const getCategorySectionConfigDetails = () => {
     SPServices.SPReadItems({
@@ -158,9 +159,24 @@ const AddRequestsFields = ({
           ["ApprovalJson"]: `[${JSON.stringify(approvalJson)}]`,
           ["CategoryId"]: selectedCategory?.id,
         });
+        getCategoryConfigDetails(selectedCategory?.id);
       })
       .catch((er) => {
         console.log("getapprovalJson error", er);
+      });
+  };
+
+  //Get Category Config Details:
+  const getCategoryConfigDetails = (categoryID: number) => {
+    SPServices.SPReadItemUsingID({
+      Listname: Config.ListNames?.CategoryConfig,
+      SelectedId: categoryID,
+    })
+      .then((res: any) => {
+        setRequestIdFormat(res?.RequestIdFormat ? res?.RequestIdFormat : "R");
+      })
+      .catch((err) => {
+        console.log(err, "getCategoryConfigDetails error");
       });
   };
 
@@ -252,6 +268,12 @@ const AddRequestsFields = ({
     return Object.keys(newErrors).length === 0;
   };
 
+  //Remove file :
+  const removeFile = (fileName: string) => {
+    const updatedFiles = files.filter((file) => file.name !== fileName);
+    setFiles(updatedFiles);
+  };
+
   //Submission
   const handleSubmit = async () => {
     if (validateForm()) {
@@ -261,12 +283,44 @@ const AddRequestsFields = ({
         RequestJSON: formData,
       })
         .then(async (e) => {
-          setShowLoader(false);
+          try {
+            const folderPath = `${serverRelativeUrl}/${Config.LibraryNames?.AttachmentsLibrary}/Requestors`;
+            const requestId = `${e?.data?.ID}`;
+
+            for (const file of files) {
+              const fileBuffer = await file.arrayBuffer();
+              const uploadResult = await sp.web
+                .getFolderByServerRelativeUrl(folderPath)
+                .files.add(file.name, fileBuffer, true);
+
+              await uploadResult.file.listItemAllFields
+                .get()
+                .then(async (item) => {
+                  await sp.web.lists
+                    .getByTitle(Config.LibraryNames?.AttachmentsLibrary)
+                    .items.getById(item.Id)
+                    .update({
+                      RequestID: requestId,
+                    });
+                });
+            }
+            setFiles([]);
+            setShowLoader(false);
+            console.log("All files uploaded successfully!");
+          } catch (error) {
+            console.error("Error uploading files:", error);
+            setShowLoader(false);
+          }
+
           SPServices.SPUpdateItem({
             Listname: Config.ListNames.RequestsHub,
             ID: e.data.ID,
             RequestJSON: {
-              RequestID: `R-${generateRequestID(e.data.ID, 5, 0)}`,
+              RequestID: `${requestIdFormat}-${generateRequestID(
+                e.data.ID,
+                5,
+                0
+              )}`,
             },
           })
             .then(async () => {
@@ -354,114 +408,6 @@ const AddRequestsFields = ({
           />
         </div>
         {dynamicFields.length > 0 && (
-          // <div className={dynamicFieldsStyles.formContainer}>
-          //   <div className={dynamicFieldsStyles.singlelineFields}>
-          //     {dynamicFields
-          //       .filter((f) => f.columnType === "Singleline")
-          //       .map((field) => (
-          //         <div
-          //           key={field.id}
-          //           className={dynamicFieldsStyles.inputField}
-          //         >
-          //           <Label className={dynamicFieldsStyles.label}>
-          //             {field?.columnDisplayName}
-          //             {field?.isRequired && <span className="required">*</span>}
-          //           </Label>
-          //           <InputText
-          //             id={field.columnName}
-          //             value={formData[field.columnName] || ""}
-          //             onChange={(e) =>
-          //               handleInputChange(field.columnName, e.target.value)
-          //             }
-          //           />
-          //           {errors[field.columnName] && (
-          //             <span className={dynamicFieldsStyles.errorMsg}>
-          //               {errors[field.columnName]}
-          //             </span>
-          //           )}
-          //         </div>
-          //       ))}
-          //     {dynamicFields
-          //       .filter((f) => f.columnType === "Choice")
-          //       .map((field) => (
-          //         <div
-          //           key={field.id}
-          //           className={dynamicFieldsStyles.inputField}
-          //         >
-          //           <Label className={dynamicFieldsStyles.label}>
-          //             {field.columnDisplayName}{" "}
-          //             {field?.isRequired && <span className="required">*</span>}
-          //           </Label>
-          //           <Dropdown
-          //             value={field?.choices.find(
-          //               (e) => e === formData[field.columnName]
-          //             )}
-          //             showClear
-          //             options={field?.choices}
-          //             onChange={(e) => {
-          //               handleInputChange(field.columnName, e.value);
-          //             }}
-          //             filter
-          //             placeholder={field.columnName}
-          //             className="w-full md:w-14rem"
-          //           />
-          //           {errors[field.columnName] && (
-          //             <span className={dynamicFieldsStyles.errorMsg}>
-          //               {errors[field.columnName]}
-          //             </span>
-          //           )}
-          //         </div>
-          //       ))}
-          //   </div>
-          //   <div className={dynamicFieldsStyles.multilineFields}>
-          //     {dynamicFields
-          //       .filter((f) => f.columnType === "Multiline")
-          //       .map((field) => (
-          //         <div
-          //           key={field.id}
-          //           className={dynamicFieldsStyles.inputField}
-          //         >
-          //           <Label className={dynamicFieldsStyles.label}>
-          //             {field.columnDisplayName}{" "}
-          //             {field?.isRequired && <span className="required">*</span>}
-          //           </Label>
-          //           <InputTextarea
-          //             id={field.columnName}
-          //             autoResize
-          //             value={formData[field.columnName] || ""}
-          //             onChange={(e) =>
-          //               handleInputChange(field.columnName, e.target.value)
-          //             }
-          //             rows={3}
-          //           />
-          //           {errors[field.columnName] && (
-          //             <span className={dynamicFieldsStyles.errorMsg}>
-          //               {errors[field.columnName]}
-          //             </span>
-          //           )}
-          //         </div>
-          //       ))}
-          //   </div>
-
-          // <div className={`${dynamicFieldsStyles.sideBarButtonContainer}`}>
-          //   <>
-          //     <Button
-          //       icon="pi pi-times"
-          //       label="Cancel"
-          //       className="customCancelButton"
-          //       onClick={() => handleCancel()}
-          //     />
-          //     <Button
-          //       icon="pi pi-save"
-          //       label="Submit"
-          //       className="customSubmitButton"
-          //       onClick={() => {
-          //         handleSubmit();
-          //       }}
-          //     />
-          //   </>
-          // </div>
-          // </div>
           <>
             {Object.entries(groupedFields).map(
               ([sectionName, fields]: [string, ISectionColumnsConfig[]]) => (
@@ -575,6 +521,45 @@ const AddRequestsFields = ({
               )
             )}
 
+            <div>
+              <Label className={dynamicFieldsStyles.label}>Attachments</Label>
+              <>
+                <div>
+                  <FileUpload
+                    className="addNewButton"
+                    name="demo[]"
+                    mode="basic"
+                    onSelect={(e) => setFiles([...files, ...e.files])}
+                    url="/api/upload"
+                    auto
+                    multiple
+                    maxFileSize={1000000}
+                    style={{ width: "14%" }}
+                    chooseLabel="Browse"
+                    chooseOptions={{ icon: "" }}
+                  />
+                </div>
+                <div style={{ marginTop: "20px" }}>
+                  {files.length > 0 && (
+                    <ul style={{ listStyle: "none", padding: 0 }}>
+                      {files.map((file, index) => (
+                        <li className={attachmentStyles?.fileList} key={index}>
+                          <Tag
+                            className={attachmentStyles.filNameTag}
+                            value={file.name}
+                          />
+                          <GiCancel
+                            style={{ cursor: "pointer", color: "red" }}
+                            onClick={() => removeFile(file.name)}
+                          />
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
+              </>
+            </div>
+
             <div className={`${dynamicFieldsStyles.sideBarButtonContainer}`}>
               <>
                 <Button
@@ -620,7 +605,7 @@ const AddRequestsFields = ({
       ...prev,
       AddRequestsDashBoardContent: DynamicRequestsFieldsSideBarContent(),
     }));
-  }, [dynamicFields, formData, errors, selectedCategory]);
+  }, [dynamicFields, formData, errors, selectedCategory, files]);
 
   return <>{showLoader ? <Loader /> : ""}</>;
 };

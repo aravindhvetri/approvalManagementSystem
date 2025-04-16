@@ -9,28 +9,29 @@ import {
   IRightSideBarContents,
   ISectionColumnsConfig,
   IApprovalDetails,
-  IApprovalStages,
   IApprovalHistoryDetails,
-  IRequestHubDetails,
 } from "../../../../CommonServices/interface";
+import {
+  peoplePickerTemplate,
+  statusTemplate,
+} from "../../../../CommonServices/CommonTemplates";
 //primeReact Imports:
 import { InputText } from "primereact/inputtext";
 import { InputTextarea } from "primereact/inputtextarea";
 import { Button } from "primereact/button";
 import { Label } from "office-ui-fabric-react";
-import { classNames } from "primereact/utils";
+import { FileUpload } from "primereact/fileupload";
+import { Tag } from "primereact/tag";
+import { GiCancel } from "react-icons/gi";
+import { DataTable } from "primereact/datatable";
+import { Column } from "primereact/column";
+import { Dropdown } from "primereact/dropdown";
 //Styles Imports:
 import dynamicFieldsStyles from "./RequestsFields.module.scss";
 import "../../../../External/style.css";
 import WorkflowActionButtons from "../WorkflowButtons/WorkflowActionButtons";
-import { DataTable } from "primereact/datatable";
-import { Column } from "primereact/column";
-import {
-  peoplePickerTemplate,
-  statusTemplate,
-} from "../../../../CommonServices/CommonTemplates";
-import { orderBy } from "lodash";
-import { Dropdown } from "primereact/dropdown";
+import attachmentStyles from "../AttachmentUploader/AttachmentUploader.module.scss";
+import { sp } from "@pnp/sp";
 
 const RequestsFields = ({
   context,
@@ -44,9 +45,12 @@ const RequestsFields = ({
   setDynamicRequestsSideBarVisible,
   setShowLoader,
 }) => {
+  console.log(navigateFrom, "navigateFrom");
+  const serverRelativeUrl = context?._pageContext?._site?.serverRelativeUrl;
   const [dynamicFields, setDynamicFields] = useState<ISectionColumnsConfig[]>(
     []
   );
+  const [files, setFiles] = useState([]);
   const [formData, setFormData] = useState({});
   const [errors, setErrors] = useState({});
   const [author, setAuthor] = useState<IPeoplePickerDetails>();
@@ -58,7 +62,6 @@ const RequestsFields = ({
     status: "",
     comments: "",
   });
-  console.log("formData", formData);
   const [approvalHistoryDetails, setApprovalHistoryDetails] =
     useState<IApprovalHistoryDetails[]>();
   //CategorySectionConfig List
@@ -156,10 +159,38 @@ const RequestsFields = ({
           name: item.Author.Title,
           email: item.Author.EMail,
         });
+        LoadExistingFiles(currentRecord.id);
       })
       .catch((e) => {
         console.log("Get Current Record from RequestHup Details error", e);
       });
+  };
+
+  const LoadExistingFiles = async (id) => {
+    try {
+      const requestId = `${id}`;
+      const folderPath = `${serverRelativeUrl}/${Config.LibraryNames?.AttachmentsLibrary}/Requestors`;
+
+      const items = await sp.web.lists
+        .getByTitle(Config.LibraryNames?.AttachmentsLibrary)
+        .items.filter(`RequestID eq '${requestId}' and IsDelete eq false`)
+        .select("FileLeafRef", "FileRef")
+        .get();
+
+      const fetchedFiles: File[] = [];
+
+      for (const item of items) {
+        const fileResponse = await sp.web
+          .getFileByServerRelativePath(item.FileRef)
+          .getBlob();
+        const file = new File([fileResponse], item.FileLeafRef);
+        fetchedFiles.push(file);
+      }
+
+      setFiles(fetchedFiles ? fetchedFiles : []);
+    } catch (error) {
+      console.error("Error fetching existing files:", error);
+    }
   };
 
   //Get Approval History
@@ -263,6 +294,38 @@ const RequestsFields = ({
     return acc;
   }, {});
 
+  //Remove file :
+  // const removeFile = (fileName: string) => {
+  //   const updatedFiles = files.filter((file) => file.name !== fileName);
+  //   setFiles(updatedFiles);
+  // };
+
+  const removeFile = async (fileName: string) => {
+    debugger;
+    try {
+      const folderPath = `${serverRelativeUrl}/${Config.LibraryNames?.AttachmentsLibrary}/Requestors`;
+      const items = await sp.web.lists
+        .getByTitle(Config.LibraryNames?.AttachmentsLibrary)
+        .items.filter(`FileLeafRef eq '${fileName}'`)
+        .select("Id", "FileLeafRef", "FileRef")
+        .get();
+
+      if (items.length > 0) {
+        const itemId = items[0].Id;
+        await sp.web.lists
+          .getByTitle(Config.LibraryNames?.AttachmentsLibrary)
+          .items.getById(itemId)
+          .update({
+            IsDelete: true,
+          });
+      }
+      const updatedFiles = files.filter((file) => file.name !== fileName);
+      setFiles(updatedFiles);
+    } catch (error) {
+      console.error("Error deleting file:", error);
+    }
+  };
+
   //DynamicRequestFieldsSideBarContent Return Function:
   const DynamicRequestsFieldsSideBarContent = () => {
     return (
@@ -271,132 +334,6 @@ const RequestsFields = ({
           <Label className={dynamicFieldsStyles.labelHeader}>
             Request details
           </Label>
-          {/* <div className={dynamicFieldsStyles.singlelineFields}>
-            {dynamicFields
-              .filter((f) => f.columnType === "Singleline")
-              .map(
-                (field) =>
-                  showColumnsByStage(field) && (
-                    <div
-                      key={field.id}
-                      className={dynamicFieldsStyles.inputField}
-                    >
-                      <Label className={dynamicFieldsStyles.label}>
-                        {field.columnDisplayName}
-                        {field?.isRequired && (
-                          <span className="required">*</span>
-                        )}
-                      </Label>
-                      <InputText
-                        disabled={
-                          !(
-                            recordAction === "Edit" &&
-                            author?.email === loginUser &&
-                            navigateFrom === "MyRequest"
-                          )
-                        }
-                        id={field.columnName}
-                        value={formData[field.columnName] || ""}
-                        onChange={(e) =>
-                          handleInputChange(field.columnName, e.target.value)
-                        }
-                      />
-                      {errors[field.columnName] && (
-                        <span className={dynamicFieldsStyles.errorMsg}>
-                          {errors[field.columnName]}
-                        </span>
-                      )}
-                    </div>
-                  )
-              )}
-          </div>
-          <div className={dynamicFieldsStyles.singlelineFields}>
-            {dynamicFields
-              .filter((f) => f.columnType === "Choice")
-              .map(
-                (field) =>
-                  showColumnsByStage(field) && (
-                    <div
-                      key={field.id}
-                      className={dynamicFieldsStyles.inputField}
-                    >
-                      <Label className={dynamicFieldsStyles.label}>
-                        {field.columnDisplayName}{" "}
-                        {field?.isRequired && (
-                          <span className="required">*</span>
-                        )}
-                      </Label>
-                      <Dropdown
-                        value={field?.choices.find(
-                          (e) => e === formData[field.columnName]
-                        )}
-                        showClear
-                        disabled={
-                          !(
-                            recordAction === "Edit" &&
-                            author?.email === loginUser &&
-                            navigateFrom === "MyRequest"
-                          )
-                        }
-                        options={field?.choices}
-                        onChange={(e) => {
-                          handleInputChange(field.columnName, e.value);
-                        }}
-                        filter
-                        placeholder={field.columnName}
-                        className="w-full md:w-14rem"
-                      />
-
-                      {errors[field.columnName] && (
-                        <span className={dynamicFieldsStyles.errorMsg}>
-                          {errors[field.columnName]}
-                        </span>
-                      )}
-                    </div>
-                  )
-              )}
-          </div>
-          <div className={dynamicFieldsStyles.multilineFields}>
-            {dynamicFields
-              .filter((f) => f.columnType === "Multiline")
-              .map(
-                (field) =>
-                  showColumnsByStage(field) && (
-                    <div
-                      key={field.id}
-                      className={dynamicFieldsStyles.inputField}
-                    >
-                      <Label className={dynamicFieldsStyles.label}>
-                        {field.columnDisplayName}{" "}
-                        {field?.isRequired && (
-                          <span className="required">*</span>
-                        )}
-                      </Label>
-                      <InputTextarea
-                        id={field.columnName}
-                        autoResize
-                        disabled={
-                          !(
-                            recordAction === "Edit" &&
-                            author?.email === loginUser &&
-                            navigateFrom === "MyRequest"
-                          )
-                        }
-                        value={formData[field.columnName] || ""}
-                        onChange={(e) =>
-                          handleInputChange(field.columnName, e.target.value)
-                        }
-                        rows={3}
-                      />
-                      {errors[field.columnName] && (
-                        <span className={dynamicFieldsStyles.errorMsg}>
-                          {errors[field.columnName]}
-                        </span>
-                      )}
-                    </div>
-                  )
-              )}
-          </div> */}
           {Object.entries(groupedFields).map(
             ([sectionName, fields]: [string, ISectionColumnsConfig[]]) => (
               <div
@@ -523,6 +460,54 @@ const RequestsFields = ({
               </div>
             )
           )}
+          {files.length > 0 && (
+            <div>
+              <Label className={dynamicFieldsStyles.label}>Attachments</Label>
+              <>
+                {!(recordAction === "Edit") ? (
+                  // author?.email === loginUser &&
+                  // navigateFrom === "MyRequest"
+                  ""
+                ) : (
+                  <div>
+                    <FileUpload
+                      className="addNewButton"
+                      name="demo[]"
+                      mode="basic"
+                      onSelect={(e) => setFiles([...files, ...e.files])}
+                      url="/api/upload"
+                      auto
+                      multiple
+                      maxFileSize={1000000}
+                      style={{ width: "14%" }}
+                      chooseLabel="Browse"
+                      chooseOptions={{ icon: "" }}
+                    />
+                  </div>
+                )}
+                <div style={{ marginTop: "20px" }}>
+                  {files.length > 0 && (
+                    <ul style={{ listStyle: "none", padding: 0 }}>
+                      {files.map((file, index) => (
+                        <li className={attachmentStyles?.fileList} key={index}>
+                          <Tag
+                            className={attachmentStyles.filNameTag}
+                            value={file?.name ? file?.name : ""}
+                          />
+                          {recordAction === "Edit" && (
+                            <GiCancel
+                              style={{ cursor: "pointer", color: "red" }}
+                              onClick={() => removeFile(file?.name)}
+                            />
+                          )}
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
+              </>
+            </div>
+          )}
           {recordAction === "Edit" && navigateFrom === "MyApproval" && (
             <div className={dynamicFieldsStyles.approverSection}>
               <Label className={dynamicFieldsStyles.labelHeader}>
@@ -590,6 +575,8 @@ const RequestsFields = ({
                   setRequestsSideBarVisible={setDynamicRequestsSideBarVisible}
                   context={context}
                   updatedRecord={formData}
+                  files={files}
+                  setFiles={setFiles}
                   requestsHubDetails={requestsDetails}
                   setRequestsHubDetails={setRequestsDetails}
                   itemID={currentRecord.id}
@@ -635,7 +622,7 @@ const RequestsFields = ({
       RequestsDashBoardContent: DynamicRequestsFieldsSideBarContent(),
     }));
     setShowLoader(false);
-  }, [dynamicFields, formData, errors, approvalDetails]);
+  }, [dynamicFields, formData, errors, approvalDetails, files]);
 
   useEffect(() => {
     getRequestHubDetails();

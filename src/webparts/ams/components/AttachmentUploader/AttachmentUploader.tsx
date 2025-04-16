@@ -13,20 +13,49 @@ import { Config } from "../../../../CommonServices/Config";
 import attachmentStyles from "./AttachmentUploader.module.scss";
 import "../../../../External/style.css";
 
-const AttachmentUploader = ({ context }) => {
+const AttachmentUploader = ({ context, datas }) => {
   const serverRelativeUrl = context?._pageContext?._site?.serverRelativeUrl;
   const [files, setFiles] = useState([]);
+  console.log(datas, "datas");
+
+  // const UploadLibrary = async () => {
+  //   try {
+  //     for (const file of files) {
+  //       const fileBuffer = await file.arrayBuffer();
+  //       await sp.web
+  //         .getFolderByServerRelativeUrl(
+  //           `${serverRelativeUrl}/${Config.LibraryNames?.AttachmentsLibrary}`
+  //         )
+  //         .files.add(file.name, fileBuffer, true);
+  //     }
+  //     setFiles([]);
+  //     console.log("All files uploaded successfully!");
+  //   } catch (error) {
+  //     console.error("Error uploading files:", error);
+  //   }
+  // };
 
   const UploadLibrary = async () => {
     try {
+      const folderPath = `${serverRelativeUrl}/${Config.LibraryNames?.AttachmentsLibrary}/Requestors`;
+      const requestId = "REQ-001";
+
       for (const file of files) {
         const fileBuffer = await file.arrayBuffer();
-        await sp.web
-          .getFolderByServerRelativeUrl(
-            `${serverRelativeUrl}/${Config.LibraryNames?.AttachmentsLibrary}`
-          )
+        const uploadResult = await sp.web
+          .getFolderByServerRelativeUrl(folderPath)
           .files.add(file.name, fileBuffer, true);
+
+        await uploadResult.file.listItemAllFields.get().then(async (item) => {
+          await sp.web.lists
+            .getByTitle(Config.LibraryNames?.AttachmentsLibrary)
+            .items.getById(item.Id)
+            .update({
+              RequestID: requestId,
+            });
+        });
       }
+
       setFiles([]);
       console.log("All files uploaded successfully!");
     } catch (error) {
@@ -38,6 +67,12 @@ const AttachmentUploader = ({ context }) => {
     const updatedFiles = files.filter((file) => file.name !== fileName);
     setFiles(updatedFiles);
   };
+
+  useEffect(() => {
+    if (datas?.requestID) {
+      console.log(datas, "datas in useEffect");
+    }
+  }, [datas]);
 
   return (
     <>
@@ -51,6 +86,7 @@ const AttachmentUploader = ({ context }) => {
           auto
           multiple
           maxFileSize={1000000}
+          style={{ width: "14%" }}
           chooseLabel="Browse"
           chooseOptions={{ icon: "" }}
         />

@@ -27,6 +27,7 @@ export interface ICategoryDetails {
   id: number;
   category: string;
   isDelete: boolean;
+  requestIdFormat: string;
 }
 //Approval Details patch:
 export interface IApprovalDetailsPatch {
@@ -204,6 +205,7 @@ export interface IApprovalFlowValidation {
 export interface IFinalSubmitDetails {
   categoryConfig: {
     category: string;
+    requestIdFormat: string;
     ExistingApprover: number;
     customApprover: {};
   };

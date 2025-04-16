@@ -28,11 +28,15 @@ const WorkflowActionButtons = ({
   setApprovalDetails,
   setRequestsSideBarVisible,
   context,
+  files,
+  setFiles,
   updatedRecord,
   requestsHubDetails,
   setRequestsHubDetails,
   itemID,
 }) => {
+  const serverRelativeUrl = context?._pageContext?._site?.serverRelativeUrl;
+  console.log(files, "files");
   //useStates
   const [submitBtn, setSubmitBtn] = useState(false);
   const [reSubmit, setReSubmit] = useState(false);
@@ -213,6 +217,7 @@ const WorkflowActionButtons = ({
     try {
       await addApprovalHistory("Approved");
       updateStatusByApprover(currentRec.approvalJson, loginUser, 1);
+      addDatasFromAttachmentLibraryRequestors(itemID, files, "Approvers");
     } catch {
       (e) => {
         console.log("Approval history patch err", e);
@@ -229,6 +234,7 @@ const WorkflowActionButtons = ({
       try {
         await addApprovalHistory("Rejected");
         updateStatusByApprover(currentRec.approvalJson, loginUser, 2);
+        addDatasFromAttachmentLibraryRequestors(itemID, files, "Approvers");
       } catch {
         (e) => {
           console.log("Approval history patch err", e);
@@ -255,11 +261,42 @@ const WorkflowActionButtons = ({
       })
         .then(() => {
           updateStatusByUser(currentRec.approvalJson, loginUser, 0);
+          addDatasFromAttachmentLibraryRequestors(itemID, files, "Requestors");
         })
         .catch((err) => {
           console.log("Resubmission error", err);
           setShowLoader(false);
         });
+    }
+  };
+
+  //Add Datas From Attachment Library Requestors:
+  const addDatasFromAttachmentLibraryRequestors = async (id, files, folder) => {
+    try {
+      const folderPath = `${serverRelativeUrl}/${Config.LibraryNames?.AttachmentsLibrary}/${folder}`;
+      const requestId = `${id}`;
+
+      for (const file of files) {
+        const fileBuffer = await file.arrayBuffer();
+        const uploadResult = await sp.web
+          .getFolderByServerRelativeUrl(folderPath)
+          .files.add(file.name, fileBuffer, true);
+
+        await uploadResult.file.listItemAllFields.get().then(async (item) => {
+          await sp.web.lists
+            .getByTitle(Config.LibraryNames?.AttachmentsLibrary)
+            .items.getById(item.Id)
+            .update({
+              RequestID: requestId,
+            });
+        });
+      }
+      setFiles([]);
+      setShowLoader(false);
+      console.log("All files uploaded successfully!");
+    } catch (error) {
+      console.error("Error uploading files:", error);
+      setShowLoader(false);
     }
   };
 
@@ -321,9 +358,7 @@ const WorkflowActionButtons = ({
         ],
         FilterCondition: "and",
       });
-      console.log("getCategoryEmailConfig", res);
       const emailContent = await getEmailTemplateConfig(res[0]);
-      console.log("emailContent", emailContent);
       return emailContent;
     } catch {
       (err) => console.log("getCategoryEmailConfig err", err);
@@ -358,7 +393,6 @@ const WorkflowActionButtons = ({
       (e: any) => e?.statusCode === 0
     );
     const tempEmailToPersons: string[] = allPending ? stageData?.approvers : [];
-    console.log("tempEmailToPersons", tempEmailToPersons);
     const replaceDynamicContentArr = {
       "[$RequestID]": `R-${generateRequestID(Item.ID, 5, 0)}`,
       "[$Requestor]": authorDetails?.Title,
@@ -419,9 +453,6 @@ const WorkflowActionButtons = ({
             },
           ]
         : [];
-    console.log("tempEmailToPersons", tempEmailToPersons);
-    console.log("emailBody", emailBody);
-    console.log("emailSubject", emailSubject);
 
     if (statusCode === 1) {
       await sentEmailtoNextStageApprovers(itemData, statusCode);
@@ -476,7 +507,6 @@ const WorkflowActionButtons = ({
           .then(async (Item: any) => {
             let Status = statusCodeDecode(statusCode);
             const template: any = await getCategoryEmailConfig(Item, Status);
-            console.log("template", template);
             await getEmailContent(
               Item,
               template?.TemplateName,
