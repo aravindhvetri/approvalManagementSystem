@@ -179,15 +179,18 @@ const EmailWorkFlow = ({
     {
       label: "View",
       icon: "pi pi-eye",
+      className: "customView",
       command: () => handleAction("view", rowData),
     },
     {
       label: "Edit",
+      className: "customEdit",
       icon: "pi pi-file-edit",
       command: () => handleAction("edit", rowData),
     },
     {
       label: "Delete",
+      className: "customDelete",
       icon: "pi pi-trash",
       command: () => handleDelete(rowData),
     },

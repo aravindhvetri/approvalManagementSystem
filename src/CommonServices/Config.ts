@@ -16,6 +16,7 @@ import {
   IRightSideBarContentsDetails,
   ISectionColumnsConfig,
   ISideNavPageNames,
+  ISpGroupNames,
   ITabviewDetails,
 } from "./interface";
 
@@ -31,6 +32,11 @@ export namespace Config {
     ApprovalHistory: "ApprovalHistory",
     EmailTemplateConfig: "EmailTemplateConfig",
     CategoryEmailConfig: "CategoryEmailConfig",
+  };
+
+  //SharePoint Group Names config
+  export const spGroupNames: ISpGroupNames = {
+    RequestsAdmin: "RequestsAdmin",
   };
 
   //Dropdown Config:

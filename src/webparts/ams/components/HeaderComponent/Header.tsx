@@ -18,6 +18,7 @@ import { LuBadgePlus } from "react-icons/lu";
 import { Button } from "primereact/button";
 import { Dropdown } from "primereact/dropdown";
 import {
+  getSpGroupMembers,
   RightSidebar,
   tabViewBar,
 } from "../../../../CommonServices/CommonTemplates";
@@ -41,6 +42,8 @@ const Header = ({ context, currentPage }) => {
   const [sideBarcontent, setSideBarContent] = useState<IRightSideBarContents>({
     ...Config.rightSideBarContents,
   });
+  const [isAdmin, setIsAdmin] = useState<boolean>(false);
+  const loginUser = context._pageContext._user.email;
   const [activeTabViewBar, setActiveTabViewBar] = useState(0);
   const [globelSearchValue, setGlobelSearchValue] = useState<string>("");
   const userDetails: IUserDetails = {
@@ -52,6 +55,9 @@ const Header = ({ context, currentPage }) => {
       ...Config.rightSideBarContentsDetails,
     });
   const [activeTabView, setActiveTabView] = useState(0);
+  console.log("activeTabView", activeTabView);
+  console.log("currentPage", currentPage);
+
   //Get Category From List
   const categoryFilter = () => {
     SPServices.SPReadItems({
@@ -91,10 +97,6 @@ const Header = ({ context, currentPage }) => {
       case Config.sideNavPageNames.Request:
         const TemptabContent: ITabviewDetails[] = [
           {
-            id: 1,
-            name: "All Request",
-          },
-          {
             id: 2,
             name: "My Request",
           },
@@ -103,6 +105,13 @@ const Header = ({ context, currentPage }) => {
             name: "My Approval",
           },
         ];
+
+        if (isAdmin) {
+          TemptabContent.push({
+            id: 1,
+            name: "All Request",
+          });
+        }
 
         const tempTabView = tabViewBar(
           TemptabContent,
@@ -135,14 +144,73 @@ const Header = ({ context, currentPage }) => {
     }
   };
 
+  // Header Filters
+  const headerFilters = () => {
+    return (
+      <>
+        {((currentPage === Config.sideNavPageNames.ApproveConfig &&
+          activeTabView === 0) ||
+          (currentPage === Config.sideNavPageNames.Request &&
+            activeTabViewBar === 0)) && (
+          <Dropdown
+            value={selectedCategory}
+            options={categoryFilterValue.categoryDrop}
+            onChange={(e) => {
+              setSelectedCategory(e.value);
+            }}
+            showClear
+            filter
+            optionLabel="name"
+            placeholder="Category"
+            className="w-full md:w-14rem"
+          />
+        )}
+        {((currentPage === Config.sideNavPageNames.Request &&
+          activeTabViewBar === 0) ||
+          currentPage === Config.sideNavPageNames.ApproveConfig) && (
+          <div className="addNewButton">
+            <Button
+              label="Add new"
+              onClick={async () => {
+                openSidebar();
+              }}
+              icon={<LuBadgePlus />}
+            />
+          </div>
+        )}
+        {currentPage === Config.sideNavPageNames.Request &&
+          activeTabViewBar !== 0 && (
+            <div className={headerStyles.searchFilter}>
+              <InputText
+                style={{ width: "80%" }}
+                type="Search"
+                value={globelSearchValue}
+                placeholder="Search here..."
+                onChange={(e) => setGlobelSearchValue(e.target.value)}
+              />
+            </div>
+          )}
+      </>
+    );
+  };
+
   //useEffect
   useEffect(() => {
     categoryFilter();
     declareTabViewBar();
+    getSpGroupMembers(Config.spGroupNames.RequestsAdmin).then(async (res) => {
+      debugger;
+      if (res?.some((e) => e?.email === loginUser)) {
+        await setIsAdmin(true);
+      } else {
+        false;
+      }
+    });
   }, []);
   useEffect(() => {
     setGlobelSearchValue("");
-  }, [activeTabViewBar]);
+    headerFilters();
+  }, [activeTabViewBar, currentPage]);
   useEffect(() => {
     if (!sideBarVisible) {
       setAddSideBarContentBooleans({ ...Config.rightSideBarContentsDetails });
@@ -171,48 +239,7 @@ const Header = ({ context, currentPage }) => {
           <div className={headerStyles.filter_header_pageName}>
             {declareTabViewBar()}
           </div>
-
-          {((activeTabViewBar === 1 &&
-            currentPage === Config.sideNavPageNames.Request) ||
-            currentPage !== Config.sideNavPageNames.Request) && (
-            <>
-              <Dropdown
-                value={selectedCategory}
-                options={categoryFilterValue.categoryDrop}
-                onChange={(e) => {
-                  setSelectedCategory(e.value);
-                }}
-                showClear
-                filter
-                optionLabel="name"
-                placeholder="Category"
-                className="w-full md:w-14rem"
-              />
-              <div className="addNewButton">
-                <Button
-                  label="Add new"
-                  onClick={async () => {
-                    openSidebar();
-                  }}
-                  icon={<LuBadgePlus />}
-                />
-              </div>
-            </>
-          )}
-
-          {currentPage === Config.sideNavPageNames.Request &&
-            activeTabViewBar !== 1 && (
-              <div className={headerStyles.searchFilter}>
-                <InputText
-                  style={{ width: "80%" }}
-                  type="Search"
-                  value={globelSearchValue}
-                  placeholder="Search here..."
-                  onChange={(e) => setGlobelSearchValue(e.target.value)}
-                />
-              </div>
-            )}
-
+          {headerFilters()}
           <RightSidebar
             visible={sideBarVisible}
             onHide={() => {

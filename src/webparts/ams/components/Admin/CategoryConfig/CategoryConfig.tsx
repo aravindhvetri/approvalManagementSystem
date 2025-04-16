@@ -105,6 +105,7 @@ const CategoryConfig = ({
     {
       label: "View",
       icon: "pi pi-eye",
+      className: "customView",
       command: async () => {
         await setActionsBooleans((prev) => ({
           ...prev,
@@ -115,7 +116,8 @@ const CategoryConfig = ({
     },
     {
       label: "Edit",
-      icon: "pi pi-pencil ",
+      icon: "pi pi-file-edit",
+      className: "customEdit",
       command: async () => {
         await setActionsBooleans((prev) => ({
           ...prev,
@@ -126,6 +128,7 @@ const CategoryConfig = ({
     },
     {
       label: "Delete",
+      className: "customDelete",
       icon: "pi pi-trash",
       command: () => isDeleteCategory(rowData?.id),
     },

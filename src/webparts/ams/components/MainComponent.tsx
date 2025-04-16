@@ -40,7 +40,7 @@ const MainComponent = ({ context }) => {
       <div className={mainStyles.page}>
         <div className={mainStyles.container}>
           <div className={mainStyles.container_sidebar}>
-            <ProductSideNav updatePage={updatePage} currentPage={currentPage} />
+            <ProductSideNav context={context} updatePage={updatePage} currentPage={currentPage} />
           </div>
           <div className={mainStyles.container_content}>
             <Header context={context} currentPage={currentPage} />
