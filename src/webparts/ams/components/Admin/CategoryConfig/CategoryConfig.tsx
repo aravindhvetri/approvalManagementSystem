@@ -32,6 +32,7 @@ import { Button } from "primereact/button";
 import DynamicSectionWithField from "./DynamicSectionWithField/DynamicSectionWithField";
 import EmailContainer from "./EmailTemplate/EmailContainer";
 import Loader from "../../Loader/Loader";
+import { set } from "@microsoft/sp-lodash-subset";
 
 const CategoryConfig = ({
   context,
@@ -47,6 +48,7 @@ const CategoryConfig = ({
     []
   );
   const [categoryInputs, setCategoryInputs] = useState<string>("");
+  const [requestInput, setRequestFormatInput] = useState<string>("");
   const [actionsBooleans, setActionsBooleans] = useState<IActionBooleans>({
     ...Config.InitialActionsBooleans,
   });
@@ -62,6 +64,7 @@ const CategoryConfig = ({
   const [validateError, setValidateError] = useState({
     categoryName: "",
     approversSelected: "",
+    requestInput: "",
   });
   const [finalSubmit, setFinalSubmit] = useState<IFinalSubmitDetails>({
     ...Config.finalSubmitDetails,
@@ -88,8 +91,11 @@ const CategoryConfig = ({
         res.forEach((items: any) => {
           tempCategoryArray.push({
             id: items?.ID,
-            category: items?.Category,
+            category: items?.Category ? items?.Category : "",
             isDelete: items?.IsDelete,
+            requestIdFormat: items?.RequestIdFormat
+              ? items?.RequestIdFormat
+              : "",
           });
         });
         setCategoryDetails([...tempCategoryArray]);
@@ -136,6 +142,7 @@ const CategoryConfig = ({
     // setShowLoader(true);
     // await new Promise((resolve) => setTimeout(resolve, 100));
     setCategoryInputs(rowData?.category);
+    setRequestFormatInput(rowData?.requestIdFormat);
     await setSelectedCategoryId(rowData?.id);
     setCategorySideBarVisible(true);
     // setShowLoader(false);
@@ -168,6 +175,13 @@ const CategoryConfig = ({
       isValid = false;
     } else {
       validateError.categoryName = "";
+    }
+    //Request Id format validation
+    if (requestInput === "") {
+      validateError.requestInput = "Request Id format is mandatory";
+      isValid = false;
+    } else {
+      validateError.requestInput = "";
     }
     if (!actionsBooleans?.isEdit && !actionsBooleans?.isView) {
       // Approver validation
@@ -285,26 +299,62 @@ const CategoryConfig = ({
             <></>
           ) : (
             <>
-              <div className={`${categoryConfigStyles.inputContainer}`}>
-                <div style={{ paddingBottom: "10px" }}>
+              <div className={`${categoryConfigStyles.inputContainer}`}></div>
+              <div className={`${categoryConfigStyles.inputDiv}`}>
+                <div className={`${categoryConfigStyles.inputChildDiv}`}>
                   <Label className={`${categoryConfigStyles.label}`}>
                     Category<span className="required">*</span>
                   </Label>
+                  <InputText
+                    className={`${categoryConfigStyles.input}`}
+                    value={categoryInputs}
+                    disabled={actionsBooleans.isView}
+                    placeholder="Enter Category"
+                    onChange={(e) => setCategoryInputs(e.target.value)}
+                  />
+                  {validateError && !categoryInputs && (
+                    <div>
+                      <span className="errorMsg">
+                        {validateError?.categoryName}
+                      </span>
+                    </div>
+                  )}
                 </div>
-                <InputText
-                  className={`${categoryConfigStyles.input}`}
-                  value={categoryInputs}
-                  disabled={actionsBooleans.isView}
-                  placeholder="Enter Category"
-                  onChange={(e) => setCategoryInputs(e.target.value)}
-                />
-                {validateError && !categoryInputs && (
-                  <div>
-                    <span className="errorMsg">
-                      {validateError?.categoryName}
-                    </span>
-                  </div>
-                )}
+                <div className={`${categoryConfigStyles.inputChildDiv}`}>
+                  <Label className={`${categoryConfigStyles.label}`}>
+                    Request Id prefix format<span className="required">*</span>
+                  </Label>
+                  <InputText
+                    className={`${categoryConfigStyles.input}`}
+                    value={requestInput}
+                    placeholder="Only alphabets allowed"
+                    onChange={(e) => {
+                      const onlyText = e.target.value
+                        .replace(/[0-9]/g, "")
+                        .toUpperCase();
+                      setRequestFormatInput(onlyText);
+                    }}
+                    disabled={actionsBooleans.isView}
+                  />
+                  {requestInput ? (
+                    <small
+                      style={{ fontSize: "10px" }}
+                      className={`${categoryConfigStyles.label}`}
+                    >
+                      {`Note: Format will be like: ${requestInput}-XXXXX`}
+                    </small>
+                  ) : (
+                    ""
+                  )}
+
+                  {validateError && !requestInput && (
+                    <div>
+                      <span className="errorMsg">
+                        {validateError?.requestInput}
+                      </span>
+                    </div>
+                  )}
+                </div>
               </div>
               {actionsBooleans?.isEdit == false &&
               actionsBooleans?.isView == false ? (
@@ -457,15 +507,17 @@ const CategoryConfig = ({
       categoryConfig: {
         ...prev.categoryConfig,
         category: categoryInputs,
+        requestIdFormat: requestInput,
       },
     }));
-  }, [categoryInputs]);
+  }, [categoryInputs, requestInput]);
 
   useEffect(() => {
     getCategoryConfigDetails();
     setValidateError({
       categoryName: "",
       approversSelected: "",
+      requestInput: "",
     });
   }, []);
 
@@ -474,6 +526,7 @@ const CategoryConfig = ({
       setValidateError({
         categoryName: "",
         approversSelected: "",
+        requestInput: "",
       });
       sessionStorage.clear();
       setSelectedApprover("");
@@ -481,6 +534,7 @@ const CategoryConfig = ({
         ...Config.NextStageFromCategorySideBar,
       });
       setCategoryInputs("");
+      setRequestFormatInput("");
       setSelectedCategoryId(null);
       setActionsBooleans({ ...Config.InitialActionsBooleans });
     }
@@ -498,6 +552,7 @@ const CategoryConfig = ({
     selectedCategoryId,
     validateError,
     actionsBooleans,
+    requestInput,
   ]);
 
   return (

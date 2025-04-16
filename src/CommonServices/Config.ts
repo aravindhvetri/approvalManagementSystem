@@ -141,6 +141,7 @@ export namespace Config {
   export const finalSubmitDetails: IFinalSubmitDetails = {
     categoryConfig: {
       category: "",
+      requestIdFormat: "",
       ExistingApprover: null,
       customApprover: null,
     },

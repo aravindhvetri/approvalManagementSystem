@@ -28,6 +28,7 @@ import EmailWorkFlowStyles from "./EmailWorkFlow.module.scss";
 import "./EmailWorkFlowStyle.css";
 import "../../../../../External/style.css";
 import Loader from "../../Loader/Loader";
+import AttachmentUploader from "../../AttachmentUploader/AttachmentUploader";
 
 const EmailWorkFlow = ({
   setEmailWorkFlowSideBarContent,

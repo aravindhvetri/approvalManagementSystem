@@ -179,7 +179,6 @@ const DynamicSectionWithField = ({
       Orderbydecorasc: true,
     })
       .then((res: any) => {
-
         const tempSectionArr = [];
         res?.forEach(async (section, index) => {
           tempSectionArr.push({
@@ -370,6 +369,42 @@ const DynamicSectionWithField = ({
   };
 
   const FieldValidateFunc = () => {
+    // SPServices.SPReadItems({
+    //   Listname: Config.ListNames?.SectionColumnsConfig,
+    //   Select: "*",
+    // }).then((res: any) => {
+    //   const tempGetcolumnInternalName =
+    //     res?.map((item: any) => ({
+    //       columnInternalName: item?.ColumnInternalName?.toLowerCase(),
+    //     })) || [];
+
+    //   const existingFieldNames = [
+    //     ...sections?.flatMap((section) =>
+    //       (section?.columns || []).map((field) => field?.name?.toLowerCase())
+    //     ),
+    //     ...tempGetcolumnInternalName.map((col) => col.columnInternalName),
+    //   ];
+
+    //   const isDuplicateName = existingFieldNames.includes(
+    //     newField?.name?.toLowerCase()
+    //   );
+    //   if (isDuplicateName && !fieldEdit) {
+    //     toast.current.show({
+    //       severity: "warn",
+    //       summary: "Warning",
+    //       content: (prop) =>
+    //         toastNotify({
+    //           iconName: "pi-exclamation-triangle",
+    //           ClsName: "toast-imgcontainer-warning",
+    //           type: "Warning",
+    //           msg: "Field name already exists",
+    //         }),
+    //       life: 3000,
+    //     });
+    //     return false;
+    //   }
+    // });
+
     const isDuplicateName = sections
       ?.flatMap((section) => section?.columns || [])
       .some(

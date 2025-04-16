@@ -312,6 +312,7 @@ const EmailContainer = ({
           ID: categoryClickingID,
           RequestJSON: {
             Category: finalSubmit?.categoryConfig?.category,
+            RequestIdFormat: finalSubmit?.categoryConfig?.requestIdFormat,
           },
         });
         //Get and Isdelete Category Section Details
@@ -496,10 +497,12 @@ const EmailContainer = ({
     } else {
       try {
         if (finalSubmit?.categoryConfig?.category !== "") {
+          debugger;
           const res = await SPServices.SPAddItem({
             Listname: Config.ListNames.CategoryConfig,
             RequestJSON: {
               Category: finalSubmit?.categoryConfig?.category,
+              RequestIdFormat: finalSubmit?.categoryConfig?.requestIdFormat,
             },
           });
 
