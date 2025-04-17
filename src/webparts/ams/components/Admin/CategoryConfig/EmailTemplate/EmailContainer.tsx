@@ -317,9 +317,15 @@ const EmailContainer = ({
         });
         //Get and Isdelete Category Section Details
         const columnTypeMap = {
-          text: 2,
-          textarea: 3,
-          Choice: 6,
+          text: 1,
+          textarea: 2,
+          Choice: 3,
+          Number: 4,
+          Date: 5,
+          DateTime: 6,
+          Person: 7,
+          PersonMulti: 8,
+          YesorNo: 9,
         };
         const list = sp.web.lists.getByTitle("RequestsHub");
         const sectionsDetails = await getCategorySectionDetails(
@@ -568,9 +574,15 @@ const EmailContainer = ({
                 for (const column of section.columns) {
                   let fieldTypeKind;
                   const columnTypeMap = {
-                    text: 2,
-                    textarea: 3,
-                    Choice: 6,
+                    text: 1,
+                    textarea: 2,
+                    Choice: 3,
+                    Number: 4,
+                    Date: 5,
+                    DateTime: 6,
+                    Person: 7,
+                    PersonMulti: 8,
+                    YesorNo: 9,
                   };
 
                   fieldTypeKind = columnTypeMap[column.type];
@@ -688,13 +700,69 @@ const EmailContainer = ({
 
   //Add to Column in Our SharepointList
   const addColumnToList = async (list, fieldTypeKind, columnName, choices) => {
+    const tempColumnName = columnName.replace(/\s/g, "");
     try {
-      if (fieldTypeKind === 2) {
-        await list.fields.addText(columnName.replace(/\s/g, "")); // For Single Line Text
+      if (fieldTypeKind === 1) {
+        await list.fields.addText(tempColumnName); // For Single Line Text
+      } else if (fieldTypeKind === 2) {
+        await list.fields.addMultilineText(tempColumnName); // For Multiple Lines of Text
       } else if (fieldTypeKind === 3) {
-        await list.fields.addMultilineText(columnName.replace(/\s/g, "")); // For Multiple Lines of Text
+        await list.fields.addChoice(tempColumnName, choices); // Pass choices array directly
+      } else if (fieldTypeKind === 4) {
+        // Pass number column directly
+        await list.fields.add(tempColumnName, "SP.FieldNumber", {
+          Title: tempColumnName, // Display name (UI title)
+          FieldTypeKind: 9, // Type: Number
+          MinimumValue: 0,
+        });
+      } else if (fieldTypeKind === 5) {
+        // Pass Date column directly
+        await list.fields.add(tempColumnName, "SP.FieldDateTime", {
+          Title: tempColumnName,
+          FieldTypeKind: 4, // Required for date/time
+          DisplayFormat: 0, // 0 = Date Only, 1 = Date + Time
+          Required: false,
+        });
       } else if (fieldTypeKind === 6) {
-        await list.fields.addChoice(columnName.replace(/\s/g, ""), choices); // Pass choices array directly
+        // Pass Date column directly
+        await list.fields.add(tempColumnName, "SP.FieldDateTime", {
+          Title: tempColumnName,
+          FieldTypeKind: 4, // Required for date/time
+          DisplayFormat: 1, // 0 = Date Only, 1 = Date + Time
+          Required: false,
+        });
+      } else if (fieldTypeKind === 7) {
+        // Pass Person column directly
+        await list.fields.add(tempColumnName, "SP.FieldUser", {
+          Title: tempColumnName,
+          FieldTypeKind: 20, // Required for Person or Group field
+          Required: false,
+          AllowMultipleValues: false, // true = allow multiple people
+          Presence: true, // show presence indicator
+          SelectionMode: 0, // 0 = People Only, 1 = People & Groups
+        });
+      } else if (fieldTypeKind === 8) {
+        // Pass Person column directly
+        await list.fields.add(tempColumnName, "SP.FieldUser", {
+          Title: tempColumnName,
+          FieldTypeKind: 20, // Required for Person or Group field
+          Required: false,
+          AllowMultipleValues: true, // true = allow multiple people
+          Presence: true, // show presence indicator
+          SelectionMode: 0, // 0 = People Only, 1 = People & Groups
+        });
+      } else if (fieldTypeKind === 9) {
+        // Pass Yes or No column directly
+        await list.fields.createFieldAsXml(`
+          <Field 
+            DisplayName="${tempColumnName}"
+            Name="${tempColumnName}"
+            Type="Boolean"
+            Required="FALSE"
+          >
+            <Default>0</Default> 
+          </Field>
+        `);
       }
     } catch (error) {
       console.error(`Error adding column ${columnName}:`, error);

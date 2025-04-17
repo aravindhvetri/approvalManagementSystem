@@ -424,6 +424,41 @@ const RequestsFields = ({
                         )}
                       </div>
                     ))}
+                  {fields
+                    .filter((f) => f.columnType === "Number")
+                    .map((field) => (
+                      <div
+                        key={field.id}
+                        className={dynamicFieldsStyles.inputField}
+                      >
+                        <Label className={dynamicFieldsStyles.label}>
+                          {field.columnDisplayName}
+                          {field?.isRequired && (
+                            <span className="required">*</span>
+                          )}
+                        </Label>
+                        <InputText
+                          id={field.columnName}
+                          keyfilter="num"
+                          value={formData[field.columnName] || null}
+                          onChange={(e) =>
+                            handleInputChange(field.columnName, e.target.value)
+                          }
+                          disabled={
+                            !(
+                              recordAction === "Edit" &&
+                              author?.email === loginUser &&
+                              navigateFrom === "MyRequest"
+                            )
+                          }
+                        />
+                        {errors[field.columnName] && (
+                          <span className={dynamicFieldsStyles.errorMsg}>
+                            {errors[field.columnName]}
+                          </span>
+                        )}
+                      </div>
+                    ))}
 
                   {fields
                     .filter((f) => f.columnType === "Choice")

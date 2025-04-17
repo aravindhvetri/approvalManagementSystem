@@ -432,6 +432,7 @@ const CategoryConfig = ({
             )}
             {nextStageFromCategory.dynamicSectionWithField ? (
               <DynamicSectionWithField
+                context={context}
                 setFinalSubmit={setFinalSubmit}
                 categoryClickingID={selectedCategoryId}
                 actionBooleans={actionsBooleans}
