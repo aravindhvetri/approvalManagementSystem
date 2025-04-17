@@ -19,6 +19,10 @@ import { InputTextarea } from "primereact/inputtextarea";
 import DynamicSectionWithFieldStyles from "./DynamicSectionWithField.module.scss";
 import "../../../../../../External/style.css";
 import "./DynamicSectionWithField.css";
+import {
+  PeoplePicker,
+  PrincipalType,
+} from "@pnp/spfx-controls-react/lib/PeoplePicker";
 //Common Service Imports:
 import { Config } from "../../../../../../CommonServices/Config";
 import {
@@ -34,8 +38,10 @@ import {
 import { sp } from "@pnp/sp";
 import SPServices from "../../../../../../CommonServices/SPServices";
 import { Toast } from "primereact/toast";
+import { Calendar } from "primereact/calendar";
 
 const DynamicSectionWithField = ({
+  context,
   categoryClickingID,
   actionBooleans,
   setNextStageFromCategory,
@@ -57,7 +63,7 @@ const DynamicSectionWithField = ({
     stages: [],
     choices: [],
   });
-  console.log(newField, "newField");
+  console.log(sections, "sections");
   const [previewVisible, setPreviewVisible] = useState(false);
   const [previewFields, setPreviewFields] = useState<any>([]);
   const [approvalStage, setApprovalStage] = useState([]);
@@ -723,6 +729,14 @@ const DynamicSectionWithField = ({
                     className={DynamicSectionWithFieldStyles.previewInput}
                   />
                 )}
+                {field.type === "Number" && (
+                  <InputText
+                    keyfilter="num"
+                    value=""
+                    disabled
+                    className={DynamicSectionWithFieldStyles.previewInput}
+                  />
+                )}
                 {field.type === "textarea" && (
                   <InputTextarea
                     value=""
@@ -740,6 +754,48 @@ const DynamicSectionWithField = ({
                     // disabled
                     className={DynamicSectionWithFieldStyles.previewDropdown}
                   />
+                )}
+                {field.type === "Date" && (
+                  <Calendar
+                    dateFormat="dd/mm/yy"
+                    showIcon
+                    className={DynamicSectionWithFieldStyles.previewInput}
+                  />
+                )}
+                {field.type === "DateTime" && (
+                  <Calendar
+                    id="calendar-12h"
+                    showTime
+                    hourFormat="12"
+                    dateFormat="dd/mm/yy"
+                    showIcon
+                    className={DynamicSectionWithFieldStyles.previewInput}
+                  />
+                )}
+                {field.type === "Person" && (
+                  <PeoplePicker
+                    context={context}
+                    personSelectionLimit={1}
+                    groupName={""}
+                    showtooltip={true}
+                    ensureUser={true}
+                    principalTypes={[PrincipalType.User]}
+                    resolveDelay={1000}
+                  />
+                )}
+                {field.type === "PersonMulti" && (
+                  <PeoplePicker
+                    context={context}
+                    personSelectionLimit={5}
+                    groupName={""}
+                    showtooltip={true}
+                    ensureUser={true}
+                    principalTypes={[PrincipalType.User]}
+                    resolveDelay={1000}
+                  />
+                )}
+                {field.type === "YesorNo" && (
+                  <Checkbox checked={false}></Checkbox>
                 )}
               </div>
             ))}

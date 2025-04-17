@@ -474,3 +474,33 @@ li.p-highlight .p-tabview-nav-link {
   text-decoration: underline;
   text-underline-offset: 8px;
 }
+
+/* Date picker.................. */
+.p-calendar {
+  height: 33.4px;
+}
+.p-datepicker-trigger {
+  background-color: var(--green);
+  border: 0 !important;
+  color: var(--liteGreen);
+}
+.p-calendar:not(.p-calendar-disabled).p-focus > .p-inputtext {
+  box-shadow: none !important;
+}
+
+/* Check box.................. */
+.p-checkbox {
+  height: 33.4px !important;
+  width: 32px;
+}
+.p-checkbox .p-checkbox-box {
+  width: 100%;
+  height: 100%;
+  border: 1px solid var(--InputBoxLiteGreen) !important;
+}
+.p-checkbox.p-highlight .p-checkbox-box {
+  background-color: var(--green) !important;
+}
+.p-checkbox.p-highlight .p-checkbox-box:hover {
+  background-color: var(--green) !important;
+}

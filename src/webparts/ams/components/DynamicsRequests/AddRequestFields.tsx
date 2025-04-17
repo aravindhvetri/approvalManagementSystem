@@ -32,6 +32,12 @@ import { sp } from "@pnp/sp/presets/all";
 import moment from "moment";
 import attachmentStyles from "../AttachmentUploader/AttachmentUploader.module.scss";
 import "../../../../External/style.css";
+import {
+  PeoplePicker,
+  PrincipalType,
+} from "@pnp/spfx-controls-react/lib/PeoplePicker";
+import { Calendar } from "primereact/calendar";
+import { Checkbox } from "primereact/checkbox";
 
 const AddRequestsFields = ({
   categoryFilterValue,
@@ -50,6 +56,7 @@ const AddRequestsFields = ({
     useState<IBasicFilterCategoryDrop>();
   const [showLoader, setShowLoader] = useState<boolean>(false);
   const [requestIdFormat, setRequestIdFormat] = useState<string>("");
+  console.log("formData", formData);
   //CategorySectionConfig List
   const getCategorySectionConfigDetails = () => {
     SPServices.SPReadItems({
@@ -260,7 +267,7 @@ const AddRequestsFields = ({
   const validateForm = () => {
     const newErrors = {};
     dynamicFields.forEach((field) => {
-      if (field.isRequired && !formData[field.columnName]?.trim()) {
+      if (field.isRequired && !formData[field.columnName]?.toString().trim()) {
         newErrors[field.columnName] = `${field.columnDisplayName} is required.`;
       }
     });
@@ -440,6 +447,156 @@ const AddRequestsFields = ({
                               )
                             }
                           />
+                          {errors[field.columnName] && (
+                            <span className={dynamicFieldsStyles.errorMsg}>
+                              {errors[field.columnName]}
+                            </span>
+                          )}
+                        </div>
+                      ))}
+                    {fields
+                      .filter((f) => f.columnType === "Number")
+                      .map((field) => (
+                        <div
+                          key={field.id}
+                          className={dynamicFieldsStyles.inputField}
+                        >
+                          <Label className={dynamicFieldsStyles.label}>
+                            {field.columnDisplayName}
+                            {field?.isRequired && (
+                              <span className="required">*</span>
+                            )}
+                          </Label>
+                          <InputText
+                            keyfilter="num"
+                            id={field.columnName}
+                            value={formData[field.columnName] || null}
+                            onChange={(e) =>
+                              handleInputChange(
+                                field.columnName,
+                                Number(e.target.value)
+                              )
+                            }
+                          />
+                          {errors[field.columnName] && (
+                            <span className={dynamicFieldsStyles.errorMsg}>
+                              {errors[field.columnName]}
+                            </span>
+                          )}
+                        </div>
+                      ))}
+                    {fields
+                      .filter(
+                        (f) =>
+                          f.columnType === "PersonMulti" ||
+                          f.columnType === "Person"
+                      )
+                      .map((field) => (
+                        <div
+                          key={field.id}
+                          className={dynamicFieldsStyles.inputField}
+                        >
+                          <Label className={dynamicFieldsStyles.label}>
+                            {field.columnDisplayName}
+                            {field?.isRequired && (
+                              <span className="required">*</span>
+                            )}
+                          </Label>
+                          <PeoplePicker
+                            context={context}
+                            personSelectionLimit={
+                              field?.columnType === "Person" ? 1 : 5
+                            }
+                            defaultSelectedUsers={
+                              field?.columnType === "Person"
+                                ? [formData[`${field.columnName}Id`]]
+                                : formData[`${field.columnName}Id`]
+                            }
+                            onChange={(e: any) => {
+                              console.log("person", e);
+                              handleInputChange(
+                                `${field.columnName}Id`,
+                                field?.columnType === "Person"
+                                  ? Number(e[0]?.id) || null
+                                  : e?.map((person) => person?.id) || []
+                              );
+                            }}
+                            groupName={""}
+                            showtooltip={true}
+                            ensureUser={true}
+                            principalTypes={[PrincipalType.User]}
+                            resolveDelay={1000}
+                          />
+                          {errors[`${field.columnName}Id`] && (
+                            <span className={dynamicFieldsStyles.errorMsg}>
+                              {errors[`${field.columnName}Id`]}
+                            </span>
+                          )}
+                        </div>
+                      ))}
+                    {fields
+                      .filter(
+                        (f) =>
+                          f.columnType === "Date" || f.columnType === "DateTime"
+                      )
+                      .map((field) => (
+                        <div
+                          key={field.id}
+                          className={dynamicFieldsStyles.inputField}
+                        >
+                          <Label className={dynamicFieldsStyles.label}>
+                            {field.columnDisplayName}
+                            {field?.isRequired && (
+                              <span className="required">*</span>
+                            )}
+                          </Label>
+                          <Calendar
+                            id="calendar-12h"
+                            value={
+                              formData[field.columnName]
+                                ? new Date(formData[field.columnName])
+                                : null
+                            }
+                            onChange={(e) => {
+                              console.log("Calendar", e);
+                              handleInputChange(
+                                field.columnName,
+                                field?.columnType === "DateTime"
+                                  ? e?.value.toLocaleString()
+                                  : e?.value.toLocaleDateString("en-US")
+                              );
+                            }}
+                            showTime={field?.columnType === "DateTime"}
+                            hourFormat="12"
+                            dateFormat="dd/mm/yy"
+                            showIcon
+                          />
+                          {errors[field.columnName] && (
+                            <span className={dynamicFieldsStyles.errorMsg}>
+                              {errors[field.columnName]}
+                            </span>
+                          )}
+                        </div>
+                      ))}
+                    {fields
+                      .filter((f) => f.columnType === "YesorNo")
+                      .map((field) => (
+                        <div
+                          key={field.id}
+                          className={dynamicFieldsStyles.inputField}
+                        >
+                          <Label className={dynamicFieldsStyles.label}>
+                            {field.columnDisplayName}
+                            {field?.isRequired && (
+                              <span className="required">*</span>
+                            )}
+                          </Label>
+                          <Checkbox
+                            onChange={(e) =>
+                              handleInputChange(field.columnName, e.checked)
+                            }
+                            checked={formData[field.columnName]}
+                          ></Checkbox>
                           {errors[field.columnName] && (
                             <span className={dynamicFieldsStyles.errorMsg}>
                               {errors[field.columnName]}

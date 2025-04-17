@@ -331,6 +331,12 @@ export const columnTypes = [
   { name: "Single line of text", value: "text" },
   { name: "Multiple lines of text", value: "textarea" },
   { name: "Choice", value: "Choice" },
+  { name: "Number", value: "Number" },
+  { name: "Date", value: "Date" },
+  { name: "Date and Time", value: "DateTime" },
+  { name: "Person Single", value: "Person" },
+  { name: "Person Multi", value: "PersonMulti" },
+  { name: "Yes or No", value: "YesorNo" },
 ];
 
 //StageTemplate :
