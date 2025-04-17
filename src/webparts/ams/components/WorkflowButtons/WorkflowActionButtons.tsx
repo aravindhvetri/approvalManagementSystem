@@ -36,7 +36,7 @@ const WorkflowActionButtons = ({
   itemID,
 }) => {
   const serverRelativeUrl = context?._pageContext?._site?.serverRelativeUrl;
-  console.log(files, "files");
+  console.log(approvalDetails, "approvalDetails");
   //useStates
   const [submitBtn, setSubmitBtn] = useState(false);
   const [reSubmit, setReSubmit] = useState(false);
@@ -202,6 +202,7 @@ const WorkflowActionButtons = ({
         ApproverId: user.Id,
         Status: Process,
         Comments: approvalDetails?.comments || "",
+        Signature: approvalDetails?.signature || "",
       },
     })
       .then((e) => {})

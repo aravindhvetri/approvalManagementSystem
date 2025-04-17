@@ -199,7 +199,6 @@ const Header = ({ context, currentPage }) => {
     categoryFilter();
     declareTabViewBar();
     getSpGroupMembers(Config.spGroupNames.RequestsAdmin).then(async (res) => {
-      debugger;
       if (res?.some((e) => e?.email === loginUser)) {
         await setIsAdmin(true);
       } else {

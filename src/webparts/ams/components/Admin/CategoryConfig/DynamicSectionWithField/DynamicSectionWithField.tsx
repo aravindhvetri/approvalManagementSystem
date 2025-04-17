@@ -368,48 +368,34 @@ const DynamicSectionWithField = ({
     return isValid;
   };
 
-  const FieldValidateFunc = () => {
-    // SPServices.SPReadItems({
-    //   Listname: Config.ListNames?.SectionColumnsConfig,
-    //   Select: "*",
-    // }).then((res: any) => {
-    //   const tempGetcolumnInternalName =
-    //     res?.map((item: any) => ({
-    //       columnInternalName: item?.ColumnInternalName?.toLowerCase(),
-    //     })) || [];
+  //Field Validation Function:
+  const FieldValidateFunc = async () => {
+    let isValidation =
+      !newField?.name || !newField?.type || newField?.stages?.length === 0;
+    setIsValidation(isValidation);
+    if (isValidation) return false;
 
-    //   const existingFieldNames = [
-    //     ...sections?.flatMap((section) =>
-    //       (section?.columns || []).map((field) => field?.name?.toLowerCase())
-    //     ),
-    //     ...tempGetcolumnInternalName.map((col) => col.columnInternalName),
-    //   ];
+    const res: any = await SPServices.SPReadItems({
+      Listname: Config.ListNames?.SectionColumnsConfig,
+      Select: "*",
+    });
 
-    //   const isDuplicateName = existingFieldNames.includes(
-    //     newField?.name?.toLowerCase()
-    //   );
-    //   if (isDuplicateName && !fieldEdit) {
-    //     toast.current.show({
-    //       severity: "warn",
-    //       summary: "Warning",
-    //       content: (prop) =>
-    //         toastNotify({
-    //           iconName: "pi-exclamation-triangle",
-    //           ClsName: "toast-imgcontainer-warning",
-    //           type: "Warning",
-    //           msg: "Field name already exists",
-    //         }),
-    //       life: 3000,
-    //     });
-    //     return false;
-    //   }
-    // });
+    const tempGetcolumnInternalName =
+      res?.map((item: any) => ({
+        columnInternalName: item?.ColumnInternalName?.toLowerCase(),
+      })) || [];
 
-    const isDuplicateName = sections
-      ?.flatMap((section) => section?.columns || [])
-      .some(
-        (field) => field.name?.toLowerCase() === newField?.name?.toLowerCase()
-      );
+    const existingFieldNames = [
+      ...sections?.flatMap((section) =>
+        (section?.columns || []).map((field) => field?.name?.toLowerCase())
+      ),
+      ...tempGetcolumnInternalName.map((col) => col.columnInternalName),
+    ];
+
+    const isDuplicateName = existingFieldNames.includes(
+      newField?.name?.toLowerCase()
+    );
+
     if (isDuplicateName && !fieldEdit) {
       toast.current.show({
         severity: "warn",
@@ -425,11 +411,7 @@ const DynamicSectionWithField = ({
       });
       return false;
     }
-
-    let isValidation =
-      !newField?.name || !newField?.type || newField?.stages?.length === 0;
-    setIsValidation(isValidation);
-    return !isValidation;
+    return true;
   };
 
   return (
@@ -684,8 +666,9 @@ const DynamicSectionWithField = ({
               <Button
                 label="Save"
                 icon="pi pi-save"
-                onClick={() => {
-                  if (FieldValidateFunc()) {
+                onClick={async () => {
+                  const isValid = await FieldValidateFunc();
+                  if (isValid) {
                     handleSaveField();
                   }
                 }}
