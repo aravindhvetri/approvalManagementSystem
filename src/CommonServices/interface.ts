@@ -172,6 +172,7 @@ export interface IApprovalDetails {
   approverEmail: string;
   status: string;
   comments: string;
+  signature: string;
 }
 
 //Approval History Details
@@ -182,6 +183,7 @@ export interface IApprovalHistoryDetails {
   approver: IPeoplePickerDetails;
   status: string;
   comments: string;
+  signature: string;
 }
 
 //EmailTemplateContents Details

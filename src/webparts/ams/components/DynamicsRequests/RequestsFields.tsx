@@ -1,6 +1,6 @@
 //Default Imports:
 import * as React from "react";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 //CommonService Imports:
 import SPServices from "../../../../CommonServices/SPServices";
 import { Config } from "../../../../CommonServices/Config";
@@ -26,6 +26,7 @@ import { GiCancel } from "react-icons/gi";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 import { Dropdown } from "primereact/dropdown";
+import SignatureCanvas from "react-signature-canvas";
 //Styles Imports:
 import dynamicFieldsStyles from "./RequestsFields.module.scss";
 import "../../../../External/style.css";
@@ -46,6 +47,8 @@ const RequestsFields = ({
   setShowLoader,
 }) => {
   console.log(navigateFrom, "navigateFrom");
+  const sigCanvas = useRef<SignatureCanvas>(null);
+  const sigCanvasRefs = useRef([]);
   const serverRelativeUrl = context?._pageContext?._site?.serverRelativeUrl;
   const [dynamicFields, setDynamicFields] = useState<ISectionColumnsConfig[]>(
     []
@@ -61,9 +64,12 @@ const RequestsFields = ({
     approverEmail: loginUser,
     status: "",
     comments: "",
+    signature: "",
   });
   const [approvalHistoryDetails, setApprovalHistoryDetails] =
     useState<IApprovalHistoryDetails[]>();
+
+  console.log(approvalHistoryDetails, "approvalHistoryDetails");
   //CategorySectionConfig List
   const getCategorySectionConfigDetails = () => {
     SPServices.SPReadItems({
@@ -167,30 +173,30 @@ const RequestsFields = ({
   };
 
   const LoadExistingFiles = async (id) => {
-    try {
-      const requestId = `${id}`;
-      const folderPath = `${serverRelativeUrl}/${Config.LibraryNames?.AttachmentsLibrary}/Requestors`;
-
-      const items = await sp.web.lists
-        .getByTitle(Config.LibraryNames?.AttachmentsLibrary)
-        .items.filter(`RequestID eq '${requestId}' and IsDelete eq false`)
-        .select("FileLeafRef", "FileRef")
-        .get();
-
-      const fetchedFiles: File[] = [];
-
-      for (const item of items) {
-        const fileResponse = await sp.web
-          .getFileByServerRelativePath(item.FileRef)
-          .getBlob();
-        const file = new File([fileResponse], item.FileLeafRef);
-        fetchedFiles.push(file);
-      }
-
-      setFiles(fetchedFiles ? fetchedFiles : []);
-    } catch (error) {
-      console.error("Error fetching existing files:", error);
-    }
+    const requestId = `${id}`;
+    sp.web.lists
+      .getByTitle(Config.LibraryNames?.AttachmentsLibrary)
+      .items.select("*,FileLeafRef,FileRef,FileDirRef")
+      .filter(`RequestID eq '${requestId}' and IsDelete eq false`)
+      .expand("File")
+      .orderBy("Modified", false)
+      .get()
+      .then((res: any) => {
+        let tempData = [];
+        if (res?.length) {
+          res?.forEach((val: any) => {
+            tempData.push({
+              name: val?.File?.Name || "",
+              ulr: val?.File?.ServerRelativeUrl || "",
+              createdDate: val?.Created ? new Date(val?.Created) : null,
+            });
+          });
+        }
+        setFiles([...tempData]);
+      })
+      .catch((err: any) => {
+        SPServices.ErrFunction("Get year end gifts", err);
+      });
   };
 
   //Get Approval History
@@ -210,6 +216,7 @@ const RequestsFields = ({
       .then((res) => {
         const tempArr = [];
         res?.forEach((item: any) => {
+          console.log(item, "item");
           tempArr.push({
             createdDate: item?.Created,
             itemID: item?.ID,
@@ -221,6 +228,7 @@ const RequestsFields = ({
             },
             status: item?.Status,
             comments: item?.Comments,
+            signature: item?.Signature,
           });
         });
         setApprovalHistoryDetails(tempArr);
@@ -238,6 +246,27 @@ const RequestsFields = ({
         {rowData?.comments?.length > 100
           ? `${rowData?.comments?.substring(0, 100)}...`
           : rowData?.comments}
+      </div>
+    );
+  };
+  //Render Signature Column:
+  const renderSignatureColumn = (rowData: IApprovalHistoryDetails) => {
+    return (
+      <div>
+        {rowData?.signature && (
+          <img
+            src={
+              rowData.signature.startsWith("data:image")
+                ? rowData.signature
+                : `data:image/png;base64,${rowData.signature}`
+            }
+            alt="Signature"
+            style={{
+              width: "100px",
+              height: "30px",
+            }}
+          />
+        )}
       </div>
     );
   };
@@ -301,7 +330,6 @@ const RequestsFields = ({
   // };
 
   const removeFile = async (fileName: string) => {
-    debugger;
     try {
       const folderPath = `${serverRelativeUrl}/${Config.LibraryNames?.AttachmentsLibrary}/Requestors`;
       const items = await sp.web.lists
@@ -324,6 +352,26 @@ const RequestsFields = ({
     } catch (error) {
       console.error("Error deleting file:", error);
     }
+  };
+
+  //Clear Signature:
+  const clear = () => {
+    sigCanvas.current?.clear();
+    setApprovalDetails((prev) => ({
+      ...prev,
+      signature: "",
+    }));
+  };
+
+  //Handle Signature Change:
+  const handleSignatureChange = () => {
+    const dataURL: any = sigCanvas.current
+      ?.getTrimmedCanvas()
+      .toDataURL("image/png");
+    setApprovalDetails((prev) => ({
+      ...prev,
+      signature: dataURL,
+    }));
   };
 
   //DynamicRequestFieldsSideBarContent Return Function:
@@ -492,7 +540,17 @@ const RequestsFields = ({
                         <li className={attachmentStyles?.fileList} key={index}>
                           <Tag
                             className={attachmentStyles.filNameTag}
-                            value={file?.name ? file?.name : ""}
+                            value={
+                              <span
+                                onClick={() => downloadFile(file)}
+                                style={{
+                                  cursor: "pointer",
+                                  textDecoration: "underline",
+                                }}
+                              >
+                                {file?.name ? file?.name : ""}
+                              </span>
+                            }
                           />
                           {recordAction === "Edit" && (
                             <GiCancel
@@ -509,24 +567,108 @@ const RequestsFields = ({
             </div>
           )}
           {recordAction === "Edit" && navigateFrom === "MyApproval" && (
-            <div className={dynamicFieldsStyles.approverSection}>
-              <Label className={dynamicFieldsStyles.labelHeader}>
-                Approvers section
-              </Label>
-              <Label className={dynamicFieldsStyles.label}>
-                Approver Description
-              </Label>
-              <InputTextarea
-                autoResize
-                style={{ width: "100%" }}
-                value={approvalDetails?.comments}
-                onChange={(e) => {
-                  getApprovalDetails("comments", e.target?.value || "");
-                }}
-                rows={3}
-              />
-            </div>
+            <>
+              <div className={dynamicFieldsStyles.approverSection}>
+                <Label className={dynamicFieldsStyles.labelHeader}>
+                  Approvers section
+                </Label>
+                <Label className={dynamicFieldsStyles.label}>
+                  Approver Description
+                </Label>
+                <InputTextarea
+                  autoResize
+                  style={{ width: "100%" }}
+                  value={approvalDetails?.comments}
+                  onChange={(e) => {
+                    getApprovalDetails("comments", e.target?.value || "");
+                  }}
+                  rows={3}
+                />
+              </div>
+              <div>
+                <div className={dynamicFieldsStyles.signatureSection}>
+                  <div>
+                    <Label className={dynamicFieldsStyles.label}>
+                      Sign Below
+                    </Label>
+                  </div>
+                  {approvalDetails?.signature && (
+                    <div>
+                      <Button
+                        label="Clear"
+                        className="customCancelButton"
+                        style={{
+                          padding: "4px 14px",
+                          fontSize: "12px",
+                        }}
+                        onClick={clear}
+                      />
+                    </div>
+                  )}
+                </div>
+                <div
+                  style={{
+                    border: "1px solid #16a34a5e",
+                    width: "100%",
+                    height: "100px",
+                  }}
+                >
+                  <SignatureCanvas
+                    penColor="#353862"
+                    canvasProps={{
+                      width: 680,
+                      height: "100px",
+                      className: "sigCanvas",
+                    }}
+                    ref={sigCanvas}
+                    onEnd={handleSignatureChange}
+                  />
+                </div>
+              </div>
+            </>
           )}
+          {/* {recordAction === "View" &&
+            approvalHistoryDetails?.length > 0 &&
+            (navigateFrom === "MyRequest" || navigateFrom === "AllRequest") &&
+            approvalHistoryDetails.map((item, index) => {
+              const isImage =
+                item.signature?.startsWith("data:image") ||
+                item.signature?.length > 50;
+
+              return item.signature ? (
+                <div key={index}>
+                  <Label className={dynamicFieldsStyles.label}>
+                    Approver {index + 1} sign
+                  </Label>
+
+                  {isImage ? (
+                    <img
+                      src={
+                        item.signature.startsWith("data:image")
+                          ? item.signature
+                          : `data:image/png;base64,${item.signature}`
+                      }
+                      alt={`Approver ${index + 1} signature`}
+                      style={{
+                        width: "100px",
+                        height: "30px",
+                      }}
+                    />
+                  ) : (
+                    <SignatureCanvas
+                      penColor="#353862"
+                      canvasProps={{
+                        width: 200,
+                        height: 60,
+                        className: "sigCanvas",
+                      }}
+                      ref={(ref) => (sigCanvasRefs.current[index] = ref)}
+                    />
+                  )}
+                </div>
+              ) : null;
+            })} */}
+
           <div className="customDataTableContainer">
             <Label className={dynamicFieldsStyles.labelHeader}>
               Approval history
@@ -562,6 +704,11 @@ const RequestsFields = ({
                 field="comments"
                 header="Comments"
                 body={renderCommentsColumn}
+              ></Column>
+              <Column
+                field="signature"
+                header="Sign"
+                body={renderSignatureColumn}
               ></Column>
             </DataTable>
           </div>
@@ -599,6 +746,16 @@ const RequestsFields = ({
     );
   };
 
+  //DownLoad File Function:
+  const downloadFile = (file) => {
+    const anchortag = document.createElement("a");
+    anchortag.setAttribute("href", file?.ulr);
+    anchortag.setAttribute("target", "_blank");
+    anchortag.setAttribute("download", "");
+    anchortag.click();
+    anchortag.remove();
+  };
+
   const handleCancel = () => {
     setDynamicRequestsSideBarVisible(false);
     setErrors({});
@@ -632,8 +789,27 @@ const RequestsFields = ({
       approverEmail: loginUser,
       status: "",
       comments: "",
+      signature: "",
     });
   }, [dynamicFields, sideBarVisible]);
+
+  useEffect(() => {
+    if (recordAction === "View" && approvalHistoryDetails?.length > 0) {
+      approvalHistoryDetails.forEach((item, index) => {
+        const signature = item?.signature;
+        const canvasRef = sigCanvasRefs.current[index];
+
+        if (signature && canvasRef) {
+          const signatureDataUrl = signature.startsWith("data:image")
+            ? signature
+            : `data:image/png;base64,${signature}`;
+
+          canvasRef.fromDataURL(signatureDataUrl);
+          canvasRef.off();
+        }
+      });
+    }
+  }, [approvalHistoryDetails]);
 
   return <></>;
 };

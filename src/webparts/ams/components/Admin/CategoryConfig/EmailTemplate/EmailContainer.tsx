@@ -497,7 +497,6 @@ const EmailContainer = ({
     } else {
       try {
         if (finalSubmit?.categoryConfig?.category !== "") {
-          debugger;
           const res = await SPServices.SPAddItem({
             Listname: Config.ListNames.CategoryConfig,
             RequestJSON: {
