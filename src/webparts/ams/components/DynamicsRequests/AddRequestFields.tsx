@@ -57,6 +57,8 @@ const AddRequestsFields = ({
   const [showLoader, setShowLoader] = useState<boolean>(false);
   const [requestIdFormat, setRequestIdFormat] = useState<string>("");
   console.log("formData", formData);
+  console.log("errors", errors);
+
   //CategorySectionConfig List
   const getCategorySectionConfigDetails = () => {
     SPServices.SPReadItems({
@@ -257,6 +259,7 @@ const AddRequestsFields = ({
 
   //handleInputChange
   const handleInputChange = (name, value) => {
+    console.log("name", name);
     setFormData({ ...formData, [name]: value });
     if (errors[name]) {
       setErrors({ ...errors, [name]: "" });
@@ -267,8 +270,30 @@ const AddRequestsFields = ({
   const validateForm = () => {
     const newErrors = {};
     dynamicFields.forEach((field) => {
-      if (field.isRequired && !formData[field.columnName]?.toString().trim()) {
-        newErrors[field.columnName] = `${field.columnDisplayName} is required.`;
+      if (
+        field.isRequired &&
+        ((!formData[field.columnName]?.toString().trim() &&
+          !(
+            field?.columnType === "Person" ||
+            field?.columnType === "PersonMulti"
+          )) ||
+          (!formData[`${field.columnName}Id`]?.toString().trim() &&
+            field?.columnType === "Person") ||
+          (!formData[`${field.columnName}Id`]?.results &&
+            field?.columnType === "PersonMulti"))
+      ) {
+        if (
+          field?.columnType === "Person" ||
+          field?.columnType === "PersonMulti"
+        ) {
+          newErrors[
+            `${field.columnName}Id`
+          ] = `${field.columnDisplayName} is required.`;
+        } else {
+          newErrors[
+            field.columnName
+          ] = `${field.columnDisplayName} is required.`;
+        }
       }
     });
     setErrors(newErrors);
@@ -510,7 +535,7 @@ const AddRequestsFields = ({
                             defaultSelectedUsers={
                               field?.columnType === "Person"
                                 ? [formData[`${field.columnName}Id`]]
-                                : formData[`${field.columnName}Id`]
+                                : formData[`${field.columnName}Id`]?.results
                             }
                             onChange={(e: any) => {
                               console.log("person", e);
@@ -518,7 +543,10 @@ const AddRequestsFields = ({
                                 `${field.columnName}Id`,
                                 field?.columnType === "Person"
                                   ? Number(e[0]?.id) || null
-                                  : e?.map((person) => person?.id) || []
+                                  : {
+                                      results:
+                                        e?.map((person) => person?.id) || [],
+                                    }
                               );
                             }}
                             groupName={""}
