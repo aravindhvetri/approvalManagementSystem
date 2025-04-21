@@ -312,7 +312,7 @@ const RequestsFields = ({
           )) ||
           (!formData[`${field.columnName}Id`]?.toString().trim() &&
             field?.columnType === "Person") ||
-          (formData[`${field.columnName}Id`]?.results?.length() === 0 &&
+          (!formData[`${field.columnName}Id`]?.results &&
             field?.columnType === "PersonMulti"))
       ) {
         if (
@@ -351,31 +351,6 @@ const RequestsFields = ({
     }
   };
 
-  //Get Users By User id
-  // const getUsers = async (columName, userIDs: any) => {
-  //   try {
-  //     const tempUserIDs: number[] = userIDs ? [userIDs] : [];
-  //     console.log("tempUserIDs", tempUserIDs);
-  //     if (tempUserIDs.length > 0) {
-  //       const userDetails = await Promise.all(
-  //         tempUserIDs.map(async (id) => {
-  //           const res = await sp.web.siteUsers.getById(id).get();
-  //           return res?.Email;
-  //         })
-  //       );
-  //       console.log("userDetails", userDetails);
-  //       setPersonField((prev) => ({
-  //         ...prev,
-  //         [columName]: userDetails,
-  //       }));
-  //     } else {
-  //       return [""];
-  //     }
-  //   } catch (err) {
-  //     console.log("getUsers error", err);
-  //     return [""];
-  //   }
-  // };
   const getUsers = async (columnName, userIDs: any) => {
     try {
       let tempUserIDs: number[] = [];
@@ -422,12 +397,7 @@ const RequestsFields = ({
     return acc;
   }, {});
 
-  //Remove file :
-  // const removeFile = (fileName: string) => {
-  //   const updatedFiles = files.filter((file) => file.name !== fileName);
-  //   setFiles(updatedFiles);
-  // };
-
+  //Remove file
   const removeFile = async (fileName: string) => {
     try {
       const folderPath = `${serverRelativeUrl}/${Config.LibraryNames?.AttachmentsLibrary}/Requestors`;
@@ -594,14 +564,6 @@ const RequestsFields = ({
                               personSelectionLimit={
                                 field?.columnType === "Person" ? 1 : 5
                               }
-                              // defaultSelectedUsers={
-                              //   field?.columnType === "Person"
-                              //     ? getUsers(
-                              //         field.columnName,
-                              //         formData[`${field.columnName}Id`]
-                              //       )
-                              //     : formData[`${field.columnName}Id`]?.results
-                              // }
                               defaultSelectedUsers={
                                 personField[field.columnName] || []
                               }
@@ -825,8 +787,6 @@ const RequestsFields = ({
               <Label className={dynamicFieldsStyles.label}>Attachments</Label>
               <>
                 {!(recordAction === "Edit") ? (
-                  // author?.email === loginUser &&
-                  // navigateFrom === "MyRequest"
                   ""
                 ) : (
                   <div>
@@ -939,47 +899,6 @@ const RequestsFields = ({
               </div>
             </>
           )}
-          {/* {recordAction === "View" &&
-            approvalHistoryDetails?.length > 0 &&
-            (navigateFrom === "MyRequest" || navigateFrom === "AllRequest") &&
-            approvalHistoryDetails.map((item, index) => {
-              const isImage =
-                item.signature?.startsWith("data:image") ||
-                item.signature?.length > 50;
-
-              return item.signature ? (
-                <div key={index}>
-                  <Label className={dynamicFieldsStyles.label}>
-                    Approver {index + 1} sign
-                  </Label>
-
-                  {isImage ? (
-                    <img
-                      src={
-                        item.signature.startsWith("data:image")
-                          ? item.signature
-                          : `data:image/png;base64,${item.signature}`
-                      }
-                      alt={`Approver ${index + 1} signature`}
-                      style={{
-                        width: "100px",
-                        height: "30px",
-                      }}
-                    />
-                  ) : (
-                    <SignatureCanvas
-                      penColor="#353862"
-                      canvasProps={{
-                        width: 200,
-                        height: 60,
-                        className: "sigCanvas",
-                      }}
-                      ref={(ref) => (sigCanvasRefs.current[index] = ref)}
-                    />
-                  )}
-                </div>
-              ) : null;
-            })} */}
 
           <div className="customDataTableContainer">
             <Label className={dynamicFieldsStyles.labelHeader}>
@@ -1091,7 +1010,7 @@ const RequestsFields = ({
       RequestsDashBoardContent: DynamicRequestsFieldsSideBarContent(),
     }));
     setShowLoader(false);
-  }, [dynamicFields, formData, errors, approvalDetails, files]);
+  }, [dynamicFields, formData, errors, approvalDetails, files, personField]);
   useEffect(() => {
     getRequestHubDetails();
     setApprovalDetails({
