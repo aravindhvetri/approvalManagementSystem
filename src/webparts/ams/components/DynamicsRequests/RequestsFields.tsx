@@ -352,10 +352,40 @@ const RequestsFields = ({
   };
 
   //Get Users By User id
-  const getUsers = async (columName, userIDs: any) => {
+  // const getUsers = async (columName, userIDs: any) => {
+  //   try {
+  //     const tempUserIDs: number[] = userIDs ? [userIDs] : [];
+  //     console.log("tempUserIDs", tempUserIDs);
+  //     if (tempUserIDs.length > 0) {
+  //       const userDetails = await Promise.all(
+  //         tempUserIDs.map(async (id) => {
+  //           const res = await sp.web.siteUsers.getById(id).get();
+  //           return res?.Email;
+  //         })
+  //       );
+  //       console.log("userDetails", userDetails);
+  //       setPersonField((prev) => ({
+  //         ...prev,
+  //         [columName]: userDetails,
+  //       }));
+  //     } else {
+  //       return [""];
+  //     }
+  //   } catch (err) {
+  //     console.log("getUsers error", err);
+  //     return [""];
+  //   }
+  // };
+  const getUsers = async (columnName, userIDs: any) => {
     try {
-      const tempUserIDs: number[] = userIDs ? [userIDs] : [];
-      console.log("tempUserIDs", tempUserIDs);
+      let tempUserIDs: number[] = [];
+
+      if (Array.isArray(userIDs?.results)) {
+        tempUserIDs = userIDs.results;
+      } else if (typeof userIDs === "number") {
+        tempUserIDs = [userIDs];
+      }
+
       if (tempUserIDs.length > 0) {
         const userDetails = await Promise.all(
           tempUserIDs.map(async (id) => {
@@ -363,17 +393,23 @@ const RequestsFields = ({
             return res?.Email;
           })
         );
-        console.log("userDetails", userDetails);
+
         setPersonField((prev) => ({
           ...prev,
-          [columName]: userDetails,
+          [columnName]: userDetails,
         }));
       } else {
-        return [""];
+        setPersonField((prev) => ({
+          ...prev,
+          [columnName]: [],
+        }));
       }
     } catch (err) {
       console.log("getUsers error", err);
-      return [""];
+      setPersonField((prev) => ({
+        ...prev,
+        [columnName]: [],
+      }));
     }
   };
 
@@ -558,13 +594,16 @@ const RequestsFields = ({
                               personSelectionLimit={
                                 field?.columnType === "Person" ? 1 : 5
                               }
+                              // defaultSelectedUsers={
+                              //   field?.columnType === "Person"
+                              //     ? getUsers(
+                              //         field.columnName,
+                              //         formData[`${field.columnName}Id`]
+                              //       )
+                              //     : formData[`${field.columnName}Id`]?.results
+                              // }
                               defaultSelectedUsers={
-                                field?.columnType === "Person"
-                                  ? getUsers(
-                                      field.columnName,
-                                      formData[`${field.columnName}Id`]
-                                    )
-                                  : formData[`${field.columnName}Id`]?.results
+                                personField[field.columnName] || []
                               }
                               onChange={(e: any) => {
                                 field?.columnType === "Person";
@@ -1082,6 +1121,27 @@ const RequestsFields = ({
       });
     }
   }, [approvalHistoryDetails]);
+
+  useEffect(() => {
+    const fetchDefaultUsers = async () => {
+      const personFields: any = Object.values(groupedFields)
+        .flat()
+        .filter(
+          (f: ISectionColumnsConfig) =>
+            f.columnType === "Person" || f.columnType === "PersonMulti"
+        );
+
+      for (const field of personFields) {
+        const columnName = field.columnName;
+        const userIdData = formData?.[`${columnName}Id`];
+        if (userIdData) {
+          await getUsers(columnName, userIdData);
+        }
+      }
+    };
+
+    fetchDefaultUsers();
+  }, [formData]);
 
   return <></>;
 };
