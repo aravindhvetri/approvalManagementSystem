@@ -54,6 +54,7 @@ const DynamicSectionWithField = ({
   const [showPopup, setShowPopup] = useState(false);
   const [newChoice, setNewChoice] = useState("");
   console.log("sections", sections);
+
   const [newField, setNewField] = useState<any>({
     columnID: null,
     sectionIndex: null,
@@ -63,6 +64,7 @@ const DynamicSectionWithField = ({
     stages: [],
     choices: [],
   });
+  console.log("newField", newField);
   console.log(sections, "sections");
   const [previewVisible, setPreviewVisible] = useState(false);
   const [previewFields, setPreviewFields] = useState<any>([]);
@@ -564,6 +566,8 @@ const DynamicSectionWithField = ({
                     setNewField({
                       ...newField,
                       type: e.value,
+                      required:
+                        e.value === "YesorNo" ? false : newField?.required,
                       choices: e.value === "Choice" ? [] : newField.choices,
                     })
                   }
@@ -619,18 +623,25 @@ const DynamicSectionWithField = ({
               )}
             </div>
 
-            <div className={DynamicSectionWithFieldStyles.columnNameContainer}>
-              <Label className={DynamicSectionWithFieldStyles.label}>
-                Require that this column contains information
-              </Label>
-              <InputSwitch
-                checked={newField.required}
-                onChange={(e) =>
-                  setNewField({ ...newField, required: e.value })
-                }
-                className="InputSwitch"
-              />
-            </div>
+            {!(newField.type === "YesorNo") && (
+              <div
+                className={DynamicSectionWithFieldStyles.columnNameContainer}
+              >
+                <Label className={DynamicSectionWithFieldStyles.label}>
+                  Require that this column contains information
+                </Label>
+                <InputSwitch
+                  checked={newField.required}
+                  onChange={(e) =>
+                    setNewField({
+                      ...newField,
+                      required: e.value,
+                    })
+                  }
+                  className="InputSwitch"
+                />
+              </div>
+            )}
             <div className={DynamicSectionWithFieldStyles.columnNameContainer}>
               <Label className={DynamicSectionWithFieldStyles.label}>
                 Need to show on

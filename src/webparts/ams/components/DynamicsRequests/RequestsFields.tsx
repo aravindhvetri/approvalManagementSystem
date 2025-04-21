@@ -33,6 +33,12 @@ import "../../../../External/style.css";
 import WorkflowActionButtons from "../WorkflowButtons/WorkflowActionButtons";
 import attachmentStyles from "../AttachmentUploader/AttachmentUploader.module.scss";
 import { sp } from "@pnp/sp";
+import {
+  PeoplePicker,
+  PrincipalType,
+} from "@pnp/spfx-controls-react/lib/PeoplePicker";
+import { Calendar } from "primereact/calendar";
+import { Checkbox } from "primereact/checkbox";
 
 const RequestsFields = ({
   context,
@@ -46,7 +52,6 @@ const RequestsFields = ({
   setDynamicRequestsSideBarVisible,
   setShowLoader,
 }) => {
-  console.log(navigateFrom, "navigateFrom");
   const sigCanvas = useRef<SignatureCanvas>(null);
   const sigCanvasRefs = useRef([]);
   const serverRelativeUrl = context?._pageContext?._site?.serverRelativeUrl;
@@ -68,8 +73,10 @@ const RequestsFields = ({
   });
   const [approvalHistoryDetails, setApprovalHistoryDetails] =
     useState<IApprovalHistoryDetails[]>();
+  const [personField, setPersonField] = useState({});
+  console.log(formData, "formData");
+  console.log(personField, "personField");
 
-  console.log(approvalHistoryDetails, "approvalHistoryDetails");
   //CategorySectionConfig List
   const getCategorySectionConfigDetails = () => {
     SPServices.SPReadItems({
@@ -158,7 +165,16 @@ const RequestsFields = ({
     })
       .then((item: any) => {
         const tempArr = {};
-        dynamicFields.map((e) => (tempArr[e.columnName] = item[e.columnName]));
+        dynamicFields.map((e) =>
+          e?.columnType === "Person"
+            ? (tempArr[`${e.columnName}Id`] =
+                Number(item[`${e.columnName}Id`]) || null)
+            : e?.columnType === "PersonMulti"
+            ? (tempArr[`${e.columnName}Id`] = {
+                results: item[`${e.columnName}Id`] || [],
+              })
+            : (tempArr[e.columnName] = item[e.columnName])
+        );
         setFormData(tempArr);
         setAuthor({
           id: item.Author.ID,
@@ -216,7 +232,6 @@ const RequestsFields = ({
       .then((res) => {
         const tempArr = [];
         res?.forEach((item: any) => {
-          console.log(item, "item");
           tempArr.push({
             createdDate: item?.Created,
             itemID: item?.ID,
@@ -288,8 +303,30 @@ const RequestsFields = ({
   const validateForm = () => {
     const newErrors = {};
     dynamicFields.forEach((field) => {
-      if (field.isRequired && !formData[field.columnName]?.trim()) {
-        newErrors[field.columnName] = `${field.columnDisplayName} is required.`;
+      if (
+        field.isRequired &&
+        ((!formData[field.columnName]?.toString().trim() &&
+          !(
+            field?.columnType === "Person" ||
+            field?.columnType === "PersonMulti"
+          )) ||
+          (!formData[`${field.columnName}Id`]?.toString().trim() &&
+            field?.columnType === "Person") ||
+          (formData[`${field.columnName}Id`]?.results?.length() === 0 &&
+            field?.columnType === "PersonMulti"))
+      ) {
+        if (
+          field?.columnType === "Person" ||
+          field?.columnType === "PersonMulti"
+        ) {
+          newErrors[
+            `${field.columnName}Id`
+          ] = `${field.columnDisplayName} is required.`;
+        } else {
+          newErrors[
+            field.columnName
+          ] = `${field.columnDisplayName} is required.`;
+        }
       }
     });
     setErrors(newErrors);
@@ -311,6 +348,32 @@ const RequestsFields = ({
       return true;
     } else {
       return false;
+    }
+  };
+
+  //Get Users By User id
+  const getUsers = async (columName, userIDs: any) => {
+    try {
+      const tempUserIDs: number[] = userIDs ? [userIDs] : [];
+      console.log("tempUserIDs", tempUserIDs);
+      if (tempUserIDs.length > 0) {
+        const userDetails = await Promise.all(
+          tempUserIDs.map(async (id) => {
+            const res = await sp.web.siteUsers.getById(id).get();
+            return res?.Email;
+          })
+        );
+        console.log("userDetails", userDetails);
+        setPersonField((prev) => ({
+          ...prev,
+          [columName]: userDetails,
+        }));
+      } else {
+        return [""];
+      }
+    } catch (err) {
+      console.log("getUsers error", err);
+      return [""];
     }
   };
 
@@ -392,153 +455,328 @@ const RequestsFields = ({
                 <div className={dynamicFieldsStyles.singlelineFields}>
                   {fields
                     .filter((f) => f.columnType === "Singleline")
-                    .map((field) => (
-                      <div
-                        key={field.id}
-                        className={dynamicFieldsStyles.inputField}
-                      >
-                        <Label className={dynamicFieldsStyles.label}>
-                          {field.columnDisplayName}
-                          {field?.isRequired && (
-                            <span className="required">*</span>
-                          )}
-                        </Label>
-                        <InputText
-                          id={field.columnName}
-                          value={formData[field.columnName] || ""}
-                          onChange={(e) =>
-                            handleInputChange(field.columnName, e.target.value)
-                          }
-                          disabled={
-                            !(
-                              recordAction === "Edit" &&
-                              author?.email === loginUser &&
-                              navigateFrom === "MyRequest"
-                            )
-                          }
-                        />
-                        {errors[field.columnName] && (
-                          <span className={dynamicFieldsStyles.errorMsg}>
-                            {errors[field.columnName]}
-                          </span>
-                        )}
-                      </div>
-                    ))}
+                    .map(
+                      (field) =>
+                        showColumnsByStage(field) && (
+                          <div
+                            key={field.id}
+                            className={dynamicFieldsStyles.inputField}
+                          >
+                            <Label className={dynamicFieldsStyles.label}>
+                              {field.columnDisplayName}
+                              {field?.isRequired && (
+                                <span className="required">*</span>
+                              )}
+                            </Label>
+                            <InputText
+                              id={field.columnName}
+                              value={formData[field.columnName] || ""}
+                              onChange={(e) =>
+                                handleInputChange(
+                                  field.columnName,
+                                  e.target.value
+                                )
+                              }
+                              disabled={
+                                !(
+                                  recordAction === "Edit" &&
+                                  author?.email === loginUser &&
+                                  navigateFrom === "MyRequest"
+                                )
+                              }
+                            />
+                            {errors[field.columnName] && (
+                              <span className={dynamicFieldsStyles.errorMsg}>
+                                {errors[field.columnName]}
+                              </span>
+                            )}
+                          </div>
+                        )
+                    )}
                   {fields
                     .filter((f) => f.columnType === "Number")
-                    .map((field) => (
-                      <div
-                        key={field.id}
-                        className={dynamicFieldsStyles.inputField}
-                      >
-                        <Label className={dynamicFieldsStyles.label}>
-                          {field.columnDisplayName}
-                          {field?.isRequired && (
-                            <span className="required">*</span>
-                          )}
-                        </Label>
-                        <InputText
-                          id={field.columnName}
-                          keyfilter="num"
-                          value={formData[field.columnName] || null}
-                          onChange={(e) =>
-                            handleInputChange(field.columnName, e.target.value)
-                          }
-                          disabled={
-                            !(
-                              recordAction === "Edit" &&
-                              author?.email === loginUser &&
-                              navigateFrom === "MyRequest"
-                            )
-                          }
-                        />
-                        {errors[field.columnName] && (
-                          <span className={dynamicFieldsStyles.errorMsg}>
-                            {errors[field.columnName]}
-                          </span>
-                        )}
-                      </div>
-                    ))}
+                    .map(
+                      (field) =>
+                        showColumnsByStage(field) && (
+                          <div
+                            key={field.id}
+                            className={dynamicFieldsStyles.inputField}
+                          >
+                            <Label className={dynamicFieldsStyles.label}>
+                              {field.columnDisplayName}
+                              {field?.isRequired && (
+                                <span className="required">*</span>
+                              )}
+                            </Label>
+                            <InputText
+                              id={field.columnName}
+                              keyfilter="num"
+                              value={formData[field.columnName] || null}
+                              onChange={(e) =>
+                                handleInputChange(
+                                  field.columnName,
+                                  e.target.value
+                                )
+                              }
+                              disabled={
+                                !(
+                                  recordAction === "Edit" &&
+                                  author?.email === loginUser &&
+                                  navigateFrom === "MyRequest"
+                                )
+                              }
+                            />
+                            {errors[field.columnName] && (
+                              <span className={dynamicFieldsStyles.errorMsg}>
+                                {errors[field.columnName]}
+                              </span>
+                            )}
+                          </div>
+                        )
+                    )}
+                  {fields
+                    .filter(
+                      (f) =>
+                        f.columnType === "PersonMulti" ||
+                        f.columnType === "Person"
+                    )
+                    .map(
+                      (field) =>
+                        showColumnsByStage(field) && (
+                          <div
+                            key={field.id}
+                            className={dynamicFieldsStyles.inputField}
+                          >
+                            <Label className={dynamicFieldsStyles.label}>
+                              {field.columnDisplayName}
+                              {field?.isRequired && (
+                                <span className="required">*</span>
+                              )}
+                            </Label>
+                            <PeoplePicker
+                              context={context}
+                              personSelectionLimit={
+                                field?.columnType === "Person" ? 1 : 5
+                              }
+                              defaultSelectedUsers={
+                                field?.columnType === "Person"
+                                  ? getUsers(
+                                      field.columnName,
+                                      formData[`${field.columnName}Id`]
+                                    )
+                                  : formData[`${field.columnName}Id`]?.results
+                              }
+                              onChange={(e: any) => {
+                                field?.columnType === "Person";
+                                handleInputChange(
+                                  `${field.columnName}Id`,
+                                  field?.columnType === "Person"
+                                    ? Number(e[0]?.id) || null
+                                    : {
+                                        results:
+                                          e?.map((person) => person?.id) || [],
+                                      }
+                                );
+                              }}
+                              disabled={
+                                !(
+                                  recordAction === "Edit" &&
+                                  author?.email === loginUser &&
+                                  navigateFrom === "MyRequest"
+                                )
+                              }
+                              groupName={""}
+                              showtooltip={true}
+                              ensureUser={true}
+                              principalTypes={[PrincipalType.User]}
+                              resolveDelay={1000}
+                            />
+                            {errors[`${field.columnName}Id`] && (
+                              <span className={dynamicFieldsStyles.errorMsg}>
+                                {errors[`${field.columnName}Id`]}
+                              </span>
+                            )}
+                          </div>
+                        )
+                    )}
+                  {fields
+                    .filter(
+                      (f) =>
+                        f.columnType === "Date" || f.columnType === "DateTime"
+                    )
+                    .map(
+                      (field) =>
+                        showColumnsByStage(field) && (
+                          <div
+                            key={field.id}
+                            className={dynamicFieldsStyles.inputField}
+                          >
+                            <Label className={dynamicFieldsStyles.label}>
+                              {field.columnDisplayName}
+                              {field?.isRequired && (
+                                <span className="required">*</span>
+                              )}
+                            </Label>
+                            <Calendar
+                              id="calendar-12h"
+                              value={
+                                formData[field.columnName]
+                                  ? new Date(formData[field.columnName])
+                                  : null
+                              }
+                              onChange={(e) => {
+                                handleInputChange(
+                                  field.columnName,
+                                  field?.columnType === "DateTime"
+                                    ? e?.value.toLocaleString()
+                                    : e?.value.toLocaleDateString("en-US")
+                                );
+                              }}
+                              disabled={
+                                !(
+                                  recordAction === "Edit" &&
+                                  author?.email === loginUser &&
+                                  navigateFrom === "MyRequest"
+                                )
+                              }
+                              showTime={field?.columnType === "DateTime"}
+                              hourFormat="12"
+                              dateFormat="dd/mm/yy"
+                              showIcon
+                            />
+                            {errors[field.columnName] && (
+                              <span className={dynamicFieldsStyles.errorMsg}>
+                                {errors[field.columnName]}
+                              </span>
+                            )}
+                          </div>
+                        )
+                    )}
+                  {fields
+                    .filter((f) => f.columnType === "YesorNo")
+                    .map(
+                      (field) =>
+                        showColumnsByStage(field) && (
+                          <div
+                            key={field.id}
+                            className={dynamicFieldsStyles.inputField}
+                          >
+                            <Label className={dynamicFieldsStyles.label}>
+                              {field.columnDisplayName}
+                              {field?.isRequired && (
+                                <span className="required">*</span>
+                              )}
+                            </Label>
+                            <Checkbox
+                              onChange={(e) =>
+                                handleInputChange(field.columnName, e.checked)
+                              }
+                              disabled={
+                                !(
+                                  recordAction === "Edit" &&
+                                  author?.email === loginUser &&
+                                  navigateFrom === "MyRequest"
+                                )
+                              }
+                              checked={formData[field.columnName]}
+                            ></Checkbox>
+                            {errors[field.columnName] && (
+                              <span className={dynamicFieldsStyles.errorMsg}>
+                                {errors[field.columnName]}
+                              </span>
+                            )}
+                          </div>
+                        )
+                    )}
 
                   {fields
                     .filter((f) => f.columnType === "Choice")
-                    .map((field) => (
-                      <div
-                        key={field.id}
-                        className={dynamicFieldsStyles.inputField}
-                      >
-                        <Label className={dynamicFieldsStyles.label}>
-                          {field.columnDisplayName}
-                          {field?.isRequired && (
-                            <span className="required">*</span>
-                          )}
-                        </Label>
-                        <Dropdown
-                          value={field?.choices.find(
-                            (e) => e === formData[field.columnName]
-                          )}
-                          showClear
-                          options={field?.choices}
-                          onChange={(e) => {
-                            handleInputChange(field.columnName, e.value);
-                          }}
-                          filter
-                          placeholder={field.columnName}
-                          disabled={
-                            !(
-                              recordAction === "Edit" &&
-                              author?.email === loginUser &&
-                              navigateFrom === "MyRequest"
-                            )
-                          }
-                          className="w-full md:w-14rem"
-                        />
-                        {errors[field.columnName] && (
-                          <span className={dynamicFieldsStyles.errorMsg}>
-                            {errors[field.columnName]}
-                          </span>
-                        )}
-                      </div>
-                    ))}
+                    .map(
+                      (field) =>
+                        showColumnsByStage(field) && (
+                          <div
+                            key={field.id}
+                            className={dynamicFieldsStyles.inputField}
+                          >
+                            <Label className={dynamicFieldsStyles.label}>
+                              {field.columnDisplayName}
+                              {field?.isRequired && (
+                                <span className="required">*</span>
+                              )}
+                            </Label>
+                            <Dropdown
+                              value={field?.choices.find(
+                                (e) => e === formData[field.columnName]
+                              )}
+                              showClear
+                              options={field?.choices}
+                              onChange={(e) => {
+                                handleInputChange(field.columnName, e.value);
+                              }}
+                              filter
+                              placeholder={field.columnName}
+                              disabled={
+                                !(
+                                  recordAction === "Edit" &&
+                                  author?.email === loginUser &&
+                                  navigateFrom === "MyRequest"
+                                )
+                              }
+                              className="w-full md:w-14rem"
+                            />
+                            {errors[field.columnName] && (
+                              <span className={dynamicFieldsStyles.errorMsg}>
+                                {errors[field.columnName]}
+                              </span>
+                            )}
+                          </div>
+                        )
+                    )}
                 </div>
 
                 <div className={dynamicFieldsStyles.multilineFields}>
                   {fields
                     .filter((f) => f.columnType === "Multiline")
-                    .map((field) => (
-                      <div
-                        key={field.id}
-                        className={dynamicFieldsStyles.inputField}
-                      >
-                        <Label className={dynamicFieldsStyles.label}>
-                          {field.columnDisplayName}
-                          {field?.isRequired && (
-                            <span className="required">*</span>
-                          )}
-                        </Label>
-                        <InputTextarea
-                          id={field.columnName}
-                          autoResize
-                          value={formData[field.columnName] || ""}
-                          onChange={(e) =>
-                            handleInputChange(field.columnName, e.target.value)
-                          }
-                          disabled={
-                            !(
-                              recordAction === "Edit" &&
-                              author?.email === loginUser &&
-                              navigateFrom === "MyRequest"
-                            )
-                          }
-                          rows={3}
-                        />
-                        {errors[field.columnName] && (
-                          <span className={dynamicFieldsStyles.errorMsg}>
-                            {errors[field.columnName]}
-                          </span>
-                        )}
-                      </div>
-                    ))}
+                    .map(
+                      (field) =>
+                        showColumnsByStage(field) && (
+                          <div
+                            key={field.id}
+                            className={dynamicFieldsStyles.inputField}
+                          >
+                            <Label className={dynamicFieldsStyles.label}>
+                              {field.columnDisplayName}
+                              {field?.isRequired && (
+                                <span className="required">*</span>
+                              )}
+                            </Label>
+                            <InputTextarea
+                              id={field.columnName}
+                              autoResize
+                              value={formData[field.columnName] || ""}
+                              onChange={(e) =>
+                                handleInputChange(
+                                  field.columnName,
+                                  e.target.value
+                                )
+                              }
+                              disabled={
+                                !(
+                                  recordAction === "Edit" &&
+                                  author?.email === loginUser &&
+                                  navigateFrom === "MyRequest"
+                                )
+                              }
+                              rows={3}
+                            />
+                            {errors[field.columnName] && (
+                              <span className={dynamicFieldsStyles.errorMsg}>
+                                {errors[field.columnName]}
+                              </span>
+                            )}
+                          </div>
+                        )
+                    )}
                 </div>
               </div>
             )
@@ -815,7 +1053,6 @@ const RequestsFields = ({
     }));
     setShowLoader(false);
   }, [dynamicFields, formData, errors, approvalDetails, files]);
-
   useEffect(() => {
     getRequestHubDetails();
     setApprovalDetails({
