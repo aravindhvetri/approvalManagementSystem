@@ -36,7 +36,7 @@ const WorkflowActionButtons = ({
   itemID,
 }) => {
   const serverRelativeUrl = context?._pageContext?._site?.serverRelativeUrl;
-  console.log(approvalDetails, "approvalDetails");
+
   //useStates
   const [submitBtn, setSubmitBtn] = useState(false);
   const [reSubmit, setReSubmit] = useState(false);
@@ -294,7 +294,6 @@ const WorkflowActionButtons = ({
       }
       setFiles([]);
       setShowLoader(false);
-      console.log("All files uploaded successfully!");
     } catch (error) {
       console.error("Error uploading files:", error);
       setShowLoader(false);

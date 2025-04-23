@@ -61,8 +61,6 @@ const AddRequestsFields = ({
     useState<IRequestIdFormatWithDigit>({
       ...Config.requestIdFormatWithDigit,
     });
-  console.log("requestIdFormat", requestIdFormat);
-
   //CategorySectionConfig List
   const getCategorySectionConfigDetails = () => {
     SPServices.SPReadItems({
@@ -238,7 +236,6 @@ const AddRequestsFields = ({
       tempApprovalJson[0]?.stages
         ?.find((stage) => stage?.stage === tempApprovalJson[0]?.Currentstage)
         ?.approvers?.map((element: any) => element) || [];
-    console.log("tempApprovers", tempApprovers);
 
     const authorDetails = await sp.web.siteUsers
       .getById(itemData?.AuthorId)
@@ -267,7 +264,6 @@ const AddRequestsFields = ({
 
   //handleInputChange
   const handleInputChange = (name, value) => {
-    console.log("name", name);
     setFormData({ ...formData, [name]: value });
     if (errors[name]) {
       setErrors({ ...errors, [name]: "" });
@@ -573,7 +569,6 @@ const AddRequestsFields = ({
                                 : formData[`${field.columnName}Id`]?.results
                             }
                             onChange={(e: any) => {
-                              console.log("person", e);
                               handleInputChange(
                                 `${field.columnName}Id`,
                                 field?.columnType === "Person"
@@ -621,7 +616,6 @@ const AddRequestsFields = ({
                                 : null
                             }
                             onChange={(e) => {
-                              console.log("Calendar", e);
                               handleInputChange(
                                 field.columnName,
                                 field?.columnType === "DateTime"

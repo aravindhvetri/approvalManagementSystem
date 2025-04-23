@@ -43,7 +43,6 @@ const ProductSideNav = ({ context, updatePage, currentPage }) => {
       pageName: Config.sideNavPageNames.ApproveConfig,
     });
   }
-  console.log("sideNavContents", sideNavContents);
 
   //SetPagename :
   const updatePageUrl = (pageName: string) => {
