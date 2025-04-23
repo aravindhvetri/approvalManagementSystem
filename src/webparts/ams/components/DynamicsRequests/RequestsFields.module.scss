@@ -85,3 +85,21 @@
   align-items: center;
   gap: 12px;
 }
+
+.signatureUploadButton {
+  display: inline-block;
+  background-color: var(--green);
+  color: white;
+  padding: 5px;
+  font-size: 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 400;
+}
+.signatureUploadButton:hover {
+  background-color: var(--liteGreen);
+  color: var(--green);
+  transition: ease-in-out;
+  transition-timing-function: linear;
+  transition-duration: 0.5s;
+}
