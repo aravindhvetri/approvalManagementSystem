@@ -2,12 +2,7 @@
 import * as React from "react";
 import { useRef } from "react";
 //PeoplePicker Imports;
-import {
-  IPeoplePickerDetails,
-  IToaster,
-  ITabviewDetails,
-  IemailMessage,
-} from "./interface";
+import { IPeoplePickerDetails, IToaster, ITabviewDetails } from "./interface";
 import {
   DirectionalHint,
   Label,
@@ -30,7 +25,6 @@ import { TabView, TabPanel } from "primereact/tabview";
 import styles from "../External/commonStyles.module.scss";
 import "../External/style.css";
 import { sp } from "@pnp/sp/presets/all";
-import moment from "moment";
 
 //PeoplePicker Template:
 export const peoplePickerTemplate = (user: IPeoplePickerDetails) => {
@@ -161,7 +155,7 @@ export const ActionsMenu = ({ items }) => {
         popup
         ref={menuLeft}
         id="popup_menu_left"
-        style={{ width: "8.5rem" }}
+        style={{ width: "8.5rem", padding: "0px" }}
       />
       <Button
         icon="pi pi-ellipsis-v"

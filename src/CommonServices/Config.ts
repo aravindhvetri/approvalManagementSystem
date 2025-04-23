@@ -12,6 +12,7 @@ import {
   IListNames,
   INextStageFromCategorySideBar,
   IRequestHubDetails,
+  IRequestIdFormatWithDigit,
   IRightSideBarContents,
   IRightSideBarContentsDetails,
   ISectionColumnsConfig,
@@ -148,6 +149,7 @@ export namespace Config {
     categoryConfig: {
       category: "",
       requestIdFormat: "",
+      requestIdDigit: "",
       ExistingApprover: null,
       customApprover: null,
     },
@@ -161,10 +163,16 @@ export namespace Config {
     status: null,
   };
 
-  //Email Message Config Details
+  //Email Message Config Details:
   export const emailMessageConfig: IemailMessage = {
     To: [],
     Subject: "",
     Body: "",
+  };
+
+  //Request ID Format with digit:
+  export const requestIdFormatWithDigit: IRequestIdFormatWithDigit = {
+    format: "",
+    digit: "",
   };
 }

@@ -26,6 +26,7 @@ import { GiCancel } from "react-icons/gi";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 import { Dropdown } from "primereact/dropdown";
+import { Toast } from "primereact/toast";
 import SignatureCanvas from "react-signature-canvas";
 //Styles Imports:
 import dynamicFieldsStyles from "./RequestsFields.module.scss";
@@ -52,6 +53,8 @@ const RequestsFields = ({
   setDynamicRequestsSideBarVisible,
   setShowLoader,
 }) => {
+  const toast = useRef(null);
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
   const sigCanvas = useRef<SignatureCanvas>(null);
   const sigCanvasRefs = useRef([]);
   const serverRelativeUrl = context?._pageContext?._site?.serverRelativeUrl;
@@ -71,6 +74,7 @@ const RequestsFields = ({
     comments: "",
     signature: "",
   });
+  console.log(approvalDetails, "approvalDetails");
   const [approvalHistoryDetails, setApprovalHistoryDetails] =
     useState<IApprovalHistoryDetails[]>();
   const [personField, setPersonField] = useState({});
@@ -430,6 +434,9 @@ const RequestsFields = ({
       ...prev,
       signature: "",
     }));
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
   };
 
   //Handle Signature Change:
@@ -441,6 +448,38 @@ const RequestsFields = ({
       ...prev,
       signature: dataURL,
     }));
+  };
+
+  const handleImageUpload = (e) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        const imageUrl = event.target?.result as string;
+        setApprovalDetails((prev) => ({
+          ...prev,
+          signature: imageUrl,
+        }));
+
+        const canvas = sigCanvas.current;
+        const img = new Image();
+        img.src = imageUrl;
+        img.onload = () => {
+          canvas?.clear();
+          const ctx = canvas?.getCanvas().getContext("2d");
+          if (ctx) {
+            ctx.drawImage(
+              img,
+              0,
+              0,
+              canvas.getCanvas().width,
+              canvas.getCanvas().height
+            );
+          }
+        };
+      };
+      reader.readAsDataURL(file);
+    }
   };
 
   //DynamicRequestFieldsSideBarContent Return Function:
@@ -669,6 +708,10 @@ const RequestsFields = ({
                               )}
                             </Label>
                             <Checkbox
+                              style={{
+                                height: "30px",
+                                width: "32px",
+                              }}
                               onChange={(e) =>
                                 handleInputChange(field.columnName, e.checked)
                               }
@@ -782,62 +825,90 @@ const RequestsFields = ({
               </div>
             )
           )}
-          {files.length > 0 && (
-            <div>
+          <div>
+            {(recordAction === "View" && files.length > 0) ||
+            recordAction === "Edit" ? (
               <Label className={dynamicFieldsStyles.label}>Attachments</Label>
-              <>
-                {!(recordAction === "Edit") ? (
-                  ""
-                ) : (
-                  <div>
-                    <FileUpload
-                      className="addNewButton"
-                      name="demo[]"
-                      mode="basic"
-                      onSelect={(e) => setFiles([...files, ...e.files])}
-                      url="/api/upload"
-                      auto
-                      multiple
-                      maxFileSize={1000000}
-                      style={{ width: "14%" }}
-                      chooseLabel="Browse"
-                      chooseOptions={{ icon: "" }}
-                    />
-                  </div>
-                )}
-                <div style={{ marginTop: "20px" }}>
-                  {files.length > 0 && (
-                    <ul style={{ listStyle: "none", padding: 0 }}>
-                      {files.map((file, index) => (
-                        <li className={attachmentStyles?.fileList} key={index}>
-                          <Tag
-                            className={attachmentStyles.filNameTag}
-                            value={
-                              <span
-                                onClick={() => downloadFile(file)}
-                                style={{
-                                  cursor: "pointer",
-                                  textDecoration: "underline",
-                                }}
-                              >
-                                {file?.name ? file?.name : ""}
-                              </span>
-                            }
-                          />
-                          {recordAction === "Edit" && (
-                            <GiCancel
-                              style={{ cursor: "pointer", color: "red" }}
-                              onClick={() => removeFile(file?.name)}
-                            />
-                          )}
-                        </li>
-                      ))}
-                    </ul>
-                  )}
+            ) : (
+              ""
+            )}
+            <>
+              {!(recordAction === "Edit") ? (
+                ""
+              ) : (
+                <div>
+                  <FileUpload
+                    className="addNewButton"
+                    name="demo[]"
+                    mode="basic"
+                    // onSelect={(e) => setFiles([...files, ...e.files])}
+                    onSelect={(e) => {
+                      const newFiles = e.files.filter(
+                        (newFile) =>
+                          !files.some(
+                            (existing) => existing.name === newFile.name
+                          )
+                      );
+
+                      const duplicateFiles = e.files.filter((newFile) =>
+                        files.some((existing) => existing.name === newFile.name)
+                      );
+
+                      if (duplicateFiles.length > 0) {
+                        toast.current?.show({
+                          severity: "warn",
+                          summary: "Warning",
+                          detail: "File name already exists!",
+                          life: 3000,
+                        });
+                      }
+
+                      if (newFiles.length > 0) {
+                        setFiles([...files, ...newFiles]);
+                      }
+                    }}
+                    url="/api/upload"
+                    auto
+                    multiple
+                    maxFileSize={1000000}
+                    style={{ width: "14%" }}
+                    chooseLabel="Browse"
+                    chooseOptions={{ icon: "" }}
+                  />
                 </div>
-              </>
-            </div>
-          )}
+              )}
+              <div style={{ marginTop: "20px" }}>
+                {files.length > 0 && (
+                  <ul style={{ listStyle: "none", padding: 0 }}>
+                    {files.map((file, index) => (
+                      <li className={attachmentStyles?.fileList} key={index}>
+                        <Tag
+                          className={attachmentStyles.filNameTag}
+                          value={
+                            <span
+                              onClick={() => downloadFile(file)}
+                              style={{
+                                cursor: "pointer",
+                                textDecoration: "underline",
+                              }}
+                            >
+                              {file?.name ? file?.name : ""}
+                            </span>
+                          }
+                        />
+                        {recordAction === "Edit" && (
+                          <GiCancel
+                            style={{ cursor: "pointer", color: "red" }}
+                            onClick={() => removeFile(file?.name)}
+                          />
+                        )}
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+            </>
+          </div>
           {recordAction === "Edit" && navigateFrom === "MyApproval" && (
             <>
               <div className={dynamicFieldsStyles.approverSection}>
@@ -877,6 +948,30 @@ const RequestsFields = ({
                       />
                     </div>
                   )}
+                  <div style={{ padding: "4px" }}>
+                    {/* <input
+                      type="file"
+                      accept="image/*"
+                      onChange={handleImageUpload}
+                      ref={fileInputRef}
+                    /> */}
+                    <div>
+                      <Label
+                        htmlFor="signatureUpload"
+                        className={dynamicFieldsStyles.signatureUploadButton}
+                      >
+                        Upload Signature Image
+                      </Label>
+                      <input
+                        id="signatureUpload"
+                        type="file"
+                        accept="image/*"
+                        onChange={handleImageUpload}
+                        ref={fileInputRef}
+                        style={{ display: "none" }}
+                      />
+                    </div>
+                  </div>
                 </div>
                 <div
                   style={{
@@ -1062,7 +1157,11 @@ const RequestsFields = ({
     fetchDefaultUsers();
   }, [formData]);
 
-  return <></>;
+  return (
+    <>
+      <Toast ref={toast} />
+    </>
+  );
 };
 
 export default RequestsFields;

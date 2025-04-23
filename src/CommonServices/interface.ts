@@ -32,6 +32,7 @@ export interface ICategoryDetails {
   category: string;
   isDelete: boolean;
   requestIdFormat: string;
+  requestIdDigit: string;
 }
 //Approval Details patch:
 export interface IApprovalDetailsPatch {
@@ -212,6 +213,7 @@ export interface IFinalSubmitDetails {
   categoryConfig: {
     category: string;
     requestIdFormat: string;
+    requestIdDigit: string;
     ExistingApprover: number;
     customApprover: {};
   };
@@ -230,4 +232,10 @@ export interface IemailMessage {
   To: string[];
   Subject: string;
   Body: string;
+}
+
+//Request ID Format with digit:
+export interface IRequestIdFormatWithDigit {
+  format: string;
+  digit: string;
 }

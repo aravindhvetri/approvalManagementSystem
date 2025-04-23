@@ -313,6 +313,7 @@ const EmailContainer = ({
           RequestJSON: {
             Category: finalSubmit?.categoryConfig?.category,
             RequestIdFormat: finalSubmit?.categoryConfig?.requestIdFormat,
+            RequestIdDigits: finalSubmit?.categoryConfig?.requestIdDigit,
           },
         });
         //Get and Isdelete Category Section Details
@@ -508,6 +509,7 @@ const EmailContainer = ({
             RequestJSON: {
               Category: finalSubmit?.categoryConfig?.category,
               RequestIdFormat: finalSubmit?.categoryConfig?.requestIdFormat,
+              RequestIdDigits: finalSubmit?.categoryConfig?.requestIdDigit,
             },
           });
 
