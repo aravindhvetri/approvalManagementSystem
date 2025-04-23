@@ -60,7 +60,6 @@ const CategoryConfig = ({
     null
   );
   const [selectedApprover, setSelectedApprover] = useState<string>("");
-  console.log("selectedCategory", selectedCategory);
   const [nextStageFromCategory, setNextStageFromCategory] =
     useState<INextStageFromCategorySideBar>({
       ...Config.NextStageFromCategorySideBar,
