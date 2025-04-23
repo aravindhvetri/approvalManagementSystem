@@ -399,7 +399,6 @@ export const getSpGroupMembers = async (groupName) => {
         email: user?.Email,
       });
     });
-    console.log("groupMembers", groupMembers);
     return groupMembers;
   } catch {
     (err) => console.log("getSpGroupMembers err", err);
