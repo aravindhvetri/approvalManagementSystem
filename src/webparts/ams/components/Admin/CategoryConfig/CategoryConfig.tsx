@@ -9,6 +9,7 @@ import {
   ICategoryDetails,
   IFinalSubmitDetails,
   INextStageFromCategorySideBar,
+  IRequestIdFormatWithDigit,
   IRightSideBarContents,
 } from "../../../../../CommonServices/interface";
 import {
@@ -48,7 +49,10 @@ const CategoryConfig = ({
     []
   );
   const [categoryInputs, setCategoryInputs] = useState<string>("");
-  const [requestInput, setRequestFormatInput] = useState<string>("");
+  const [requestInput, setRequestFormatInput] =
+    useState<IRequestIdFormatWithDigit>({
+      ...Config.requestIdFormatWithDigit,
+    });
   const [actionsBooleans, setActionsBooleans] = useState<IActionBooleans>({
     ...Config.InitialActionsBooleans,
   });
@@ -64,6 +68,7 @@ const CategoryConfig = ({
     categoryName: "",
     approversSelected: "",
     requestInput: "",
+    digit: "",
   });
   const [finalSubmit, setFinalSubmit] = useState<IFinalSubmitDetails>({
     ...Config.finalSubmitDetails,
@@ -94,6 +99,9 @@ const CategoryConfig = ({
             isDelete: items?.IsDelete,
             requestIdFormat: items?.RequestIdFormat
               ? items?.RequestIdFormat
+              : "",
+            requestIdDigit: items?.RequestIdDigits
+              ? items?.RequestIdDigits
               : "",
           });
         });
@@ -141,10 +149,15 @@ const CategoryConfig = ({
 
   //Handle View and Edit Actions:
   const handleActionClick = async (rowData: ICategoryDetails) => {
+    console.log(rowData, "rowData");
     // setShowLoader(true);
     // await new Promise((resolve) => setTimeout(resolve, 100));
     setCategoryInputs(rowData?.category);
-    setRequestFormatInput(rowData?.requestIdFormat);
+    setRequestFormatInput((prev: IRequestIdFormatWithDigit) => ({
+      ...prev,
+      format: rowData?.requestIdFormat,
+      digit: rowData?.requestIdDigit,
+    }));
     await setSelectedCategoryId(rowData?.id);
     setCategorySideBarVisible(true);
     // setShowLoader(false);
@@ -179,11 +192,18 @@ const CategoryConfig = ({
       validateError.categoryName = "";
     }
     //Request Id format validation
-    if (requestInput === "") {
+    if (requestInput?.format === "") {
       validateError.requestInput = "Request Id format is mandatory";
       isValid = false;
     } else {
       validateError.requestInput = "";
+    }
+    //Request Id digit validation
+    if (requestInput?.digit === "") {
+      validateError.digit = "Request Id digit is mandatory";
+      isValid = false;
+    } else {
+      validateError.digit = "";
     }
     if (!actionsBooleans?.isEdit && !actionsBooleans?.isView) {
       // Approver validation
@@ -328,32 +348,76 @@ const CategoryConfig = ({
                   </Label>
                   <InputText
                     className={`${categoryConfigStyles.input}`}
-                    value={requestInput}
+                    value={requestInput?.format}
                     placeholder="Only alphabets allowed"
                     onChange={(e) => {
                       const onlyText = e.target.value
                         .replace(/[0-9]/g, "")
                         .toUpperCase();
-                      setRequestFormatInput(onlyText);
+                      setRequestFormatInput({
+                        ...requestInput,
+                        format: onlyText,
+                      });
                     }}
                     disabled={actionsBooleans.isView}
                   />
-                  {requestInput ? (
+                  {requestInput?.format && requestInput?.digit ? (
                     <small
                       style={{ fontSize: "10px" }}
                       className={`${categoryConfigStyles.label}`}
                     >
-                      {`Note: Format will be like: ${requestInput}-XXXXX`}
+                      {`Note: Format will be like: ${
+                        requestInput.format
+                      }-${String(1).padStart(Number(requestInput.digit), "0")}`}
                     </small>
                   ) : (
                     ""
                   )}
 
-                  {validateError && !requestInput && (
+                  {validateError && !requestInput?.format && (
                     <div>
                       <span className="errorMsg">
                         {validateError?.requestInput}
                       </span>
+                    </div>
+                  )}
+                </div>
+                <div className={`${categoryConfigStyles.inputChildDiv}`}>
+                  <Label className={`${categoryConfigStyles.label}`}>
+                    Number of digits_RequestId
+                    <span className="required">*</span>
+                  </Label>
+                  <InputText
+                    className={`${categoryConfigStyles.input}`}
+                    value={requestInput?.digit}
+                    placeholder="Enter number of digits (e.g., 5)"
+                    // onChange={(e) => {
+                    //   const onlyNumbers = e.target.value.replace(/\D/g, "");
+                    //   setRequestFormatInput({
+                    //     ...requestInput,
+                    //     digit: onlyNumbers,
+                    //   });
+                    // }}
+                    onChange={(e) => {
+                      const onlyNumbers = e.target.value.replace(/\D/g, "");
+                      const numberValue = Number(onlyNumbers);
+                      if (numberValue >= 1 && numberValue <= 10) {
+                        setRequestFormatInput({
+                          ...requestInput,
+                          digit: onlyNumbers,
+                        });
+                      } else if (onlyNumbers === "") {
+                        setRequestFormatInput({
+                          ...requestInput,
+                          digit: "",
+                        });
+                      }
+                    }}
+                    disabled={actionsBooleans.isView}
+                  />
+                  {validateError && !requestInput?.digit && (
+                    <div>
+                      <span className="errorMsg">{validateError?.digit}</span>
                     </div>
                   )}
                 </div>
@@ -510,7 +574,8 @@ const CategoryConfig = ({
       categoryConfig: {
         ...prev.categoryConfig,
         category: categoryInputs,
-        requestIdFormat: requestInput,
+        requestIdFormat: requestInput?.format,
+        requestIdDigit: requestInput?.digit,
       },
     }));
   }, [categoryInputs, requestInput]);
@@ -521,6 +586,7 @@ const CategoryConfig = ({
       categoryName: "",
       approversSelected: "",
       requestInput: "",
+      digit: "",
     });
   }, []);
 
@@ -530,6 +596,7 @@ const CategoryConfig = ({
         categoryName: "",
         approversSelected: "",
         requestInput: "",
+        digit: "",
       });
       sessionStorage.clear();
       setSelectedApprover("");
@@ -537,7 +604,9 @@ const CategoryConfig = ({
         ...Config.NextStageFromCategorySideBar,
       });
       setCategoryInputs("");
-      setRequestFormatInput("");
+      setRequestFormatInput({
+        ...Config.requestIdFormatWithDigit,
+      });
       setSelectedCategoryId(null);
       setActionsBooleans({ ...Config.InitialActionsBooleans });
     }
