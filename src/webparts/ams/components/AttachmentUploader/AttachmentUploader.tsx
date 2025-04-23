@@ -16,8 +16,6 @@ import "../../../../External/style.css";
 const AttachmentUploader = ({ context, datas }) => {
   const serverRelativeUrl = context?._pageContext?._site?.serverRelativeUrl;
   const [files, setFiles] = useState([]);
-  console.log(datas, "datas");
-
   // const UploadLibrary = async () => {
   //   try {
   //     for (const file of files) {

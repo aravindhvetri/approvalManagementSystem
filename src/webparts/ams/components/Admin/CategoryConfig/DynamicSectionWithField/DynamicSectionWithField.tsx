@@ -53,8 +53,6 @@ const DynamicSectionWithField = ({
   const [sections, setSections] = useState([]);
   const [showPopup, setShowPopup] = useState(false);
   const [newChoice, setNewChoice] = useState("");
-  console.log("sections", sections);
-
   const [newField, setNewField] = useState<any>({
     columnID: null,
     sectionIndex: null,
@@ -64,8 +62,6 @@ const DynamicSectionWithField = ({
     stages: [],
     choices: [],
   });
-  console.log("newField", newField);
-  console.log(sections, "sections");
   const [previewVisible, setPreviewVisible] = useState(false);
   const [previewFields, setPreviewFields] = useState<any>([]);
   const [approvalStage, setApprovalStage] = useState([]);

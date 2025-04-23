@@ -74,8 +74,6 @@ const RequestsFields = ({
   const [approvalHistoryDetails, setApprovalHistoryDetails] =
     useState<IApprovalHistoryDetails[]>();
   const [personField, setPersonField] = useState({});
-  console.log(formData, "formData");
-  console.log(personField, "personField");
 
   //CategorySectionConfig List
   const getCategorySectionConfigDetails = () => {

@@ -55,8 +55,6 @@ const Header = ({ context, currentPage }) => {
       ...Config.rightSideBarContentsDetails,
     });
   const [activeTabView, setActiveTabView] = useState(0);
-  console.log("activeTabView", activeTabView);
-  console.log("currentPage", currentPage);
 
   //Get Category From List
   const categoryFilter = () => {
