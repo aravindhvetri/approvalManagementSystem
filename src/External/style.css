@@ -489,10 +489,6 @@ li.p-highlight .p-tabview-nav-link {
 }
 
 /* Check box.................. */
-.p-checkbox {
-  height: 33.4px !important;
-  width: 32px;
-}
 .p-checkbox .p-checkbox-box {
   width: 100%;
   height: 100%;

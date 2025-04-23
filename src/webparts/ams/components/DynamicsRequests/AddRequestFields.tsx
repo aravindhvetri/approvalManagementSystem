@@ -1,6 +1,12 @@
 //Default Imports:
 import * as React from "react";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
+import {
+  PeoplePicker,
+  PrincipalType,
+} from "@pnp/spfx-controls-react/lib/PeoplePicker";
+import { Calendar } from "primereact/calendar";
+import { Checkbox } from "primereact/checkbox";
 //CommonService Imports:
 import SPServices from "../../../../CommonServices/SPServices";
 import { Config } from "../../../../CommonServices/Config";
@@ -9,6 +15,7 @@ import {
   ISectionColumnsConfig,
   IBasicFilterCategoryDrop,
   IemailMessage,
+  IRequestIdFormatWithDigit,
 } from "../../../../CommonServices/interface";
 import {
   generateRequestID,
@@ -22,22 +29,16 @@ import { Label } from "office-ui-fabric-react";
 import { FileUpload } from "primereact/fileupload";
 import { Tag } from "primereact/tag";
 import { GiCancel } from "react-icons/gi";
-//Styles Imports:
-import dynamicFieldsStyles from "./RequestsFields.module.scss";
-import "../../../../External/style.css";
-import WorkflowActionButtons from "../WorkflowButtons/WorkflowActionButtons";
+import { Toast } from "primereact/toast";
 import { Dropdown } from "primereact/dropdown";
 import Loader from "../Loader/Loader";
 import { sp } from "@pnp/sp/presets/all";
 import moment from "moment";
+//Styles Imports:
+import dynamicFieldsStyles from "./RequestsFields.module.scss";
+import "../../../../External/style.css";
 import attachmentStyles from "../AttachmentUploader/AttachmentUploader.module.scss";
 import "../../../../External/style.css";
-import {
-  PeoplePicker,
-  PrincipalType,
-} from "@pnp/spfx-controls-react/lib/PeoplePicker";
-import { Calendar } from "primereact/calendar";
-import { Checkbox } from "primereact/checkbox";
 
 const AddRequestsFields = ({
   categoryFilterValue,
@@ -45,18 +46,21 @@ const AddRequestsFields = ({
   setRequestsDashBoardContent,
   setDynamicRequestsSideBarVisible,
 }) => {
+  const toast = useRef(null);
   const serverRelativeUrl = context?._pageContext?._site?.serverRelativeUrl;
   const [files, setFiles] = useState([]);
   const [dynamicFields, setDynamicFields] = useState<ISectionColumnsConfig[]>(
     []
   );
-  const [formData, setFormData] = useState({});
+  const [formData, setFormData] = useState<any>({});
   const [errors, setErrors] = useState({});
   const [selectedCategory, setSelectedCategory] =
     useState<IBasicFilterCategoryDrop>();
   const [showLoader, setShowLoader] = useState<boolean>(false);
-  const [requestIdFormat, setRequestIdFormat] = useState<string>("");
-
+  const [requestIdFormat, setRequestIdFormat] =
+    useState<IRequestIdFormatWithDigit>({
+      ...Config.requestIdFormatWithDigit,
+    });
   //CategorySectionConfig List
   const getCategorySectionConfigDetails = () => {
     SPServices.SPReadItems({
@@ -180,7 +184,11 @@ const AddRequestsFields = ({
       SelectedId: categoryID,
     })
       .then((res: any) => {
-        setRequestIdFormat(res?.RequestIdFormat ? res?.RequestIdFormat : "R");
+        setRequestIdFormat({
+          ...requestIdFormat,
+          format: res?.RequestIdFormat,
+          digit: res?.RequestIdDigits,
+        });
       })
       .catch((err) => {
         console.log(err, "getCategoryConfigDetails error");
@@ -302,7 +310,7 @@ const AddRequestsFields = ({
     setFiles(updatedFiles);
   };
 
-  //Submission
+  //Submission of form:
   const handleSubmit = async () => {
     if (validateForm()) {
       setShowLoader(true);
@@ -333,77 +341,105 @@ const AddRequestsFields = ({
                 });
             }
             setFiles([]);
-            setShowLoader(false);
-          } catch (error) {
-            console.error("Error uploading files:", error);
-            setShowLoader(false);
-          }
 
-          SPServices.SPUpdateItem({
-            Listname: Config.ListNames.RequestsHub,
-            ID: e.data.ID,
-            RequestJSON: {
-              RequestID: `${requestIdFormat}-${generateRequestID(
-                e.data.ID,
-                5,
-                0
-              )}`,
-            },
-          })
-            .then(async () => {
-              await SPServices.SPReadItems({
-                Listname: Config.ListNames.CategoryEmailConfig,
-                Select: "*,Category/Id,ParentTemplate/Id",
-                Expand: "Category,ParentTemplate",
+            const selectedCategoryId = formData?.CategoryId;
+            const digitLength = parseInt(requestIdFormat?.digit || "3", 10);
+
+            let count = 0;
+            try {
+              const categoryCountRes = await SPServices.SPReadItems({
+                Listname: Config.ListNames.RequestsHub,
                 Filter: [
                   {
                     FilterKey: "CategoryId",
                     Operator: "eq",
-                    FilterValue: e?.data?.CategoryId.toString(),
-                  },
-                  {
-                    FilterKey: "Process",
-                    Operator: "eq",
-                    FilterValue: "Submit",
+                    FilterValue: selectedCategoryId.toString(),
                   },
                 ],
                 FilterCondition: "and",
-              })
-                .then((res: any) => {
-                  res?.forEach((element: any) => {
-                    SPServices.SPReadItemUsingID({
-                      Listname: Config.ListNames.EmailTemplateConfig,
-                      SelectedId: element?.ParentTemplateId,
-                      Select: "*",
-                    })
-                      .then(async (template: any) => {
-                        await getEmailContent(
-                          e?.data,
-                          template?.TemplateName,
-                          template?.EmailBody
-                        );
-                        setDynamicRequestsSideBarVisible(false);
-                        setShowLoader(false);
-                      })
-                      .catch((err) =>
-                        console.log("get EmailTemplateConfig error", err)
-                      );
-                  });
-                })
-                .catch((err) =>
-                  console.log("get CategoryEmailConfig error", err)
-                );
-            })
-            .catch((err) => {
-              console.log("update item in requesthub error", err);
-              setShowLoader(false);
+                Select: "RequestID",
+              });
+              const filteredItems = categoryCountRes?.filter(
+                (item: any) =>
+                  item?.RequestID !== null && item?.RequestID !== ""
+              );
+              count = filteredItems.length;
+            } catch (err) {
+              console.error("Error fetching category count:", err);
+              count = 0;
+            }
+
+            const nextNumber = getFormattedNumber(count, digitLength);
+            const generatedRequestId = `${requestIdFormat?.format}-${nextNumber}`;
+
+            await SPServices.SPUpdateItem({
+              Listname: Config.ListNames.RequestsHub,
+              ID: e.data.ID,
+              RequestJSON: {
+                RequestID: generatedRequestId,
+              },
             });
+
+            await SPServices.SPReadItems({
+              Listname: Config.ListNames.CategoryEmailConfig,
+              Select: "*,Category/Id,ParentTemplate/Id",
+              Expand: "Category,ParentTemplate",
+              Filter: [
+                {
+                  FilterKey: "CategoryId",
+                  Operator: "eq",
+                  FilterValue: selectedCategoryId.toString(),
+                },
+                {
+                  FilterKey: "Process",
+                  Operator: "eq",
+                  FilterValue: "Submit",
+                },
+              ],
+              FilterCondition: "and",
+            })
+              .then((res: any) => {
+                res?.forEach((element: any) => {
+                  SPServices.SPReadItemUsingID({
+                    Listname: Config.ListNames.EmailTemplateConfig,
+                    SelectedId: element?.ParentTemplateId,
+                    Select: "*",
+                  })
+                    .then(async (template: any) => {
+                      await getEmailContent(
+                        e?.data,
+                        template?.TemplateName,
+                        template?.EmailBody
+                      );
+                      setDynamicRequestsSideBarVisible(false);
+                      setShowLoader(false);
+                    })
+                    .catch((err) =>
+                      console.log("get EmailTemplateConfig error", err)
+                    );
+                });
+              })
+              .catch((err) =>
+                console.log("get CategoryEmailConfig error", err)
+              );
+          } catch (error) {
+            console.error("Error during file upload or update:", error);
+            setShowLoader(false);
+          }
         })
         .catch((err) => {
           console.log("Add item in requesthub error", err);
           setShowLoader(false);
         });
     }
+  };
+
+  //Final RequestId format:
+  const getFormattedNumber = (count: number, digitLength: number): string => {
+    const next = count + 1;
+    return next.toString().length >= digitLength
+      ? next.toString()
+      : next.toString().padStart(digitLength, "0");
   };
 
   //Group dynamic fields by section name:
@@ -617,6 +653,10 @@ const AddRequestsFields = ({
                               handleInputChange(field.columnName, e.checked)
                             }
                             checked={formData[field.columnName]}
+                            style={{
+                              height: "30px",
+                              width: "32px",
+                            }}
                           ></Checkbox>
                           {errors[field.columnName] && (
                             <span className={dynamicFieldsStyles.errorMsg}>
@@ -707,7 +747,32 @@ const AddRequestsFields = ({
                     className="addNewButton"
                     name="demo[]"
                     mode="basic"
-                    onSelect={(e) => setFiles([...files, ...e.files])}
+                    // onSelect={(e) => setFiles([...files, ...e.files])}
+                    onSelect={(e) => {
+                      const newFiles = e.files.filter(
+                        (newFile) =>
+                          !files.some(
+                            (existing) => existing.name === newFile.name
+                          )
+                      );
+
+                      const duplicateFiles = e.files.filter((newFile) =>
+                        files.some((existing) => existing.name === newFile.name)
+                      );
+
+                      if (duplicateFiles.length > 0) {
+                        toast.current?.show({
+                          severity: "warn",
+                          summary: "Warning",
+                          detail: "File name already exists!",
+                          life: 3000,
+                        });
+                      }
+
+                      if (newFiles.length > 0) {
+                        setFiles([...files, ...newFiles]);
+                      }
+                    }}
                     url="/api/upload"
                     auto
                     multiple
@@ -785,7 +850,12 @@ const AddRequestsFields = ({
     }));
   }, [dynamicFields, formData, errors, selectedCategory, files]);
 
-  return <>{showLoader ? <Loader /> : ""}</>;
+  return (
+    <>
+      <Toast ref={toast} />
+      {showLoader ? <Loader /> : ""}
+    </>
+  );
 };
 
 export default AddRequestsFields;
