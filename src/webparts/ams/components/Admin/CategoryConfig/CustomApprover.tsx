@@ -28,6 +28,7 @@ import SPServices from "../../../../../CommonServices/SPServices";
 import { notesContainerDetails } from "../../../../../CommonServices/CommonTemplates";
 
 const CustomApprover = ({
+  setApproverSignatureDetails,
   categoryClickingID,
   actionBooleans,
   category,
@@ -154,6 +155,9 @@ const CustomApprover = ({
     setApprovalFlowDetails({
       ...approvalFlowDetails,
       totalStages: orderedStage.length,
+    });
+    setApproverSignatureDetails({
+      ...Config.approverSignatureFieldConfig,
     });
     setValidation({ ...Config.ApprovalFlowValidation });
   };

@@ -35,6 +35,7 @@ const EmailContainer = ({
   getCategoryConfigDetails,
 }) => {
   const toast = useRef<Toast>(null);
+  console.log("finalsubmit", finalSubmit);
   const [selectedEmail, setSelectedEmail] = useState<string>("");
   const [existingEmailData, setExistingEmailData] = useState([]);
   const [customEmailData, setCustomEmailData] = useState([]);
@@ -314,6 +315,13 @@ const EmailContainer = ({
             Category: finalSubmit?.categoryConfig?.category,
             RequestIdFormat: finalSubmit?.categoryConfig?.requestIdFormat,
             RequestIdDigits: finalSubmit?.categoryConfig?.requestIdDigit,
+            ViewApproverSignStages: `[{"Stage": ${JSON.stringify(
+              finalSubmit?.categoryConfig?.viewApproverSignStages
+                .map((item) => parseInt(item.split(" ")[1]))
+                .sort((x, y) => x - y)
+            )}}]`,
+            IsApproverSignRequired:
+              finalSubmit?.categoryConfig?.isApproverSignRequired,
           },
         });
         //Get and Isdelete Category Section Details
@@ -510,6 +518,13 @@ const EmailContainer = ({
               Category: finalSubmit?.categoryConfig?.category,
               RequestIdFormat: finalSubmit?.categoryConfig?.requestIdFormat,
               RequestIdDigits: finalSubmit?.categoryConfig?.requestIdDigit,
+              ViewApproverSignStages: `[{"Stage": ${JSON.stringify(
+                finalSubmit?.categoryConfig?.viewApproverSignStages
+                  .map((item) => parseInt(item.split(" ")[1]))
+                  .sort((x, y) => x - y)
+              )}}]`,
+              IsApproverSignRequired:
+                finalSubmit?.categoryConfig?.isApproverSignRequired,
             },
           });
 

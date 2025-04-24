@@ -33,6 +33,8 @@ export interface ICategoryDetails {
   isDelete: boolean;
   requestIdFormat: string;
   requestIdDigit: string;
+  isApproverSignRequired: boolean;
+  viewApproverSignStages: string[];
 }
 //Approval Details patch:
 export interface IApprovalDetailsPatch {
@@ -216,6 +218,8 @@ export interface IFinalSubmitDetails {
     requestIdDigit: string;
     ExistingApprover: number;
     customApprover: {};
+    isApproverSignRequired: boolean;
+    viewApproverSignStages: string[];
   };
   dynamicSectionWithField: [];
 }
@@ -238,4 +242,10 @@ export interface IemailMessage {
 export interface IRequestIdFormatWithDigit {
   format: string;
   digit: string;
+}
+
+//Approver Signature Field Config Details
+export interface IApproverSignatureFeildConfig {
+  isMandatory: boolean;
+  ViewStages: string[];
 }

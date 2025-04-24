@@ -16,6 +16,7 @@ import { Persona, PersonaSize } from "@fluentui/react";
 import ExistingApproverStyles from "./CategoryConfig.module.scss";
 
 const ExistingApprover = ({
+  setApproverSignatureDetails,
   setExisitingApproverSideBarVisible,
   category,
   setFinalSubmit,
@@ -62,6 +63,13 @@ const ExistingApprover = ({
       Orderbydecorasc: false,
       Select: "*,Category/ID",
       Expand: "Category",
+      Filter: [
+        {
+          FilterKey: "IsDelete",
+          Operator: "eq",
+          FilterValue: "false",
+        },
+      ],
     })
       .then((res) => {
         const temApprovalConfigArray = [];
@@ -171,7 +179,12 @@ const ExistingApprover = ({
           <Dropdown
             value={selectedFlow}
             options={approvalFlowOptions}
-            onChange={handleFlowChange}
+            onChange={(e) => {
+              setApproverSignatureDetails({
+                ...Config.approverSignatureFieldConfig,
+              });
+              handleFlowChange(e);
+            }}
             placeholder="Select Approval Flow"
             className={`${ExistingApproverStyles.dropDown}`}
           />

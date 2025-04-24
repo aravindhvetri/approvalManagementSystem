@@ -3,6 +3,7 @@ import {
   IActionBooleans,
   IApprovalDetailsPatch,
   IApprovalFlowValidation,
+  IApproverSignatureFeildConfig,
   ICategoryEmailConfigDetails,
   IDropdownDetails,
   IemailMessage,
@@ -151,7 +152,9 @@ export namespace Config {
       requestIdFormat: "",
       requestIdDigit: "",
       ExistingApprover: null,
-      customApprover: null,
+      customApprover: {},
+      isApproverSignRequired: false,
+      viewApproverSignStages: [],
     },
     dynamicSectionWithField: [],
   };
@@ -174,5 +177,11 @@ export namespace Config {
   export const requestIdFormatWithDigit: IRequestIdFormatWithDigit = {
     format: "",
     digit: "",
+  };
+
+  //Approver Signature Confid details:
+  export const approverSignatureFieldConfig: IApproverSignatureFeildConfig = {
+    isMandatory: false,
+    ViewStages: [],
   };
 }

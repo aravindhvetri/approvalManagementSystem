@@ -10,6 +10,7 @@ import {
   ISectionColumnsConfig,
   IApprovalDetails,
   IApprovalHistoryDetails,
+  IApproverSignatureFeildConfig,
 } from "../../../../CommonServices/interface";
 import {
   peoplePickerTemplate,
@@ -74,10 +75,16 @@ const RequestsFields = ({
     comments: "",
     signature: "",
   });
+  const [signatureFieldConfig, setSignatureFieldConfig] =
+    useState<IApproverSignatureFeildConfig>({
+      ...Config.approverSignatureFieldConfig,
+    });
   console.log(approvalDetails, "approvalDetails");
   const [approvalHistoryDetails, setApprovalHistoryDetails] =
     useState<IApprovalHistoryDetails[]>();
   const [personField, setPersonField] = useState({});
+
+  console.log("signatureFieldConfig", signatureFieldConfig);
 
   //CategorySectionConfig List
   const getCategorySectionConfigDetails = () => {
@@ -351,6 +358,38 @@ const RequestsFields = ({
     } else {
       return false;
     }
+  };
+  //show signature field by stage
+  const showSignatureByStage = () => {
+    if (
+      navigateFrom === "MyApproval" &&
+      currentRecord?.approvalJson[0]?.stages
+        .filter((stage) =>
+          signatureFieldConfig?.ViewStages.includes(stage.stage)
+        )
+        .some((stage) => stage.approvers.some((e) => e.email === loginUser))
+    ) {
+      return true;
+    } else {
+      return false;
+    }
+  };
+  //Get category config details using id
+  const getCategoryConfigDetails = () => {
+    console.log("currentRec", currentRecord?.CategoryId);
+    SPServices.SPReadItemUsingID({
+      Listname: Config.ListNames.CategoryConfig,
+      SelectedId: currentRecord?.CategoryId,
+    })
+      .then((res: any) => {
+        console.log("catRes", res);
+        setSignatureFieldConfig((prev: IApproverSignatureFeildConfig) => ({
+          ...prev,
+          isMandatory: res?.IsApproverSignRequired,
+          ViewStages: JSON.parse(res?.ViewApproverSignStages)[0]?.Stage,
+        }));
+      })
+      .catch((err) => console.log("getCategoryConfigDetails err", err));
   };
 
   const getUsers = async (columnName, userIDs: any) => {
@@ -926,70 +965,73 @@ const RequestsFields = ({
                   rows={3}
                 />
               </div>
-              <div>
-                <div className={dynamicFieldsStyles.signatureSection}>
-                  <div>
-                    <Label className={dynamicFieldsStyles.label}>
-                      Sign Below
-                    </Label>
-                  </div>
-                  {approvalDetails?.signature && (
+              {showSignatureByStage() && (
+                <div>
+                  <div className={dynamicFieldsStyles.signatureSection}>
                     <div>
-                      <Button
-                        label="Clear"
-                        className="customCancelButton"
-                        style={{
-                          padding: "4px 14px",
-                          fontSize: "12px",
-                        }}
-                        onClick={clear}
-                      />
+                      <Label className={dynamicFieldsStyles.label}>
+                        Sign Below
+                      </Label>
                     </div>
-                  )}
-                  <div style={{ padding: "4px" }}>
-                    {/* <input
+                    {approvalDetails?.signature && (
+                      <div>
+                        <Button
+                          label="Clear"
+                          className="customCancelButton"
+                          style={{
+                            padding: "4px 14px",
+                            fontSize: "12px",
+                          }}
+                          onClick={clear}
+                        />
+                      </div>
+                    )}
+                    <div style={{ padding: "4px" }}>
+                      {/* <input
                       type="file"
                       accept="image/*"
                       onChange={handleImageUpload}
                       ref={fileInputRef}
                     /> */}
-                    <div>
-                      <Label
-                        htmlFor="signatureUpload"
-                        className={dynamicFieldsStyles.signatureUploadButton}
-                      >
-                        Upload Signature Image
-                      </Label>
-                      <input
-                        id="signatureUpload"
-                        type="file"
-                        accept="image/*"
-                        onChange={handleImageUpload}
-                        ref={fileInputRef}
-                        style={{ display: "none" }}
-                      />
+                      <div>
+                        <Label
+                          htmlFor="signatureUpload"
+                          className={dynamicFieldsStyles.signatureUploadButton}
+                        >
+                          Upload Signature Image
+                        </Label>
+                        <input
+                          id="signatureUpload"
+                          type="file"
+                          accept="image/*"
+                          onChange={handleImageUpload}
+                          ref={fileInputRef}
+                          style={{ display: "none" }}
+                        />
+                      </div>
                     </div>
                   </div>
-                </div>
-                <div
-                  style={{
-                    border: "1px solid #16a34a5e",
-                    width: "100%",
-                    height: "100px",
-                  }}
-                >
-                  <SignatureCanvas
-                    penColor="#353862"
-                    canvasProps={{
-                      width: 680,
+
+                  <div
+                    style={{
+                      border: "1px solid #16a34a5e",
+                      width: "100%",
                       height: "100px",
-                      className: "sigCanvas",
                     }}
-                    ref={sigCanvas}
-                    onEnd={handleSignatureChange}
-                  />
+                  >
+                    <SignatureCanvas
+                      penColor="#353862"
+                      canvasProps={{
+                        width: 680,
+                        height: "100px",
+                        className: "sigCanvas",
+                      }}
+                      ref={sigCanvas}
+                      onEnd={handleSignatureChange}
+                    />
+                  </div>
                 </div>
-              </div>
+              )}
             </>
           )}
 
@@ -1106,6 +1148,7 @@ const RequestsFields = ({
   }, [dynamicFields, formData, errors, approvalDetails, files, personField]);
   useEffect(() => {
     getRequestHubDetails();
+    getCategoryConfigDetails();
     setApprovalDetails({
       parentID: currentRecord.id,
       stage: currentRecord.approvalJson[0].Currentstage,

@@ -478,6 +478,8 @@ li.p-highlight .p-tabview-nav-link {
 /* Date picker.................. */
 .p-calendar {
   height: 33.4px;
+  padding: 0 !important;
+  border: 0 !important;
 }
 .p-datepicker-trigger {
   background-color: var(--green);
@@ -499,4 +501,33 @@ li.p-highlight .p-tabview-nav-link {
 }
 .p-checkbox.p-highlight .p-checkbox-box:hover {
   background-color: var(--green) !important;
+}
+
+/* MultiSelect design........... */
+.p-multiselect {
+  border: 1px solid var(--InputBoxLiteGreen);
+  box-shadow: none;
+  height: 32px;
+  width: 100%;
+  margin: 0 !important;
+  padding: 0px !important;
+}
+.p-multiselect:focus-within {
+  border-color: var(--green);
+}
+.p-multiselect-label {
+  font-size: var(--dataTableHeaderFontSize);
+}
+.p-multiselect-trigger-icon {
+  color: var(--green);
+  height: 13px;
+  width: 13px;
+}
+.p-multiselect-item.p-highlight {
+  background: var(--green);
+  color: var(--dataTableHeaderBgColor);
+}
+.p-multiselect .p-inputtext {
+  font-size: var(--dataTableHeaderFontSize);
+  border: 0px;
 }
