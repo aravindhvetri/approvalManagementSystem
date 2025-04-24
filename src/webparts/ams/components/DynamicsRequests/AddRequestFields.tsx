@@ -49,6 +49,7 @@ const AddRequestsFields = ({
   const toast = useRef(null);
   const serverRelativeUrl = context?._pageContext?._site?.serverRelativeUrl;
   const [files, setFiles] = useState([]);
+  console.log(files, "RequestorsFiles");
   const [dynamicFields, setDynamicFields] = useState<ISectionColumnsConfig[]>(
     []
   );
@@ -451,6 +452,51 @@ const AddRequestsFields = ({
     return acc;
   }, {});
 
+  //Handle File Selection:
+  const handleFileSelection = async (e, files, setFiles, toast, Config) => {
+    try {
+      // Fetch existing files from SharePoint
+      const existingSPFiles = await sp.web.lists
+        .getByTitle(Config.LibraryNames?.AttachmentsLibrary)
+        .items.select("FileLeafRef")
+        .filter(`IsDelete eq false`)
+        .get();
+
+      const spFileNames = existingSPFiles.map((file) => file.FileLeafRef);
+
+      const duplicatesInSP = e.files.filter((newFile) =>
+        spFileNames.includes(newFile.name)
+      );
+
+      const duplicatesInState = e.files.filter((newFile) =>
+        files.some((existing) => existing.name === newFile.name)
+      );
+
+      const totalDuplicates = [...duplicatesInSP, ...duplicatesInState];
+
+      const newFiles = e.files.filter(
+        (newFile) =>
+          !spFileNames.includes(newFile.name) &&
+          !files.some((existing) => existing.name === newFile.name)
+      );
+
+      if (totalDuplicates.length > 0) {
+        toast.current?.show({
+          severity: "warn",
+          summary: "Warning",
+          detail: "Some file names already exist!",
+          life: 3000,
+        });
+      }
+
+      if (newFiles.length > 0) {
+        setFiles([...files, ...newFiles]);
+      }
+    } catch (error) {
+      console.error("Error in file selection:", error);
+    }
+  };
+
   //DynamicRequestFieldsSideBarContent Return Function:
   const DynamicRequestsFieldsSideBarContent = () => {
     return (
@@ -747,32 +793,9 @@ const AddRequestsFields = ({
                     className="addNewButton"
                     name="demo[]"
                     mode="basic"
-                    // onSelect={(e) => setFiles([...files, ...e.files])}
-                    onSelect={(e) => {
-                      const newFiles = e.files.filter(
-                        (newFile) =>
-                          !files.some(
-                            (existing) => existing.name === newFile.name
-                          )
-                      );
-
-                      const duplicateFiles = e.files.filter((newFile) =>
-                        files.some((existing) => existing.name === newFile.name)
-                      );
-
-                      if (duplicateFiles.length > 0) {
-                        toast.current?.show({
-                          severity: "warn",
-                          summary: "Warning",
-                          detail: "File name already exists!",
-                          life: 3000,
-                        });
-                      }
-
-                      if (newFiles.length > 0) {
-                        setFiles([...files, ...newFiles]);
-                      }
-                    }}
+                    onSelect={(e) =>
+                      handleFileSelection(e, files, setFiles, toast, Config)
+                    }
                     url="/api/upload"
                     auto
                     multiple
