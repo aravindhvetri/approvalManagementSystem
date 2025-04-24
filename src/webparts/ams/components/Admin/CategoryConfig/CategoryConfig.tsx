@@ -6,6 +6,7 @@ import SPServices from "../../../../../CommonServices/SPServices";
 import { Config } from "../../../../../CommonServices/Config";
 import {
   IActionBooleans,
+  IApproverSignatureFeildConfig,
   ICategoryDetails,
   IFinalSubmitDetails,
   INextStageFromCategorySideBar,
@@ -34,6 +35,9 @@ import DynamicSectionWithField from "./DynamicSectionWithField/DynamicSectionWit
 import EmailContainer from "./EmailTemplate/EmailContainer";
 import Loader from "../../Loader/Loader";
 import { set } from "@microsoft/sp-lodash-subset";
+import { Checkbox } from "primereact/checkbox";
+import { Dropdown } from "primereact/dropdown";
+import { MultiSelect } from "primereact/multiselect";
 
 const CategoryConfig = ({
   context,
@@ -53,12 +57,17 @@ const CategoryConfig = ({
     useState<IRequestIdFormatWithDigit>({
       ...Config.requestIdFormatWithDigit,
     });
+  const [approverSignatureDetails, setApproverSignatureDetails] =
+    useState<IApproverSignatureFeildConfig>({
+      ...Config.approverSignatureFieldConfig,
+    });
   const [actionsBooleans, setActionsBooleans] = useState<IActionBooleans>({
     ...Config.InitialActionsBooleans,
   });
   const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(
     null
   );
+  const [approvalSignStage, setApprovalSignStage] = useState([]);
   const [selectedApprover, setSelectedApprover] = useState<string>("");
   const [nextStageFromCategory, setNextStageFromCategory] =
     useState<INextStageFromCategorySideBar>({
@@ -69,11 +78,15 @@ const CategoryConfig = ({
     approversSelected: "",
     requestInput: "",
     digit: "",
+    signatureShowStages: "",
   });
   const [finalSubmit, setFinalSubmit] = useState<IFinalSubmitDetails>({
     ...Config.finalSubmitDetails,
   });
   const [showLoader, setShowLoader] = useState<boolean>(true);
+  console.log("finalSubmit", finalSubmit);
+  console.log("validateError", validateError);
+  console.log("approvalSignStage", approvalSignStage);
 
   //Get Category Config Details:
   const getCategoryConfigDetails = () => {
@@ -103,6 +116,12 @@ const CategoryConfig = ({
             requestIdDigit: items?.RequestIdDigits
               ? items?.RequestIdDigits
               : "",
+            isApproverSignRequired: items?.IsApproverSignRequired,
+            viewApproverSignStages:
+              items?.ViewApproverSignStages &&
+              JSON.parse(items?.ViewApproverSignStages)[0].Stage?.map(
+                (e: any) => "Stage " + e
+              ),
           });
         });
         setCategoryDetails([...tempCategoryArray]);
@@ -158,6 +177,11 @@ const CategoryConfig = ({
       format: rowData?.requestIdFormat,
       digit: rowData?.requestIdDigit,
     }));
+    setApproverSignatureDetails((prev: IApproverSignatureFeildConfig) => ({
+      ...prev,
+      ViewStages: rowData?.viewApproverSignStages,
+      isMandatory: rowData?.isApproverSignRequired,
+    }));
     await setSelectedCategoryId(rowData?.id);
     setCategorySideBarVisible(true);
     // setShowLoader(false);
@@ -204,6 +228,14 @@ const CategoryConfig = ({
       isValid = false;
     } else {
       validateError.digit = "";
+    }
+    //Signature stages
+    if (approverSignatureDetails?.ViewStages.length === 0) {
+      validateError.signatureShowStages =
+        "Atleast one stage is required to shows signature field";
+      isValid = false;
+    } else {
+      validateError.signatureShowStages = "";
     }
     if (!actionsBooleans?.isEdit && !actionsBooleans?.isView) {
       // Approver validation
@@ -308,6 +340,45 @@ const CategoryConfig = ({
         dynamicSectionWithField: true,
         ApproverSection: false,
       }));
+    }
+  };
+
+  //Get Approval Stage Count
+  const getApprovalStageCount = async () => {
+    debugger;
+    var totalStages = 0;
+    if (
+      (selectedApprover === "custom" ||
+        ((actionsBooleans.isEdit || actionsBooleans.isView) &&
+          finalSubmit?.categoryConfig?.customApprover)) &&
+      finalSubmit?.categoryConfig?.customApprover?.["totalStages"]
+    ) {
+      totalStages =
+        finalSubmit?.categoryConfig?.customApprover?.["totalStages"];
+    } else if (
+      (selectedApprover === "existing" ||
+        ((actionsBooleans.isEdit || actionsBooleans.isView) &&
+          finalSubmit?.categoryConfig?.ExistingApprover)) &&
+      finalSubmit?.categoryConfig?.ExistingApprover
+    ) {
+      const flowID = finalSubmit?.categoryConfig?.ExistingApprover;
+      await SPServices.SPReadItemUsingID({
+        Listname: Config.ListNames.ApprovalConfig,
+        SelectedId: flowID,
+      })
+        .then((res: any) => {
+          return (totalStages = res?.TotalStages);
+        })
+        .catch((err) => console.log("ApprovalConfig get error", err));
+    }
+    const tempStageArr = [];
+    if (totalStages > 0) {
+      for (let i = 1; i <= totalStages; i++) {
+        tempStageArr.push({ label: "Stage " + i, value: "Stage " + i });
+        setApprovalSignStage([...tempStageArr]);
+      }
+    } else {
+      setApprovalSignStage([]);
     }
   };
 
@@ -431,6 +502,21 @@ const CategoryConfig = ({
                       name="approver"
                       value="existing"
                       onChange={(e) => {
+                        setValidateError((prev) => ({
+                          ...prev,
+                          signatureShowStages: "",
+                        }));
+                        setFinalSubmit((prev: IFinalSubmitDetails) => ({
+                          ...prev,
+                          categoryConfig: {
+                            ...prev.categoryConfig,
+                            customApprover: {},
+                          },
+                        }));
+                        setApproverSignatureDetails({
+                          ...Config.approverSignatureFieldConfig,
+                        });
+                        setApprovalSignStage([]);
                         sessionStorage.removeItem("approvalFlowDetails");
                         setSelectedApprover(e?.value);
                       }}
@@ -449,6 +535,21 @@ const CategoryConfig = ({
                       name="approver"
                       value="custom"
                       onChange={(e) => {
+                        setValidateError((prev) => ({
+                          ...prev,
+                          signatureShowStages: "",
+                        }));
+                        setFinalSubmit((prev: IFinalSubmitDetails) => ({
+                          ...prev,
+                          categoryConfig: {
+                            ...prev.categoryConfig,
+                            ExistingApprover: null,
+                          },
+                        }));
+                        setApproverSignatureDetails({
+                          ...Config.approverSignatureFieldConfig,
+                        });
+                        setApprovalSignStage([]);
                         sessionStorage.removeItem("selectedFlow");
                         sessionStorage.removeItem("selectedFlowID");
                         setSelectedApprover(e?.value);
@@ -472,6 +573,7 @@ const CategoryConfig = ({
             {selectedApprover === "existing" &&
             nextStageFromCategory.ApproverSection ? (
               <ExistingApprover
+                setApproverSignatureDetails={setApproverSignatureDetails}
                 setFinalSubmit={setFinalSubmit}
                 setExisitingApproverSideBarVisible={setCategorySideBarVisible}
                 category={categoryInputs}
@@ -483,6 +585,7 @@ const CategoryConfig = ({
               (actionsBooleans?.isView &&
                 nextStageFromCategory.ApproverSection) ? (
               <CustomApprover
+                setApproverSignatureDetails={setApproverSignatureDetails}
                 categoryClickingID={selectedCategoryId}
                 actionBooleans={actionsBooleans}
                 category={categoryInputs}
@@ -529,7 +632,63 @@ const CategoryConfig = ({
               </span>
             </div>
           )}
-
+          {!(
+            nextStageFromCategory.dynamicSectionWithField ||
+            nextStageFromCategory.EmailTemplateSection
+          ) &&
+            approvalSignStage.length > 0 && (
+              <div
+                className={`${categoryConfigStyles.approverSignatureDetailContainer}`}
+              >
+                <div style={{ width: "32%" }}>
+                  <Label className={`${categoryConfigStyles.label}`}>
+                    Is Approver Signature Mandatory?
+                  </Label>
+                  <Checkbox
+                    onChange={(e) => {
+                      console.log("Cchk", e);
+                      setApproverSignatureDetails(
+                        (prev: IApproverSignatureFeildConfig) => ({
+                          ...prev,
+                          isMandatory: e.checked,
+                        })
+                      );
+                    }}
+                    checked={approverSignatureDetails.isMandatory}
+                    disabled={actionsBooleans.isView}
+                  ></Checkbox>
+                </div>
+                <div style={{ width: "32%" }}>
+                  <Label className={`${categoryConfigStyles.label}`}>
+                    Stages signature field shows on
+                    <span className="required">*</span>
+                  </Label>
+                  <MultiSelect
+                    onChange={(e) => {
+                      setApproverSignatureDetails(
+                        (prev: IApproverSignatureFeildConfig) => ({
+                          ...prev,
+                          ViewStages: e.value,
+                        })
+                      );
+                      console.log("Cchk", e);
+                    }}
+                    value={approverSignatureDetails?.ViewStages}
+                    options={approvalSignStage}
+                    optionLabel="value"
+                    disabled={actionsBooleans.isView}
+                  />
+                  {validateError &&
+                    approverSignatureDetails?.ViewStages.length === 0 && (
+                      <div>
+                        <span className="errorMsg">
+                          {validateError?.signatureShowStages}
+                        </span>
+                      </div>
+                    )}
+                </div>
+              </div>
+            )}
           {nextStageFromCategory.ApproverSection ? (
             <div className={`${categoryConfigStyles.FlowSideBarButtons}`}>
               <Button
@@ -576,9 +735,11 @@ const CategoryConfig = ({
         category: categoryInputs,
         requestIdFormat: requestInput?.format,
         requestIdDigit: requestInput?.digit,
+        isApproverSignRequired: approverSignatureDetails?.isMandatory,
+        viewApproverSignStages: approverSignatureDetails?.ViewStages,
       },
     }));
-  }, [categoryInputs, requestInput]);
+  }, [categoryInputs, requestInput, approverSignatureDetails]);
 
   useEffect(() => {
     getCategoryConfigDetails();
@@ -587,6 +748,7 @@ const CategoryConfig = ({
       approversSelected: "",
       requestInput: "",
       digit: "",
+      signatureShowStages: "",
     });
   }, []);
 
@@ -597,13 +759,17 @@ const CategoryConfig = ({
         approversSelected: "",
         requestInput: "",
         digit: "",
+        signatureShowStages: "",
       });
+      setFinalSubmit({ ...Config.finalSubmitDetails });
       sessionStorage.clear();
       setSelectedApprover("");
       setNextStageFromCategory({
         ...Config.NextStageFromCategorySideBar,
       });
       setCategoryInputs("");
+      setApproverSignatureDetails({ ...Config.approverSignatureFieldConfig });
+      setApprovalSignStage([]);
       setRequestFormatInput({
         ...Config.requestIdFormatWithDigit,
       });
@@ -625,8 +791,12 @@ const CategoryConfig = ({
     validateError,
     actionsBooleans,
     requestInput,
+    approverSignatureDetails,
+    approvalSignStage,
   ]);
-
+  useEffect(() => {
+    getApprovalStageCount();
+  }, [finalSubmit]);
   return (
     <>
       <Toast ref={toast} />
