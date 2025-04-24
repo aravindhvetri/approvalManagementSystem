@@ -63,7 +63,6 @@ const RequestsFields = ({
     []
   );
   const [files, setFiles] = useState([]);
-  console.log(files, "approversFiles");
   const [formData, setFormData] = useState({});
   const [errors, setErrors] = useState({});
   const [author, setAuthor] = useState<IPeoplePickerDetails>();
@@ -520,51 +519,6 @@ const RequestsFields = ({
     }
   };
 
-  //Handle File Selection:
-  const handleFileSelection = async (e, files, setFiles, toast, Config) => {
-    try {
-      // Fetch existing files from SharePoint
-      const existingSPFiles = await sp.web.lists
-        .getByTitle(Config.LibraryNames?.AttachmentsLibrary)
-        .items.select("FileLeafRef")
-        .filter(`IsDelete eq false`)
-        .get();
-
-      const spFileNames = existingSPFiles.map((file) => file.FileLeafRef);
-
-      const duplicatesInSP = e.files.filter((newFile) =>
-        spFileNames.includes(newFile.name)
-      );
-
-      const duplicatesInState = e.files.filter((newFile) =>
-        files.some((existing) => existing.name === newFile.name)
-      );
-
-      const totalDuplicates = [...duplicatesInSP, ...duplicatesInState];
-
-      const newFiles = e.files.filter(
-        (newFile) =>
-          !spFileNames.includes(newFile.name) &&
-          !files.some((existing) => existing.name === newFile.name)
-      );
-
-      if (totalDuplicates.length > 0) {
-        toast.current?.show({
-          severity: "warn",
-          summary: "Warning",
-          detail: "Some file names already exist!",
-          life: 3000,
-        });
-      }
-
-      if (newFiles.length > 0) {
-        setFiles([...files, ...newFiles]);
-      }
-    } catch (error) {
-      console.error("Error in file selection:", error);
-    }
-  };
-
   //DynamicRequestFieldsSideBarContent Return Function:
   const DynamicRequestsFieldsSideBarContent = () => {
     return (
@@ -924,9 +878,32 @@ const RequestsFields = ({
                     className="addNewButton"
                     name="demo[]"
                     mode="basic"
-                    onSelect={(e) =>
-                      handleFileSelection(e, files, setFiles, toast, Config)
-                    }
+                    // onSelect={(e) => setFiles([...files, ...e.files])}
+                    onSelect={(e) => {
+                      const newFiles = e.files.filter(
+                        (newFile) =>
+                          !files.some(
+                            (existing) => existing.name === newFile.name
+                          )
+                      );
+
+                      const duplicateFiles = e.files.filter((newFile) =>
+                        files.some((existing) => existing.name === newFile.name)
+                      );
+
+                      if (duplicateFiles.length > 0) {
+                        toast.current?.show({
+                          severity: "warn",
+                          summary: "Warning",
+                          detail: "File name already exists!",
+                          life: 3000,
+                        });
+                      }
+
+                      if (newFiles.length > 0) {
+                        setFiles([...files, ...newFiles]);
+                      }
+                    }}
                     url="/api/upload"
                     auto
                     multiple
@@ -996,7 +973,6 @@ const RequestsFields = ({
                         Sign Below
                       </Label>
                     </div>
-
                     {approvalDetails?.signature && (
                       <div>
                         <Button
@@ -1027,8 +1003,9 @@ const RequestsFields = ({
                           style={{ display: "none" }}
                         />
                       </div>
+                    </div>
+                  </div>
 
-                  )}
                   <div
                     style={{
                       border: "1px solid #16a34a5e",
@@ -1105,7 +1082,7 @@ const RequestsFields = ({
                   setRequestsSideBarVisible={setDynamicRequestsSideBarVisible}
                   context={context}
                   updatedRecord={formData}
-                  files={files.filter((file) => file instanceof File)}
+                  files={files}
                   setFiles={setFiles}
                   requestsHubDetails={requestsDetails}
                   setRequestsHubDetails={setRequestsDetails}
