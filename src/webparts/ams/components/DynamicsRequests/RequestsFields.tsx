@@ -1084,6 +1084,7 @@ const RequestsFields = ({
                   updatedRecord={formData}
                   files={files}
                   setFiles={setFiles}
+                  signatureFieldConfig={signatureFieldConfig}
                   requestsHubDetails={requestsDetails}
                   setRequestsHubDetails={setRequestsDetails}
                   itemID={currentRecord.id}

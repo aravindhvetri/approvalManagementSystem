@@ -25,6 +25,8 @@ import { trim } from "lodash";
 const EmailContainer = ({
   actionBooleans,
   setFinalSubmit,
+  setActiveStep,
+  previous,
   getCategoryFunction,
   categoryClickingID,
   setNextStageFromCategory,
@@ -505,6 +507,7 @@ const EmailContainer = ({
         setFinalSubmit({ ...Config.finalSubmitDetails });
         getCategoryConfigDetails();
         setShowLoader(false);
+        setActiveStep(0);
       } catch {
         (err) => console.log("Update categoryConfig Details error", err);
         setShowLoader(false);
@@ -707,6 +710,7 @@ const EmailContainer = ({
         setFinalSubmit({ ...Config.finalSubmitDetails });
         getCategoryConfigDetails();
         setShowLoader(false);
+        setActiveStep(0);
       } catch (err) {
         console.error("Error in handleSubmit:", err);
         alert("An error occurred while processing the request.");
@@ -887,6 +891,7 @@ const EmailContainer = ({
                   dynamicSectionWithField: true,
                 })
               );
+              previous();
             }}
           />
         </div>
@@ -903,6 +908,7 @@ const EmailContainer = ({
                   ...Config.NextStageFromCategorySideBar,
                 });
                 sessionStorage.clear();
+                setActiveStep(0);
               }}
             />
           )}
@@ -920,6 +926,7 @@ const EmailContainer = ({
                     ...Config.NextStageFromCategorySideBar,
                   });
                   sessionStorage.clear();
+                  setActiveStep(0);
                 }}
               />
               <Button

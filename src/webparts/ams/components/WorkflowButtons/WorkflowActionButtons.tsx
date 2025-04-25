@@ -30,6 +30,7 @@ const WorkflowActionButtons = ({
   context,
   files,
   setFiles,
+  signatureFieldConfig,
   updatedRecord,
   requestsHubDetails,
   setRequestsHubDetails,
@@ -213,39 +214,59 @@ const WorkflowActionButtons = ({
 
   //On Approval Click
   const onApprovalClick = async () => {
+    const isSignatureRequired = signatureFieldConfig?.isMandatory === true;
+    const isSignatureEmpty = !approvalDetails?.signature;
+
+    if (isSignatureRequired && isSignatureEmpty) {
+      setApproverDescriptionErrMsg("* Signature is mandatory");
+      setShowLoader(false);
+      return;
+    }
+
     setApproverDescriptionErrMsg("");
     setShowLoader(true);
     try {
       await addApprovalHistory("Approved");
       updateStatusByApprover(currentRec.approvalJson, loginUser, 1);
       addDatasFromAttachmentLibraryRequestors(itemID, files, "Approvers");
-    } catch {
-      (e) => {
-        console.log("Approval history patch err", e);
-        setShowLoader(false);
-      };
+    } catch (e) {
+      console.log("Approval history patch err", e);
+      setShowLoader(false);
     }
   };
 
   //On Rejection Click
   const onRejectionClick = async () => {
-    if (approvalDetails?.comments.trim().length > 0) {
-      setApproverDescriptionErrMsg("");
-      setShowLoader(true);
-      try {
-        await addApprovalHistory("Rejected");
-        updateStatusByApprover(currentRec.approvalJson, loginUser, 2);
-        addDatasFromAttachmentLibraryRequestors(itemID, files, "Approvers");
-      } catch {
-        (e) => {
-          console.log("Approval history patch err", e);
-          setShowLoader(false);
-        };
-      }
-    } else {
-      setApproverDescriptionErrMsg(
-        "* Approver description is mandatory for rejection"
-      );
+    const isCommentEmpty = !approvalDetails?.comments.trim();
+    const isSignatureRequired = signatureFieldConfig?.isMandatory === true;
+    const isSignatureEmpty = !approvalDetails?.signature;
+
+    let errorMessage = "";
+
+    if (isCommentEmpty) {
+      errorMessage += "* Approver description is mandatory for rejection";
+    }
+
+    if (isSignatureRequired && isSignatureEmpty) {
+      errorMessage += errorMessage
+        ? " and signature is mandatory"
+        : "* Signature is mandatory";
+    }
+
+    if (errorMessage) {
+      setApproverDescriptionErrMsg(errorMessage);
+      setShowLoader(false);
+      return;
+    }
+
+    setApproverDescriptionErrMsg("");
+    setShowLoader(true);
+    try {
+      await addApprovalHistory("Rejected");
+      updateStatusByApprover(currentRec.approvalJson, loginUser, 2);
+      addDatasFromAttachmentLibraryRequestors(itemID, files, "Approvers");
+    } catch (e) {
+      console.log("Approval history patch err", e);
       setShowLoader(false);
     }
   };

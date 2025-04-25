@@ -531,3 +531,35 @@ li.p-highlight .p-tabview-nav-link {
   font-size: var(--dataTableHeaderFontSize);
   border: 0px;
 }
+
+/*Stepper component common Styles*/
+.p-steps .p-steps-item.p-highlight .p-steps-number {
+  background-color: var(--green);
+}
+.p-steps .p-steps-item .p-menuitem-link .p-steps-number {
+  font-size: 12px;
+  border-radius: 50%;
+  border: 1px solid var(--green);
+}
+.p-steps .p-steps-item.p-highlight .p-steps-title {
+  color: var(--green);
+  font-weight: 600;
+  font-size: 14px;
+}
+.p-steps .p-disabled .p-steps-number {
+  background-color: var(--liteGreen);
+  color: var(--green);
+  border: 1px solid var(--liteGreen) !important;
+}
+.p-steps .p-disabled .p-steps-title {
+  font-size: 14px;
+}
+
+.p-steps .p-steps-item:before {
+  border-top: 3px solid #dee2e6;
+  transform: translateY(-50%);
+}
+
+.p-steps .p-steps-item.p-highlight::before {
+  border-top: 3px solid var(--green);
+}
