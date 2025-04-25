@@ -30,6 +30,7 @@ import { Label } from "office-ui-fabric-react";
 import ExistingApprover from "./ExistingApprover";
 import CustomApprover from "./CustomApprover";
 import { Button } from "primereact/button";
+import { Steps } from "primereact/steps";
 //Component Imports:
 import DynamicSectionWithField from "./DynamicSectionWithField/DynamicSectionWithField";
 import EmailContainer from "./EmailTemplate/EmailContainer";
@@ -48,6 +49,13 @@ const CategoryConfig = ({
   setCategorySideBarVisible,
 }) => {
   //state variables:
+  const stepItems = [
+    { label: "Category Config" },
+    { label: "Dynamic Fields" },
+    { label: "Email Config" },
+  ];
+  const [activeStep, setActiveStep] = useState(0);
+  console.log("activeStep", activeStep);
   const toast = useRef<Toast>(null);
   const [categoryDetails, setCategoryDetails] = useState<ICategoryDetails[]>(
     []
@@ -340,12 +348,16 @@ const CategoryConfig = ({
         dynamicSectionWithField: true,
         ApproverSection: false,
       }));
+      next();
     }
+  };
+
+  const next = () => {
+    setActiveStep(1);
   };
 
   //Get Approval Stage Count
   const getApprovalStageCount = async () => {
-    debugger;
     var totalStages = 0;
     if (
       (selectedApprover === "custom" ||
@@ -386,6 +398,13 @@ const CategoryConfig = ({
   const categoryConfigSideBarContents = () => {
     return (
       <>
+        <Steps
+          model={stepItems}
+          activeIndex={activeStep}
+          onSelect={(e) => setActiveStep(e.index)}
+          readOnly={true}
+          style={{ paddingBottom: "30px" }}
+        />
         <div>
           {nextStageFromCategory.dynamicSectionWithField ||
           nextStageFromCategory.EmailTemplateSection ? (
@@ -462,13 +481,6 @@ const CategoryConfig = ({
                     className={`${categoryConfigStyles.input}`}
                     value={requestInput?.digit}
                     placeholder="Enter number of digits (e.g., 5)"
-                    // onChange={(e) => {
-                    //   const onlyNumbers = e.target.value.replace(/\D/g, "");
-                    //   setRequestFormatInput({
-                    //     ...requestInput,
-                    //     digit: onlyNumbers,
-                    //   });
-                    // }}
                     onChange={(e) => {
                       const onlyNumbers = e.target.value.replace(/\D/g, "");
                       const numberValue = Number(onlyNumbers);
@@ -571,7 +583,8 @@ const CategoryConfig = ({
           )}
           <div>
             {selectedApprover === "existing" &&
-            nextStageFromCategory.ApproverSection ? (
+            nextStageFromCategory.ApproverSection &&
+            activeStep == 0 ? (
               <ExistingApprover
                 setApproverSignatureDetails={setApproverSignatureDetails}
                 setFinalSubmit={setFinalSubmit}
@@ -579,11 +592,14 @@ const CategoryConfig = ({
                 category={categoryInputs}
               />
             ) : (selectedApprover === "custom" &&
-                nextStageFromCategory.ApproverSection) ||
+                nextStageFromCategory.ApproverSection &&
+                activeStep == 0) ||
               (actionsBooleans?.isEdit &&
-                nextStageFromCategory.ApproverSection) ||
+                nextStageFromCategory.ApproverSection &&
+                activeStep == 0) ||
               (actionsBooleans?.isView &&
-                nextStageFromCategory.ApproverSection) ? (
+                nextStageFromCategory.ApproverSection &&
+                activeStep == 0) ? (
               <CustomApprover
                 setApproverSignatureDetails={setApproverSignatureDetails}
                 categoryClickingID={selectedCategoryId}
@@ -596,22 +612,29 @@ const CategoryConfig = ({
             ) : (
               <></>
             )}
-            {nextStageFromCategory.dynamicSectionWithField ? (
+            {nextStageFromCategory.dynamicSectionWithField &&
+            activeStep == 1 ? (
               <DynamicSectionWithField
                 context={context}
                 setFinalSubmit={setFinalSubmit}
+                previous={() => setActiveStep(0)}
+                next={() => setActiveStep(2)}
                 categoryClickingID={selectedCategoryId}
                 actionBooleans={actionsBooleans}
+                setActiveStep={setActiveStep}
                 setNextStageFromCategory={setNextStageFromCategory}
                 setSelectedApprover={setSelectedApprover}
                 setDynamicSectionWithFieldSideBarVisible={
                   setCategorySideBarVisible
                 }
               />
-            ) : nextStageFromCategory.EmailTemplateSection ? (
+            ) : nextStageFromCategory.EmailTemplateSection &&
+              activeStep === 2 ? (
               <EmailContainer
                 getCategoryFunction={getCategoryFunction}
                 setFinalSubmit={setFinalSubmit}
+                previous={() => setActiveStep(1)}
+                setActiveStep={setActiveStep}
                 actionBooleans={actionsBooleans}
                 categoryClickingID={selectedCategoryId}
                 getCategoryConfigDetails={getCategoryConfigDetails}
@@ -646,7 +669,6 @@ const CategoryConfig = ({
                   </Label>
                   <Checkbox
                     onChange={(e) => {
-                      console.log("Cchk", e);
                       setApproverSignatureDetails(
                         (prev: IApproverSignatureFeildConfig) => ({
                           ...prev,
@@ -696,11 +718,12 @@ const CategoryConfig = ({
                 label="Cancel"
                 onClick={() => {
                   setCategorySideBarVisible(false);
+                  setActiveStep(0);
                 }}
                 className="customCancelButton"
               />
 
-              <Button
+              {/* <Button
                 icon="pi pi-angle-double-right"
                 label="Next"
                 className="customSubmitButton"
@@ -716,6 +739,29 @@ const CategoryConfig = ({
                           ApproverSection: false,
                         })
                       );
+                }}
+              /> */}
+              <Button
+                icon="pi pi-angle-double-right"
+                label="Next"
+                className="customSubmitButton"
+                onClick={() => {
+                  if (
+                    actionsBooleans?.isEdit ||
+                    (actionsBooleans?.isEdit === false &&
+                      actionsBooleans?.isView === false)
+                  ) {
+                    finalValidation();
+                  } else {
+                    setNextStageFromCategory(
+                      (prev: INextStageFromCategorySideBar) => ({
+                        ...prev,
+                        dynamicSectionWithField: true,
+                        ApproverSection: false,
+                      })
+                    );
+                    setActiveStep(1);
+                  }
                 }}
               />
             </div>
@@ -775,6 +821,7 @@ const CategoryConfig = ({
       });
       setSelectedCategoryId(null);
       setActionsBooleans({ ...Config.InitialActionsBooleans });
+      setActiveStep(0);
     }
   }, [ApprovalConfigSideBarVisible]);
 
@@ -793,6 +840,7 @@ const CategoryConfig = ({
     requestInput,
     approverSignatureDetails,
     approvalSignStage,
+    activeStep,
   ]);
   useEffect(() => {
     getApprovalStageCount();

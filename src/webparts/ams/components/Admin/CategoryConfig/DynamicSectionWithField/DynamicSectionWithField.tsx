@@ -44,6 +44,9 @@ const DynamicSectionWithField = ({
   context,
   categoryClickingID,
   actionBooleans,
+  previous,
+  setActiveStep,
+  next,
   setNextStageFromCategory,
   setSelectedApprover,
   setDynamicSectionWithFieldSideBarVisible,
@@ -368,6 +371,7 @@ const DynamicSectionWithField = ({
         EmailTemplateSection: true,
         dynamicSectionWithField: false,
       }));
+      next();
     }
     return isValid;
   };
@@ -673,6 +677,7 @@ const DynamicSectionWithField = ({
                   setIsValidation(false);
                   setChoiceError(false);
                   setFieldEdit(false);
+                  setActiveStep(0);
                 }}
                 className="customCancelButton"
               />
@@ -802,6 +807,7 @@ const DynamicSectionWithField = ({
               setNextStageFromCategory({
                 ...Config.NextStageFromCategorySideBar,
               });
+              previous();
             }}
           />
         </div>
