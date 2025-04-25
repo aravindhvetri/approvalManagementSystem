@@ -240,27 +240,32 @@ export const multiplePeoplePickerTemplate = (users: IPeoplePickerDetails[]) => {
               className="all-member-users"
               content={
                 <ul style={{ margin: 10, padding: 0 }}>
-                  {users.map((DName: any) => {
-                    return (
-                      <li style={{ listStyleType: "none" }}>
-                        <div style={{ display: "flex" }}>
-                          <Persona
-                            showOverflowTooltip
-                            size={PersonaSize.size24}
-                            presence={PersonaPresence.none}
-                            showInitialsUntilImageLoads={true}
-                            imageUrl={
-                              "/_layouts/15/userphoto.aspx?size=S&username=" +
-                              `${DName.email}`
-                            }
-                          />
-                          <Label style={{ marginLeft: 10, fontSize: 12 }}>
-                            {DName.name}
-                          </Label>
-                        </div>
-                      </li>
-                    );
-                  })}
+                  {users
+                    .filter(
+                      (item, index, self) =>
+                        index === self.findIndex((t) => t.email === item.email)
+                    )
+                    .map((DName: any) => {
+                      return (
+                        <li style={{ listStyleType: "none" }}>
+                          <div style={{ display: "flex" }}>
+                            <Persona
+                              showOverflowTooltip
+                              size={PersonaSize.size24}
+                              presence={PersonaPresence.none}
+                              showInitialsUntilImageLoads={true}
+                              imageUrl={
+                                "/_layouts/15/userphoto.aspx?size=S&username=" +
+                                `${DName.email}`
+                              }
+                            />
+                            <Label style={{ marginLeft: 10, fontSize: 12 }}>
+                              {DName.name}
+                            </Label>
+                          </div>
+                        </li>
+                      );
+                    })}
                 </ul>
               }
               delay={TooltipDelay.zero}
@@ -268,7 +273,11 @@ export const multiplePeoplePickerTemplate = (users: IPeoplePickerDetails[]) => {
               styles={{ root: { display: "inline-block" } }}
             >
               <div className={styles.Persona}>
-                +{users.length - 2}
+                +
+                {users.filter(
+                  (item, index, self) =>
+                    index === self.findIndex((t) => t.email === item.email)
+                ).length - 2}
                 <div className={styles.AllPersona}></div>
               </div>
             </TooltipHost>

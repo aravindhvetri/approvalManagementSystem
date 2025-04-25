@@ -558,7 +558,10 @@ const EmailContainer = ({
               });
             }
 
-            if (finalSubmit?.categoryConfig?.customApprover !== null) {
+            if (
+              Object.keys(finalSubmit?.categoryConfig?.customApprover)
+                .length !== 0
+            ) {
               const customApprovalConfigRes = await SPServices.SPAddItem({
                 Listname: Config.ListNames.ApprovalConfig,
                 RequestJSON: {
