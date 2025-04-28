@@ -118,8 +118,8 @@ const ExistingApprover = ({
   const getApprovalStageConfigDetails = () => {
     SPServices.SPReadItems({
       Listname: Config.ListNames.ApprovalStageConfig,
-      Orderby: "Modified",
-      Orderbydecorasc: false,
+      Orderby: "Stage",
+      Orderbydecorasc: true,
       Select: "*,Approver/ID,Approver/EMail,Approver/Title",
       Expand: "Approver",
       Filter: [
