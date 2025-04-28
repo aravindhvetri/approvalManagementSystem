@@ -25,6 +25,7 @@ import Loader from "../Loader/Loader";
 const WorkflowActionButtons = ({
   validateForm,
   approvalDetails,
+  showSignatureByStage,
   setApprovalDetails,
   setRequestsSideBarVisible,
   context,
@@ -217,7 +218,7 @@ const WorkflowActionButtons = ({
     const isSignatureRequired = signatureFieldConfig?.isMandatory === true;
     const isSignatureEmpty = !approvalDetails?.signature;
 
-    if (isSignatureRequired && isSignatureEmpty) {
+    if (isSignatureRequired && isSignatureEmpty && showSignatureByStage) {
       setApproverDescriptionErrMsg("* Signature is mandatory");
       setShowLoader(false);
       return;
@@ -247,7 +248,7 @@ const WorkflowActionButtons = ({
       errorMessage += "* Approver description is mandatory for rejection";
     }
 
-    if (isSignatureRequired && isSignatureEmpty) {
+    if (isSignatureRequired && isSignatureEmpty && showSignatureByStage) {
       errorMessage += errorMessage
         ? " and signature is mandatory"
         : "* Signature is mandatory";
@@ -551,6 +552,11 @@ const WorkflowActionButtons = ({
   useEffect(() => {
     visibleButtons();
   });
+  useEffect(() => {
+    if (approvalDetails?.comments || approvalDetails?.signature) {
+      setApproverDescriptionErrMsg("");
+    }
+  }, [approvalDetails]);
   useEffect(() => {
     getRequestHubDetails();
   }, []);
