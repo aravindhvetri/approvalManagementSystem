@@ -344,7 +344,11 @@ const RequestsFields = ({
     if (
       (navigateFrom === "MyApproval" &&
         currentRecord?.approvalJson[0]?.stages
-          .filter((stage) => field?.viewStage[0]?.Stage.includes(stage.stage))
+          .filter(
+            (stage) =>
+              field?.viewStage[0]?.Stage.includes(stage.stage) &&
+              stage.stage <= currentRecord?.approvalJson[0]?.Currentstage
+          )
           .some((stage) =>
             stage.approvers.some((e) => e.email === loginUser)
           )) ||
@@ -361,8 +365,10 @@ const RequestsFields = ({
     if (
       navigateFrom === "MyApproval" &&
       currentRecord?.approvalJson[0]?.stages
-        .filter((stage) =>
-          signatureFieldConfig?.ViewStages.includes(stage.stage)
+        .filter(
+          (stage) =>
+            signatureFieldConfig?.ViewStages.includes(stage.stage) &&
+            stage.stage <= currentRecord?.approvalJson[0]?.Currentstage
         )
         .some((stage) => stage.approvers.some((e) => e.email === loginUser))
     ) {

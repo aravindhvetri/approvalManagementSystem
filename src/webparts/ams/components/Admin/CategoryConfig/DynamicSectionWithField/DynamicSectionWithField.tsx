@@ -677,7 +677,7 @@ const DynamicSectionWithField = ({
                   setIsValidation(false);
                   setChoiceError(false);
                   setFieldEdit(false);
-                  setActiveStep(0);
+                  setActiveStep(1);
                 }}
                 className="customCancelButton"
               />

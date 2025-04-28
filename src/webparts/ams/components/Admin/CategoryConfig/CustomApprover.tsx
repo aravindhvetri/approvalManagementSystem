@@ -285,6 +285,7 @@ const CustomApprover = ({
         Listname: Config.ListNames.ApprovalStageConfig,
         Select: "*,ParentApproval/Id,Approver/Id,Approver/EMail,Approver/Title",
         Expand: "ParentApproval,Approver",
+        Orderby: "Stage",
         Filter: [
           {
             FilterKey: "ParentApprovalId",
