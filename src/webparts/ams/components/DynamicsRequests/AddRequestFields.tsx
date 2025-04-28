@@ -49,7 +49,6 @@ const AddRequestsFields = ({
   const toast = useRef(null);
   const serverRelativeUrl = context?._pageContext?._site?.serverRelativeUrl;
   const [files, setFiles] = useState([]);
-  console.log(files, "RequestorsFiles");
   const [dynamicFields, setDynamicFields] = useState<ISectionColumnsConfig[]>(
     []
   );
@@ -455,7 +454,6 @@ const AddRequestsFields = ({
   //Handle File Selection:
   const handleFileSelection = async (e, files, setFiles, toast, Config) => {
     try {
-      // Fetch existing files from SharePoint
       const existingSPFiles = await sp.web.lists
         .getByTitle(Config.LibraryNames?.AttachmentsLibrary)
         .items.select("FileLeafRef")

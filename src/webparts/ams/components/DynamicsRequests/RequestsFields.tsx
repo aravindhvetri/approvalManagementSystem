@@ -79,12 +79,9 @@ const RequestsFields = ({
     useState<IApproverSignatureFeildConfig>({
       ...Config.approverSignatureFieldConfig,
     });
-  console.log(approvalDetails, "approvalDetails");
   const [approvalHistoryDetails, setApprovalHistoryDetails] =
     useState<IApprovalHistoryDetails[]>();
   const [personField, setPersonField] = useState({});
-
-  console.log("signatureFieldConfig", signatureFieldConfig);
 
   //CategorySectionConfig List
   const getCategorySectionConfigDetails = () => {
@@ -376,13 +373,11 @@ const RequestsFields = ({
   };
   //Get category config details using id
   const getCategoryConfigDetails = () => {
-    console.log("currentRec", currentRecord?.CategoryId);
     SPServices.SPReadItemUsingID({
       Listname: Config.ListNames.CategoryConfig,
       SelectedId: currentRecord?.CategoryId,
     })
       .then((res: any) => {
-        console.log("catRes", res);
         setSignatureFieldConfig((prev: IApproverSignatureFeildConfig) => ({
           ...prev,
           isMandatory: res?.IsApproverSignRequired,
@@ -437,6 +432,50 @@ const RequestsFields = ({
     acc[field.sectionName].push(field);
     return acc;
   }, {});
+
+  //Handle File Selection:
+  const handleFileSelection = async (e, files, setFiles, toast, Config) => {
+    try {
+      const existingSPFiles = await sp.web.lists
+        .getByTitle(Config.LibraryNames?.AttachmentsLibrary)
+        .items.select("FileLeafRef")
+        .filter(`IsDelete eq false`)
+        .get();
+
+      const spFileNames = existingSPFiles.map((file) => file.FileLeafRef);
+
+      const duplicatesInSP = e.files.filter((newFile) =>
+        spFileNames.includes(newFile.name)
+      );
+
+      const duplicatesInState = e.files.filter((newFile) =>
+        files.some((existing) => existing.name === newFile.name)
+      );
+
+      const totalDuplicates = [...duplicatesInSP, ...duplicatesInState];
+
+      const newFiles = e.files.filter(
+        (newFile) =>
+          !spFileNames.includes(newFile.name) &&
+          !files.some((existing) => existing.name === newFile.name)
+      );
+
+      if (totalDuplicates.length > 0) {
+        toast.current?.show({
+          severity: "warn",
+          summary: "Warning",
+          detail: "Some file names already exist!",
+          life: 3000,
+        });
+      }
+
+      if (newFiles.length > 0) {
+        setFiles([...files, ...newFiles]);
+      }
+    } catch (error) {
+      console.error("Error in file selection:", error);
+    }
+  };
 
   //Remove file
   const removeFile = async (fileName: string) => {
@@ -878,32 +917,9 @@ const RequestsFields = ({
                     className="addNewButton"
                     name="demo[]"
                     mode="basic"
-                    // onSelect={(e) => setFiles([...files, ...e.files])}
-                    onSelect={(e) => {
-                      const newFiles = e.files.filter(
-                        (newFile) =>
-                          !files.some(
-                            (existing) => existing.name === newFile.name
-                          )
-                      );
-
-                      const duplicateFiles = e.files.filter((newFile) =>
-                        files.some((existing) => existing.name === newFile.name)
-                      );
-
-                      if (duplicateFiles.length > 0) {
-                        toast.current?.show({
-                          severity: "warn",
-                          summary: "Warning",
-                          detail: "File name already exists!",
-                          life: 3000,
-                        });
-                      }
-
-                      if (newFiles.length > 0) {
-                        setFiles([...files, ...newFiles]);
-                      }
-                    }}
+                    onSelect={(e) =>
+                      handleFileSelection(e, files, setFiles, toast, Config)
+                    }
                     url="/api/upload"
                     auto
                     multiple
@@ -1082,7 +1098,7 @@ const RequestsFields = ({
                   setRequestsSideBarVisible={setDynamicRequestsSideBarVisible}
                   context={context}
                   updatedRecord={formData}
-                  files={files}
+                  files={files.filter((file) => file instanceof File)}
                   setFiles={setFiles}
                   signatureFieldConfig={signatureFieldConfig}
                   requestsHubDetails={requestsDetails}

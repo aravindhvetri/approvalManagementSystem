@@ -37,7 +37,6 @@ const EmailContainer = ({
   getCategoryConfigDetails,
 }) => {
   const toast = useRef<Toast>(null);
-  console.log("finalsubmit", finalSubmit);
   const [selectedEmail, setSelectedEmail] = useState<string>("");
   const [existingEmailData, setExistingEmailData] = useState([]);
   const [customEmailData, setCustomEmailData] = useState([]);
