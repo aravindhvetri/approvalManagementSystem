@@ -55,7 +55,6 @@ const CategoryConfig = ({
     { label: "Email Config" },
   ];
   const [activeStep, setActiveStep] = useState(0);
-  console.log("activeStep", activeStep);
   const toast = useRef<Toast>(null);
   const [categoryDetails, setCategoryDetails] = useState<ICategoryDetails[]>(
     []
@@ -92,9 +91,6 @@ const CategoryConfig = ({
     ...Config.finalSubmitDetails,
   });
   const [showLoader, setShowLoader] = useState<boolean>(true);
-  console.log("finalSubmit", finalSubmit);
-  console.log("validateError", validateError);
-  console.log("approvalSignStage", approvalSignStage);
 
   //Get Category Config Details:
   const getCategoryConfigDetails = () => {
@@ -176,9 +172,6 @@ const CategoryConfig = ({
 
   //Handle View and Edit Actions:
   const handleActionClick = async (rowData: ICategoryDetails) => {
-    console.log(rowData, "rowData");
-    // setShowLoader(true);
-    // await new Promise((resolve) => setTimeout(resolve, 100));
     setCategoryInputs(rowData?.category);
     setRequestFormatInput((prev: IRequestIdFormatWithDigit) => ({
       ...prev,
@@ -693,7 +686,6 @@ const CategoryConfig = ({
                           ViewStages: e.value,
                         })
                       );
-                      console.log("Cchk", e);
                     }}
                     value={approverSignatureDetails?.ViewStages}
                     options={approvalSignStage}

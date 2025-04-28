@@ -16,22 +16,6 @@ import "../../../../External/style.css";
 const AttachmentUploader = ({ context, datas }) => {
   const serverRelativeUrl = context?._pageContext?._site?.serverRelativeUrl;
   const [files, setFiles] = useState([]);
-  // const UploadLibrary = async () => {
-  //   try {
-  //     for (const file of files) {
-  //       const fileBuffer = await file.arrayBuffer();
-  //       await sp.web
-  //         .getFolderByServerRelativeUrl(
-  //           `${serverRelativeUrl}/${Config.LibraryNames?.AttachmentsLibrary}`
-  //         )
-  //         .files.add(file.name, fileBuffer, true);
-  //     }
-  //     setFiles([]);
-  //     console.log("All files uploaded successfully!");
-  //   } catch (error) {
-  //     console.error("Error uploading files:", error);
-  //   }
-  // };
 
   const UploadLibrary = async () => {
     try {
