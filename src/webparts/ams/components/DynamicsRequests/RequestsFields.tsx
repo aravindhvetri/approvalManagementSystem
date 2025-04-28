@@ -368,7 +368,7 @@ const RequestsFields = ({
         .filter(
           (stage) =>
             signatureFieldConfig?.ViewStages.includes(stage.stage) &&
-            stage.stage <= currentRecord?.approvalJson[0]?.Currentstage
+            stage.stage === currentRecord?.approvalJson[0]?.Currentstage
         )
         .some((stage) => stage.approvers.some((e) => e.email === loginUser))
     ) {
@@ -1100,6 +1100,7 @@ const RequestsFields = ({
                 <WorkflowActionButtons
                   validateForm={validateForm}
                   approvalDetails={approvalDetails}
+                  showSignatureByStage={showSignatureByStage()}
                   setApprovalDetails={setApprovalDetails}
                   setRequestsSideBarVisible={setDynamicRequestsSideBarVisible}
                   context={context}
