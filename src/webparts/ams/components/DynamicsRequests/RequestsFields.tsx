@@ -1154,9 +1154,11 @@ const RequestsFields = ({
       getCategorySectionConfigDetails();
     }
   }, [null, currentRecord.CategoryId]);
+
   useEffect(() => {
     getApprovalHistory();
   }, [null, currentRecord]);
+
   useEffect(() => {
     setRequestsDashBoardContent((prev: IRightSideBarContents) => ({
       ...prev,
@@ -1164,6 +1166,7 @@ const RequestsFields = ({
     }));
     setShowLoader(false);
   }, [dynamicFields, formData, errors, approvalDetails, files, personField]);
+
   useEffect(() => {
     getRequestHubDetails();
     getCategoryConfigDetails();
