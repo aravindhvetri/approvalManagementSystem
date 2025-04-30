@@ -180,7 +180,7 @@ const Header = ({ context, currentPage }) => {
           activeTabViewBar !== 0 && (
             <div className={headerStyles.searchFilter}>
               <InputText
-                style={{ width: "80%" }}
+                style={{ width: "100%" }}
                 type="Search"
                 value={globelSearchValue}
                 placeholder="Search here..."
@@ -219,9 +219,17 @@ const Header = ({ context, currentPage }) => {
       <div className="headerContainer">
         <div className={headerStyles.profile_header_container}>
           <div className={headerStyles.profile_header_content}>
-            <h1>Welcome back,</h1>
-            <label>{userDetails.name}</label>
+            <h1
+              style={{
+                fontSize: "1.875rem",
+                lineHeight: "2.25rem",
+              }}
+            >
+              Approval Hub
+            </h1>
+            <p>Manage and track approval workflows across your organization</p>
           </div>
+
           <div className={headerStyles.profile_header_Icons}>
             <div className={headerStyles.notifyBell}>
               <IoMdNotificationsOutline />
@@ -229,6 +237,7 @@ const Header = ({ context, currentPage }) => {
             <Persona
               imageUrl={`/_layouts/15/userphoto.aspx?size=S&username=${userDetails.email}`}
             />
+            {headerFilters()}
           </div>
         </div>
 
@@ -236,7 +245,6 @@ const Header = ({ context, currentPage }) => {
           <div className={headerStyles.filter_header_pageName}>
             {declareTabViewBar()}
           </div>
-          {headerFilters()}
           <RightSidebar
             visible={sideBarVisible}
             onHide={() => {

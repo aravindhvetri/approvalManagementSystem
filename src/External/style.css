@@ -62,6 +62,14 @@ div[data-automationid="SiteHeader"] {
   border-radius: 6px;
   margin-bottom: 10px;
 }
+.p-datatable .p-datatable-thead > tr > th {
+  border: none !important;
+  padding: 0;
+}
+.p-datatable .p-datatable-tbody > tr > td {
+  border: none;
+  padding: 0;
+}
 .customDataTableContainer .p-datatable .p-datatable-thead > tr > th {
   background-color: var(--dataTableHeaderBgColor);
   padding: var(--dataTableHeaderPadding);
@@ -110,7 +118,7 @@ div[data-automationid="SiteHeader"] {
 /*Header Component common styles(import Style from CommonStyles.module.scss)*/
 
 .headerContainer .p-dropdown {
-  width: 15%;
+  width: 40%;
 }
 
 .p-dropdown {
@@ -156,9 +164,9 @@ div[data-automationid="SiteHeader"] {
   box-shadow: none;
 }
 
-.addNewButton {
+/* .addNewButton {
   width: 10%;
-}
+} */
 .addNewButton .p-button {
   width: 100%;
 }
@@ -316,7 +324,7 @@ input::placeholder {
 
 /* Tabview Common Styles.................................................... */
 
-.p-tabview {
+/* .p-tabview {
   padding: 0;
   margin: 0;
   height: 100%;
@@ -343,6 +351,49 @@ li.p-highlight .p-tabview-nav-link {
 }
 .p-menuitem-link {
   border: 0;
+} */
+.p-tabview {
+  padding: 0;
+  margin: 0;
+  height: 100%;
+  background: #f9f9fb;
+  border: none;
+  box-shadow: none;
+}
+
+.p-tabview-nav {
+  border: none;
+  background-color: #f4f4f5;
+  display: flex;
+  justify-content: space-between;
+  padding: 3px;
+  border-radius: 5px;
+}
+
+.p-tabview-nav-link {
+  font-size: 14px;
+  font-weight: 500;
+  color: #82717a;
+  padding: 10px 110px;
+  border: none;
+  background-color: transparent;
+  transition: background-color 0.4s ease-in-out, color 0.4s ease-in-out;
+}
+
+li.p-highlight .p-tabview-nav-link {
+  font-weight: 600;
+  color: var(--dataTableHeaderTextColor);
+  background-color: white;
+  border-radius: 5px;
+}
+
+.p-tabview-selected {
+  border: none !important;
+}
+
+.p-tabview-panels {
+  padding: 0;
+  background: white;
 }
 
 /* Required Fields........................ */
@@ -443,6 +494,9 @@ li.p-highlight .p-tabview-nav-link {
   margin: 0px 10px 0 10px;
   font-size: var(--dataTableHeaderFontSize);
   min-width: 0;
+}
+.p-datatable .p-paginator-bottom {
+  border-width: 0;
 }
 .p-paginator .p-paginator-pages .p-paginator-page.p-highlight {
   background: var(--green);
