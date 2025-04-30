@@ -129,3 +129,20 @@ $darkblue: #353862;
   font-weight: 600;
   padding-bottom: 20px;
 }
+
+//Card  Common Style:
+.cardHeader {
+  justify-content: space-between;
+  padding-bottom: 4px;
+  display: flex;
+  font-size: 16px;
+  font-weight: 600;
+  .cardIcon {
+    font-size: 25px;
+    color: #898c9ea3;
+  }
+}
+.cardCount {
+  font-size: 24px;
+  font-weight: 600;
+}

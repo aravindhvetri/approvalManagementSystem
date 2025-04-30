@@ -452,8 +452,12 @@ export const getSpGroupMembers = async (groupName) => {
 //Show Card with details
 export const showCard = (cardDetails: ICardDetails) => {
   return (
-    <Card title={cardDetails?.cardTitle}>
-      <p>{cardDetails?.cardContent}</p>
+    <Card className="custom-card">
+      <div className={styles.cardHeader}>
+        <span className="card-title">{cardDetails?.cardTitle}</span>
+        <span className={styles.cardIcon}>{cardDetails?.icon}</span>
+      </div>
+      <div className={styles.cardCount}>{cardDetails?.cardContent}</div>
     </Card>
   );
 };

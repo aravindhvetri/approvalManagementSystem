@@ -34,6 +34,11 @@ import "./HeaderStyle.css";
 import DashboardPage from "../Dashboard/DashboardPage";
 import { InputText } from "primereact/inputtext";
 import ApprovalConfig from "../ApprovalConfig/ApprovalConfig";
+//React icons imports:
+import { FaChartBar } from "react-icons/fa";
+import { FaRegClock } from "react-icons/fa";
+import { SiTicktick } from "react-icons/si";
+import { GiCancel } from "react-icons/gi";
 
 const Header = ({ context, currentPage }) => {
   //UseStates
@@ -62,8 +67,6 @@ const Header = ({ context, currentPage }) => {
   const [cardDataCountDetails, setCardDataCountDetails] = useState<
     ICardDataCountDetails[]
   >([Config.cardDataCountDetailsConfig]);
-  console.log("currentTableData", currentTableData);
-  console.log("cardDataCountDetails", cardDataCountDetails);
 
   //Get Category From List
   const categoryFilter = () => {
@@ -112,12 +115,25 @@ const Header = ({ context, currentPage }) => {
       (e) => e?.status === "Rejected"
     ).length;
     const tempArr = [
-      { name: "Total Requests", count: tempTotalRequestCount },
-      { name: "Pending Requests", count: tempPendingRequestCount },
-      { name: "Approved Requests", count: tempApprovedRequestCount },
+      {
+        name: "Total Requests",
+        count: tempTotalRequestCount,
+        icon: <FaChartBar />,
+      },
+      {
+        name: "Pending Requests",
+        count: tempPendingRequestCount,
+        icon: <FaRegClock />,
+      },
+      {
+        name: "Approved Requests",
+        count: tempApprovedRequestCount,
+        icon: <SiTicktick />,
+      },
       {
         name: "Rejected Requests",
         count: tempRejecetedRequestCount,
+        icon: <GiCancel />,
       },
     ];
     await setCardDataCountDetails([...tempArr]);
@@ -279,7 +295,11 @@ const Header = ({ context, currentPage }) => {
         </div>
         <div className={headerStyles.cardDetails_container}>
           {cardDataCountDetails?.map((e) =>
-            showCard({ cardTitle: e?.name, cardContent: e?.count.toString() })
+            showCard({
+              cardTitle: e?.name,
+              cardContent: e?.count.toString(),
+              icon: e?.icon,
+            })
           )}
         </div>
 
