@@ -62,8 +62,6 @@ const Header = ({ context, currentPage }) => {
   const [cardDataCountDetails, setCardDataCountDetails] = useState<
     ICardDataCountDetails[]
   >([Config.cardDataCountDetailsConfig]);
-  console.log("currentTableData", currentTableData);
-  console.log("cardDataCountDetails", cardDataCountDetails);
 
   //Get Category From List
   const categoryFilter = () => {
