@@ -4,12 +4,15 @@ import { useEffect, useState } from "react";
 //primeReact Imports:
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
+import { MdUpdate } from "react-icons/md";
+import { RiGitPullRequestLine } from "react-icons/ri";
 //Styles Imports:
 import dashboardStyles from "./Dashboard.module.scss";
 import "../../../../External/style.css";
 //CommonService Imports:
 import {
   ActionsMenu,
+  cardStatusTemplate,
   multiplePeoplePickerTemplate,
   peoplePickerTemplate,
   statusTemplate,
@@ -20,8 +23,6 @@ import {
   IPeoplePickerDetails,
   IRequestHubDetails,
 } from "../../../../CommonServices/interface";
-import WorkflowActionButtons from "../WorkflowButtons/WorkflowActionButtons";
-import AttachmentUploader from "../AttachmentUploader/AttachmentUploader";
 import RequestsFields from "../DynamicsRequests/RequestsFields";
 import moment from "moment";
 import Loader from "../Loader/Loader";
@@ -129,7 +130,7 @@ const MyRequestPage = ({
 
   //Render Status Column:
   const renderStatusColumn = (rowData: IRequestHubDetails) => {
-    return <div>{statusTemplate(rowData?.status)}</div>;
+    return <div>{cardStatusTemplate(rowData?.status)}</div>;
   };
 
   //Render Stage level Approver Column:
@@ -280,7 +281,17 @@ const MyRequestPage = ({
               <Column field="Action" body={renderActionColumn}></Column>
             </DataTable>
           </div> */}
-          <div>
+          <div className={dashboardStyles.profile_header_content}>
+            <h2
+              style={{
+                lineHeight: "2.25rem",
+              }}
+            >
+              My Requests
+            </h2>
+            <p>View and manage requests you've submitted</p>
+          </div>
+          <div className="customDataTableCardContainer">
             <DataTable
               value={requestsDetails}
               paginator
@@ -294,17 +305,23 @@ const MyRequestPage = ({
                 body={(rowData) => (
                   <div className={dashboardStyles.requestCard}>
                     <div className={dashboardStyles.requestCardHeader}>
-                      <h3 className="title">
-                        {rowData.category}
+                      <div className={dashboardStyles.requestId}>
+                        <h3 className={dashboardStyles.requestIdTitle}>
+                          <RiGitPullRequestLine style={{ fontSize: "24px" }} />
+                          {rowData.category}
+                        </h3>
                         <span>{renderStatusColumn(rowData)}</span>
-                      </h3>
-                      <p className="request-id">{rowData.requestId}</p>
-                      <p className="submitted">
-                        Submitted{" "}
-                        {moment(rowData.createdDate).format("DD/MM/YYYY")}
-                      </p>
+                      </div>
+                      <div className={dashboardStyles.requestIdDetails}>
+                        <p className={dashboardStyles.requestIdpara}>
+                          {rowData.requestId}
+                        </p>
+                        <p className={dashboardStyles.requestIdpara}>
+                          <MdUpdate style={{ fontSize: "18px" }} /> Submitted{" "}
+                          {moment(rowData.createdDate).format("DD/MM/YYYY")}
+                        </p>
+                      </div>
                     </div>
-
                     <div className={dashboardStyles.requestCardBody}>
                       {renderActionColumn(rowData)}
                     </div>

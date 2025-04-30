@@ -81,6 +81,18 @@ $darkblue: #353862;
   gap: 6px;
   font-weight: 600;
 }
+
+.cardStatusItem {
+  display: flex;
+  align-items: center;
+  padding: 6px 20px 6px 20px;
+  border-radius: 30px;
+  gap: 6px;
+  font-weight: 500;
+  font-size: 12px;
+  letter-spacing: 1px;
+}
+
 //sideBar Header Style:
 @mixin sideBarHeader {
   font-size: 16px;

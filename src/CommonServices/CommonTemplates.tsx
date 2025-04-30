@@ -81,7 +81,42 @@ export const statusTemplate = (status: string) => {
         borderColor: getColors(status)?.borderColor,
       }}
     >
-      <div style={{ fontSize: "16px" }}>{getIcons(status)}</div>
+      <div
+        style={{
+          fontSize: "16px",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
+        {getIcons(status)}
+      </div>
+      <div>{status}</div>
+    </div>
+  );
+};
+
+//Custom Template for Card View:
+export const cardStatusTemplate = (status: string) => {
+  return (
+    <div
+      className={styles.cardStatusItem}
+      style={{
+        backgroundColor: getColors(status)?.bgColor,
+        color: getColors(status)?.color,
+        borderColor: getColors(status)?.borderColor,
+      }}
+    >
+      <div
+        style={{
+          fontSize: "12px",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
+        {getIcons(status)}
+      </div>
       <div>{status}</div>
     </div>
   );
@@ -117,7 +152,7 @@ const getColors = (status: string) => {
   switch (status) {
     case "Pending":
       colors.bgColor = "#eaf1f6";
-      colors.color = "##2a6d9c";
+      colors.color = "#2a6d9c";
       break;
     case "Approved":
       colors.bgColor = "#e8f6ed";
@@ -129,7 +164,7 @@ const getColors = (status: string) => {
       break;
     case "Restart from rejected stage":
       colors.bgColor = "#eaf1f6";
-      colors.color = "##2a6d9c";
+      colors.color = "#2a6d9c";
       break;
     case "Restart from first stage":
       colors.bgColor = "#e8f6ed";
