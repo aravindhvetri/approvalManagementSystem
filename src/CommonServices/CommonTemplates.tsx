@@ -2,7 +2,12 @@
 import * as React from "react";
 import { useRef } from "react";
 //PeoplePicker Imports;
-import { IPeoplePickerDetails, IToaster, ITabviewDetails } from "./interface";
+import {
+  IPeoplePickerDetails,
+  IToaster,
+  ITabviewDetails,
+  ICardDetails,
+} from "./interface";
 import {
   DirectionalHint,
   Label,
@@ -25,6 +30,7 @@ import { TabView, TabPanel } from "primereact/tabview";
 import styles from "../External/commonStyles.module.scss";
 import "../External/style.css";
 import { sp } from "@pnp/sp/presets/all";
+import { Card } from "primereact/card";
 
 //PeoplePicker Template:
 export const peoplePickerTemplate = (user: IPeoplePickerDetails) => {
@@ -406,4 +412,13 @@ export const getSpGroupMembers = async (groupName) => {
   } catch {
     (err) => console.log("getSpGroupMembers err", err);
   }
+};
+
+//Show Card with details
+export const showCard = (cardDetails: ICardDetails) => {
+  return (
+    <Card title={cardDetails?.cardTitle}>
+      <p>{cardDetails?.cardContent}</p>
+    </Card>
+  );
 };

@@ -11,6 +11,8 @@ import {
   ITabviewDetails,
   IBasicFilterCategoryDrop,
   IRightSideBarContentsDetails,
+  ICardDetails,
+  ICardDataCountDetails,
 } from "../../../../CommonServices/interface";
 import SPServices from "../../../../CommonServices/SPServices";
 //Style Imports:
@@ -20,6 +22,7 @@ import { Dropdown } from "primereact/dropdown";
 import {
   getSpGroupMembers,
   RightSidebar,
+  showCard,
   tabViewBar,
 } from "../../../../CommonServices/CommonTemplates";
 import { Persona } from "office-ui-fabric-react";
@@ -55,6 +58,12 @@ const Header = ({ context, currentPage }) => {
       ...Config.rightSideBarContentsDetails,
     });
   const [activeTabView, setActiveTabView] = useState(0);
+  const [currentTableData, setCurrentTableData] = useState([]);
+  const [cardDataCountDetails, setCardDataCountDetails] = useState<
+    ICardDataCountDetails[]
+  >([Config.cardDataCountDetailsConfig]);
+  console.log("currentTableData", currentTableData);
+  console.log("cardDataCountDetails", cardDataCountDetails);
 
   //Get Category From List
   const categoryFilter = () => {
@@ -79,6 +88,7 @@ const Header = ({ context, currentPage }) => {
       });
   };
 
+  // Sitebar open
   const openSidebar = async () => {
     if (currentPage === Config.sideNavPageNames.Request) {
       setAddSideBarContentBooleans((prev: IRightSideBarContentsDetails) => ({
@@ -87,6 +97,30 @@ const Header = ({ context, currentPage }) => {
       }));
     }
     setSideBarVisible(true);
+  };
+
+  //Set Card Details Count
+  const setCardCounts = async () => {
+    const tempTotalRequestCount: number = currentTableData?.length;
+    const tempPendingRequestCount: number = currentTableData?.filter(
+      (e) => e?.status === "Pending"
+    ).length;
+    const tempApprovedRequestCount: number = currentTableData?.filter(
+      (e) => e?.status === "Approved"
+    ).length;
+    const tempRejecetedRequestCount: number = currentTableData?.filter(
+      (e) => e?.status === "Rejected"
+    ).length;
+    const tempArr = [
+      { name: "Total Requests", count: tempTotalRequestCount },
+      { name: "Pending Requests", count: tempPendingRequestCount },
+      { name: "Approved Requests", count: tempApprovedRequestCount },
+      {
+        name: "Rejected Requests",
+        count: tempRejecetedRequestCount,
+      },
+    ];
+    await setCardDataCountDetails([...tempArr]);
   };
 
   //Set TabView Content
@@ -213,6 +247,9 @@ const Header = ({ context, currentPage }) => {
       setAddSideBarContentBooleans({ ...Config.rightSideBarContentsDetails });
     }
   }, [sideBarVisible]);
+  useEffect(() => {
+    setCardCounts();
+  }, [currentTableData]);
 
   return (
     <>
@@ -239,6 +276,11 @@ const Header = ({ context, currentPage }) => {
             />
             {headerFilters()}
           </div>
+        </div>
+        <div className={headerStyles.cardDetails_container}>
+          {cardDataCountDetails?.map((e) =>
+            showCard({ cardTitle: e?.name, cardContent: e?.count.toString() })
+          )}
         </div>
 
         <div className={headerStyles.filter_header_container}>
@@ -274,6 +316,7 @@ const Header = ({ context, currentPage }) => {
         {currentPage == Config.sideNavPageNames.Request ? (
           <>
             <DashboardPage
+              setCurrentTableDataForDataCard={setCurrentTableData}
               categoryFilterValue={categoryFilterValue}
               activeTabViewBar={activeTabViewBar}
               addRequest={addSideBarContentBooleans?.addRequestDetails}

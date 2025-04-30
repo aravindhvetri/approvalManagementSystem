@@ -27,6 +27,7 @@ import { Item } from "@pnp/sp/items";
 import Loader from "../Loader/Loader";
 
 const MyApprovalPage = ({
+  setCurrentTableDataForDataCard,
   searchValue,
   filterCategory,
   context,
@@ -118,19 +119,13 @@ const MyApprovalPage = ({
   //Filter records for approvers
   const filterRecords = (tempArr) => {
     const filterTempArr = tempArr.filter((item) =>
-      // filterCategory
-      //   ? item?.CategoryId === filterCategory.id &&
-      //     item.approvalJson[0].stages.some(
-      //       (stage) =>
-      //         stage.stage <= item.approvalJson[0].Currentstage &&
-      //         stage.approvers.some((approver) => approver.email === loginUser)
-      //     ):
       item.approvalJson[0].stages.some(
         (stage) =>
           stage.stage <= item.approvalJson[0].Currentstage &&
           stage.approvers.some((approver) => approver.email === loginUser)
       )
     );
+
     setRequestsDetails([...filterTempArr]);
     setShowLoader(false);
   };
@@ -225,6 +220,9 @@ const MyApprovalPage = ({
     setNavigateFrom("MyApproval");
   }, [null, filterCategory, searchValue]);
 
+  useEffect(() => {
+    setCurrentTableDataForDataCard([...requestsDetails]);
+  }, [requestsDetails]);
   return (
     <>
       {showLoader ? (

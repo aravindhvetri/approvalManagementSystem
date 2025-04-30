@@ -249,3 +249,14 @@ export interface IApproverSignatureFeildConfig {
   isMandatory: boolean;
   ViewStages: string[];
 }
+
+//Card details
+export interface ICardDetails {
+  cardTitle: string;
+  cardContent: string;
+}
+
+export interface ICardDataCountDetails {
+  name: string;
+  count: number;
+}

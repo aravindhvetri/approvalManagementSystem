@@ -4,6 +4,7 @@ import {
   IApprovalDetailsPatch,
   IApprovalFlowValidation,
   IApproverSignatureFeildConfig,
+  ICardDataCountDetails,
   ICategoryEmailConfigDetails,
   IDropdownDetails,
   IemailMessage,
@@ -183,5 +184,11 @@ export namespace Config {
   export const approverSignatureFieldConfig: IApproverSignatureFeildConfig = {
     isMandatory: false,
     ViewStages: [],
+  };
+
+  //card Data Count Details
+  export const cardDataCountDetailsConfig: ICardDataCountDetails = {
+    name: "Loading....",
+    count: 0,
   };
 }

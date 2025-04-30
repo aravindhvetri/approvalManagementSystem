@@ -83,3 +83,12 @@
     }
   }
 }
+//Card styles
+.cardDetails_container {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 2%;
+  margin: 10px 0px 10px 0px;
+}

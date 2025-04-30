@@ -15,6 +15,7 @@ import MyApprovalPage from "./MyApproval";
 import { sp } from "@pnp/sp";
 
 const DashboardPage = ({
+  setCurrentTableDataForDataCard,
   categoryFilterValue,
   addRequest,
   context,
@@ -37,6 +38,7 @@ const DashboardPage = ({
       )}
       {activeTabViewBar === 2 && (
         <AllRequestPage
+          setCurrentTableDataForDataCard={setCurrentTableDataForDataCard}
           searchValue={globelSearchValue}
           filterCategory={selectedCategory}
           sideBarVisible={sideBarVisible}
@@ -47,6 +49,7 @@ const DashboardPage = ({
       )}
       {activeTabViewBar === 0 && (
         <MyRequestPage
+          setCurrentTableDataForDataCard={setCurrentTableDataForDataCard}
           filterCategory={selectedCategory}
           sideBarVisible={sideBarVisible}
           context={context}
@@ -56,6 +59,7 @@ const DashboardPage = ({
       )}
       {activeTabViewBar === 1 && (
         <MyApprovalPage
+          setCurrentTableDataForDataCard={setCurrentTableDataForDataCard}
           searchValue={globelSearchValue}
           filterCategory={selectedCategory}
           sideBarVisible={sideBarVisible}
