@@ -5,7 +5,7 @@
   box-sizing: border-box;
   justify-content: space-between;
   align-items: center;
-  gap: 10px;
+  // gap: 10px;
   height: 60px;
   background-color: transparent;
   padding: 10px 0px 10px 0px;
@@ -16,35 +16,37 @@
     width: 75%;
   }
   .filter_header_pageName {
-    width: 90%;
+    width: 100%;
   }
   .searchFilter {
-    width: 20%;
+    width: 46%;
     display: flex;
     align-items: center;
-    justify-content: end;
+    // justify-content: end;
   }
 }
 .profile_header_container {
   @extend .filter_header_container;
   justify-content: space-between;
-  height: 50px;
+  height: 70px;
   padding: 0px;
   background-color: $white;
+  width: 100%;
   .profile_header_content {
-    display: flex;
-    align-items: center;
-    justify-content: start;
     padding: 0px;
     height: 100%;
-    width: 100%;
+    width: 60%;
   }
   h1 {
-    color: $sideNavBodyTextColor;
-    font-size: 25px;
-    font-weight: calc(var(--dataTableHeaderFontWeight) - 300);
-    letter-spacing: 1px;
-    width: 17%;
+    margin: 0;
+    padding: 0;
+  }
+  p {
+    padding: 6px 0 10px 0px;
+    margin: 0;
+    color: var(--dataTableBodyTextColor);
+    font-size: 15px;
+    font-weight: 400;
   }
   label {
     font-size: calc(var(--fontSizebig) +2);
@@ -58,6 +60,7 @@
     gap: 6px;
     align-items: center;
     justify-content: end;
+    width: 40%;
   }
   .notifyBell {
     display: flex;

@@ -222,7 +222,7 @@ const MyRequestPage = ({
         <Loader />
       ) : (
         <>
-          <div className="customDataTableContainer">
+          {/* <div className="customDataTableContainer">
             <DataTable
               paginator
               rows={5}
@@ -278,6 +278,39 @@ const MyRequestPage = ({
                 style={{ width: "10rem" }}
               ></Column>
               <Column field="Action" body={renderActionColumn}></Column>
+            </DataTable>
+          </div> */}
+          <div>
+            <DataTable
+              value={requestsDetails}
+              paginator
+              rows={5}
+              className="custom-card-table"
+              emptyMessage={
+                <p style={{ textAlign: "center" }}>No Records Found</p>
+              }
+            >
+              <Column
+                body={(rowData) => (
+                  <div className={dashboardStyles.requestCard}>
+                    <div className={dashboardStyles.requestCardHeader}>
+                      <h3 className="title">
+                        {rowData.category}
+                        <span>{renderStatusColumn(rowData)}</span>
+                      </h3>
+                      <p className="request-id">{rowData.requestId}</p>
+                      <p className="submitted">
+                        Submitted{" "}
+                        {moment(rowData.createdDate).format("DD/MM/YYYY")}
+                      </p>
+                    </div>
+
+                    <div className={dashboardStyles.requestCardBody}>
+                      {renderActionColumn(rowData)}
+                    </div>
+                  </div>
+                )}
+              />
             </DataTable>
           </div>
           {currentRecord && (
