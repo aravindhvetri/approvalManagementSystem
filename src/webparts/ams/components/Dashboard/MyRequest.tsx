@@ -28,6 +28,7 @@ import moment from "moment";
 import Loader from "../Loader/Loader";
 
 const MyRequestPage = ({
+  setCurrentTableDataForDataCard,
   filterCategory,
   context,
   sideBarVisible,
@@ -217,6 +218,10 @@ const MyRequestPage = ({
     getRequestsHubDetails();
     setNavigateFrom("MyRequest");
   }, [null, sideBarVisible, filterCategory]);
+
+  useEffect(() => {
+    setCurrentTableDataForDataCard([...requestsDetails]);
+  }, [requestsDetails]);
   return (
     <>
       {showLoader ? (

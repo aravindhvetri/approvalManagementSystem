@@ -26,6 +26,7 @@ import RequestsFields from "../DynamicsRequests/RequestsFields";
 import Loader from "../Loader/Loader";
 
 const AllRequestPage = ({
+  setCurrentTableDataForDataCard,
   searchValue,
   filterCategory,
   context,
@@ -209,6 +210,9 @@ const AllRequestPage = ({
     setNavigateFrom("AllRequest");
   }, [null, filterCategory, searchValue]);
 
+  useEffect(() => {
+    setCurrentTableDataForDataCard([...requestsDetails]);
+  }, [requestsDetails]);
   return (
     <>
       {showLoader ? (

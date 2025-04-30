@@ -623,3 +623,21 @@ li.p-highlight .p-tabview-nav-link {
 .p-steps .p-steps-item.p-highlight::before {
   border-top: 3px solid var(--green);
 }
+
+/* Data Card Styles......................................... */
+.p-card {
+  height: 100%;
+  width: 25%;
+}
+.p-card .p-card-body {
+  padding: 10px;
+  height: 100%;
+  width: 100%;
+}
+.p-card .p-card-title {
+  font-size: 15px;
+  font-weight: 600;
+}
+.p-card .p-card-content {
+  padding: 0;
+}
