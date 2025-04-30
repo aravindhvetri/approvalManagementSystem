@@ -62,6 +62,12 @@ div[data-automationid="SiteHeader"] {
   border-radius: 6px;
   margin-bottom: 10px;
 }
+.customDataTableCardContainer {
+  box-shadow: -4px 4px 12px #f5f5f5, 4px 0px 6px #f5f5f5;
+  padding: 10px;
+  border-radius: 6px;
+  margin-bottom: 10px;
+}
 .p-datatable .p-datatable-thead > tr > th {
   border: none !important;
   padding: 0;
