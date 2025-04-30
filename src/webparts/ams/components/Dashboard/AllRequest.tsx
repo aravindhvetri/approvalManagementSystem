@@ -107,9 +107,8 @@ const AllRequestPage = ({
           };
         })
       );
+      filterRecords(temArr);
       // filterCategory ? filterRecords(temArr) : setRequestsDetails([...temArr]);
-      setRequestsDetails([...temArr]);
-      setShowLoader(false);
     } catch (e) {
       console.log("RequestsHub Error", e);
     }
@@ -117,9 +116,38 @@ const AllRequestPage = ({
 
   //Filter Condition
   const filterRecords = (tempArr) => {
-    const filterArr = tempArr.filter((e) => e.CategoryId === filterCategory.id);
-    setRequestsDetails([...filterArr]);
+    console.log("temArr", tempArr);
+    if (searchValue) {
+      const tempSearchFilter = tempArr?.filter((item) => {
+        return (
+          item?.author?.email
+            ?.toLowerCase()
+            .includes(searchValue.toLowerCase()) ||
+          item?.author?.name
+            ?.toLowerCase()
+            .includes(searchValue.toLowerCase()) ||
+          item?.category?.toLowerCase().includes(searchValue.toLowerCase()) ||
+          item?.requestId?.toLowerCase().includes(searchValue.toLowerCase()) ||
+          item?.approvalJson[0]?.stages?.filter((e) =>
+            e?.approvers.some(
+              (approver) =>
+                approver?.name
+                  .toLowerCase()
+                  .includes(searchValue.toLowerCase()) ||
+                approver?.email
+                  .toLowerCase()
+                  .includes(searchValue.toLowerCase())
+            )
+          ).length > 0
+        );
+      });
+      setRequestsDetails([...tempSearchFilter]);
+    } else {
+      setRequestsDetails([...tempArr]);
+    }
+    setShowLoader(false);
   };
+
   //Render Status Column:
   const renderStatusColumn = (rowData: IRequestHubDetails) => {
     return <div>{statusTemplate(rowData?.status)}</div>;
@@ -223,7 +251,6 @@ const AllRequestPage = ({
             <DataTable
               paginator
               rows={5}
-              globalFilter={searchValue}
               value={requestsDetails}
               tableStyle={{ minWidth: "50rem" }}
               emptyMessage={

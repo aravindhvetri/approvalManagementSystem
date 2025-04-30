@@ -125,8 +125,23 @@ const MyApprovalPage = ({
           stage.approvers.some((approver) => approver.email === loginUser)
       )
     );
-
-    setRequestsDetails([...filterTempArr]);
+    if (searchValue) {
+      const tempSearchFilter = filterTempArr?.filter((item) => {
+        return (
+          item?.author?.email
+            ?.toLowerCase()
+            .includes(searchValue.toLowerCase()) ||
+          item?.author?.name
+            ?.toLowerCase()
+            .includes(searchValue.toLowerCase()) ||
+          item?.category?.toLowerCase().includes(searchValue.toLowerCase()) ||
+          item?.requestId?.toLowerCase().includes(searchValue.toLowerCase())
+        );
+      });
+      setRequestsDetails([...tempSearchFilter]);
+    } else {
+      setRequestsDetails([...filterTempArr]);
+    }
     setShowLoader(false);
   };
 
@@ -233,7 +248,6 @@ const MyApprovalPage = ({
             <DataTable
               paginator
               rows={5}
-              globalFilter={searchValue}
               value={requestsDetails}
               tableStyle={{ minWidth: "50rem" }}
               emptyMessage={
