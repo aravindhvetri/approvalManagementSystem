@@ -300,7 +300,7 @@ const MyRequestPage = ({
             <DataTable
               value={requestsDetails}
               paginator
-              rows={5}
+              rows={2}
               className="custom-card-table"
               emptyMessage={
                 <p style={{ textAlign: "center" }}>No Records Found</p>

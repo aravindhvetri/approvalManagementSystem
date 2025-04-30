@@ -190,5 +190,6 @@ export namespace Config {
   export const cardDataCountDetailsConfig: ICardDataCountDetails = {
     name: "Loading....",
     count: 0,
+    icon: null,
   };
 }

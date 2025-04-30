@@ -254,9 +254,11 @@ export interface IApproverSignatureFeildConfig {
 export interface ICardDetails {
   cardTitle: string;
   cardContent: string;
+  icon: any;
 }
 
 export interface ICardDataCountDetails {
   name: string;
   count: number;
+  icon: any;
 }
