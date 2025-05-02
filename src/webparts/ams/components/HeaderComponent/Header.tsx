@@ -93,7 +93,7 @@ const Header = ({ context, currentPage }) => {
 
   // Sitebar open
   const openSidebar = async () => {
-    if (currentPage === Config.sideNavPageNames.Request) {
+    if (activeTabViewBar !== 3) {
       setAddSideBarContentBooleans((prev: IRightSideBarContentsDetails) => ({
         ...prev,
         addRequestDetails: true,
@@ -141,65 +141,69 @@ const Header = ({ context, currentPage }) => {
 
   //Set TabView Content
   const declareTabViewBar = () => {
-    switch (currentPage) {
-      case Config.sideNavPageNames.Request:
-        const TemptabContent: ITabviewDetails[] = [
-          {
-            id: 2,
-            name: "My Request",
-          },
-          {
-            id: 3,
-            name: "My Approval",
-          },
-        ];
+    const TemptabContent: ITabviewDetails[] = [
+      {
+        id: 2,
+        name: "My Request",
+      },
+      {
+        id: 3,
+        name: "My Approval",
+      },
+    ];
 
-        if (isAdmin) {
-          TemptabContent.push({
-            id: 1,
-            name: "All Request",
-          });
+    if (isAdmin) {
+      TemptabContent.push(
+        {
+          id: 1,
+          name: "All Request",
+        },
+        {
+          id: 4,
+          name: "Workflows",
         }
+      );
 
-        const tempTabView = tabViewBar(
-          TemptabContent,
-          activeTabViewBar,
-          setActiveTabViewBar
-        );
-        return <>{tempTabView}</>;
-      case Config.sideNavPageNames.ApproveConfig:
-        const TempApproveConfigTabContent: ITabviewDetails[] = [
-          {
-            id: 1,
-            name: "Category",
-          },
-          {
-            id: 2,
-            name: "Approver Workflow",
-          },
-          {
-            id: 3,
-            name: "Email Workflow",
-          },
-        ];
-
-        const tempApproveConfigTabView = tabViewBar(
-          TempApproveConfigTabContent,
-          activeTabView,
-          setActiveTabView
-        );
-        return <>{tempApproveConfigTabView}</>;
+      const tempTabView = tabViewBar(
+        TemptabContent,
+        activeTabViewBar,
+        setActiveTabViewBar
+      );
+      return <>{tempTabView}</>;
     }
+  };
+
+  //Workflows tab view bar
+  const workFlowsTabViewBar = () => {
+    const TempApproveConfigTabContent: ITabviewDetails[] = [
+      {
+        id: 1,
+        name: "Category",
+      },
+      {
+        id: 2,
+        name: "Approver Workflow",
+      },
+      {
+        id: 3,
+        name: "Email Workflow",
+      },
+    ];
+
+    const tempApproveConfigTabView = tabViewBar(
+      TempApproveConfigTabContent,
+      activeTabView,
+      setActiveTabView
+    );
+    return <>{tempApproveConfigTabView}</>;
   };
 
   // Header Filters
   const headerFilters = () => {
     return (
       <>
-        {((currentPage === Config.sideNavPageNames.ApproveConfig &&
-          activeTabView === 0) ||
-          (currentPage === Config.sideNavPageNames.Request &&
-            activeTabViewBar === 0)) && (
+        {((activeTabViewBar === 3 && activeTabView === 0) ||
+          (activeTabViewBar !== 3 && activeTabViewBar === 0)) && (
           <Dropdown
             value={selectedCategory}
             options={categoryFilterValue.categoryDrop}
@@ -213,9 +217,8 @@ const Header = ({ context, currentPage }) => {
             className="w-full md:w-14rem"
           />
         )}
-        {((currentPage === Config.sideNavPageNames.Request &&
-          activeTabViewBar === 0) ||
-          currentPage === Config.sideNavPageNames.ApproveConfig) && (
+        {((activeTabViewBar !== 3 && activeTabViewBar === 0) ||
+          activeTabViewBar === 3) && (
           <div className="addNewButton">
             <Button
               label="Add new"
@@ -226,18 +229,17 @@ const Header = ({ context, currentPage }) => {
             />
           </div>
         )}
-        {currentPage === Config.sideNavPageNames.Request &&
-          activeTabViewBar !== 0 && (
-            <div className={headerStyles.searchFilter}>
-              <InputText
-                style={{ width: "100%" }}
-                type="Search"
-                value={globelSearchValue}
-                placeholder="Search here..."
-                onChange={(e) => setGlobelSearchValue(e.target.value)}
-              />
-            </div>
-          )}
+        {activeTabViewBar !== 3 && activeTabViewBar !== 0 && (
+          <div className={headerStyles.searchFilter}>
+            <InputText
+              style={{ width: "100%" }}
+              type="Search"
+              value={globelSearchValue}
+              placeholder="Search here..."
+              onChange={(e) => setGlobelSearchValue(e.target.value)}
+            />
+          </div>
+        )}
       </>
     );
   };
@@ -246,6 +248,7 @@ const Header = ({ context, currentPage }) => {
   useEffect(() => {
     categoryFilter();
     declareTabViewBar();
+    workFlowsTabViewBar();
     getSpGroupMembers(Config.spGroupNames.RequestsAdmin).then(async (res) => {
       if (res?.some((e) => e?.email === loginUser)) {
         await setIsAdmin(true);
@@ -293,47 +296,49 @@ const Header = ({ context, currentPage }) => {
             {headerFilters()}
           </div>
         </div>
-        <div className={headerStyles.cardDetails_container}>
-          {cardDataCountDetails?.map((e) =>
-            showCard({
-              cardTitle: e?.name,
-              cardContent: e?.count.toString(),
-              icon: e?.icon,
-            })
-          )}
-        </div>
+        {currentPage == Config.sideNavPageNames.Request && (
+          <div className={headerStyles.cardDetails_container}>
+            {cardDataCountDetails?.map((e) =>
+              showCard({
+                cardTitle: e?.name,
+                cardContent: e?.count.toString(),
+                icon: e?.icon,
+              })
+            )}
+          </div>
+        )}
 
         <div className={headerStyles.filter_header_container}>
           <div className={headerStyles.filter_header_pageName}>
             {declareTabViewBar()}
           </div>
+
           <RightSidebar
             visible={sideBarVisible}
             onHide={() => {
               setSideBarVisible(false);
             }}
             contents={
-              currentPage == Config.sideNavPageNames.ApproveConfig &&
-              activeTabView == 0
+              activeTabViewBar === 3 && activeTabView == 0
                 ? sideBarcontent?.categoryConfigContent
-                : currentPage == Config.sideNavPageNames.Request
+                : activeTabViewBar !== 3
                 ? addSideBarContentBooleans?.addRequestDetails
                   ? sideBarcontent?.AddRequestsDashBoardContent
                   : sideBarcontent?.RequestsDashBoardContent
-                : currentPage == Config.sideNavPageNames.ApproveConfig &&
-                  activeTabView == 1
+                : activeTabViewBar === 3 && activeTabView == 1
                 ? sideBarcontent?.ApprovalConfigContent
-                : currentPage == Config.sideNavPageNames.ApproveConfig &&
-                  activeTabView == 2
+                : activeTabViewBar === 3 && activeTabView == 2
                 ? sideBarcontent?.EmailWorkFlowContent
                 : ""
             }
           ></RightSidebar>
         </div>
+        <div className={headerStyles.filter_header_pageName}>
+          {activeTabViewBar === 3 && workFlowsTabViewBar()}
+        </div>
       </div>
-
       <div>
-        {currentPage == Config.sideNavPageNames.Request ? (
+        {activeTabViewBar !== 3 ? (
           <>
             <DashboardPage
               setCurrentTableDataForDataCard={setCurrentTableData}
@@ -348,7 +353,7 @@ const Header = ({ context, currentPage }) => {
               setDynamicRequestsSideBarVisible={setSideBarVisible}
             />
           </>
-        ) : currentPage == Config.sideNavPageNames.ApproveConfig ? (
+        ) : activeTabViewBar === 3 ? (
           <ApprovalConfig
             context={context}
             getCategoryFunction={categoryFilter}

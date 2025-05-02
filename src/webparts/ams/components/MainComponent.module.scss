@@ -9,13 +9,13 @@
     display: flex;
     width: 100%;
     .container_sidebar {
-      width: 16%;
+      width: 0%;
       height: 92vh;
       background-color: $sideNavBgColor;
       padding: 30px 14px 14px 14px;
     }
     .container_content {
-      width: 84%;
+      width: 100%;
       padding: 14px;
     }
   }
