@@ -160,11 +160,11 @@ div[data-automationid="SiteHeader"] {
   padding: 5px;
 }
 .p-dropdown .p-dropdown-clear-icon {
-  color: var(--green);
+  color: #3b63a5;
   border: 0px;
-  top: 55%;
-  height: 13px;
-  width: 13px;
+  top: 62%;
+  height: 9px;
+  width: 9px;
 }
 .p-button {
   box-shadow: none;

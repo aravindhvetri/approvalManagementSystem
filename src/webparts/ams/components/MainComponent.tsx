@@ -39,9 +39,9 @@ const MainComponent = ({ context }) => {
     <>
       <div className={mainStyles.page}>
         <div className={mainStyles.container}>
-          <div className={mainStyles.container_sidebar}>
+          {/* <div className={mainStyles.container_sidebar}>
             <ProductSideNav context={context} updatePage={updatePage} currentPage={currentPage} />
-          </div>
+          </div> */}
           <div className={mainStyles.container_content}>
             <Header context={context} currentPage={currentPage} />
           </div>
