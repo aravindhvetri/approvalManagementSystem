@@ -57,13 +57,16 @@ div[data-automationid="SiteHeader"] {
 
 /*Dashboard Common Styles (import Style from CommonStyles.module.scss)*/
 .customDataTableContainer {
-  box-shadow: -4px 4px 12px #f5f5f5, 4px 0px 6px #f5f5f5;
-  padding: 10px;
+  /* box-shadow: -4px 4px 12px #f5f5f5, 4px 0px 6px #f5f5f5; */
+  box-shadow: -4px 0px 6px #f5f5f5, /* left */ 4px 0px 6px #f5f5f5,
+    /* right */ 0px -4px 6px #f5f5f5, /* top */ 0px 4px 6px #f5f5f5; /* bottom */
+  padding: 18px;
   border-radius: 6px;
   margin-bottom: 10px;
 }
 .customDataTableCardContainer {
-  box-shadow: -4px 4px 12px #f5f5f5, 4px 0px 6px #f5f5f5;
+  box-shadow: -4px 0px 6px #f5f5f5, /* left */ 4px 0px 6px #f5f5f5,
+    /* right */ 0px -4px 6px #f5f5f5, /* top */ 0px 4px 6px #f5f5f5; /* bottom */
   padding: 10px;
   border-radius: 6px;
   margin-bottom: 10px;
@@ -77,7 +80,7 @@ div[data-automationid="SiteHeader"] {
   padding: 0;
 }
 .customDataTableContainer .p-datatable .p-datatable-thead > tr > th {
-  background-color: var(--dataTableHeaderBgColor);
+  /* background-color: var(--dataTableHeaderBgColor); */
   padding: var(--dataTableHeaderPadding);
   font-size: var(--dataTableHeaderFontSize);
   color: var(--dataTableHeaderTextColor);
@@ -322,6 +325,8 @@ input::placeholder {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  color: var(--dataTableBodyTextColor);
+  font-size: 13px;
 }
 .user-selector-group .ms-Persona {
   min-width: 0px;
@@ -628,6 +633,8 @@ li.p-highlight .p-tabview-nav-link {
 .p-card {
   height: 100%;
   width: 25%;
+  border-left: 4px solid #b4b5c1;
+  border-radius: 10px;
 }
 .p-card .p-card-body {
   padding: 14px;

@@ -4,12 +4,16 @@ import { useEffect, useState } from "react";
 //primeReact Imports:
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
+import { RiGitPullRequestLine } from "react-icons/ri";
+import { BiCurrentLocation } from "react-icons/bi";
+import { MdUpdate } from "react-icons/md";
 //Styles Imports:
 import dashboardStyles from "./Dashboard.module.scss";
 import "../../../../External/style.css";
 //CommonService Imports:
 import {
   ActionsMenu,
+  cardStatusTemplate,
   multiplePeoplePickerTemplate,
   peoplePickerTemplate,
   statusTemplate,
@@ -24,6 +28,7 @@ import WorkflowActionButtons from "../WorkflowButtons/WorkflowActionButtons";
 import AttachmentUploader from "../AttachmentUploader/AttachmentUploader";
 import RequestsFields from "../DynamicsRequests/RequestsFields";
 import Loader from "../Loader/Loader";
+import moment from "moment";
 
 const AllRequestPage = ({
   setCurrentTableDataForDataCard,
@@ -39,6 +44,7 @@ const AllRequestPage = ({
   const [requestsDetails, setRequestsDetails] = useState<IRequestHubDetails[]>(
     []
   );
+  console.log(requestsDetails, "requestsDetails");
   //Record Action
   const [recordAction, setRecordAction] = useState<string>("");
   const [navigateFrom, setNavigateFrom] = useState<string>("");
@@ -149,8 +155,11 @@ const AllRequestPage = ({
   };
 
   //Render Status Column:
+  // const renderStatusColumn = (rowData: IRequestHubDetails) => {
+  //   return <div>{statusTemplate(rowData?.status)}</div>;
+  // };
   const renderStatusColumn = (rowData: IRequestHubDetails) => {
-    return <div>{statusTemplate(rowData?.status)}</div>;
+    return <div>{cardStatusTemplate(rowData?.status)}</div>;
   };
 
   //Render Stage level Approver Column:
@@ -247,7 +256,7 @@ const AllRequestPage = ({
         <Loader />
       ) : (
         <>
-          <div className="customDataTableContainer">
+          {/* <div className="customDataTableContainer">
             <DataTable
               paginator
               rows={5}
@@ -292,6 +301,60 @@ const AllRequestPage = ({
                 style={{ width: "10rem" }}
               ></Column>
               <Column field="Action" body={renderActionColumn}></Column>
+            </DataTable>
+          </div> */}
+          <div className="customDataTableCardContainer">
+            <div className={dashboardStyles.profile_header_content}>
+              <h2
+                style={{
+                  lineHeight: "2.25rem",
+                }}
+              >
+                All Request
+              </h2>
+              <p>View the complete list of requests across all statuses</p>
+            </div>
+            <DataTable
+              value={requestsDetails}
+              paginator
+              rows={2}
+              className="custom-card-table"
+              emptyMessage={
+                <p style={{ textAlign: "center" }}>No Records Found</p>
+              }
+            >
+              <Column
+                body={(rowData) => (
+                  <div className={dashboardStyles.requestCard}>
+                    <div className={dashboardStyles.requestCardHeader}>
+                      <div className={dashboardStyles.requestId}>
+                        <h3 className={dashboardStyles.requestIdTitle}>
+                          <RiGitPullRequestLine style={{ fontSize: "24px" }} />
+                          {rowData.category}
+                        </h3>
+                        <span>{renderStatusColumn(rowData)}</span>
+                      </div>
+                      <div className={dashboardStyles.requestIdDetails}>
+                        <p className={dashboardStyles.requestIdpara}>
+                          {rowData.requestId}
+                        </p>
+                        <p className={dashboardStyles.requestIdpara}>
+                          {/* <BiCurrentLocation style={{ fontSize: "18px" }} />{" "}
+                          Current stage -{" "}
+                          {renderStagelevelApproverColumns(rowData, 4)} */}
+                          <MdUpdate style={{ fontSize: "18px" }} /> Submitted{" "}
+                          {moment(rowData.createdDate).format("DD/MM/YYYY")}
+                        </p>
+                      </div>
+                    </div>
+
+                    <div className={dashboardStyles.requestCardBody}>
+                      {renderStagelevelApproverColumns(rowData, 1)}
+                      {renderActionColumn(rowData)}
+                    </div>
+                  </div>
+                )}
+              />
             </DataTable>
           </div>
           {currentRecord && (

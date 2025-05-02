@@ -286,17 +286,17 @@ const MyRequestPage = ({
               <Column field="Action" body={renderActionColumn}></Column>
             </DataTable>
           </div> */}
-          <div className={dashboardStyles.profile_header_content}>
-            <h2
-              style={{
-                lineHeight: "2.25rem",
-              }}
-            >
-              My Requests
-            </h2>
-            <p>View and manage requests you've submitted</p>
-          </div>
           <div className="customDataTableCardContainer">
+            <div className={dashboardStyles.profile_header_content}>
+              <h2
+                style={{
+                  lineHeight: "2.25rem",
+                }}
+              >
+                My Requests
+              </h2>
+              <p>View and manage requests you've submitted</p>
+            </div>
             <DataTable
               value={requestsDetails}
               paginator
