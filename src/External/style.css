@@ -203,9 +203,9 @@ div[data-automationid="SiteHeader"] {
   gap: 5px;
   border: 0;
   height: 32px;
-  transition: ease-in-out;
+  /* transition: ease-in-out;
   transition-timing-function: linear;
-  transition-duration: 0.5s;
+  transition-duration: 0.5s; */
 }
 
 /*CategoryConfig Common Styles..........................................*/
@@ -367,24 +367,27 @@ li.p-highlight .p-tabview-nav-link {
   padding: 0;
   margin: 0;
   height: 100%;
-  background: #f9f9fb;
+  background: #ecf0f1;
   border: none;
   box-shadow: none;
 }
 
 .p-tabview-nav {
   border: none;
-  background-color: #f4f4f5;
+  background-color: #ecf0f1;
   display: flex;
-  justify-content: space-between;
   padding: 3px;
   border-radius: 5px;
+}
+
+.p-tabview-nav .p-unselectable-text {
+  width: 20%;
 }
 
 .p-tabview-nav-link {
   font-size: 14px;
   font-weight: 500;
-  color: #82717a;
+  color: #979a9a;
   padding: 10px 96px;
   border: none;
   background-color: transparent;
