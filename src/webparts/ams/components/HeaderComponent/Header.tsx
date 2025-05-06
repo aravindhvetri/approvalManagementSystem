@@ -175,14 +175,13 @@ const Header = ({ context, currentPage }) => {
           name: "Email Config",
         }
       );
-
-      const tempTabView = tabViewBar(
-        TemptabContent,
-        activeTabViewBar,
-        setActiveTabViewBar
-      );
-      return <>{tempTabView}</>;
     }
+    const tempTabView = tabViewBar(
+      TemptabContent,
+      activeTabViewBar,
+      setActiveTabViewBar
+    );
+    return <>{tempTabView}</>;
   };
 
   //Workflows tab view bar
@@ -258,7 +257,7 @@ const Header = ({ context, currentPage }) => {
   useEffect(() => {
     categoryFilter();
     declareTabViewBar();
-    workFlowsTabViewBar();
+    // workFlowsTabViewBar();
     getSpGroupMembers(Config.spGroupNames.RequestsAdmin).then(async (res) => {
       if (res?.some((e) => e?.email === loginUser)) {
         await setIsAdmin(true);
@@ -298,9 +297,9 @@ const Header = ({ context, currentPage }) => {
           </div>
 
           <div className={headerStyles.profile_header_Icons}>
-            <div className={headerStyles.notifyBell}>
+            {/* <div className={headerStyles.notifyBell}>
               <IoMdNotificationsOutline />
-            </div>
+            </div> */}
             <Persona
               imageUrl={`/_layouts/15/userphoto.aspx?size=S&username=${userDetails.email}`}
             />
