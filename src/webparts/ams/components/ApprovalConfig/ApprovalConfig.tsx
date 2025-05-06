@@ -13,7 +13,7 @@ import ApprovalDashboard from "../Admin/ApprovalWorkFlow/ApprovalDashboard";
 
 const ApprovalConfig = ({
   context,
-  setTabView,
+  activeTabViewBar,
   getCategoryFunction,
   selectedCategory,
   ApprovalConfigSideBarVisible,
@@ -23,23 +23,23 @@ const ApprovalConfig = ({
   return (
     <>
       <div className="tabViewContents">
-        {setTabView == 0 ? (
+        {activeTabViewBar == 2 ? (
           <CategoryConfig
-          selectedCategory={selectedCategory}
+            selectedCategory={selectedCategory}
             getCategoryFunction={getCategoryFunction}
             context={context}
             setCategorySideBarContent={setApprovalConfigSideBarContent}
             setCategorySideBarVisible={setApprovalConfigSideBarVisible}
             ApprovalConfigSideBarVisible={ApprovalConfigSideBarVisible}
           />
-        ) : setTabView == 1 ? (
+        ) : activeTabViewBar == 3 ? (
           <ApprovalDashboard
             ApprovalConfigSideBarVisible={ApprovalConfigSideBarVisible}
             setApprovalSideBarContent={setApprovalConfigSideBarContent}
             setApprovalSideBarVisible={setApprovalConfigSideBarVisible}
             context={context}
           />
-        ) : setTabView == 2 ? (
+        ) : activeTabViewBar == 4 ? (
           <EmailWorkFlow
             setEmailWorkFlowSideBarContent={setApprovalConfigSideBarContent}
             setEmailWorkFlowSideBarVisible={setApprovalConfigSideBarVisible}

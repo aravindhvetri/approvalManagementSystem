@@ -36,7 +36,7 @@ const DashboardPage = ({
           setDynamicRequestsSideBarVisible={setDynamicRequestsSideBarVisible}
         />
       )}
-      {activeTabViewBar === 2 && (
+      {/* {activeTabViewBar === 2 && (
         <AllRequestPage
           setCurrentTableDataForDataCard={setCurrentTableDataForDataCard}
           searchValue={globelSearchValue}
@@ -46,7 +46,7 @@ const DashboardPage = ({
           setRequestsDashBoardContent={setRequestsDashBoardContent}
           setDynamicRequestsSideBarVisible={setDynamicRequestsSideBarVisible}
         />
-      )}
+      )} */}
       {activeTabViewBar === 0 && (
         <MyRequestPage
           setCurrentTableDataForDataCard={setCurrentTableDataForDataCard}

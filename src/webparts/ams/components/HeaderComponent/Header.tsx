@@ -93,7 +93,7 @@ const Header = ({ context, currentPage }) => {
 
   // Sitebar open
   const openSidebar = async () => {
-    if (activeTabViewBar !== 3) {
+    if (activeTabViewBar === 0) {
       setAddSideBarContentBooleans((prev: IRightSideBarContentsDetails) => ({
         ...prev,
         addRequestDetails: true,
@@ -143,24 +143,36 @@ const Header = ({ context, currentPage }) => {
   const declareTabViewBar = () => {
     const TemptabContent: ITabviewDetails[] = [
       {
-        id: 2,
+        id: 1,
         name: "My Request",
       },
       {
-        id: 3,
+        id: 2,
         name: "My Approval",
       },
     ];
 
     if (isAdmin) {
       TemptabContent.push(
+        // {
+        //   id: 1,
+        //   name: "All Request",
+        // },
+        // {
+        //   id: 4,
+        //   name: "Workflows",
+        // }
         {
-          id: 1,
-          name: "All Request",
+          id: 3,
+          name: "Category Config",
         },
         {
           id: 4,
-          name: "Workflows",
+          name: "Approval Config",
+        },
+        {
+          id: 5,
+          name: "Email Config",
         }
       );
 
@@ -182,7 +194,7 @@ const Header = ({ context, currentPage }) => {
       },
       {
         id: 2,
-        name: "Approver Workflow",
+        name: "Approval Workflow",
       },
       {
         id: 3,
@@ -202,13 +214,13 @@ const Header = ({ context, currentPage }) => {
   const headerFilters = () => {
     return (
       <>
-        {((activeTabViewBar === 3 && activeTabView === 0) ||
-          (activeTabViewBar !== 3 && activeTabViewBar === 0)) && (
+        {(activeTabViewBar === 2 || activeTabViewBar === 0) && (
           <Dropdown
             value={selectedCategory}
             options={categoryFilterValue.categoryDrop}
             onChange={(e) => {
               setSelectedCategory(e.value);
+              console.log("e.value", e.value);
             }}
             showClear
             filter
@@ -217,8 +229,7 @@ const Header = ({ context, currentPage }) => {
             className="w-full md:w-14rem"
           />
         )}
-        {((activeTabViewBar !== 3 && activeTabViewBar === 0) ||
-          activeTabViewBar === 3) && (
+        {activeTabViewBar !== 1 && (
           <div className="addNewButton">
             <Button
               label="Add new"
@@ -229,7 +240,7 @@ const Header = ({ context, currentPage }) => {
             />
           </div>
         )}
-        {activeTabViewBar !== 3 && activeTabViewBar !== 0 && (
+        {activeTabViewBar === 1 && (
           <div className={headerStyles.searchFilter}>
             <InputText
               style={{ width: "100%" }}
@@ -296,7 +307,7 @@ const Header = ({ context, currentPage }) => {
             {headerFilters()}
           </div>
         </div>
-        {currentPage == Config.sideNavPageNames.Request && (
+        {(activeTabViewBar === 1 || activeTabViewBar === 0) && (
           <div className={headerStyles.cardDetails_container}>
             {cardDataCountDetails?.map((e) =>
               showCard({
@@ -319,26 +330,27 @@ const Header = ({ context, currentPage }) => {
               setSideBarVisible(false);
             }}
             contents={
-              activeTabViewBar === 3 && activeTabView == 0
+              activeTabViewBar === 2
                 ? sideBarcontent?.categoryConfigContent
-                : activeTabViewBar !== 3
-                ? addSideBarContentBooleans?.addRequestDetails
+                : activeTabViewBar === 0 || activeTabViewBar === 1
+                ? addSideBarContentBooleans?.addRequestDetails &&
+                  activeTabViewBar === 0
                   ? sideBarcontent?.AddRequestsDashBoardContent
                   : sideBarcontent?.RequestsDashBoardContent
-                : activeTabViewBar === 3 && activeTabView == 1
+                : activeTabViewBar === 3
                 ? sideBarcontent?.ApprovalConfigContent
-                : activeTabViewBar === 3 && activeTabView == 2
+                : activeTabViewBar === 4
                 ? sideBarcontent?.EmailWorkFlowContent
                 : ""
             }
           ></RightSidebar>
         </div>
-        <div className={headerStyles.filter_header_pageName}>
+        {/* <div className={headerStyles.filter_header_pageName}>
           {activeTabViewBar === 3 && workFlowsTabViewBar()}
-        </div>
+        </div> */}
       </div>
       <div>
-        {activeTabViewBar !== 3 ? (
+        {activeTabViewBar === 0 || activeTabViewBar === 1 ? (
           <>
             <DashboardPage
               setCurrentTableDataForDataCard={setCurrentTableData}
@@ -353,13 +365,13 @@ const Header = ({ context, currentPage }) => {
               setDynamicRequestsSideBarVisible={setSideBarVisible}
             />
           </>
-        ) : activeTabViewBar === 3 ? (
+        ) : activeTabViewBar !== 0 && activeTabViewBar !== 1 ? (
           <ApprovalConfig
             context={context}
             getCategoryFunction={categoryFilter}
             selectedCategory={selectedCategory}
             ApprovalConfigSideBarVisible={sideBarVisible}
-            setTabView={activeTabView}
+            activeTabViewBar={activeTabViewBar}
             setApprovalConfigSideBarContent={setSideBarContent}
             setApprovalConfigSideBarVisible={setSideBarVisible}
           />
