@@ -23,6 +23,7 @@ import { Label } from "office-ui-fabric-react";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import { Toast } from "primereact/toast";
+import { MdMarkEmailRead } from "react-icons/md";
 //Styles Imports:
 import EmailWorkFlowStyles from "./EmailWorkFlow.module.scss";
 import "./EmailWorkFlowStyle.css";
@@ -352,28 +353,72 @@ const EmailWorkFlow = ({
       {showLoader ? (
         <Loader />
       ) : (
-        <div className="customDataTableContainer">
-          <DataTable
-            paginator
-            rows={5}
-            value={getEmailTemplateContent}
-            tableStyle={{ minWidth: "50rem" }}
-            emptyMessage={
-              <p style={{ textAlign: "center" }}>No Records Found</p>
-            }
-          >
-            <Column
-              style={{ width: "80%" }}
-              field="templateName"
-              header="Template Name"
-            ></Column>
-            <Column
-              style={{ width: "20%" }}
-              field="Action"
-              body={renderActionColumn}
-            ></Column>
-          </DataTable>
-        </div>
+        <>
+          {/* <div className="customDataTableContainer">
+            <DataTable
+              paginator
+              rows={5}
+              value={getEmailTemplateContent}
+              tableStyle={{ minWidth: "50rem" }}
+              emptyMessage={
+                <p style={{ textAlign: "center" }}>No Records Found</p>
+              }
+            >
+              <Column
+                style={{ width: "80%" }}
+                field="templateName"
+                header="Template Name"
+              ></Column>
+              <Column
+                style={{ width: "20%" }}
+                field="Action"
+                body={renderActionColumn}
+              ></Column>
+            </DataTable>
+          </div> */}
+          <div className="customDataTableCardContainer">
+            <div className="profile_header_content">
+              <h2
+                style={{
+                  lineHeight: "2.25rem",
+                }}
+              >
+                Email Config
+              </h2>
+              <p>
+                Set up and manage email templates used in the request and
+                approval process
+              </p>
+            </div>
+            <DataTable
+              value={getEmailTemplateContent}
+              paginator
+              rows={3}
+              className="custom-card-table"
+              emptyMessage={
+                <p style={{ textAlign: "center" }}>No Records Found</p>
+              }
+            >
+              <Column
+                body={(rowData) => (
+                  <div className="requestCard">
+                    <div className="requestCardHeader">
+                      <div className="requestId">
+                        <h3 className="requestIdTitle">
+                          <MdMarkEmailRead style={{ fontSize: "24px" }} />
+                          {rowData.templateName}
+                        </h3>
+                      </div>
+                    </div>
+                    <div className="requestCardBody">
+                      {renderActionColumn(rowData)}
+                    </div>
+                  </div>
+                )}
+              />
+            </DataTable>
+          </div>
+        </>
       )}
     </>
   );

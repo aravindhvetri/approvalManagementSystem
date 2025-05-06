@@ -31,6 +31,7 @@ import ExistingApprover from "./ExistingApprover";
 import CustomApprover from "./CustomApprover";
 import { Button } from "primereact/button";
 import { Steps } from "primereact/steps";
+import { BiSolidCategory } from "react-icons/bi";
 //Component Imports:
 import DynamicSectionWithField from "./DynamicSectionWithField/DynamicSectionWithField";
 import EmailContainer from "./EmailTemplate/EmailContainer";
@@ -59,6 +60,7 @@ const CategoryConfig = ({
   const [categoryDetails, setCategoryDetails] = useState<ICategoryDetails[]>(
     []
   );
+  console.log(categoryDetails, "categoryDetails");
   const [categoryInputs, setCategoryInputs] = useState<string>("");
   const [requestInput, setRequestFormatInput] =
     useState<IRequestIdFormatWithDigit>({
@@ -844,7 +846,7 @@ const CategoryConfig = ({
         <Loader />
       ) : (
         <>
-          <div className="customDataTableContainer">
+          {/* <div className="customDataTableContainer">
             <DataTable
               globalFilter={selectedCategory?.name}
               paginator
@@ -858,15 +860,67 @@ const CategoryConfig = ({
               }
             >
               <Column
-                style={{ width: "80%" }}
+                style={{ width: "40%" }}
                 field="category"
                 header="Category"
+              ></Column>
+              <Column
+                style={{ width: "40%" }}
+                field="requestIdFormat"
+                header="Request Id Format"
               ></Column>
               <Column
                 style={{ width: "20%" }}
                 field="Action"
                 body={renderActionColumn}
               ></Column>
+            </DataTable>
+          </div> */}
+          <div className="customDataTableCardContainer">
+            <div className="profile_header_content">
+              <h2
+                style={{
+                  lineHeight: "2.25rem",
+                }}
+              >
+                Category Config
+              </h2>
+              <p>
+                Configure categories and define their structure for request
+                management
+              </p>
+            </div>
+            <DataTable
+              value={categoryDetails}
+              paginator
+              rows={2}
+              className="custom-card-table"
+              emptyMessage={
+                <p style={{ textAlign: "center" }}>No Records Found</p>
+              }
+            >
+              <Column
+                body={(rowData) => (
+                  <div className="requestCard">
+                    <div className="requestCardHeader">
+                      <div className="requestId">
+                        <h3 className="requestIdTitle">
+                          <BiSolidCategory style={{ fontSize: "24px" }} />
+                          {rowData.category}
+                        </h3>
+                      </div>
+                      <div className="requestIdDetails">
+                        <p className="requestIdpara">
+                          Request Id Format - {rowData.requestIdFormat}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="requestCardBody">
+                      {renderActionColumn(rowData)}
+                    </div>
+                  </div>
+                )}
+              />
             </DataTable>
           </div>
         </>

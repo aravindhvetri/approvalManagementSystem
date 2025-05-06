@@ -21,6 +21,7 @@ import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 import ApprovalWorkFlow from "./ApprovalWorkFlow";
 import Loader from "../../Loader/Loader";
+import { LuWorkflow } from "react-icons/lu";
 
 const ApprovalDashboard = ({
   setApprovalSideBarContent,
@@ -32,6 +33,7 @@ const ApprovalDashboard = ({
   const [approvalConfigDetails, setApprovalConfigDetails] = useState<
     IApprovalConfigDetails[]
   >([]);
+
   const [isEdit, setIsEdit] = useState<boolean>(true);
   const [currentRecord, setCurrentRecord] = useState<IApprovalConfigDetails>();
   const [showLoader, setShowLoader] = useState<boolean>(true);
@@ -203,33 +205,81 @@ const ApprovalDashboard = ({
       {showLoader ? (
         <Loader />
       ) : (
-        <div className="customDataTableContainer">
-          <DataTable
-            paginator
-            rows={5}
-            value={approvalConfigDetails}
-            tableStyle={{ minWidth: "50rem" }}
-            emptyMessage={
-              <>
+        <>
+          {/* <div className="customDataTableContainer">
+            <DataTable
+              paginator
+              rows={5}
+              value={approvalConfigDetails}
+              tableStyle={{ minWidth: "50rem" }}
+              emptyMessage={
+                <>
+                  <p style={{ textAlign: "center" }}>No Records Found</p>
+                </>
+              }
+            >
+              <Column field="apprvalFlowName" header="name"></Column>
+              <Column
+                field="stages"
+                header="Approvers"
+                body={renderApproversColumn}
+              ></Column>
+              <Column
+                field="rejectionFlow"
+                body={renderRejectionFlowColumn}
+                style={{ width: "15rem" }}
+                header="Rejection flow"
+              ></Column>
+              <Column field="Action" body={renderActionColumn}></Column>
+            </DataTable>
+          </div> */}
+          <div className="customDataTableCardContainer">
+            <div className="profile_header_content">
+              <h2
+                style={{
+                  lineHeight: "2.25rem",
+                }}
+              >
+                Approval Config
+              </h2>
+              <p>Configure approval stages and rules for processing requests</p>
+            </div>
+            <DataTable
+              value={approvalConfigDetails}
+              paginator
+              rows={2}
+              className="custom-card-table"
+              emptyMessage={
                 <p style={{ textAlign: "center" }}>No Records Found</p>
-              </>
-            }
-          >
-            <Column field="apprvalFlowName" header="name"></Column>
-            <Column
-              field="stages"
-              header="Approvers"
-              body={renderApproversColumn}
-            ></Column>
-            <Column
-              field="rejectionFlow"
-              body={renderRejectionFlowColumn}
-              style={{ width: "15rem" }}
-              header="Rejection flow"
-            ></Column>
-            <Column field="Action" body={renderActionColumn}></Column>
-          </DataTable>
-        </div>
+              }
+            >
+              <Column
+                body={(rowData) => (
+                  <div className="requestCard">
+                    <div className="requestCardHeader">
+                      <div className="requestId">
+                        <h3 className="requestIdTitle">
+                          <LuWorkflow style={{ fontSize: "24px" }} />
+                          {rowData.apprvalFlowName}
+                        </h3>
+                        <span>{renderRejectionFlowColumn(rowData)}</span>
+                      </div>
+                      <div className="requestIdDetails">
+                        <p className="requestIdpara">
+                          Total Stages - {rowData?.totalStages}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="requestCardBody">
+                      {renderApproversColumn(rowData)}
+                      {renderActionColumn(rowData)}
+                    </div>
+                  </div>
+                )}
+              />
+            </DataTable>
+          </div>
+        </>
       )}
     </>
   );
