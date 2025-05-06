@@ -70,6 +70,7 @@ div[data-automationid="SiteHeader"] {
   padding: 10px;
   border-radius: 6px;
   margin-bottom: 10px;
+  height: auto;
 }
 .p-datatable .p-datatable-thead > tr > th {
   border: none !important;
@@ -647,4 +648,77 @@ li.p-highlight .p-tabview-nav-link {
 }
 .p-card .p-card-content {
   padding: 0;
+}
+
+/* Data Card Body styles......................................... */
+.profile_header_content {
+  padding: 0px;
+  margin-bottom: 16px;
+}
+.profile_header_content h2 {
+  margin: 0;
+  padding: 0;
+}
+.profile_header_content p {
+  padding: 6px 0 10px 0px;
+  margin: 0;
+  color: var(--dataTableBodyTextColor);
+  font-size: 14px;
+  font-weight: 400;
+}
+.requestCard {
+  background-color: #fff;
+  border-radius: 10px;
+  padding: 1rem;
+  box-shadow: -4px 4px 12px #f5f5f5, 4px 0px 6px #f5f5f5;
+  margin-bottom: 20px;
+  border: 2px solid #f4f4f5;
+  display: flex;
+  width: 100%;
+}
+.requestCardBody {
+  width: 20%;
+  display: flex;
+  justify-content: end;
+  gap: 12px;
+  align-items: center;
+  color: var(--dataTableBodyTextColor);
+  font-size: 12px;
+}
+.requestCardHeader {
+  width: 80%;
+}
+.requestIdDetails {
+  display: flex;
+  gap: 18px;
+  padding-top: 16px;
+}
+.requestIdDetails p {
+  margin: 0;
+  padding: 0;
+}
+.requestIdpara {
+  font-size: 13px;
+  font-weight: 450;
+  letter-spacing: 1px;
+  color: var(--dataTableBodyTextColor);
+  display: flex;
+  gap: 4px;
+}
+.requestId {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+.requestIdTitle {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.requestId h3 {
+  margin: 0;
+  padding: 0;
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: 1px;
 }
