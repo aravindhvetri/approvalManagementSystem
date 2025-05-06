@@ -220,7 +220,6 @@ const Header = ({ context, currentPage }) => {
             options={categoryFilterValue.categoryDrop}
             onChange={(e) => {
               setSelectedCategory(e.value);
-              console.log("e.value", e.value);
             }}
             showClear
             filter
@@ -270,6 +269,7 @@ const Header = ({ context, currentPage }) => {
   }, []);
   useEffect(() => {
     setGlobelSearchValue("");
+    setSelectedCategory(undefined);
     headerFilters();
   }, [activeTabViewBar, currentPage]);
   useEffect(() => {
