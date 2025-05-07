@@ -8,6 +8,7 @@ export default function Loader() {
       {/* <ProgressSpinner style={{width: '50px', height: '50px'}} 
             strokeWidth="8" fill="var(--surface-ground)" animationDuration=".5s" /> */}
 
+      {/* <span className="loader"></span> */}
       <span className="loader"></span>
     </div>
   );

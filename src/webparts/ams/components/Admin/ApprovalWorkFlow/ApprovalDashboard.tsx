@@ -21,7 +21,10 @@ import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 import ApprovalWorkFlow from "./ApprovalWorkFlow";
 import Loader from "../../Loader/Loader";
+//PrimeReact imports:
+import { Button } from "primereact/button";
 import { LuWorkflow } from "react-icons/lu";
+import { LuBadgePlus } from "react-icons/lu";
 
 const ApprovalDashboard = ({
   setApprovalSideBarContent,
@@ -235,14 +238,27 @@ const ApprovalDashboard = ({
           </div> */}
           <div className="customDataTableCardContainer">
             <div className="profile_header_content">
-              <h2
-                style={{
-                  lineHeight: "2.25rem",
-                }}
-              >
-                Approval Config
-              </h2>
-              <p>Configure approval stages and rules for processing requests</p>
+              <div>
+                <h2
+                  style={{
+                    lineHeight: "2.25rem",
+                  }}
+                >
+                  Approval Config
+                </h2>
+                <p>
+                  Configure approval stages and rules for processing requests
+                </p>
+              </div>
+              <div className="addNewButton">
+                <Button
+                  label="Add New"
+                  onClick={async () => {
+                    setApprovalSideBarVisible(true);
+                  }}
+                  icon={<LuBadgePlus />}
+                />
+              </div>
             </div>
             <DataTable
               value={approvalConfigDetails}

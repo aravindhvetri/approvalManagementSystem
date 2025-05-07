@@ -24,12 +24,12 @@ import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import { Toast } from "primereact/toast";
 import { MdMarkEmailRead } from "react-icons/md";
+import { LuBadgePlus } from "react-icons/lu";
 //Styles Imports:
 import EmailWorkFlowStyles from "./EmailWorkFlow.module.scss";
 import "./EmailWorkFlowStyle.css";
 import "../../../../../External/style.css";
 import Loader from "../../Loader/Loader";
-import AttachmentUploader from "../../AttachmentUploader/AttachmentUploader";
 
 const EmailWorkFlow = ({
   setEmailWorkFlowSideBarContent,
@@ -378,17 +378,28 @@ const EmailWorkFlow = ({
           </div> */}
           <div className="customDataTableCardContainer">
             <div className="profile_header_content">
-              <h2
-                style={{
-                  lineHeight: "2.25rem",
-                }}
-              >
-                Email Config
-              </h2>
-              <p>
-                Set up and manage email templates used in the request and
-                approval process
-              </p>
+              <div>
+                <h2
+                  style={{
+                    lineHeight: "2.25rem",
+                  }}
+                >
+                  Email Config
+                </h2>
+                <p>
+                  Set up and manage email templates used in the request and
+                  approval process
+                </p>
+              </div>
+              <div className="addNewButton">
+                <Button
+                  label="Add New"
+                  onClick={async () => {
+                    setEmailWorkFlowSideBarVisible(true);
+                  }}
+                  icon={<LuBadgePlus />}
+                />
+              </div>
             </div>
             <DataTable
               value={getEmailTemplateContent}
