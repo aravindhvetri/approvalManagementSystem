@@ -35,6 +35,7 @@ export interface ICategoryDetails {
   requestIdDigit: string;
   isApproverSignRequired: boolean;
   viewApproverSignStages: string[];
+  isDraft: boolean;
 }
 //Approval Details patch:
 export interface IApprovalDetailsPatch {
@@ -217,7 +218,7 @@ export interface IFinalSubmitDetails {
     requestIdFormat: string;
     requestIdDigit: string;
     ExistingApprover: number;
-    customApprover: {};
+    customApprover: IApprovalDetailsPatch;
     isApproverSignRequired: boolean;
     viewApproverSignStages: string[];
   };

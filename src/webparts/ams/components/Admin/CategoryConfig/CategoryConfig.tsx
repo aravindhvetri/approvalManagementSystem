@@ -6,6 +6,7 @@ import SPServices from "../../../../../CommonServices/SPServices";
 import { Config } from "../../../../../CommonServices/Config";
 import {
   IActionBooleans,
+  IApprovalStages,
   IApproverSignatureFeildConfig,
   ICategoryDetails,
   IFinalSubmitDetails,
@@ -66,6 +67,7 @@ const CategoryConfig = ({
     useState<IRequestIdFormatWithDigit>({
       ...Config.requestIdFormatWithDigit,
     });
+  const [categoryIsDraft, setCategoryIsDraft] = useState<boolean>(false);
   const [approverSignatureDetails, setApproverSignatureDetails] =
     useState<IApproverSignatureFeildConfig>({
       ...Config.approverSignatureFieldConfig,
@@ -93,7 +95,7 @@ const CategoryConfig = ({
     ...Config.finalSubmitDetails,
   });
   const [showLoader, setShowLoader] = useState<boolean>(true);
-
+  console.log("finalSubmit", finalSubmit);
   //Get Category Config Details:
   const getCategoryConfigDetails = () => {
     SPServices.SPReadItems({
@@ -128,6 +130,7 @@ const CategoryConfig = ({
               JSON.parse(items?.ViewApproverSignStages)[0].Stage?.map(
                 (e: any) => "Stage " + e
               ),
+            isDraft: items?.IsDraft,
           });
         });
         setCategoryDetails([...tempCategoryArray]);
@@ -180,6 +183,7 @@ const CategoryConfig = ({
       format: rowData?.requestIdFormat,
       digit: rowData?.requestIdDigit,
     }));
+    setCategoryIsDraft(rowData?.isDraft);
     setApproverSignatureDetails((prev: IApproverSignatureFeildConfig) => ({
       ...prev,
       ViewStages: rowData?.viewApproverSignStages,
@@ -209,7 +213,138 @@ const CategoryConfig = ({
     });
   };
 
-  const finalValidation = () => {
+  //Category in draft
+  const draftCategory = async () => {
+    if (selectedCategoryId) {
+      try {
+        const res = await SPServices.SPUpdateItem({
+          Listname: Config.ListNames.CategoryConfig,
+          ID: selectedCategoryId,
+          RequestJSON: {
+            Category: finalSubmit?.categoryConfig?.category,
+            RequestIdFormat: finalSubmit?.categoryConfig?.requestIdFormat,
+            RequestIdDigits: finalSubmit?.categoryConfig?.requestIdDigit,
+            ViewApproverSignStages: `[{"Stage": ${JSON.stringify(
+              finalSubmit?.categoryConfig?.viewApproverSignStages
+                .map((item) => parseInt(item.split(" ")[1]))
+                .sort((x, y) => x - y)
+            )}}]`,
+            IsApproverSignRequired:
+              finalSubmit?.categoryConfig?.isApproverSignRequired,
+            IsDraft: true,
+          },
+        });
+        alert("Process completed successfully!");
+        sessionStorage.clear();
+        getCategoryConfigDetails();
+        setCategorySideBarVisible(false);
+      } catch {
+        (err) => console.log("Draft category details err", err);
+      }
+    } else {
+      try {
+        if (finalSubmit?.categoryConfig?.category !== "") {
+          const res = await SPServices.SPAddItem({
+            Listname: Config.ListNames.CategoryConfig,
+            RequestJSON: {
+              Category: finalSubmit?.categoryConfig?.category,
+              RequestIdFormat: finalSubmit?.categoryConfig?.requestIdFormat,
+              RequestIdDigits: finalSubmit?.categoryConfig?.requestIdDigit,
+              ViewApproverSignStages: `[{"Stage": ${JSON.stringify(
+                finalSubmit?.categoryConfig?.viewApproverSignStages
+                  .map((item) => parseInt(item.split(" ")[1]))
+                  .sort((x, y) => x - y)
+              )}}]`,
+              IsApproverSignRequired:
+                finalSubmit?.categoryConfig?.isApproverSignRequired,
+              IsDraft: true,
+            },
+          });
+
+          if (res?.data?.ID) {
+            const newCategoryId = res?.data?.ID; // Use a variable instead of state
+
+            if (finalSubmit?.categoryConfig?.ExistingApprover !== null) {
+              const existingApprovalConfig: any = await SPServices.SPReadItems({
+                Listname: Config.ListNames.ApprovalConfig,
+                Select: "ID,CategoryId",
+                Filter: [
+                  {
+                    FilterKey: "ID",
+                    Operator: "eq",
+                    FilterValue:
+                      finalSubmit?.categoryConfig?.ExistingApprover.toString(),
+                  },
+                ],
+              });
+
+              let existingCategories =
+                existingApprovalConfig[0]?.CategoryId || [];
+              existingCategories.push(newCategoryId);
+
+              await SPServices.SPUpdateItem({
+                Listname: Config.ListNames.ApprovalConfig,
+                ID: finalSubmit?.categoryConfig?.ExistingApprover,
+                RequestJSON: {
+                  CategoryId: { results: existingCategories },
+                },
+              });
+            }
+            if (finalSubmit?.categoryConfig?.ExistingApprover === null) {
+              const customApprovalConfigRes = await SPServices.SPAddItem({
+                Listname: Config.ListNames.ApprovalConfig,
+                RequestJSON: {
+                  CategoryId: { results: [newCategoryId] },
+                  ApprovalFlowName:
+                    finalSubmit?.categoryConfig?.customApprover
+                      ?.apprvalFlowName,
+                  TotalStages:
+                    finalSubmit?.categoryConfig?.customApprover?.totalStages,
+                  RejectionFlow:
+                    finalSubmit?.categoryConfig?.customApprover?.rejectionFlow,
+                },
+              });
+
+              await finalSubmit?.categoryConfig?.customApprover?.stages?.forEach(
+                (stage) =>
+                  addApprovalStageConfigDetails(
+                    customApprovalConfigRes?.data.ID,
+                    stage
+                  )
+              );
+            }
+          }
+        }
+        alert("Process completed successfully!");
+        sessionStorage.clear();
+        getCategoryConfigDetails();
+        setCategorySideBarVisible(false);
+      } catch {
+        (err) => console.log("Draft category details err", err);
+      }
+    }
+  };
+
+  //ApprovalStageConfig Details Patch:
+  const addApprovalStageConfigDetails = (
+    parentId: number,
+    stage: IApprovalStages
+  ) => {
+    const tempApprovers = stage?.approver?.map((e) => e.id);
+    SPServices.SPAddItem({
+      Listname: Config.ListNames.ApprovalStageConfig,
+      RequestJSON: {
+        ParentApprovalId: parentId,
+        Stage: stage?.stage,
+        ApprovalProcess: stage?.approvalProcess,
+        ApproverId: { results: tempApprovers },
+      },
+    })
+      .then((res: any) => {})
+      .catch((err) => console.log("addApprovalStageConfigDetails error", err));
+  };
+
+  const finalValidation = (Isdraft: boolean) => {
     let isValid = true;
     // Category name validation
     if (categoryInputs === "") {
@@ -338,12 +473,16 @@ const CategoryConfig = ({
 
     // If everything is valid, move to next section
     if (isValid) {
-      setNextStageFromCategory((prev: INextStageFromCategorySideBar) => ({
-        ...prev,
-        dynamicSectionWithField: true,
-        ApproverSection: false,
-      }));
-      next();
+      if (!Isdraft) {
+        setNextStageFromCategory((prev: INextStageFromCategorySideBar) => ({
+          ...prev,
+          dynamicSectionWithField: true,
+          ApproverSection: false,
+        }));
+        next();
+      } else if (Isdraft) {
+        draftCategory();
+      }
     }
   };
 
@@ -517,7 +656,9 @@ const CategoryConfig = ({
                           ...prev,
                           categoryConfig: {
                             ...prev.categoryConfig,
-                            customApprover: {},
+                            customApprover: {
+                              ...Config.ApprovalConfigDefaultDetails,
+                            },
                           },
                         }));
                         setApproverSignatureDetails({
@@ -610,6 +751,9 @@ const CategoryConfig = ({
             {nextStageFromCategory.dynamicSectionWithField &&
             activeStep == 1 ? (
               <DynamicSectionWithField
+                finalSubmit={finalSubmit}
+                categoryIsDraft={categoryIsDraft}
+                getCategoryConfigDetails={getCategoryConfigDetails}
                 context={context}
                 setFinalSubmit={setFinalSubmit}
                 previous={() => setActiveStep(0)}
@@ -626,7 +770,7 @@ const CategoryConfig = ({
             ) : nextStageFromCategory.EmailTemplateSection &&
               activeStep === 2 ? (
               <EmailContainer
-                getCategoryFunction={getCategoryFunction}
+                categoryIsDraft={categoryIsDraft}
                 setFinalSubmit={setFinalSubmit}
                 previous={() => setActiveStep(1)}
                 setActiveStep={setActiveStep}
@@ -716,6 +860,17 @@ const CategoryConfig = ({
                 }}
                 className="customCancelButton"
               />
+              {(selectedCategoryId === null ||
+                (actionsBooleans.isEdit && categoryIsDraft)) && (
+                <Button
+                  icon="pi pi-save"
+                  label="Draft"
+                  onClick={() => {
+                    finalValidation(true);
+                  }}
+                  className="customCancelButton"
+                />
+              )}
 
               {/* <Button
                 icon="pi pi-angle-double-right"
@@ -745,7 +900,7 @@ const CategoryConfig = ({
                     (actionsBooleans?.isEdit === false &&
                       actionsBooleans?.isView === false)
                   ) {
-                    finalValidation();
+                    finalValidation(false);
                   } else {
                     setNextStageFromCategory(
                       (prev: INextStageFromCategorySideBar) => ({
@@ -839,6 +994,9 @@ const CategoryConfig = ({
   useEffect(() => {
     getApprovalStageCount();
   }, [finalSubmit]);
+  useEffect(() => {
+    getCategoryFunction();
+  }, [categoryDetails]);
   return (
     <>
       <Toast ref={toast} />

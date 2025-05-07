@@ -75,6 +75,18 @@ const Header = ({ context, currentPage }) => {
       Select: "*",
       Orderby: "Modified",
       Orderbydecorasc: false,
+      Filter: [
+        {
+          FilterKey: "IsDelete",
+          Operator: "eq",
+          FilterValue: "false",
+        },
+        {
+          FilterKey: "IsDraft",
+          Operator: "eq",
+          FilterValue: "false",
+        },
+      ],
     })
       .then((res: any) => {
         const TempArr: IBasicFilterCategoryDrop[] = [];
