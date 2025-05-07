@@ -53,6 +53,7 @@ const Header = ({ context, currentPage }) => {
   const [isAdmin, setIsAdmin] = useState<boolean>(false);
   const loginUser = context._pageContext._user.email;
   const [activeTabViewBar, setActiveTabViewBar] = useState(0);
+  console.log(activeTabViewBar, "activeTabViewBar");
   const [globelSearchValue, setGlobelSearchValue] = useState<string>("");
   const userDetails: IUserDetails = {
     name: context._pageContext._user.displayName,
@@ -164,7 +165,7 @@ const Header = ({ context, currentPage }) => {
         // }
         {
           id: 3,
-          name: "Category Config",
+          name: "Custom Workflows",
         },
         {
           id: 4,
@@ -213,7 +214,7 @@ const Header = ({ context, currentPage }) => {
   const headerFilters = () => {
     return (
       <>
-        {(activeTabViewBar === 2 || activeTabViewBar === 0) && (
+        {/* {(activeTabViewBar === 2 || activeTabViewBar === 0) && (
           <Dropdown
             value={selectedCategory}
             options={categoryFilterValue.categoryDrop}
@@ -226,8 +227,37 @@ const Header = ({ context, currentPage }) => {
             placeholder="Category"
             className="w-full md:w-14rem"
           />
+        )} */}
+        {isAdmin && (
+          <div className="addNewCustomWorkflowButton">
+            <Button
+              onClick={() => {
+                setSideBarVisible(true);
+                setActiveTabViewBar(2);
+              }}
+              label="Create Custom Workflow"
+              // icon={<LuBadgePlus />}
+            />
+          </div>
         )}
-        {activeTabViewBar !== 1 && (
+
+        <div className="addNewRequestButton">
+          <Button
+            onClick={() => {
+              setAddSideBarContentBooleans(
+                (prev: IRightSideBarContentsDetails) => ({
+                  ...prev,
+                  addRequestDetails: true,
+                })
+              );
+              setSideBarVisible(true);
+              setActiveTabViewBar(0);
+            }}
+            label="New Request"
+            // icon={<LuBadgePlus />}
+          />
+        </div>
+        {/* {activeTabViewBar !== 1 && (
           <div className="addNewButton">
             <Button
               label="Add new"
@@ -237,8 +267,8 @@ const Header = ({ context, currentPage }) => {
               icon={<LuBadgePlus />}
             />
           </div>
-        )}
-        {activeTabViewBar === 1 && (
+        )} */}
+        {/* {activeTabViewBar === 1 && (
           <div className={headerStyles.searchFilter}>
             <InputText
               style={{ width: "100%" }}
@@ -248,7 +278,7 @@ const Header = ({ context, currentPage }) => {
               onChange={(e) => setGlobelSearchValue(e.target.value)}
             />
           </div>
-        )}
+        )} */}
       </>
     );
   };
@@ -299,10 +329,10 @@ const Header = ({ context, currentPage }) => {
           <div className={headerStyles.profile_header_Icons}>
             {/* <div className={headerStyles.notifyBell}>
               <IoMdNotificationsOutline />
-            </div> */}
+            </div>
             <Persona
               imageUrl={`/_layouts/15/userphoto.aspx?size=S&username=${userDetails.email}`}
-            />
+            /> */}
             {headerFilters()}
           </div>
         </div>

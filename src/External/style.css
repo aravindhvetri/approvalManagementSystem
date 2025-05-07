@@ -209,6 +209,41 @@ div[data-automationid="SiteHeader"] {
   transition-duration: 0.5s; */
 }
 
+.addNewCustomWorkflowButton .p-button {
+  width: 100%;
+}
+
+.addNewCustomWorkflowButton .p-button-label {
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.addNewCustomWorkflowButton .p-button {
+  background-color: #323130;
+  gap: 6px;
+  color: white;
+  border: 0;
+  height: 40px;
+}
+
+.addNewRequestButton .p-button {
+  width: 100%;
+}
+
+.addNewRequestButton .p-button-label {
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.addNewRequestButton .p-button {
+  background-color: transparent;
+  gap: 6px;
+  color: black;
+  border: 0;
+  height: 40px;
+  border: 1px solid #00000042;
+}
+
 /*CategoryConfig Common Styles..........................................*/
 
 .CustomSideBarContainer {
@@ -657,6 +692,9 @@ li.p-highlight .p-tabview-nav-link {
 .profile_header_content {
   padding: 0px;
   margin-bottom: 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 .profile_header_content h2 {
   margin: 0;

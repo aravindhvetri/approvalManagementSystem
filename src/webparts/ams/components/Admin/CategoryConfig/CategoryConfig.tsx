@@ -60,7 +60,6 @@ const CategoryConfig = ({
   const [categoryDetails, setCategoryDetails] = useState<ICategoryDetails[]>(
     []
   );
-  console.log(categoryDetails, "categoryDetails");
   const [categoryInputs, setCategoryInputs] = useState<string>("");
   const [requestInput, setRequestFormatInput] =
     useState<IRequestIdFormatWithDigit>({
@@ -878,17 +877,19 @@ const CategoryConfig = ({
           </div> */}
           <div className="customDataTableCardContainer">
             <div className="profile_header_content">
-              <h2
-                style={{
-                  lineHeight: "2.25rem",
-                }}
-              >
-                Category Config
-              </h2>
-              <p>
-                Configure categories and define their structure for request
-                management
-              </p>
+              <div>
+                <h2
+                  style={{
+                    lineHeight: "2.25rem",
+                  }}
+                >
+                  Custom Workflows
+                </h2>
+                <p>
+                  Configure WorkFlows and define their structure for request
+                  management
+                </p>
+              </div>
             </div>
             <DataTable
               value={categoryDetails}
