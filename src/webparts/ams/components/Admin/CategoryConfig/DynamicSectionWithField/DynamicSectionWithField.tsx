@@ -32,6 +32,7 @@ import {
 } from "../../../../../../CommonServices/CommonTemplates";
 import { Label } from "office-ui-fabric-react";
 import {
+  IApprovalStages,
   IFinalSubmitDetails,
   INextStageFromCategorySideBar,
 } from "../../../../../../CommonServices/interface";
@@ -41,6 +42,9 @@ import { Toast } from "primereact/toast";
 import { Calendar } from "primereact/calendar";
 
 const DynamicSectionWithField = ({
+  finalSubmit,
+  categoryIsDraft,
+  getCategoryConfigDetails,
   context,
   categoryClickingID,
   actionBooleans,
@@ -74,7 +78,7 @@ const DynamicSectionWithField = ({
   const [isValidation, setIsValidation] = useState<boolean>(false);
   const [choiceError, setChoiceError] = useState<boolean>(false);
   const [fieldEdit, setFieldEdit] = useState<boolean>(false);
-
+  console.log("finalSubmit", finalSubmit);
   const handleSaveField = () => {
     const updatedSections = [...sections];
     if (newField.sectionIndex !== null) {
@@ -162,6 +166,558 @@ const DynamicSectionWithField = ({
       columns: sections[sectionIndex].columns,
     });
     setPreviewVisible(true);
+  };
+  //Category in draft
+  const draftCategory = async () => {
+    if (categoryClickingID) {
+      try {
+        const res = await SPServices.SPUpdateItem({
+          Listname: Config.ListNames.CategoryConfig,
+          ID: categoryClickingID,
+          RequestJSON: {
+            Category: finalSubmit?.categoryConfig?.category,
+            RequestIdFormat: finalSubmit?.categoryConfig?.requestIdFormat,
+            RequestIdDigits: finalSubmit?.categoryConfig?.requestIdDigit,
+            ViewApproverSignStages: `[{"Stage": ${JSON.stringify(
+              finalSubmit?.categoryConfig?.viewApproverSignStages
+                .map((item) => parseInt(item.split(" ")[1]))
+                .sort((x, y) => x - y)
+            )}}]`,
+            IsApproverSignRequired:
+              finalSubmit?.categoryConfig?.isApproverSignRequired,
+            IsDraft: true,
+          },
+        });
+        //Get and Isdelete Category Section Details
+        const columnTypeMap = {
+          text: 1,
+          textarea: 2,
+          Choice: 3,
+          Number: 4,
+          Date: 5,
+          DateTime: 6,
+          Person: 7,
+          PersonMulti: 8,
+          YesorNo: 9,
+        };
+        const list = sp.web.lists.getByTitle("RequestsHub");
+        const sectionsDetails = await getCategorySectionDetails(
+          categoryClickingID
+        );
+        finalSubmit?.dynamicSectionWithField?.forEach(async (section: any) => {
+          if (section?.sectionID) {
+            if (
+              sectionsDetails
+                ?.map((e: any) => e?.ID)
+                .includes(section?.sectionID)
+            ) {
+              const tempJson = {
+                CategoryId: categoryClickingID,
+                SectionName: section?.name,
+              };
+
+              await updateSectionConfigList(section?.sectionID, tempJson);
+              const columnDetails = await getCategorySectionColumnsDetails(
+                section?.sectionID
+              );
+              section?.columns?.forEach(async (column: any) => {
+                if (column?.columnID) {
+                  if (
+                    columnDetails
+                      ?.map((e: any) => e?.ID)
+                      .includes(column?.columnID)
+                  ) {
+                    //update in list Pending.............
+                    //
+                    const tempColumnJson = {
+                      ColumnExternalName: column?.name,
+                      ColumnType:
+                        column?.type == "text"
+                          ? "Singleline"
+                          : column?.type == "textarea"
+                          ? "Multiline"
+                          : column?.type,
+                      IsRequired: column?.required,
+                      ViewStage: `[{"Stage": ${JSON.stringify(
+                        column?.stages
+                          .map((item) => parseInt(item.split(" ")[1]))
+                          .sort((x, y) => x - y)
+                      )}}]`,
+                      ChoiceValues:
+                        column?.type == "Choice"
+                          ? `[{"Options":${JSON.stringify(column?.choices)}}]`
+                          : "",
+                    };
+                    await updatesectionColumnsConfigList(
+                      column?.columnID,
+                      tempColumnJson
+                    );
+                  }
+                } else {
+                  let fieldTypeKind;
+                  fieldTypeKind = columnTypeMap[column.type];
+                  await addColumnToList(
+                    list,
+                    fieldTypeKind,
+                    column.name,
+                    column.choices || []
+                  );
+                  addsectionColumnsConfigList({
+                    ParentSectionId: section?.sectionID,
+                    ColumnInternalName: (column?.name).replace(/\s/g, ""),
+                    ColumnExternalName: column?.name,
+                    ColumnType:
+                      column?.type == "text"
+                        ? "Singleline"
+                        : column?.type == "textarea"
+                        ? "Multiline"
+                        : column?.type,
+                    IsRequired: column?.required,
+                    ViewStage: `[{"Stage": ${JSON.stringify(
+                      column?.stages
+                        .map((item) => parseInt(item.split(" ")[1]))
+                        .sort((x, y) => x - y)
+                    )}}]`,
+                    ChoiceValues:
+                      column?.type == "Choice"
+                        ? `[{"Options":${JSON.stringify(column?.choices)}}]`
+                        : "",
+                  });
+                }
+              });
+              //Deleted Columns
+              const deletedColumns = columnDetails?.filter(
+                (e: any) =>
+                  !section?.columns.map((e: any) => e?.columnID).includes(e?.ID)
+              );
+              if (deletedColumns.length > 0) {
+                deletedColumns?.forEach((item: any) => {
+                  updatesectionColumnsConfigList(item?.ID, {
+                    IsDelete: true,
+                  });
+                });
+              }
+            }
+          } else {
+            const tempJson = {
+              CategoryId: categoryClickingID,
+              SectionName: section?.name,
+            };
+            const newSection: any = await addSectionConfigList(tempJson);
+            section?.columns?.forEach(async (column: any) => {
+              let fieldTypeKind;
+              fieldTypeKind = columnTypeMap[column.type];
+              await addColumnToList(
+                list,
+                fieldTypeKind,
+                column.name,
+                column.choices || []
+              );
+              addsectionColumnsConfigList({
+                ParentSectionId: newSection?.data?.ID,
+                ColumnInternalName: column?.name.replace(/\s/g, ""),
+                ColumnExternalName: column?.name,
+                ColumnType:
+                  column?.type == "text"
+                    ? "Singleline"
+                    : column?.type == "textarea"
+                    ? "Multiline"
+                    : column?.type,
+                IsRequired: column?.required,
+                ViewStage: `[{"Stage": ${JSON.stringify(
+                  column?.stages
+                    .map((item) => parseInt(item.split(" ")[1]))
+                    .sort((x, y) => x - y)
+                )}}]`,
+                ChoiceValues:
+                  column?.type == "Choice"
+                    ? `[{"Options":${JSON.stringify(column?.choices)}}]`
+                    : "",
+              });
+            });
+          }
+        });
+        //Deleted Sections and their columns
+        const deletedSections = sectionsDetails?.filter(
+          (e: any) =>
+            !finalSubmit?.dynamicSectionWithField
+              ?.map((e: any) => e?.sectionID)
+              .includes(e?.ID)
+        );
+        if (deletedSections.length > 0) {
+          deletedSections?.forEach(async (item: any) => {
+            updateSectionConfigList(item?.ID, {
+              IsDelete: true,
+            });
+            const getDeletedSectionColumns =
+              await getCategorySectionColumnsDetails(item?.ID);
+            getDeletedSectionColumns?.forEach(async (item: any) => {
+              updatesectionColumnsConfigList(item?.ID, {
+                IsDelete: true,
+              });
+            });
+          });
+        }
+
+        alert("Process completed successfully!");
+        sessionStorage.clear();
+        getCategoryConfigDetails();
+        setDynamicSectionWithFieldSideBarVisible(false);
+      } catch {
+        (err) => console.log("Draft category details err", err);
+      }
+    } else {
+      try {
+        if (finalSubmit?.categoryConfig?.category !== "") {
+          const res = await SPServices.SPAddItem({
+            Listname: Config.ListNames.CategoryConfig,
+            RequestJSON: {
+              Category: finalSubmit?.categoryConfig?.category,
+              RequestIdFormat: finalSubmit?.categoryConfig?.requestIdFormat,
+              RequestIdDigits: finalSubmit?.categoryConfig?.requestIdDigit,
+              ViewApproverSignStages: `[{"Stage": ${JSON.stringify(
+                finalSubmit?.categoryConfig?.viewApproverSignStages
+                  .map((item) => parseInt(item.split(" ")[1]))
+                  .sort((x, y) => x - y)
+              )}}]`,
+              IsApproverSignRequired:
+                finalSubmit?.categoryConfig?.isApproverSignRequired,
+              IsDraft: true,
+            },
+          });
+
+          if (res?.data?.ID) {
+            const newCategoryId = res?.data?.ID; // Use a variable instead of state
+
+            if (finalSubmit?.categoryConfig?.ExistingApprover !== null) {
+              const existingApprovalConfig: any = await SPServices.SPReadItems({
+                Listname: Config.ListNames.ApprovalConfig,
+                Select: "ID,CategoryId",
+                Filter: [
+                  {
+                    FilterKey: "ID",
+                    Operator: "eq",
+                    FilterValue:
+                      finalSubmit?.categoryConfig?.ExistingApprover.toString(),
+                  },
+                ],
+              });
+
+              let existingCategories =
+                existingApprovalConfig[0]?.CategoryId || [];
+              existingCategories.push(newCategoryId);
+
+              await SPServices.SPUpdateItem({
+                Listname: Config.ListNames.ApprovalConfig,
+                ID: finalSubmit?.categoryConfig?.ExistingApprover,
+                RequestJSON: {
+                  CategoryId: { results: existingCategories },
+                },
+              });
+            }
+            if (finalSubmit?.categoryConfig?.ExistingApprover === null) {
+              const customApprovalConfigRes = await SPServices.SPAddItem({
+                Listname: Config.ListNames.ApprovalConfig,
+                RequestJSON: {
+                  CategoryId: { results: [newCategoryId] },
+                  ApprovalFlowName:
+                    finalSubmit?.categoryConfig?.customApprover
+                      ?.apprvalFlowName,
+                  TotalStages:
+                    finalSubmit?.categoryConfig?.customApprover?.totalStages,
+                  RejectionFlow:
+                    finalSubmit?.categoryConfig?.customApprover?.rejectionFlow,
+                },
+              });
+
+              await finalSubmit?.categoryConfig?.customApprover?.stages?.forEach(
+                (stage) =>
+                  addApprovalStageConfigDetails(
+                    customApprovalConfigRes?.data.ID,
+                    stage
+                  )
+              );
+            }
+            if (finalSubmit?.dynamicSectionWithField?.length > 0) {
+              const list = sp.web.lists.getByTitle("RequestsHub");
+
+              for (const section of finalSubmit.dynamicSectionWithField) {
+                let categorySectionId = null;
+
+                for (const column of section.columns) {
+                  let fieldTypeKind;
+                  const columnTypeMap = {
+                    text: 1,
+                    textarea: 2,
+                    Choice: 3,
+                    Number: 4,
+                    Date: 5,
+                    DateTime: 6,
+                    Person: 7,
+                    PersonMulti: 8,
+                    YesorNo: 9,
+                  };
+
+                  fieldTypeKind = columnTypeMap[column.type];
+                  if (!fieldTypeKind) {
+                    console.log("Invalid column type:", column.type);
+                    continue;
+                  }
+
+                  await addColumnToList(
+                    list,
+                    fieldTypeKind,
+                    column.name,
+                    column.choices || []
+                  );
+
+                  if (categorySectionId === null) {
+                    const CategorySecionConfigRes = await SPServices.SPAddItem({
+                      Listname: Config.ListNames?.CategorySectionConfig,
+                      RequestJSON: {
+                        CategoryId: newCategoryId,
+                        SectionName: section.name,
+                      },
+                    });
+
+                    if (CategorySecionConfigRes?.data?.ID) {
+                      categorySectionId = CategorySecionConfigRes?.data?.ID;
+                    }
+                  }
+
+                  if (categorySectionId) {
+                    await SPServices.SPAddItem({
+                      Listname: Config.ListNames?.SectionColumnsConfig,
+                      RequestJSON: {
+                        ParentSectionId: categorySectionId,
+                        ColumnInternalName: column?.name.replace(/\s/g, ""),
+                        ColumnExternalName: column?.name,
+                        ColumnType:
+                          column?.type == "text"
+                            ? "Singleline"
+                            : column?.type == "textarea"
+                            ? "Multiline"
+                            : column?.type,
+                        IsRequired: column?.required,
+                        ViewStage: `[{"Stage": ${JSON.stringify(
+                          column?.stages
+                            .map((item) => parseInt(item.split(" ")[1]))
+                            .sort((x, y) => x - y)
+                        )}}]`,
+                        ChoiceValues:
+                          column?.type == "Choice"
+                            ? `[{"Options":${JSON.stringify(column?.choices)}}]`
+                            : "",
+                      },
+                    });
+                  }
+                }
+              }
+            }
+          }
+        }
+        alert("Process completed successfully!");
+        sessionStorage.clear();
+        getCategoryConfigDetails();
+        setDynamicSectionWithFieldSideBarVisible(false);
+      } catch {
+        (err) => console.log("Draft category details err", err);
+      }
+    }
+  };
+
+  // Get Category Sections
+  const getCategorySectionDetails = async (dataID) => {
+    try {
+      const res = await SPServices.SPReadItems({
+        Listname: Config.ListNames.CategorySectionConfig,
+        Select: "*,Category/Id",
+        Expand: "Category",
+        Filter: [
+          {
+            FilterKey: "CategoryId",
+            Operator: "eq",
+            FilterValue: dataID?.toString(),
+          },
+          {
+            FilterKey: "IsDelete",
+            Operator: "eq",
+            FilterValue: "false",
+          },
+        ],
+      });
+      return res;
+    } catch {
+      (err) => console.log("getCategorySectionDetails error", err);
+    }
+  };
+
+  //Update sectionConfigList
+  const updateSectionConfigList = (ItemID, dataJson: {}) => {
+    SPServices.SPUpdateItem({
+      Listname: Config.ListNames.CategorySectionConfig,
+      ID: ItemID,
+      RequestJSON: dataJson,
+    })
+      .then((res) => {
+        return res;
+      })
+      .catch((err) => console.log("updateSectionConfigList err", err));
+  };
+
+  // Get Category Sections
+  const getCategorySectionColumnsDetails = async (dataID) => {
+    try {
+      const res = await SPServices.SPReadItems({
+        Listname: Config.ListNames.SectionColumnsConfig,
+        Select: "*,ParentSection/Id",
+        Expand: "ParentSection",
+        Filter: [
+          {
+            FilterKey: "ParentSectionId",
+            Operator: "eq",
+            FilterValue: dataID?.toString(),
+          },
+          {
+            FilterKey: "IsDelete",
+            Operator: "eq",
+            FilterValue: "false",
+          },
+        ],
+      });
+      return res;
+    } catch {
+      (err) => console.log("getCategorySectionDetails error", err);
+    }
+  };
+
+  //Update sectionConfigList
+  const addSectionConfigList = async (dataJson: {}) => {
+    try {
+      const res = await SPServices.SPAddItem({
+        Listname: Config.ListNames.CategorySectionConfig,
+        RequestJSON: dataJson,
+      });
+      return res;
+    } catch {
+      (err) => console.log("addSectionConfigList err", err);
+    }
+  };
+
+  //Update sectionColumnsConfigList
+  const addsectionColumnsConfigList = async (dataJson: {}) => {
+    try {
+      const res = await SPServices.SPAddItem({
+        Listname: Config.ListNames.SectionColumnsConfig,
+        RequestJSON: dataJson,
+      });
+      return res;
+    } catch {
+      (err) => console.log("addsectionColumnsConfigList err", err);
+    }
+  };
+
+  //Update sectionColumnsConfigList
+  const updatesectionColumnsConfigList = (ItemID, dataJson: {}) => {
+    SPServices.SPUpdateItem({
+      Listname: Config.ListNames.SectionColumnsConfig,
+      ID: ItemID,
+      RequestJSON: dataJson,
+    })
+      .then((res) => {
+        return res;
+      })
+      .catch((err) => console.log("updatesectionColumnsConfigList err", err));
+  };
+
+  //Add to Column in Our SharepointList
+  const addColumnToList = async (list, fieldTypeKind, columnName, choices) => {
+    const tempColumnName = columnName.replace(/\s/g, "");
+    try {
+      if (fieldTypeKind === 1) {
+        await list.fields.addText(tempColumnName); // For Single Line Text
+      } else if (fieldTypeKind === 2) {
+        await list.fields.addMultilineText(tempColumnName); // For Multiple Lines of Text
+      } else if (fieldTypeKind === 3) {
+        await list.fields.addChoice(tempColumnName, choices); // Pass choices array directly
+      } else if (fieldTypeKind === 4) {
+        // Pass number column directly
+        await list.fields.add(tempColumnName, "SP.FieldNumber", {
+          Title: tempColumnName, // Display name (UI title)
+          FieldTypeKind: 9, // Type: Number
+          MinimumValue: 0,
+        });
+      } else if (fieldTypeKind === 5) {
+        // Pass Date column directly
+        await list.fields.add(tempColumnName, "SP.FieldDateTime", {
+          Title: tempColumnName,
+          FieldTypeKind: 4, // Required for date/time
+          DisplayFormat: 0, // 0 = Date Only, 1 = Date + Time
+          Required: false,
+        });
+      } else if (fieldTypeKind === 6) {
+        // Pass Date column directly
+        await list.fields.add(tempColumnName, "SP.FieldDateTime", {
+          Title: tempColumnName,
+          FieldTypeKind: 4, // Required for date/time
+          DisplayFormat: 1, // 0 = Date Only, 1 = Date + Time
+          Required: false,
+        });
+      } else if (fieldTypeKind === 7) {
+        // Pass Person column directly
+        await list.fields.add(tempColumnName, "SP.FieldUser", {
+          Title: tempColumnName,
+          FieldTypeKind: 20, // Required for Person or Group field
+          Required: false,
+          AllowMultipleValues: false, // true = allow multiple people
+          Presence: true, // show presence indicator
+          SelectionMode: 0, // 0 = People Only, 1 = People & Groups
+        });
+      } else if (fieldTypeKind === 8) {
+        // Pass Person column directly
+        await list.fields.add(tempColumnName, "SP.FieldUser", {
+          Title: tempColumnName,
+          FieldTypeKind: 20, // Required for Person or Group field
+          Required: false,
+          AllowMultipleValues: true, // true = allow multiple people
+          Presence: true, // show presence indicator
+          SelectionMode: 0, // 0 = People Only, 1 = People & Groups
+        });
+      } else if (fieldTypeKind === 9) {
+        // Pass Yes or No column directly
+        await list.fields.createFieldAsXml(`
+          <Field 
+            DisplayName="${tempColumnName}"
+            Name="${tempColumnName}"
+            Type="Boolean"
+            Required="FALSE"
+          >
+            <Default>0</Default> 
+          </Field>
+        `);
+      }
+    } catch (error) {
+      console.error(`Error adding column ${columnName}:`, error);
+    }
+  };
+
+  //ApprovalStageConfig Details Patch:
+  const addApprovalStageConfigDetails = (
+    parentId: number,
+    stage: IApprovalStages
+  ) => {
+    const tempApprovers = stage?.approver?.map((e) => e.id);
+    SPServices.SPAddItem({
+      Listname: Config.ListNames.ApprovalStageConfig,
+      RequestJSON: {
+        ParentApprovalId: parentId,
+        Stage: stage?.stage,
+        ApprovalProcess: stage?.approvalProcess,
+        ApproverId: { results: tempApprovers },
+      },
+    })
+      .then((res: any) => {})
+      .catch((err) => console.log("addApprovalStageConfigDetails error", err));
   };
 
   //Get CategorySectionConfigDetails:
@@ -316,7 +872,7 @@ const DynamicSectionWithField = ({
     }
   }, [showPopup]);
 
-  const validateFunction = () => {
+  const validateFunction = (isDraft) => {
     let isValid = true;
     if (sections?.length == 0) {
       isValid = false;
@@ -366,12 +922,16 @@ const DynamicSectionWithField = ({
     });
 
     if (isValid) {
-      setNextStageFromCategory((prev: INextStageFromCategorySideBar) => ({
-        ...prev,
-        EmailTemplateSection: true,
-        dynamicSectionWithField: false,
-      }));
-      next();
+      if (isDraft) {
+        draftCategory();
+      } else {
+        setNextStageFromCategory((prev: INextStageFromCategorySideBar) => ({
+          ...prev,
+          EmailTemplateSection: true,
+          dynamicSectionWithField: false,
+        }));
+        next();
+      }
     }
     return isValid;
   };
@@ -826,12 +1386,22 @@ const DynamicSectionWithField = ({
               setSections([]); // Clear state
             }}
           />
-
+          {(categoryClickingID === null ||
+            (actionBooleans.isEdit && categoryIsDraft)) && (
+            <Button
+              icon="pi pi-save"
+              label="Draft"
+              onClick={() => {
+                validateFunction(true);
+              }}
+              className="customCancelButton"
+            />
+          )}
           <Button
             icon="pi pi-angle-double-right"
             label="Next"
             onClick={() => {
-              validateFunction();
+              validateFunction(false);
             }}
             className="customSubmitButton"
           />

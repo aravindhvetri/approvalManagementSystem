@@ -25,9 +25,9 @@ import { trim } from "lodash";
 const EmailContainer = ({
   actionBooleans,
   setFinalSubmit,
+  categoryIsDraft,
   setActiveStep,
   previous,
-  getCategoryFunction,
   categoryClickingID,
   setNextStageFromCategory,
   setSelectedApprover,
@@ -189,7 +189,7 @@ const EmailContainer = ({
       .catch((err) => console.log("updatesectionColumnsConfigList err", err));
   };
 
-  const valiadateFunc = () => {
+  const valiadateFunc = (isDraft: boolean) => {
     let isValid = true;
     if (selectedEmail === "") {
       validateError.emailTemplateSelected =
@@ -300,12 +300,12 @@ const EmailContainer = ({
 
     if (isValid) {
       setShowLoader(true);
-      finalHandleSubmit();
+      finalHandleSubmit(isDraft);
     }
   };
 
   //Add Datas to Sharepoint List:
-  const finalHandleSubmit = async () => {
+  const finalHandleSubmit = async (isDraft: boolean) => {
     if (categoryClickingID) {
       //Update categoryConfig Details
       try {
@@ -323,6 +323,7 @@ const EmailContainer = ({
             )}}]`,
             IsApproverSignRequired:
               finalSubmit?.categoryConfig?.isApproverSignRequired,
+            IsDraft: isDraft,
           },
         });
         //Get and Isdelete Category Section Details
@@ -498,7 +499,6 @@ const EmailContainer = ({
 
         alert("Process completed successfully!");
         sessionStorage.clear();
-        getCategoryFunction();
         setNextStageFromCategory({ ...Config.NextStageFromCategorySideBar });
         setEmailContainerFieldSideBarVisible(false);
         setSelectedApprover("");
@@ -527,6 +527,7 @@ const EmailContainer = ({
               )}}]`,
               IsApproverSignRequired:
                 finalSubmit?.categoryConfig?.isApproverSignRequired,
+              IsDraft: isDraft,
             },
           });
 
@@ -560,10 +561,7 @@ const EmailContainer = ({
               });
             }
 
-            if (
-              Object.keys(finalSubmit?.categoryConfig?.customApprover)
-                .length !== 0
-            ) {
+            if (finalSubmit?.categoryConfig?.ExistingApprover === null) {
               const customApprovalConfigRes = await SPServices.SPAddItem({
                 Listname: Config.ListNames.ApprovalConfig,
                 RequestJSON: {
@@ -704,7 +702,6 @@ const EmailContainer = ({
 
         alert("Process completed successfully!");
         sessionStorage.clear();
-        getCategoryFunction();
         setNextStageFromCategory({ ...Config.NextStageFromCategorySideBar });
         setEmailContainerFieldSideBarVisible(false);
         setSelectedApprover("");
@@ -931,6 +928,25 @@ const EmailContainer = ({
                   setActiveStep(0);
                 }}
               />
+              {(categoryClickingID === null ||
+                (actionBooleans.isEdit && categoryIsDraft)) && (
+                <Button
+                  icon="pi pi-save"
+                  label="Draft"
+                  onClick={() => {
+                    if (
+                      actionBooleans?.isView === false &&
+                      actionBooleans?.isEdit === false
+                    ) {
+                      valiadateFunc(true);
+                    } else {
+                      setShowLoader(true);
+                      finalHandleSubmit(true);
+                    }
+                  }}
+                  className="customCancelButton"
+                />
+              )}
               <Button
                 icon="pi pi-save"
                 label="Submit"
@@ -939,10 +955,10 @@ const EmailContainer = ({
                     actionBooleans?.isView === false &&
                     actionBooleans?.isEdit === false
                   ) {
-                    valiadateFunc();
+                    valiadateFunc(false);
                   } else {
                     setShowLoader(true);
-                    finalHandleSubmit();
+                    finalHandleSubmit(false);
                   }
                 }}
                 className="customSubmitButton"

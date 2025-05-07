@@ -153,7 +153,7 @@ export namespace Config {
       requestIdFormat: "",
       requestIdDigit: "",
       ExistingApprover: null,
-      customApprover: {},
+      customApprover: ApprovalConfigDefaultDetails,
       isApproverSignRequired: false,
       viewApproverSignStages: [],
     },
