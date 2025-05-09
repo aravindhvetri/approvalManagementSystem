@@ -30,6 +30,7 @@ import EmailWorkFlowStyles from "./EmailWorkFlow.module.scss";
 import "./EmailWorkFlowStyle.css";
 import "../../../../../External/style.css";
 import Loader from "../../Loader/Loader";
+import { sp } from "@pnp/sp";
 
 const EmailWorkFlow = ({
   setEmailWorkFlowSideBarContent,
@@ -61,6 +62,15 @@ const EmailWorkFlow = ({
     { info: " Enter [$ApproverComments] for replace of Approver comments" },
   ];
   const [showLoader, setShowLoader] = useState<boolean>(true);
+  const [usedCategories, setUsedCategories] = useState([]);
+  const warningNote = [
+    {
+      info: ` This email flow is already used by the following categories: ${usedCategories.join(
+        ", "
+      )}. Please review them carefully before making any changes`,
+    },
+  ];
+  console.log("usedCategories", usedCategories);
 
   //Get Email Template Contents:
   const getEmailTemplateContents = () => {
@@ -89,6 +99,47 @@ const EmailWorkFlow = ({
       .catch((err) => console.log("Error in getEmailTemplateContents", err));
   };
 
+  //Get CategoryEmailConfig Details
+  const getCategoryEmailDetails = async (templateID) => {
+    try {
+      const res = await SPServices.SPReadItems({
+        Listname: Config.ListNames.CategoryEmailConfig,
+        Select: "*,Category/Id,ParentTemplate/Id",
+        Expand: "Category,ParentTemplate",
+        Filter: [
+          {
+            FilterKey: "ParentTemplateId",
+            Operator: "eq",
+            FilterValue: templateID.toString(),
+          },
+        ],
+      });
+      const tempCategoryArr = [];
+      res?.forEach(async (element: any) => {
+        let tempCategory = await getCategory(element?.CategoryId);
+        tempCategoryArr.push(tempCategory);
+        setUsedCategories([...tempCategoryArr]);
+      });
+    } catch {
+      (err) => console.log("getCategoryEmailDetails err", err);
+    }
+  };
+
+  //Get Category Details
+  const getCategory = async (itemID) => {
+    try {
+      const res = await SPServices.SPReadItemUsingID({
+        Listname: Config.ListNames.CategoryConfig,
+        Select: "*",
+        SelectedId: itemID,
+      });
+      return res?.["Category"];
+    } catch {
+      (err) => console.log("getCategory err", err);
+      return "";
+    }
+  };
+
   //Handle Action View and Edit:
   const handleAction = (
     action: string,
@@ -108,6 +159,7 @@ const EmailWorkFlow = ({
         templateName: selected?.templateName || "",
         emailBody: selected?.emailBody || "",
       });
+      getCategoryEmailDetails(selected.id);
       setEmailWorkFlowSideBarVisible(true);
     }
   };
@@ -257,6 +309,9 @@ const EmailWorkFlow = ({
           ? "View email template"
           : "Add email template"}
       </h4>
+      {actionsBooleans.isEdit && usedCategories.length > 0 && (
+        <>{notesContainerDetails("⚠ Warning", warningNote)}</>
+      )}
       <div>
         <Label className={EmailWorkFlowStyles.label}>Name</Label>
         <InputText
@@ -330,7 +385,7 @@ const EmailWorkFlow = ({
           )}
         </div>
         {!actionsBooleans.isView && (
-          <>{notesContainerDetails("Info notes", infoNotes)}</>
+          <>{notesContainerDetails("ⓘ Info", infoNotes)}</>
         )}
       </div>
     </>
@@ -345,7 +400,7 @@ const EmailWorkFlow = ({
       ...prev,
       EmailWorkFlowContent: EmailWorkFlowSideBarContents(),
     }));
-  }, [actionsBooleans, templateData, isValidation]);
+  }, [actionsBooleans, templateData, isValidation, usedCategories]);
 
   return (
     <>

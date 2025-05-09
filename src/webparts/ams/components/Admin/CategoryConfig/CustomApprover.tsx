@@ -454,7 +454,7 @@ const CustomApprover = ({
         ""
       )}
       {actionBooleans?.isEdit && (
-        <div>{notesContainerDetails("Notes", notes)}</div>
+        <div>{notesContainerDetails("ⓘ Info", notes)}</div>
       )}
     </>
   );
