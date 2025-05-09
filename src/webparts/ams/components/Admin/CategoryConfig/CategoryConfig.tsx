@@ -1090,7 +1090,7 @@ const CategoryConfig = ({
                           <BiSolidCategory style={{ fontSize: "24px" }} />
                           {rowData.category}
                         </h3>
-                        <span>{renderStatusColumn(rowData)}</span>
+                        {/* <span>{renderStatusColumn(rowData)}</span> */}
                       </div>
                       <div className="requestIdDetails">
                         <p className="requestIdpara">

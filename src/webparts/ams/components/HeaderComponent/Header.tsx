@@ -53,7 +53,6 @@ const Header = ({ context, currentPage }) => {
   const [isAdmin, setIsAdmin] = useState<boolean>(false);
   const loginUser = context._pageContext._user.email;
   const [activeTabViewBar, setActiveTabViewBar] = useState(0);
-  console.log(activeTabViewBar, "activeTabViewBar");
   const [globelSearchValue, setGlobelSearchValue] = useState<string>("");
   const userDetails: IUserDetails = {
     name: context._pageContext._user.displayName,

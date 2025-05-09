@@ -36,7 +36,7 @@ const ApprovalDashboard = ({
   const [approvalConfigDetails, setApprovalConfigDetails] = useState<
     IApprovalConfigDetails[]
   >([]);
-
+  console.log("approvalConfigDetails", approvalConfigDetails);
   const [isEdit, setIsEdit] = useState<boolean>(true);
   const [currentRecord, setCurrentRecord] = useState<IApprovalConfigDetails>();
   const [showLoader, setShowLoader] = useState<boolean>(true);
@@ -83,7 +83,7 @@ const ApprovalDashboard = ({
   const getApprovalConfig = () => {
     SPServices.SPReadItems({
       Listname: Config.ListNames.ApprovalConfig,
-      Select: "*,Category/Id",
+      Select: "*,Category/Id,Category/Category",
       Expand: "Category",
       Filter: [
         {
@@ -96,11 +96,13 @@ const ApprovalDashboard = ({
       Orderbydecorasc: false,
     })
       .then(async (res) => {
+        console.log("getApprovalConfig", res);
         const tempArr: IApprovalConfigDetails[] = [];
         await res?.forEach(async (item: any) => {
           tempArr.push({
             id: item?.ID,
             category: item?.CategoryId,
+            categoryName: item?.Category,
             apprvalFlowName: item?.ApprovalFlowName,
             totalStages: item?.TotalStages,
             rejectionFlow: item?.RejectionFlow,
@@ -161,10 +163,26 @@ const ApprovalDashboard = ({
       .then(() => getApprovalConfig())
       .catch((err) => console.log("updateIsDelete error", err));
   };
+
   //Approval Type
   const renderRejectionFlowColumn = (rowData) => {
     return <div>{statusTemplate(rowData?.rejectionFlow)}</div>;
   };
+
+  //Render Category Name:
+  const renderCategoryName = (rowData) => {
+    return (
+      <div className="categoryName">
+        Linked categories for this approval -
+        {rowData?.categoryName?.map((e) => (
+          <div key={e} className="categoryTag">
+            {e?.Category}
+          </div>
+        ))}
+      </div>
+    );
+  };
+
   //Render Approvers column
   const renderApproversColumn = (rowData) => {
     const approvers: IPeoplePickerDetails[] = rowData?.stages.flatMap((e) =>
@@ -285,6 +303,7 @@ const ApprovalDashboard = ({
                           Total Stages - {rowData?.totalStages}
                         </p>
                       </div>
+                      {renderCategoryName(rowData)}
                     </div>
                     <div className="requestCardBody">
                       {renderApproversColumn(rowData)}
