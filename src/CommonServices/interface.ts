@@ -49,6 +49,7 @@ export interface IApprovalDetailsPatch {
 export interface IApprovalConfigDetails {
   id: number;
   category: [];
+  categoryName: [];
   apprvalFlowName: string;
   totalStages: number;
   rejectionFlow: string;
