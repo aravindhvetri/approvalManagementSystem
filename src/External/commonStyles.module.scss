@@ -76,9 +76,10 @@ $darkblue: #353862;
 .statusItem {
   display: flex;
   align-items: center;
+  justify-content: center;
   padding: 6px 12px 6px 12px;
   border-radius: 8px;
-  // gap: 6px;
+  gap: 6px;
   font-weight: 600;
   font-size: 12px;
 }

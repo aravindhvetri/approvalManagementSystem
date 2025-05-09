@@ -144,6 +144,10 @@ const getIcons = (status: string) => {
       return "";
     case "Resubmission not allowed":
       return "";
+    case "Active":
+      return <FaRegCheckCircle />;
+    case "Draft":
+      return <LuClock9 />;
     default:
       return null;
   }
@@ -179,6 +183,14 @@ const getColors = (status: string) => {
     case "Resubmission not allowed":
       colors.bgColor = "#f6e8e8";
       colors.color = "#b23d3f";
+      break;
+    case "Draft":
+      colors.bgColor = "#eaf1f6";
+      colors.color = "#2a6d9c";
+      break;
+    case "Active":
+      colors.bgColor = "#e8f6ed";
+      colors.color = "#16a34a";
       break;
     default:
       return null;

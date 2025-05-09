@@ -16,6 +16,7 @@ import {
 } from "../../../../../CommonServices/interface";
 import {
   ActionsMenu,
+  cardStatusTemplate,
   toastNotify,
 } from "../../../../../CommonServices/CommonTemplates";
 //Styles Imports:
@@ -191,6 +192,15 @@ const CategoryConfig = ({
     await setSelectedCategoryId(rowData?.id);
     setCategorySideBarVisible(true);
     // setShowLoader(false);
+  };
+
+  //Render Status Column:
+  const renderStatusColumn = (rowData: ICategoryDetails) => {
+    return (
+      <div>
+        {cardStatusTemplate(rowData?.isDraft == true ? "Draft" : "Active")}
+      </div>
+    );
   };
 
   //Render Action Column:
@@ -1067,6 +1077,7 @@ const CategoryConfig = ({
                           <BiSolidCategory style={{ fontSize: "24px" }} />
                           {rowData.category}
                         </h3>
+                        <span>{renderStatusColumn(rowData)}</span>
                       </div>
                       <div className="requestIdDetails">
                         <p className="requestIdpara">
