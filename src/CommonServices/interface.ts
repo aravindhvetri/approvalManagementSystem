@@ -36,6 +36,7 @@ export interface ICategoryDetails {
   isApproverSignRequired: boolean;
   viewApproverSignStages: string[];
   isDraft: boolean;
+  draftedState: number;
 }
 //Approval Details patch:
 export interface IApprovalDetailsPatch {
@@ -262,4 +263,10 @@ export interface ICardDataCountDetails {
   name: string;
   count: number;
   icon: any;
+}
+
+//Draft Category
+export interface ICategoryDraft {
+  isDraft: boolean;
+  draftedState: number;
 }

@@ -43,13 +43,14 @@ import { Calendar } from "primereact/calendar";
 
 const DynamicSectionWithField = ({
   finalSubmit,
-  categoryIsDraft,
+  categoryDraft,
   getCategoryConfigDetails,
   context,
   categoryClickingID,
   actionBooleans,
   previous,
   setActiveStep,
+  activeStep,
   next,
   setNextStageFromCategory,
   setSelectedApprover,
@@ -186,6 +187,7 @@ const DynamicSectionWithField = ({
             IsApproverSignRequired:
               finalSubmit?.categoryConfig?.isApproverSignRequired,
             IsDraft: true,
+            DraftedState: activeStep,
           },
         });
         //Get and Isdelete Category Section Details
@@ -383,6 +385,7 @@ const DynamicSectionWithField = ({
               IsApproverSignRequired:
                 finalSubmit?.categoryConfig?.isApproverSignRequired,
               IsDraft: true,
+              DraftedState: activeStep,
             },
           });
 
@@ -1386,8 +1389,10 @@ const DynamicSectionWithField = ({
               setSections([]); // Clear state
             }}
           />
-          {(categoryClickingID === null ||
-            (actionBooleans.isEdit && categoryIsDraft)) && (
+          {/* {(categoryClickingID === null ||
+            (actionBooleans.isEdit &&
+              categoryDraft?.isDraft &&
+              categoryDraft?.draftedState === activeStep)) && (
             <Button
               icon="pi pi-save"
               label="Draft"
@@ -1396,7 +1401,7 @@ const DynamicSectionWithField = ({
               }}
               className="customCancelButton"
             />
-          )}
+          )} */}
           <Button
             icon="pi pi-angle-double-right"
             label="Next"

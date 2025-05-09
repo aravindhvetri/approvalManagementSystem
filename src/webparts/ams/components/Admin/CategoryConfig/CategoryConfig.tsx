@@ -9,6 +9,7 @@ import {
   IApprovalStages,
   IApproverSignatureFeildConfig,
   ICategoryDetails,
+  ICategoryDraft,
   IFinalSubmitDetails,
   INextStageFromCategorySideBar,
   IRequestIdFormatWithDigit,
@@ -67,7 +68,9 @@ const CategoryConfig = ({
     useState<IRequestIdFormatWithDigit>({
       ...Config.requestIdFormatWithDigit,
     });
-  const [categoryIsDraft, setCategoryIsDraft] = useState<boolean>(false);
+  const [categoryDraft, setCategoryDraft] = useState<ICategoryDraft>({
+    ...Config.draftedCategoryDetails,
+  });
   const [approverSignatureDetails, setApproverSignatureDetails] =
     useState<IApproverSignatureFeildConfig>({
       ...Config.approverSignatureFieldConfig,
@@ -131,6 +134,7 @@ const CategoryConfig = ({
                 (e: any) => "Stage " + e
               ),
             isDraft: items?.IsDraft,
+            draftedState: items?.DraftedState,
           });
         });
         setCategoryDetails([...tempCategoryArray]);
@@ -183,7 +187,10 @@ const CategoryConfig = ({
       format: rowData?.requestIdFormat,
       digit: rowData?.requestIdDigit,
     }));
-    setCategoryIsDraft(rowData?.isDraft);
+    setCategoryDraft({
+      isDraft: rowData?.isDraft,
+      draftedState: rowData?.draftedState,
+    });
     setApproverSignatureDetails((prev: IApproverSignatureFeildConfig) => ({
       ...prev,
       ViewStages: rowData?.viewApproverSignStages,
@@ -241,6 +248,7 @@ const CategoryConfig = ({
             IsApproverSignRequired:
               finalSubmit?.categoryConfig?.isApproverSignRequired,
             IsDraft: true,
+            DraftedState: activeStep,
           },
         });
         alert("Process completed successfully!");
@@ -267,6 +275,7 @@ const CategoryConfig = ({
               IsApproverSignRequired:
                 finalSubmit?.categoryConfig?.isApproverSignRequired,
               IsDraft: true,
+              DraftedState: activeStep,
             },
           });
 
@@ -761,7 +770,7 @@ const CategoryConfig = ({
             activeStep == 1 ? (
               <DynamicSectionWithField
                 finalSubmit={finalSubmit}
-                categoryIsDraft={categoryIsDraft}
+                categoryDraft={categoryDraft}
                 getCategoryConfigDetails={getCategoryConfigDetails}
                 context={context}
                 setFinalSubmit={setFinalSubmit}
@@ -769,6 +778,7 @@ const CategoryConfig = ({
                 next={() => setActiveStep(2)}
                 categoryClickingID={selectedCategoryId}
                 actionBooleans={actionsBooleans}
+                activeStep={activeStep}
                 setActiveStep={setActiveStep}
                 setNextStageFromCategory={setNextStageFromCategory}
                 setSelectedApprover={setSelectedApprover}
@@ -779,10 +789,11 @@ const CategoryConfig = ({
             ) : nextStageFromCategory.EmailTemplateSection &&
               activeStep === 2 ? (
               <EmailContainer
-                categoryIsDraft={categoryIsDraft}
+                categoryDraft={categoryDraft}
                 setFinalSubmit={setFinalSubmit}
                 previous={() => setActiveStep(1)}
                 setActiveStep={setActiveStep}
+                activeStep={activeStep}
                 actionBooleans={actionsBooleans}
                 categoryClickingID={selectedCategoryId}
                 getCategoryConfigDetails={getCategoryConfigDetails}
@@ -869,8 +880,10 @@ const CategoryConfig = ({
                 }}
                 className="customCancelButton"
               />
-              {(selectedCategoryId === null ||
-                (actionsBooleans.isEdit && categoryIsDraft)) && (
+              {/* {(selectedCategoryId === null ||
+                (actionsBooleans.isEdit &&
+                  categoryDraft?.isDraft &&
+                  activeStep >= categoryDraft.draftedState)) && (
                 <Button
                   icon="pi pi-save"
                   label="Draft"
@@ -879,7 +892,7 @@ const CategoryConfig = ({
                   }}
                   className="customCancelButton"
                 />
-              )}
+              )} */}
 
               {/* <Button
                 icon="pi pi-angle-double-right"
