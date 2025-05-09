@@ -104,7 +104,7 @@ const EmailWorkFlow = ({
     try {
       const res = await SPServices.SPReadItems({
         Listname: Config.ListNames.CategoryEmailConfig,
-        Select: "*,Category/Id,ParentTemplate/Id",
+        Select: "*,Category/Id,ParentTemplate/Id,Category/Category",
         Expand: "Category,ParentTemplate",
         Filter: [
           {
@@ -116,27 +116,11 @@ const EmailWorkFlow = ({
       });
       const tempCategoryArr = [];
       res?.forEach(async (element: any) => {
-        let tempCategory = await getCategory(element?.CategoryId);
-        tempCategoryArr.push(tempCategory);
+        tempCategoryArr.push(element?.Category?.Category);
         setUsedCategories([...tempCategoryArr]);
       });
     } catch {
       (err) => console.log("getCategoryEmailDetails err", err);
-    }
-  };
-
-  //Get Category Details
-  const getCategory = async (itemID) => {
-    try {
-      const res = await SPServices.SPReadItemUsingID({
-        Listname: Config.ListNames.CategoryConfig,
-        Select: "*",
-        SelectedId: itemID,
-      });
-      return res?.["Category"];
-    } catch {
-      (err) => console.log("getCategory err", err);
-      return "";
     }
   };
 

@@ -28,10 +28,12 @@ import {
 import { sp } from "@pnp/sp";
 import { Config } from "../../../../../CommonServices/Config";
 import Loader from "../../Loader/Loader";
+import { notesContainerDetails } from "../../../../../CommonServices/CommonTemplates";
 
 const ApprovalWorkFlow = ({
   currentRec,
   isEdit,
+  usedCategories,
   setIsEdit,
   setCurrentRecord,
   approvalTableRender,
@@ -55,6 +57,13 @@ const ApprovalWorkFlow = ({
     ...Config.ApprovalFlowValidation,
   });
   const [showLoader, setShowLoader] = useState<boolean>(false);
+  const warningNote = [
+    {
+      info: ` This email flow is already used by the following categories: ${usedCategories.join(
+        ", "
+      )}. Please review them carefully before making any changes`,
+    },
+  ];
 
   //ApprovalConfig Details Patch
   const addApprovalConfigDetails = (addData: IApprovalDetailsPatch) => {
@@ -325,6 +334,9 @@ const ApprovalWorkFlow = ({
   ///ApprovalConfigFlowContent
   const ApprovalConfigSidebarContent = () => (
     <>
+      {isEdit && currentRec?.id !== null && usedCategories.length > 0 && (
+        <>{notesContainerDetails("⚠ Warning", warningNote)}</>
+      )}
       <div
         className={`${ApprovalWorkFlowStyles.topSection}`}
         style={{ marginBottom: "1rem" }}

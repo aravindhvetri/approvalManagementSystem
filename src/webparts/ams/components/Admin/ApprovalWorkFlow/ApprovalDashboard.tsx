@@ -40,7 +40,26 @@ const ApprovalDashboard = ({
   const [isEdit, setIsEdit] = useState<boolean>(true);
   const [currentRecord, setCurrentRecord] = useState<IApprovalConfigDetails>();
   const [showLoader, setShowLoader] = useState<boolean>(true);
-
+  const [usedCategories, setUsedCategories] = useState([]);
+  console.log("usedCategories", usedCategories);
+  //Get Category Details
+  const getCategoryDetails = async (ItemID) => {
+    try {
+      const res: any = await SPServices.SPReadItemUsingId({
+        Listname: Config.ListNames.ApprovalConfig,
+        Select: "*,Category/Id,Category/Category",
+        Expand: "Category",
+        SelectedId: ItemID,
+      });
+      const tempCategoryArr = [];
+      res?.Category.forEach((element: any) => {
+        tempCategoryArr.push(element?.Category);
+        setUsedCategories([...tempCategoryArr]);
+      });
+    } catch {
+      (err) => console.log("getCategoryDetails err", err);
+    }
+  };
   //Set Actions PopUp:
   const actionsWithIcons = (rowData) => [
     {
@@ -66,6 +85,7 @@ const ApprovalDashboard = ({
         );
         await setCurrentRecord(currentRec);
         await setIsEdit(true);
+        await getCategoryDetails(rowData?.id);
         setApprovalSideBarVisible(true);
       },
     },
@@ -215,6 +235,7 @@ const ApprovalDashboard = ({
       <ApprovalWorkFlow
         currentRec={currentRecord}
         isEdit={isEdit}
+        usedCategories={usedCategories}
         setIsEdit={setIsEdit}
         setCurrentRecord={setCurrentRecord}
         approvalTableRender={getApprovalConfig}
