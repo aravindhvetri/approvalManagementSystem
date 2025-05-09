@@ -193,12 +193,16 @@ const ApprovalDashboard = ({
   const renderCategoryName = (rowData) => {
     return (
       <div className="categoryName">
-        Linked categories for this approval -
-        {rowData?.categoryName?.map((e) => (
-          <div key={e} className="categoryTag">
-            {e?.Category}
-          </div>
-        ))}
+        {rowData?.categoryName?.length > 0 && (
+          <>
+            Linked categories for this approval -
+            {rowData.categoryName.map((e, index) => (
+              <div key={index} className="categoryTag">
+                {e?.Category}
+              </div>
+            ))}
+          </>
+        )}
       </div>
     );
   };

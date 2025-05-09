@@ -31,6 +31,7 @@ import "./EmailWorkFlowStyle.css";
 import "../../../../../External/style.css";
 import Loader from "../../Loader/Loader";
 import { sp } from "@pnp/sp";
+import { get } from "@microsoft/sp-lodash-subset";
 
 const EmailWorkFlow = ({
   setEmailWorkFlowSideBarContent,
@@ -41,6 +42,7 @@ const EmailWorkFlow = ({
   const [getEmailTemplateContent, setEmailTemplateContent] = useState<
     IEmailTemplateConfigDetails[]
   >([]);
+  console.log(getEmailTemplateContent, "getEmailTemplateContent");
   const [actionsBooleans, setActionsBooleans] = useState<IActionBooleans>({
     ...Config.InitialActionsBooleans,
   });
@@ -70,36 +72,45 @@ const EmailWorkFlow = ({
       )}. Please review them carefully before making any changes`,
     },
   ];
-  console.log("usedCategories", usedCategories);
 
   //Get Email Template Contents:
-  const getEmailTemplateContents = () => {
-    SPServices.SPReadItems({
-      Listname: Config.ListNames?.EmailTemplateConfig,
-      Orderby: "Modified",
-      Orderbydecorasc: false,
-      Select: "*",
-      Filter: [
-        {
-          FilterKey: "IsDelete",
-          Operator: "eq",
-          FilterValue: "false",
-        },
-      ],
-    })
-      .then((res: any) => {
-        const tempEmailTemplateContentsArr = res.map((item: any) => ({
-          id: item?.ID,
-          templateName: item?.TemplateName,
-          emailBody: item?.EmailBody,
-        }));
-        setEmailTemplateContent(tempEmailTemplateContentsArr);
-        setShowLoader(false);
-      })
-      .catch((err) => console.log("Error in getEmailTemplateContents", err));
+  const getEmailTemplateContents = async () => {
+    setShowLoader(true);
+    try {
+      const res = await SPServices.SPReadItems({
+        Listname: Config.ListNames?.EmailTemplateConfig,
+        Orderby: "Modified",
+        Orderbydecorasc: false,
+        Select: "*",
+        Filter: [
+          {
+            FilterKey: "IsDelete",
+            Operator: "eq",
+            FilterValue: "false",
+          },
+        ],
+      });
+
+      const emailTemplatesWithCategories = await Promise.all(
+        res.map(async (item: any) => {
+          const categories = await getCategoryEmailDetails(item?.ID);
+          return {
+            id: item?.ID,
+            templateName: item?.TemplateName,
+            emailBody: item?.EmailBody,
+            usedCategories: categories,
+          };
+        })
+      );
+
+      setEmailTemplateContent(emailTemplatesWithCategories);
+      setShowLoader(false);
+    } catch (err) {
+      console.log("Error in getEmailTemplateContents", err);
+    }
   };
 
-  //Get CategoryEmailConfig Details
+  // Modified getCategoryEmailDetails to return category array
   const getCategoryEmailDetails = async (templateID) => {
     try {
       const res = await SPServices.SPReadItems({
@@ -114,13 +125,14 @@ const EmailWorkFlow = ({
           },
         ],
       });
-      const tempCategoryArr = [];
-      res?.forEach(async (element: any) => {
-        tempCategoryArr.push(element?.Category?.Category);
-        setUsedCategories([...tempCategoryArr]);
-      });
-    } catch {
-      (err) => console.log("getCategoryEmailDetails err", err);
+
+      const tempCategoryArr =
+        res?.map((element: any) => element?.Category?.Category) || [];
+      setUsedCategories([...tempCategoryArr]);
+      return tempCategoryArr;
+    } catch (err) {
+      console.log("getCategoryEmailDetails err", err);
+      return [];
     }
   };
 
@@ -275,6 +287,24 @@ const EmailWorkFlow = ({
     }
     setValidation(false);
     return true;
+  };
+
+  //Render Category Name:
+  const renderCategoryName = (rowData) => {
+    return (
+      <div className="categoryName">
+        {rowData?.usedCategories?.length > 0 && (
+          <>
+            Linked categories for this approval -
+            {rowData.usedCategories.map((e, index) => (
+              <div key={index} className="categoryTag">
+                {e}
+              </div>
+            ))}
+          </>
+        )}
+      </div>
+    );
   };
 
   //Render Action Column:
@@ -459,6 +489,7 @@ const EmailWorkFlow = ({
                           {rowData.templateName}
                         </h3>
                       </div>
+                      {renderCategoryName(rowData)}
                     </div>
                     <div className="requestCardBody">
                       {renderActionColumn(rowData)}
