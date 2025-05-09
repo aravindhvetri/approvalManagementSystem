@@ -484,8 +484,8 @@ li.p-highlight .p-tabview-nav-link {
 .notesContainer {
   width: 100%;
   padding: 10px;
-  box-shadow: var(--sideBarBoxShadow);
-  background-color: var(--liteGrayBackgorund);
+  box-shadow: rgb(234, 174, 174);
+  background-color: #e5e7e9;
   border: 0;
   border-radius: 10px;
   margin-top: 30px;
@@ -493,6 +493,7 @@ li.p-highlight .p-tabview-nav-link {
   h1 {
     font-size: var(--fontSizebig);
     font-family: "Courier New", Courier, monospace;
+    color: orangered;
   }
 
   li {
@@ -500,11 +501,12 @@ li.p-highlight .p-tabview-nav-link {
     font-size: 14px;
     font-family: "Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS",
       sans-serif;
+    color: #34495e;
   }
 
   li::before {
     content: "➱ "; /* Use any symbol */
-    color: var(--green); /* Optional: Change color */
+    color: #229954; /* Optional: Change color */
     margin-right: 8px;
   }
 }

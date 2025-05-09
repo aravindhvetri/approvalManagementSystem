@@ -248,10 +248,10 @@ const CustomEmail = ({
           </div>
         )}
 
-        {actionBooleans?.isEdit && notesContainerDetails("Notes", notes)}
+        {actionBooleans?.isEdit && notesContainerDetails("ⓘ Info", notes)}
       </div>
       {!actionBooleans?.isView && !actionBooleans?.isEdit && (
-        <>{notesContainerDetails("Info notes", infoNotes)}</>
+        <>{notesContainerDetails("ⓘ Info", infoNotes)}</>
       )}
     </>
   );
