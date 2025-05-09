@@ -5,6 +5,7 @@ import {
   IApprovalFlowValidation,
   IApproverSignatureFeildConfig,
   ICardDataCountDetails,
+  ICategoryDraft,
   ICategoryEmailConfigDetails,
   IDropdownDetails,
   IemailMessage,
@@ -191,5 +192,11 @@ export namespace Config {
     name: "Loading....",
     count: 0,
     icon: null,
+  };
+
+  //Draft Category Config
+  export const draftedCategoryDetails: ICategoryDraft = {
+    isDraft: false,
+    draftedState: null,
   };
 }

@@ -25,8 +25,9 @@ import { trim } from "lodash";
 const EmailContainer = ({
   actionBooleans,
   setFinalSubmit,
-  categoryIsDraft,
+  categoryDraft,
   setActiveStep,
+  activeStep,
   previous,
   categoryClickingID,
   setNextStageFromCategory,
@@ -324,6 +325,7 @@ const EmailContainer = ({
             IsApproverSignRequired:
               finalSubmit?.categoryConfig?.isApproverSignRequired,
             IsDraft: isDraft,
+            DraftedState: isDraft ? activeStep : null,
           },
         });
         //Get and Isdelete Category Section Details
@@ -528,6 +530,7 @@ const EmailContainer = ({
               IsApproverSignRequired:
                 finalSubmit?.categoryConfig?.isApproverSignRequired,
               IsDraft: isDraft,
+              DraftedState: isDraft ? activeStep : null,
             },
           });
 
@@ -928,8 +931,10 @@ const EmailContainer = ({
                   setActiveStep(0);
                 }}
               />
-              {(categoryClickingID === null ||
-                (actionBooleans.isEdit && categoryIsDraft)) && (
+              {/* {(categoryClickingID === null ||
+                (actionBooleans.isEdit &&
+                  categoryDraft.isDraft &&
+                  activeStep >= categoryDraft.draftedState)) && (
                 <Button
                   icon="pi pi-save"
                   label="Draft"
@@ -946,7 +951,7 @@ const EmailContainer = ({
                   }}
                   className="customCancelButton"
                 />
-              )}
+              )} */}
               <Button
                 icon="pi pi-save"
                 label="Submit"
