@@ -247,7 +247,7 @@ div[data-automationid="SiteHeader"] {
 /*CategoryConfig Common Styles..........................................*/
 
 .CustomSideBarContainer {
-  width: 46rem;
+  width: 100%;
   box-shadow: var(--sideBarBoxShadow);
 }
 .customButtonWrapper .pi {
