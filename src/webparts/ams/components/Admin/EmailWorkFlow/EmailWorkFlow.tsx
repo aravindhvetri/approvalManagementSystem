@@ -30,8 +30,6 @@ import EmailWorkFlowStyles from "./EmailWorkFlow.module.scss";
 import "./EmailWorkFlowStyle.css";
 import "../../../../../External/style.css";
 import Loader from "../../Loader/Loader";
-import { sp } from "@pnp/sp";
-import { get } from "@microsoft/sp-lodash-subset";
 
 const EmailWorkFlow = ({
   setEmailWorkFlowSideBarContent,
@@ -42,7 +40,6 @@ const EmailWorkFlow = ({
   const [getEmailTemplateContent, setEmailTemplateContent] = useState<
     IEmailTemplateConfigDetails[]
   >([]);
-  console.log(getEmailTemplateContent, "getEmailTemplateContent");
   const [actionsBooleans, setActionsBooleans] = useState<IActionBooleans>({
     ...Config.InitialActionsBooleans,
   });
@@ -295,7 +292,7 @@ const EmailWorkFlow = ({
       <div className="categoryName">
         {rowData?.usedCategories?.length > 0 && (
           <>
-            Linked categories for this approval -
+            Linked categories for this email -
             {rowData.usedCategories.map((e, index) => (
               <div key={index} className="categoryTag">
                 {e}
