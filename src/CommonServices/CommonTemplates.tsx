@@ -144,6 +144,10 @@ const getIcons = (status: string) => {
       return "";
     case "Resubmission not allowed":
       return "";
+    case "Everyone should approve":
+      return "";
+    case "Anyone can approve":
+      return "";
     case "Active":
       return <FaRegCheckCircle />;
     case "Draft":
@@ -183,6 +187,14 @@ const getColors = (status: string) => {
     case "Resubmission not allowed":
       colors.bgColor = "#f6e8e8";
       colors.color = "#b23d3f";
+      break;
+    case "Everyone should approve":
+      colors.bgColor = "#f6e8e8";
+      colors.color = "#b23d3f";
+      break;
+    case "Anyone can approve":
+      colors.bgColor = "#e8f6ed";
+      colors.color = "#16a34a";
       break;
     case "Draft":
       colors.bgColor = "#eaf1f6";

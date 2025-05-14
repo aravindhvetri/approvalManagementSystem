@@ -2,11 +2,49 @@
 
 .label {
   @include label;
+  margin-bottom: 15px;
+}
+.maincontainer {
+  box-sizing: border-box;
+  margin: 30px;
+  padding: 20px;
+  border: 1px solid var(--liteGreen);
+}
+.approvalConfigContainer {
+  padding: 10px 0px 10px 0px;
+  width: 100%;
+  gap: 15px;
+  .approvalSubContainer {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    .approvalStagesContainer {
+      width: 38%;
+    }
+    .stageConfigContainer {
+      width: 60%;
+      height: fit-content;
+      .stageFormContainer {
+        width: 100%;
+        border: 1px solid var(--liteGreen);
+        border-radius: 10px;
+        padding: 20px;
+        .stageConfigHeader {
+          color: $green;
+        }
+        .deleteStageButton {
+          display: flex;
+          width: 100%;
+          justify-content: space-between;
+        }
+      }
+    }
+  }
 }
 .topSection {
   display: flex;
-  gap: 20px;
-  width: 100%;
+  gap: 2%;
+  width: 95%;
   margin: 0 !important;
   .nameDiv {
     width: 40%;
@@ -27,12 +65,13 @@
     cursor: pointer;
   }
 }
-
 .buttonsDiv {
   display: flex;
-  justify-content: flex-end;
-  gap: 2%;
+  justify-content: space-between;
+  margin-top: 20px;
+  width: 100%;
 }
 .addStageButton {
+  width: 100%;
   margin: 20px 0px 20px 0px;
 }

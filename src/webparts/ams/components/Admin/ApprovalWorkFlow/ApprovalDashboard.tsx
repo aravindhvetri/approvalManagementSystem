@@ -36,12 +36,10 @@ const ApprovalDashboard = ({
   const [approvalConfigDetails, setApprovalConfigDetails] = useState<
     IApprovalConfigDetails[]
   >([]);
-  console.log("approvalConfigDetails", approvalConfigDetails);
   const [isEdit, setIsEdit] = useState<boolean>(true);
   const [currentRecord, setCurrentRecord] = useState<IApprovalConfigDetails>();
   const [showLoader, setShowLoader] = useState<boolean>(true);
   const [usedCategories, setUsedCategories] = useState([]);
-  console.log("usedCategories", usedCategories);
   //Get Category Details
   const getCategoryDetails = async (ItemID) => {
     try {
@@ -116,7 +114,6 @@ const ApprovalDashboard = ({
       Orderbydecorasc: false,
     })
       .then(async (res) => {
-        console.log("getApprovalConfig", res);
         const tempArr: IApprovalConfigDetails[] = [];
         await res?.forEach(async (item: any) => {
           tempArr.push({
@@ -184,7 +181,7 @@ const ApprovalDashboard = ({
       .catch((err) => console.log("updateIsDelete error", err));
   };
 
-  //Approval Type
+  //Rejection Type
   const renderRejectionFlowColumn = (rowData) => {
     return <div>{statusTemplate(rowData?.rejectionFlow)}</div>;
   };
