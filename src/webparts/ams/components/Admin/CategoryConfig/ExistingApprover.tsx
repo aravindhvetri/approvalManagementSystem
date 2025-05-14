@@ -12,8 +12,13 @@ import {
 //Prime React Imports:
 import { Dropdown } from "primereact/dropdown";
 import { Persona, PersonaSize } from "@fluentui/react";
+import { MdAppRegistration } from "react-icons/md";
 //Styles Imports:
 import ExistingApproverStyles from "./CategoryConfig.module.scss";
+import {
+  multiplePeoplePickerTemplate,
+  peoplePickerTemplate,
+} from "../../../../../CommonServices/CommonTemplates";
 
 const ExistingApprover = ({
   setApproverSignatureDetails,
@@ -205,20 +210,29 @@ const ExistingApprover = ({
               key={stageData.stage}
               className={`${ExistingApproverStyles.stageSection}`}
             >
-              <h3>Stage {stageData.stage} approver</h3>
-              <div
-                className={`${ExistingApproverStyles.approvalMessage} ${
-                  stageData.approvalProcess === 1
-                    ? ExistingApproverStyles.onlyOne
-                    : ExistingApproverStyles.everyone
-                }`}
-              >
-                {stageData.approvalProcess === 1
-                  ? "Only one should approve"
-                  : "Everyone should approve"}
+              <div>
+                <div className={ExistingApproverStyles.stageHeader}>
+                  <div>
+                    <MdAppRegistration />
+                  </div>
+                  <div>
+                    <h3>Stage {stageData.stage} approver</h3>
+                  </div>
+                </div>
+                <div
+                  className={`${ExistingApproverStyles.approvalMessage} ${
+                    stageData.approvalProcess === 1
+                      ? ExistingApproverStyles.onlyOne
+                      : ExistingApproverStyles.everyone
+                  }`}
+                >
+                  {stageData.approvalProcess === 1
+                    ? "Only one should approve"
+                    : "Everyone should approve"}
+                </div>
               </div>
               <div className={`${ExistingApproverStyles.approversList}`}>
-                {stageData.approver.map((user: IPeoplePickerDetails) => (
+                {/* {stageData.approver.map((user: IPeoplePickerDetails) => (
                   <div
                     key={user.id}
                     className={`${ExistingApproverStyles.approversChip}`}
@@ -229,7 +243,10 @@ const ExistingApprover = ({
                       imageUrl={`/_layouts/15/userphoto.aspx?size=L&username=${user.email}`}
                     />
                   </div>
-                ))}
+                ))} */}
+                {stageData?.approver.length > 1
+                  ? multiplePeoplePickerTemplate(stageData?.approver)
+                  : peoplePickerTemplate(stageData?.approver[0])}
               </div>
             </div>
           ))}

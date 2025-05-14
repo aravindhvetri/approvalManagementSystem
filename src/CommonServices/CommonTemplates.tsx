@@ -223,14 +223,37 @@ export const ActionsMenu = ({ items }) => {
   );
 };
 
+//Custom Header for Sidebar:
+const customHeader = (
+  <div className="profile_header_content">
+    <div>
+      <h1
+        style={{
+          fontSize: "1.875rem",
+          lineHeight: "2.25rem",
+        }}
+      >
+        Purchase Workflow
+      </h1>
+      <p>Configure your purchase approval process</p>
+    </div>
+  </div>
+);
+
 //SideBar setups:
-export const RightSidebar = ({ visible, onHide, contents }) => {
+export const RightSidebar = ({
+  visible,
+  onHide,
+  activeTabViewBar,
+  contents,
+}) => {
   return (
     <div>
       <Sidebar
         visible={visible}
         className="CustomSideBarContainer"
         position="right"
+        header={activeTabViewBar == 2 ? customHeader : ""}
         onHide={onHide}
       >
         {contents}
@@ -399,16 +422,20 @@ export const columnTypes = [
 export const stageBodyTemplate = (rowData) => {
   const sortedStages = [...rowData.stages].sort();
   return (
-    <div style={{ display: "flex", gap: "8px" }}>
+    <div style={{ display: "flex", gap: "4px", alignItems: "center" }}>
       {sortedStages.map((stage, index) => (
         <span
           key={index}
           style={{
-            padding: "5px",
-            border: "1px solid",
-            borderRadius: "20px",
-            color: getColor(stage),
-            borderColor: getColor(stage),
+            // padding: "5px",
+            // border: "1px solid",
+            // borderRadius: "20px",
+            // color: getColor(stage),
+            // borderColor: getColor(stage),
+            padding: "2px 6px 2px 6px",
+            borderRadius: "2px",
+            color: "white",
+            backgroundColor: "#000000b0",
           }}
         >
           {stage}
