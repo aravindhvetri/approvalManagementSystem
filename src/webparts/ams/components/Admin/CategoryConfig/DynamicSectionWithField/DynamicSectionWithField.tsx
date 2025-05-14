@@ -15,6 +15,9 @@ import { TbEdit } from "react-icons/tb";
 import { RiDeleteBinLine } from "react-icons/ri";
 import { IoMdEye } from "react-icons/io";
 import { InputTextarea } from "primereact/inputtextarea";
+import { AiOutlineAppstore } from "react-icons/ai";
+import { LuPlus } from "react-icons/lu";
+import { LuTrash2 } from "react-icons/lu";
 //Styles Imports:
 import DynamicSectionWithFieldStyles from "./DynamicSectionWithField.module.scss";
 import "../../../../../../External/style.css";
@@ -80,6 +83,7 @@ const DynamicSectionWithField = ({
   const [choiceError, setChoiceError] = useState<boolean>(false);
   const [fieldEdit, setFieldEdit] = useState<boolean>(false);
   console.log("finalSubmit", finalSubmit);
+
   const handleSaveField = () => {
     const updatedSections = [...sections];
     if (newField.sectionIndex !== null) {
@@ -124,6 +128,12 @@ const DynamicSectionWithField = ({
     setFieldEdit(false);
   };
 
+  const handleDeleteSection = (index: number) => {
+    const updatedSections = [...sections];
+    updatedSections.splice(index, 1);
+    setSections(updatedSections);
+  };
+
   const RequiredBodyTemplate = (rowData) => {
     return <div>{rowData?.required ? "Yes" : "No"}</div>;
   };
@@ -131,12 +141,12 @@ const DynamicSectionWithField = ({
   const ActionBodyTemplate = (rowData, sectionIndex, rowIndex) => {
     return (
       <div className={DynamicSectionWithFieldStyles.ActionIconsContainer}>
-        <div style={{ color: "#0095ff", cursor: "pointer" }}>
+        <div className={DynamicSectionWithFieldStyles?.actionIconLayer}>
           <TbEdit
             onClick={() => handleEditField(rowData, sectionIndex, rowIndex)}
           />
         </div>
-        <div style={{ color: "#ff0000", cursor: "pointer" }}>
+        <div className={DynamicSectionWithFieldStyles?.actionIconLayer}>
           <RiDeleteBinLine
             onClick={() => handleDeleteField(sectionIndex, rowIndex)}
           />
@@ -988,12 +998,15 @@ const DynamicSectionWithField = ({
   return (
     <>
       <Toast ref={toast} />
-      <div className={DynamicSectionWithFieldStyles.heading}>Fields</div>
-      <div className={`${DynamicSectionWithFieldStyles.container} container`}>
-        {(actionBooleans?.isEdit || categoryClickingID === null) && (
+      <div className="workFlowHeaderContainer">
+        <div className="workFlowHeaderIcon">
+          <AiOutlineAppstore />
+        </div>
+        <div>Form Configuration</div>
+        {categoryClickingID === null && (
           <Button
             icon={
-              <IoIosAddCircle
+              <LuPlus
                 className={DynamicSectionWithFieldStyles.addSectionBtnIcon}
               />
             }
@@ -1002,95 +1015,118 @@ const DynamicSectionWithField = ({
             className={DynamicSectionWithFieldStyles.addButton}
           />
         )}
-        {sections.map((section, sectionIndex) => (
-          <div
-            key={sectionIndex}
-            className={DynamicSectionWithFieldStyles.sectionContainer}
-          >
-            <Label className={DynamicSectionWithFieldStyles.label}>
-              Section name
-            </Label>
-            <InputText
-              disabled={actionBooleans?.isView && categoryClickingID !== null}
-              value={section.name}
-              onChange={(e) => {
-                const updatedSections = [...sections];
-                updatedSections[sectionIndex].name = e.target.value;
-                setSections(updatedSections);
-              }}
-              placeholder="Enter here"
-              className={DynamicSectionWithFieldStyles.sectionInput}
-            />
-            {section.columns?.length > 0 ? (
-              <div className="customDataTableContainer">
-                <DataTable
-                  value={section.columns}
-                  emptyMessage={
-                    <>
-                      <p style={{ textAlign: "center" }}>No Records Found</p>
-                    </>
-                  }
-                >
-                  <Column header="Name" field="name"></Column>
-                  <Column header="Type" field="type"></Column>
-                  <Column
-                    header="Required"
-                    body={RequiredBodyTemplate}
-                  ></Column>
-                  <Column
-                    header="Approver"
-                    body={(row) => stageBodyTemplate(row)}
-                  ></Column>
-                  {(actionBooleans?.isEdit || categoryClickingID === null) && (
-                    <Column
-                      header="Action"
-                      body={(row, { rowIndex }) =>
-                        ActionBodyTemplate(row, sectionIndex, rowIndex)
-                      }
-                    ></Column>
-                  )}
-                </DataTable>
+      </div>
+      {/* <div className={DynamicSectionWithFieldStyles.heading}>Fields</div> */}
+      <div className={`${DynamicSectionWithFieldStyles.container} container`}>
+        <div className={DynamicSectionWithFieldStyles.sectionWrapper}>
+          {sections.map((section, sectionIndex) => (
+            <div
+              key={sectionIndex}
+              className={DynamicSectionWithFieldStyles.sectionContainer}
+            >
+              <div className={DynamicSectionWithFieldStyles.sectionlabelHeader}>
+                <Label className={DynamicSectionWithFieldStyles.label}>
+                  Section name
+                </Label>
+                {categoryClickingID === null && sections?.length > 1 && (
+                  <LuTrash2
+                    className={DynamicSectionWithFieldStyles.deleteIcon}
+                    onClick={() => handleDeleteSection(sectionIndex)}
+                  />
+                )}
               </div>
-            ) : (
-              ""
-            )}
-            <div style={{ display: "flex", justifyContent: "space-between" }}>
-              {(actionBooleans?.isEdit || categoryClickingID === null) && (
-                <Button
-                  icon={
-                    <IoIosAddCircle
-                      className={
-                        DynamicSectionWithFieldStyles.addSectionBtnIcon
+              <InputText
+                disabled={actionBooleans?.isView && categoryClickingID !== null}
+                value={section.name}
+                onChange={(e) => {
+                  const updatedSections = [...sections];
+                  updatedSections[sectionIndex].name = e.target.value;
+                  setSections(updatedSections);
+                }}
+                placeholder="Enter here"
+                className={DynamicSectionWithFieldStyles.sectionInput}
+              />
+              {section.columns?.length > 0 ? (
+                <>
+                  <Label className={DynamicSectionWithFieldStyles.label}>
+                    Fields
+                  </Label>
+                  <div className="customDataTableContainer">
+                    <DataTable
+                      value={section.columns}
+                      emptyMessage={
+                        <>
+                          <p style={{ textAlign: "center" }}>
+                            No Records Found
+                          </p>
+                        </>
                       }
-                    />
-                  }
-                  label="Add Field"
-                  onClick={() => {
-                    setNewField({ ...newField, sectionIndex });
-                    setShowPopup(true);
-                  }}
-                  className={DynamicSectionWithFieldStyles.addFieldButton}
-                />
-              )}
-              {section.columns?.length >= 2 ? (
-                <Button
-                  icon={
-                    <IoMdEye
-                      className={
-                        DynamicSectionWithFieldStyles.addSectionBtnIcon
-                      }
-                    />
-                  }
-                  label="preview"
-                  onClick={() => handlePreview(sectionIndex)}
-                  className={DynamicSectionWithFieldStyles.addButton}
-                />
+                    >
+                      <Column header="Name" field="name"></Column>
+                      <Column header="Type" field="type"></Column>
+                      <Column
+                        header="Required"
+                        body={RequiredBodyTemplate}
+                      ></Column>
+                      <Column
+                        header="Approver"
+                        body={(row) => stageBodyTemplate(row)}
+                      ></Column>
+                      {(actionBooleans?.isEdit ||
+                        categoryClickingID === null) && (
+                        <Column
+                          header="Action"
+                          body={(row, { rowIndex }) =>
+                            ActionBodyTemplate(row, sectionIndex, rowIndex)
+                          }
+                        ></Column>
+                      )}
+                    </DataTable>
+                  </div>
+                </>
               ) : (
                 ""
               )}
+              <div style={{ display: "flex", justifyContent: "space-between" }}>
+                {(actionBooleans?.isEdit || categoryClickingID === null) && (
+                  <Button
+                    icon={
+                      <LuPlus
+                        className={
+                          DynamicSectionWithFieldStyles.addSectionBtnIcon
+                        }
+                      />
+                    }
+                    label="Add Field"
+                    onClick={() => {
+                      setNewField({ ...newField, sectionIndex });
+                      setShowPopup(true);
+                    }}
+                    className={DynamicSectionWithFieldStyles.addButton}
+                    style={{ marginLeft: "0" }}
+                  />
+                )}
+                {/* {section.columns?.length >= 2 ? (
+                  <Button
+                    icon={
+                      <IoMdEye
+                        className={
+                          DynamicSectionWithFieldStyles.addSectionBtnIcon
+                        }
+                      />
+                    }
+                    label="preview"
+                    onClick={() => handlePreview(sectionIndex)}
+                    className={DynamicSectionWithFieldStyles.addButton}
+                    style={{ marginLeft: "0" }}
+                  />
+                ) : (
+                  ""
+                )} */}
+              </div>
             </div>
-          </div>
-        ))}
+          ))}
+        </div>
         <Dialog
           visible={showPopup}
           onHide={() => setShowPopup(false)}
@@ -1389,19 +1425,6 @@ const DynamicSectionWithField = ({
               setSections([]); // Clear state
             }}
           />
-          {/* {(categoryClickingID === null ||
-            (actionBooleans.isEdit &&
-              categoryDraft?.isDraft &&
-              categoryDraft?.draftedState === activeStep)) && (
-            <Button
-              icon="pi pi-save"
-              label="Draft"
-              onClick={() => {
-                validateFunction(true);
-              }}
-              className="customCancelButton"
-            />
-          )} */}
           <Button
             icon="pi pi-angle-double-right"
             label="Next"

@@ -369,6 +369,7 @@ const Header = ({ context, currentPage }) => {
             onHide={() => {
               setSideBarVisible(false);
             }}
+            activeTabViewBar={activeTabViewBar}
             contents={
               activeTabViewBar === 2
                 ? sideBarcontent?.categoryConfigContent

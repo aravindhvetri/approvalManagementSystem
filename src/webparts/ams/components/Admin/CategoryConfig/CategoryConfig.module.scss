@@ -12,8 +12,6 @@
 .approverSignatureDetailContainer {
   width: 100%;
   display: flex;
-  gap: 20px;
-  margin: 20px 0px 20px 0px;
 }
 .inputContainer {
   width: 100%;
@@ -22,50 +20,54 @@
     padding: 10px;
   }
 }
-.radioContainer {
-  display: flex;
-  padding-top: 28px;
-  .radioDiv {
-    display: flex;
-    .radioDivLabel {
-      padding: 0 50px 0 10px;
-      color: #353862;
-      font-weight: 500;
-      font-size: 14px;
-    }
-  }
+
+.labelNote {
+  margin-left: 20px;
+  background: #000000bd;
+  color: white;
+  padding: 4px;
+  border-radius: 3px;
+  font-size: 12px;
 }
+
 .CategoryContainer {
   display: flex;
-  gap: 5%;
+  gap: 3%;
   align-items: baseline;
   .dropDownDiv {
-    padding-top: 20px;
-    width: 46%;
+    padding-top: 2px;
+    width: 67%;
     .dropDown {
-      padding: 5px;
+      padding: 3px;
       width: 100%;
     }
   }
   .RejectionDiv {
-    width: 34%;
-    background-color: var(--liteGreen);
-    color: var(--green);
-    padding: 8px;
-    height: 37px;
+    width: 24%;
+    background-color: #000000cf;
+    color: white;
+    padding: 6px 8px 8px 8px;
+    height: 33px;
     border-radius: 20px;
     text-align: center;
-    font-size: 14px;
+    font-size: 13px;
   }
 }
 .approversContainer {
   .stageSection {
-    margin-bottom: 20px;
-
+    margin: 10px 10px 10px 0px;
+    display: flex;
+    justify-content: space-between;
+    border: 1px solid var(--borderColor);
+    border-radius: 5px;
+    padding: 10px;
+    align-items: center;
     h3 {
-      color: var(--green);
-      font-size: 16px;
-      font-weight: 600;
+      color: black;
+      font-size: 14px;
+      font-weight: 500;
+      margin: 0;
+      padding-bottom: 8px;
     }
 
     .approvalMessage {
@@ -112,13 +114,19 @@
   }
 }
 .FlowSideBarButtons {
-  margin-top: 10px;
+  margin-top: 16px;
   display: flex;
   gap: 3%;
-  justify-content: flex-end;
+  justify-content: space-between;
 }
 
 //Cutom Approver Styles:
+.stageHeader {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 20px;
+}
 .topSection {
   display: flex;
   gap: 20px;
@@ -152,14 +160,52 @@
 .addStageButton {
   margin: 20px 0px 20px 0px;
 }
-.inputDiv {
+
+.categoryConfigFields {
   display: flex;
-  gap: 20px;
   width: 100%;
-  .inputChildDiv {
-    width: 40%;
-    input {
-      width: 100%;
+  gap: 3%;
+  height: 354px;
+  padding: 0px 20px 0px 20px;
+  .notApproverSection {
+    width: 100%;
+  }
+  .categoryConfigChild {
+    width: 39%;
+    .inputDiv {
+      height: 322px !important;
+      overflow: auto;
+      padding: 0px 10px 0px 0px;
+      .inputChildDiv {
+        width: 100%;
+        padding-bottom: 14px;
+        input {
+          width: 100%;
+        }
+      }
+    }
+  }
+  .radioContainerChild {
+    margin-top: 40px;
+    width: 58%;
+    .ExistingCustomApproverContainer {
+      height: 286px;
+      overflow: auto;
+    }
+    .radioContainer {
+      display: flex;
+      gap: 3%;
+      padding-bottom: 6px;
+      .radioDiv {
+        display: flex;
+        .radioDivLabel {
+          padding: 0 50px 0 10px;
+          font-size: 14px;
+          color: black;
+          font-weight: 400;
+          letter-spacing: 0.5px;
+        }
+      }
     }
   }
 }

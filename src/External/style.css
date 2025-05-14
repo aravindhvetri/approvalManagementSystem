@@ -58,10 +58,11 @@ div[data-automationid="SiteHeader"] {
 /*Dashboard Common Styles (import Style from CommonStyles.module.scss)*/
 .customDataTableContainer {
   /* box-shadow: -4px 4px 12px #f5f5f5, 4px 0px 6px #f5f5f5; */
-  box-shadow: -4px 0px 6px #f5f5f5, /* left */ 4px 0px 6px #f5f5f5,
-    /* right */ 0px -4px 6px #f5f5f5, /* top */ 0px 4px 6px #f5f5f5; /* bottom */
+  /* box-shadow: -4px 0px 6px #f5f5f5, 4px 0px 6px #f5f5f5,
+   0px -4px 6px #f5f5f5,  0px 4px 6px #f5f5f5; */
+  border: 1px solid #e4e4e7;
   padding: 18px;
-  border-radius: 6px;
+  border-radius: 5px;
   margin-bottom: 10px;
 }
 .customDataTableCardContainer {
@@ -82,17 +83,18 @@ div[data-automationid="SiteHeader"] {
 }
 .customDataTableContainer .p-datatable .p-datatable-thead > tr > th {
   /* background-color: var(--dataTableHeaderBgColor); */
-  padding: var(--dataTableHeaderPadding);
+  padding: var(--dataTableWholePadding);
   font-size: var(--dataTableHeaderFontSize);
   color: var(--dataTableHeaderTextColor);
   border: none;
   /* border-radius: var(--dataTableHeaderBorderRadius); */
   font-weight: var(--dataTableHeaderFontWeight);
+  letter-spacing: 0.5px;
 }
 .customDataTableContainer .p-datatable .p-datatable-tbody > tr > td {
   color: var(--dataTableBodyTextColor);
   font-size: var(--dataTableHeaderFontSize);
-  padding: var(--dataTableBodyPadding);
+  padding: var(--dataTableWholePadding);
   border: 1px solid #dee2e6a8;
   border-width: 0 0 1px 0;
 }
@@ -249,6 +251,16 @@ div[data-automationid="SiteHeader"] {
 .CustomSideBarContainer {
   width: 100%;
   box-shadow: var(--sideBarBoxShadow);
+  padding: 40px;
+}
+.p-sidebar-content {
+  border: 1px solid #e4e4e7;
+  padding-top: 12px;
+  border-radius: 8px;
+  /* overflow: hidden; */
+}
+.p-sidebar .p-sidebar-header {
+  padding: 0px 0px 10px 0px;
 }
 .customButtonWrapper .pi {
   font-size: var(--dataTableHeaderFontSize);
@@ -367,6 +379,20 @@ input::placeholder {
 .user-selector-group .ms-Persona {
   min-width: 0px;
   width: 24px;
+}
+.workFlowHeaderContainer {
+  display: flex;
+  gap: 6px;
+  font-size: 18px;
+  letter-spacing: 1px;
+  align-items: center;
+  font-weight: 500;
+  padding-bottom: 12px;
+}
+.workFlowHeaderIcon {
+  display: flex;
+  align-items: center;
+  font-size: 22px;
 }
 
 /* Tabview Common Styles.................................................... */
@@ -639,6 +665,9 @@ li.p-highlight .p-tabview-nav-link {
 }
 
 /*Stepper component common Styles*/
+.customSteps {
+  width: 30%;
+}
 .p-steps .p-steps-item.p-highlight .p-steps-number {
   background-color: var(--green);
 }
@@ -664,10 +693,74 @@ li.p-highlight .p-tabview-nav-link {
 .p-steps .p-steps-item:before {
   border-top: 3px solid #dee2e6;
   transform: translateY(-50%);
+  width: 70%;
+  left: 102px;
 }
 
 .p-steps .p-steps-item.p-highlight::before {
   border-top: 3px solid var(--green);
+}
+
+.custom-steps-wrapper {
+  display: flex;
+  justify-content: space-between;
+  position: relative;
+  margin-bottom: 20px;
+  width: 30%;
+}
+
+.custom-step {
+  display: flex;
+  align-items: center;
+  position: relative;
+  flex: 1;
+}
+
+.step-circle {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background-color: #f3f3f3;
+  color: var(--green);
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1;
+}
+
+.step-circle.completed {
+  background-color: black;
+  color: white;
+}
+
+.step-circle.active {
+  background-color: black;
+  color: white;
+  border-color: black;
+}
+
+.step-label {
+  font-size: 14px;
+  margin-top: 8px;
+  text-align: center;
+  max-width: 100px;
+}
+
+.step-line {
+  position: absolute;
+  top: 15px;
+  left: -3%;
+
+  width: 64%;
+  height: 3px;
+  background-color: #dee2e6;
+  z-index: 0;
+  transform: translateX(50%);
+}
+
+.step-line.completed {
+  background-color: black;
 }
 
 /* Data Card Styles......................................... */
@@ -702,8 +795,12 @@ li.p-highlight .p-tabview-nav-link {
   margin: 0;
   padding: 0;
 }
+.profile_header_content h1 {
+  margin: 0;
+  padding: 0;
+}
 .profile_header_content p {
-  padding: 6px 0 10px 0px;
+  padding: 6px 0 0 0px;
   margin: 0;
   color: var(--dataTableBodyTextColor);
   font-size: 14px;

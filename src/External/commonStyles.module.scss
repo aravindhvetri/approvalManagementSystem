@@ -10,13 +10,14 @@ $darkblue: #353862;
 //Using Styles For Normal CssFile:
 :root {
   --dataTableHeaderBgColor: #f3f4f6;
-  --dataTableHeaderTextColor: #353862;
+  --dataTableHeaderTextColor: black;
   --dataTableHeaderFontSize: 12px;
-  --dataTableHeaderFontWeight: 700;
+  --dataTableHeaderFontWeight: 500;
   --dataTableHeaderBorderRadius: 4px;
   --dataTableBodyTextColor: #7c8098;
   --dataTableHeaderPadding: 10px 20px;
   --dataTableBodyPadding: 6px 20px;
+  --dataTableWholePadding: 10px;
   --sideBarBoxShadow: -4px 4px 10px rgba(255, 255, 255, 0.5);
   --green: #979a9a;
   --red: #ff0000;
@@ -25,6 +26,7 @@ $darkblue: #353862;
   --liteGreen: #ecf0f1;
   --fontSizebig: 14px;
   --liteGrayBackgorund: #f9f9f9;
+  --borderColor: #ebebed;
 }
 
 //sideNavSection Selectable ButtonModel styles:
@@ -119,9 +121,10 @@ $darkblue: #353862;
 
 //Label Common Style:
 @mixin label {
-  font-weight: bold;
-  font-size: 13px;
-  color: var(--dataTableHeaderTextColor);
+  color: black;
+  padding-bottom: 8px;
+  font-weight: 400;
+  letter-spacing: 0.5px;
 }
 
 //heading Common Style:
