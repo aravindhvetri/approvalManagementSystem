@@ -136,6 +136,7 @@ div[data-automationid="SiteHeader"] {
   box-shadow: none;
   padding: 2px;
   margin: 0 !important;
+  width: 100%;
 }
 .p-dropdown:focus-within {
   border-color: var(--green);

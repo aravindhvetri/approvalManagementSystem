@@ -1,0 +1,29 @@
+/* Stage data table design........................ */
+.requestCardStage {
+  background-color: #fff;
+  border-radius: 10px;
+  padding: 1rem;
+  border: 1px solid var(--liteGreen);
+  display: flex;
+  width: 100%;
+}
+.p-datatable .p-datatable-tbody > tr.p-highlight {
+  background-color: transparent !important;
+  color: black !important;
+}
+.p-datatable .p-datatable-tbody > tr:hover {
+  background-color: transparent !important;
+}
+
+/* Stage button style.................. */
+.customAddStageButton {
+  background-color: transparent;
+  color: var(--green);
+  padding: 6px 12px 6px 12px;
+  border: 1px solid var(--InputBoxLiteGreen);
+  font-size: 14px;
+}
+.customAddStageButton:hover {
+  background-color: var(--green);
+  color: var(--liteGreen);
+}
