@@ -77,16 +77,8 @@
       font-weight: 600;
       margin-bottom: 10px;
       display: inline-block;
-
-      &.onlyOne {
-        background-color: lightblue;
-        color: #00008b91;
-      }
-
-      &.everyone {
-        background-color: var(--liteGreen);
-        color: var(--green);
-      }
+      background-color: var(--liteGreen);
+      color: var(--green);
     }
 
     .approversList {
@@ -127,40 +119,6 @@
   gap: 5px;
   font-size: 20px;
 }
-.topSection {
-  display: flex;
-  gap: 20px;
-  width: 100%;
-  margin-top: 30px;
-  .nameDiv {
-    width: 40%;
-  }
-  .rejectDiv {
-    width: 40%;
-  }
-}
-.stage {
-  margin-top: 20px;
-  display: flex;
-  gap: 1%;
-  align-items: center;
-
-  .deleteDiv {
-    padding-top: 37px;
-    color: red;
-    cursor: pointer;
-  }
-}
-
-.buttonsDiv {
-  display: flex;
-  justify-content: flex-end;
-  gap: 2%;
-}
-.addStageButton {
-  margin: 20px 0px 20px 0px;
-}
-
 .categoryConfigFields {
   display: flex;
   width: 100%;
@@ -208,4 +166,78 @@
       }
     }
   }
+}
+
+.mainApprovalContainer {
+  box-sizing: border-box;
+  padding: 10px 20px;
+  height: 440px;
+  overflow: auto;
+}
+.approvalConfigContainer {
+  padding: 10px 0px 0px 0px;
+  width: 100%;
+  gap: 15px;
+  .approvalSubContainer {
+    width: 100%;
+    height: 25px;
+    display: flex;
+    justify-content: space-between;
+    .approvalStagesContainer {
+      width: 38%;
+    }
+    .stageConfigContainer {
+      width: 60%;
+      height: fit-content;
+      .stageFormContainer {
+        width: 100%;
+        border: 1px solid var(--borderColor);
+        border-radius: 6px;
+        padding: 8px;
+        .stageConfigHeader {
+          @include label;
+          font-weight: 500;
+        }
+        .deleteStageButton {
+          display: flex;
+          width: 100%;
+          justify-content: space-between;
+        }
+      }
+    }
+  }
+}
+.topSection {
+  display: flex;
+  justify-content: space-between;
+  width: 78%;
+  margin-top: 10px;
+  .nameDiv {
+    width: 49%;
+  }
+  .rejectDiv {
+    width: 49%;
+  }
+}
+.stage {
+  margin-top: 20px;
+  display: flex;
+  gap: 1%;
+  align-items: center;
+
+  .deleteDiv {
+    padding-top: 37px;
+    color: red;
+    cursor: pointer;
+  }
+}
+.buttonsDiv {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 10px;
+  width: 100%;
+}
+.addStageButton {
+  width: 100%;
+  margin: 20px 0px 20px 0px;
 }

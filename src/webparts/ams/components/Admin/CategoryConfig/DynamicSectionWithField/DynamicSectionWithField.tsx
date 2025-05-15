@@ -867,15 +867,6 @@ const DynamicSectionWithField = ({
     if (storedSections) {
       setSections(JSON.parse(storedSections));
     }
-    //Handle ReLoad Browser then clear session Storage:
-    const handleBeforeUnload = () => {
-      sessionStorage.clear();
-    };
-
-    window.addEventListener("beforeunload", handleBeforeUnload);
-    return () => {
-      window.removeEventListener("beforeunload", handleBeforeUnload);
-    };
   }, []);
 
   useEffect(() => {
@@ -1027,14 +1018,11 @@ const DynamicSectionWithField = ({
         <div>Form Configuration</div>
         {categoryClickingID === null && (
           <Button
-            icon={
-              <LuPlus
-                className={DynamicSectionWithFieldStyles.addSectionBtnIcon}
-              />
-            }
+            icon={<LuPlus className="modernBtnIcon" />}
             label="Add Section"
             onClick={addDynamicSection}
-            className={DynamicSectionWithFieldStyles.addButton}
+            className="modernButton"
+            style={{ marginLeft: "30px" }}
           />
         )}
       </div>
@@ -1112,20 +1100,13 @@ const DynamicSectionWithField = ({
               <div style={{ display: "flex", justifyContent: "space-between" }}>
                 {(actionBooleans?.isEdit || categoryClickingID === null) && (
                   <Button
-                    icon={
-                      <LuPlus
-                        className={
-                          DynamicSectionWithFieldStyles.addSectionBtnIcon
-                        }
-                      />
-                    }
+                    icon={<LuPlus className="modernBtnIcon" />}
                     label="Add Field"
                     onClick={() => {
                       setNewField({ ...newField, sectionIndex });
                       setShowPopup(true);
                     }}
-                    className={DynamicSectionWithFieldStyles.addButton}
-                    style={{ marginLeft: "0" }}
+                    className="modernButton"
                   />
                 )}
                 {/* {section.columns?.length >= 2 ? (

@@ -2,16 +2,15 @@
 
 .label {
   @include label;
-  margin-bottom: 15px;
 }
-.maincontainer {
+.mainApprovalContainer {
   box-sizing: border-box;
-  margin: 30px;
-  padding: 20px;
-  border: 1px solid var(--liteGreen);
+  padding: 10px 20px;
+  height: 440px;
+  overflow: auto;
 }
 .approvalConfigContainer {
-  padding: 10px 0px 10px 0px;
+  padding: 10px 0px 0px 0px;
   width: 100%;
   gap: 15px;
   .approvalSubContainer {
@@ -26,11 +25,12 @@
       height: fit-content;
       .stageFormContainer {
         width: 100%;
-        border: 1px solid var(--liteGreen);
-        border-radius: 10px;
+        border: 1px solid var(--borderColor);
+        border-radius: 6px;
         padding: 20px;
         .stageConfigHeader {
-          color: $green;
+          @include label;
+          font-weight: 500;
         }
         .deleteStageButton {
           display: flex;
@@ -43,14 +43,14 @@
 }
 .topSection {
   display: flex;
-  gap: 2%;
-  width: 95%;
+  justify-content: space-between;
+  width: 38%;
   margin: 0 !important;
   .nameDiv {
-    width: 40%;
+    width: 49%;
   }
   .rejectDiv {
-    width: 40%;
+    width: 49%;
   }
 }
 .stage {
@@ -68,7 +68,7 @@
 .buttonsDiv {
   display: flex;
   justify-content: space-between;
-  margin-top: 20px;
+  margin-top: 10px;
   width: 100%;
 }
 .addStageButton {

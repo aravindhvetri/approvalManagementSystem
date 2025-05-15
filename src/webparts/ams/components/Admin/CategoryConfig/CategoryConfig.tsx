@@ -18,6 +18,7 @@ import {
 import {
   ActionsMenu,
   cardStatusTemplate,
+  customHeader,
   toastNotify,
 } from "../../../../../CommonServices/CommonTemplates";
 //Styles Imports:
@@ -1048,6 +1049,15 @@ const CategoryConfig = ({
       digit: "",
       signatureShowStages: "",
     });
+    //Handle ReLoad Browser then clear session Storage:
+    const handleBeforeUnload = () => {
+      sessionStorage.clear();
+    };
+
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    return () => {
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+    };
   }, []);
 
   useEffect(() => {

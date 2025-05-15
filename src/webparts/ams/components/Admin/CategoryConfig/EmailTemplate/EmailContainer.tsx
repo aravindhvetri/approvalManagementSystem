@@ -71,15 +71,6 @@ const EmailContainer = ({
     if (storedEmail) {
       setSelectedEmail(storedEmail);
     }
-    //Handle ReLoad Browser then clear session Storage:
-    const handleBeforeUnload = () => {
-      sessionStorage.clear();
-    };
-
-    window.addEventListener("beforeunload", handleBeforeUnload);
-    return () => {
-      window.removeEventListener("beforeunload", handleBeforeUnload);
-    };
   }, []);
 
   // Store selectedEmail in sessionStorage on change

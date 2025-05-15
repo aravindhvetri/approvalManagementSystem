@@ -884,6 +884,27 @@ li.p-highlight .p-tabview-nav-link {
   padding: 4px 10px 5px 10px;
   border-radius: 2px;
 }
+
+/* Modern Button Design with icon.................................*/
+
+.modernBtnIcon {
+  font-size: 16px;
+}
+
+.modernButton {
+  background-color: white;
+  display: flex;
+  gap: 6px;
+  color: #000000c2;
+  font-weight: 500;
+  padding: 6px 15px 6px 15px;
+  font-size: 13px;
+  border: 1px solid #dee2e6;
+  border-radius: 5px;
+  cursor: pointer;
+  align-items: center;
+}
+
 .radioDivLabel {
   padding: 0 50px 0 10px;
   font-size: 14px;

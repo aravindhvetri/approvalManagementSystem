@@ -30,6 +30,7 @@ import { sp } from "@pnp/sp";
 import { Config } from "../../../../../CommonServices/Config";
 import Loader from "../../Loader/Loader";
 import {
+  customHeader,
   multiplePeoplePickerTemplate,
   notesContainerDetails,
   peoplePickerTemplate,
@@ -43,6 +44,7 @@ const ApprovalWorkFlow = ({
   currentRec,
   isEdit,
   usedCategories,
+  setUsedCategories,
   setIsEdit,
   setCurrentRecord,
   approvalTableRender,
@@ -75,7 +77,7 @@ const ApprovalWorkFlow = ({
     },
   ];
   const [selectedStage, setSelectedStage] = useState({});
-  console.log("selectedStage", selectedStage);
+  console.log("usedCategories", usedCategories);
 
   //ApprovalConfig Details Patch
   const addApprovalConfigDetails = (addData: IApprovalDetailsPatch) => {
@@ -374,7 +376,6 @@ const ApprovalWorkFlow = ({
     return (
       <div className="categoryName">
         <>
-          Rejection flow -
           <div className="categoryTag">
             {data === 1
               ? "Anyone can approve"
@@ -395,7 +396,7 @@ const ApprovalWorkFlow = ({
         selectionMode="single"
         selection={selectedStage}
         scrollable
-        scrollHeight="320px"
+        scrollHeight="242px"
         onSelectionChange={(e) => {
           e.value && setSelectedStage(e.value);
         }}
@@ -408,14 +409,14 @@ const ApprovalWorkFlow = ({
                 className="requestCardStage"
                 style={
                   selectedStage?.["stage"] === rowData?.stage
-                    ? { backgroundColor: " #ecf0f1" }
+                    ? { backgroundColor: "#f3f3f3bd", borderColor: "#0000005c" }
                     : {}
                 }
               >
                 <div className="requestCardHeader">
                   <div className="requestId">
-                    <h3 className="requestIdTitle">
-                      <MdAppRegistration style={{ fontSize: "24px" }} />
+                    <h3 className="requestIdTitle" style={{ fontSize: "13px" }}>
+                      <MdAppRegistration style={{ fontSize: "20px" }} />
                       {`Stage ${rowData?.stage} approval`}
                     </h3>
                   </div>
@@ -450,10 +451,26 @@ const ApprovalWorkFlow = ({
   ///ApprovalConfigFlowContent
   const ApprovalConfigSidebarContent = () => (
     <>
-      {isEdit && currentRec?.id !== null && usedCategories.length > 0 && (
-        <>{notesContainerDetails("⚠ Warning", warningNote)}</>
-      )}
-      <div className={`${ApprovalWorkFlowStyles.maincontainer}`}>
+      <div className="profile_header_content">
+        <div>
+          <h2>{`${
+            currentRec?.id === null ? "Add " : isEdit ? "Edit " : "View "
+          }Approval Workflow`}</h2>
+          <p>
+            {`${
+              currentRec?.id === null
+                ? "Set up a new approval process for category requests "
+                : isEdit
+                ? "Modify the approval process for category requests "
+                : "View the approval process for category requests"
+            }`}
+          </p>
+        </div>
+      </div>
+      <div className={`${ApprovalWorkFlowStyles.mainApprovalContainer}`}>
+        {isEdit && currentRec?.id !== null && usedCategories.length > 0 && (
+          <>{notesContainerDetails("⚠ Warning", warningNote)}</>
+        )}
         <div
           className={`${ApprovalWorkFlowStyles.topSection}`}
           style={{ marginBottom: "1rem" }}
@@ -590,9 +607,8 @@ const ApprovalWorkFlow = ({
                 <Button
                   style={{ width: "100%", display: "flow" }}
                   visible={isEdit}
-                  className="customAddStageButton"
+                  className="modernButton"
                   label="Add Stage"
-                  icon="pi pi-plus"
                   onClick={() => {
                     validRequiredField("addStage");
                   }}
@@ -615,7 +631,7 @@ const ApprovalWorkFlow = ({
                       icon="pi pi-trash"
                       label="Remove"
                       visible={isEdit}
-                      className="customAddStageButton"
+                      className="modernButton"
                       onClick={() => {
                         removeStage(
                           approvalFlowDetails?.stages.findIndex(
@@ -691,41 +707,41 @@ const ApprovalWorkFlow = ({
               </div>
             </div>
           </div>
-          <div className={`${ApprovalWorkFlowStyles.buttonsDiv}`}>
-            <>
-              {isEdit && (
-                <>
-                  <Button
-                    className="customCancelButton"
-                    label="Cancel"
-                    icon="pi pi-times"
-                    onClick={() => {
-                      setApprovalSideBarVisible(false);
-                    }}
-                  />
-                  <Button
-                    className="customSubmitButton"
-                    label="Submit"
-                    icon="pi pi-save"
-                    onClick={() => {
-                      validRequiredField("submit");
-                    }}
-                  />
-                </>
-              )}
-              {!isEdit && (
-                <Button
-                  icon="pi pi-times"
-                  label="Close"
-                  className="customCancelButton"
-                  onClick={() => {
-                    setApprovalSideBarVisible(false);
-                  }}
-                />
-              )}
-            </>
-          </div>
         </div>
+      </div>
+      <div className={`${ApprovalWorkFlowStyles.buttonsDiv}`}>
+        <>
+          {isEdit && (
+            <>
+              <Button
+                className="customCancelButton"
+                label="Cancel"
+                icon="pi pi-times"
+                onClick={() => {
+                  setApprovalSideBarVisible(false);
+                }}
+              />
+              <Button
+                className="customSubmitButton"
+                label="Submit"
+                icon="pi pi-save"
+                onClick={() => {
+                  validRequiredField("submit");
+                }}
+              />
+            </>
+          )}
+          {!isEdit && (
+            <Button
+              icon="pi pi-times"
+              label="Close"
+              className="customCancelButton"
+              onClick={() => {
+                setApprovalSideBarVisible(false);
+              }}
+            />
+          )}
+        </>
       </div>
     </>
   );
@@ -744,6 +760,7 @@ const ApprovalWorkFlow = ({
         stages: [],
       });
       setIsEdit(true);
+      setUsedCategories([]);
       setApprovalFlowDetails({ ...Config.ApprovalConfigDefaultDetails });
     } else if (ApprovalConfigSideBarVisible) {
       if (currentRec?.id) {

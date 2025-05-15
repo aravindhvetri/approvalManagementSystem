@@ -236,7 +236,7 @@ export const ActionsMenu = ({ items }) => {
 };
 
 //Custom Header for Sidebar:
-const customHeader = (
+export const customHeader = (title, description) => (
   <div className="profile_header_content">
     <div>
       <h1
@@ -245,9 +245,9 @@ const customHeader = (
           lineHeight: "2.25rem",
         }}
       >
-        Purchase Workflow
+        {title}
       </h1>
-      <p>Configure your purchase approval process</p>
+      <p>{description}</p>
     </div>
   </div>
 );
@@ -265,7 +265,19 @@ export const RightSidebar = ({
         visible={visible}
         className="CustomSideBarContainer"
         position="right"
-        header={activeTabViewBar == 2 ? customHeader : ""}
+        header={
+          activeTabViewBar == 2
+            ? customHeader(
+                "Purchase Workflow",
+                "Configure your purchase approval process"
+              )
+            : activeTabViewBar == 3
+            ? customHeader(
+                "Approval Workflow",
+                "Configure your approval workflow for the approval process"
+              )
+            : ""
+        }
         onHide={onHide}
       >
         {contents}
