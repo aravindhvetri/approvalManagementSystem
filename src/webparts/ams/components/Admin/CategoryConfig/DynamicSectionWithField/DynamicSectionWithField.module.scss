@@ -52,7 +52,7 @@
 
 .container {
   margin-bottom: 14px;
-  height: 320px;
+  height: 340px;
   overflow: auto;
   .sectionHeader {
     display: flex;
@@ -104,7 +104,7 @@
 }
 
 .dialog {
-  width: 30%;
+  width: 40%;
   .p-dialog-header {
     background-color: #007ad9;
     color: white;
@@ -194,6 +194,7 @@
 .label {
   @include label;
 }
+
 .stageContainer {
   padding-bottom: 10px;
   font-size: 13px;

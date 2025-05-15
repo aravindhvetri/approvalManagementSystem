@@ -186,6 +186,7 @@ const CustomEmail = ({
   return (
     <>
       <Toast ref={toast} />
+      {actionBooleans?.isEdit && notesContainerDetails("ⓘ Info", notes)}
       <div>
         {templates.map((template, index) => (
           <div key={index} className={customEmailStyles.templateContainer}>
@@ -247,8 +248,6 @@ const CustomEmail = ({
             />
           </div>
         )}
-
-        {actionBooleans?.isEdit && notesContainerDetails("ⓘ Info", notes)}
       </div>
       {!actionBooleans?.isView && !actionBooleans?.isEdit && (
         <>{notesContainerDetails("ⓘ Info", infoNotes)}</>

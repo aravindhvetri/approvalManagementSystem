@@ -7,12 +7,15 @@ import { Config } from "../../../../../../../CommonServices/Config";
 import ExistingEmailstyles from "./ExisitingEmail.module.scss";
 import { Label } from "office-ui-fabric-react";
 import { IFinalSubmitDetails } from "../../../../../../../CommonServices/interface";
+import { set } from "@microsoft/sp-lodash-subset";
 
 const ExistingEmail = ({ ExisitingEmailData }) => {
   //State Variables:
   const [getTemplateNameOptions, setTemplateNameOptions] = useState([]);
   const [selectedDropValues, setSelectedDropValues] = useState<any>([]);
   const [templateData, setTemplateData] = useState([]);
+  const [selectedEmailBody, setSelectedEmailBody] = useState("");
+  console.log(selectedEmailBody, "selectedEmailBody");
 
   const getEmailTemplateConfigDetails = () => {
     SPServices.SPReadItems({
@@ -50,7 +53,48 @@ const ExistingEmail = ({ ExisitingEmailData }) => {
     );
     setSelectedDropValues(updatedValues);
     ExisitingEmailData(updatedValues);
+    setSelectedEmailBody(process);
     sessionStorage.setItem("selectedDropValues", JSON.stringify(updatedValues));
+    sessionStorage.setItem("selectedEmailBody", JSON.stringify(process));
+  };
+
+  //Render Email Body Preview:
+  const renderEmailBodyPreview = () => {
+    if (!selectedEmailBody) {
+      return (
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+          className={ExistingEmailstyles.emailBodyPreview}
+        >
+          <Label className={ExistingEmailstyles.bodyLabel}>
+            No Email content found !
+          </Label>
+        </div>
+      );
+    }
+
+    const selectedTemplateName = selectedDropValues.find(
+      (item) => item.process === selectedEmailBody
+    )?.value;
+
+    const selectedTemplate = templateData.find(
+      (temp) => temp.TemplateName === selectedTemplateName
+    );
+
+    if (!selectedTemplate?.EmailBody) return null;
+
+    return (
+      <div className={ExistingEmailstyles.emailBodyPreview}>
+        <Label className={ExistingEmailstyles.bodyLabel}>
+          {selectedEmailBody} Email Content Preview :
+        </Label>
+        <div dangerouslySetInnerHTML={{ __html: selectedTemplate.EmailBody }} />
+      </div>
+    );
   };
 
   // Fetch email templates
@@ -66,6 +110,11 @@ const ExistingEmail = ({ ExisitingEmailData }) => {
         { process: "Submit", value: "", id: null },
       ]);
     }
+
+    const storedEmailBody = sessionStorage.getItem("selectedEmailBody");
+    if (storedEmailBody) {
+      setSelectedEmailBody(JSON.parse(storedEmailBody));
+    }
     getEmailTemplateConfigDetails();
 
     const handleBeforeUnload = () => {
@@ -79,21 +128,24 @@ const ExistingEmail = ({ ExisitingEmailData }) => {
   }, []);
 
   return (
-    <div className={ExistingEmailstyles.existingEmailContainer}>
-      {selectedDropValues.map((item: any) => (
-        <div key={item.process} className={ExistingEmailstyles.emailRow}>
-          <Label className={ExistingEmailstyles.label}>{item.process}</Label>
-          <div className={ExistingEmailstyles.dropDownContainer}>
-            <Dropdown
-              value={item.value || null}
-              options={getTemplateNameOptions}
-              onChange={(e) => handleFlowChange(item.process, e.value)}
-              placeholder="Enter here"
-              className={ExistingEmailstyles.dropDown}
-            />
+    <div className={ExistingEmailstyles.existingEmailSection}>
+      <div className={ExistingEmailstyles.existingEmailContainer}>
+        {selectedDropValues.map((item: any) => (
+          <div key={item.process} className={ExistingEmailstyles.emailRow}>
+            <Label className={ExistingEmailstyles.label}>{item.process}</Label>
+            <div className={ExistingEmailstyles.dropDownContainer}>
+              <Dropdown
+                value={item.value || null}
+                options={getTemplateNameOptions}
+                onChange={(e) => handleFlowChange(item.process, e.value)}
+                placeholder="Enter here"
+                className={ExistingEmailstyles.dropDown}
+              />
+            </div>
           </div>
-        </div>
-      ))}
+        ))}
+      </div>
+      {renderEmailBodyPreview()}
     </div>
   );
 };

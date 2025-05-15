@@ -474,7 +474,12 @@ const CustomApprover = ({
 
   return (
     <>
+
       {/* <div className={`${CustomApproverStyles.topSection}`}>
+      {actionBooleans?.isEdit && (
+        <div>{notesContainerDetails("ⓘ Info", notes)}</div>
+      )}
+      <div className={`${CustomApproverStyles.topSection}`}>
         <div className={`${CustomApproverStyles.nameDiv}`}>
           <Label className={`${CustomApproverStyles.label}`}>
             Name<span className="required">*</span>
@@ -585,6 +590,7 @@ const CustomApprover = ({
       ) : (
         ""
       )}
+
       {actionBooleans?.isEdit && (
         <div>{notesContainerDetails("ⓘ Info", notes)}</div>
       )} */}

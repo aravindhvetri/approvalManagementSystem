@@ -76,9 +76,31 @@ const DynamicSectionWithField = ({
   const [previewVisible, setPreviewVisible] = useState(false);
   const [previewFields, setPreviewFields] = useState<any>([]);
   const [approvalStage, setApprovalStage] = useState([]);
+
   const addDynamicSection = () => {
+    if (sections.length === 0) {
+      setSections([{ name: "", sectionID: null, columns: [] }]);
+      return;
+    }
+    const lastSection = sections[sections.length - 1];
+
+    const isLastSectionFilled =
+      lastSection &&
+      lastSection.name.trim() !== "" &&
+      lastSection.columns.length > 0;
+
+    if (!isLastSectionFilled) {
+      toast.current.show({
+        severity: "warn",
+        summary: "Fill Section",
+        detail: "Please fill the current section before adding a new one.",
+        life: 3000,
+      });
+      return;
+    }
     setSections([...sections, { name: "", sectionID: null, columns: [] }]);
   };
+
   const [isValidation, setIsValidation] = useState<boolean>(false);
   const [choiceError, setChoiceError] = useState<boolean>(false);
   const [fieldEdit, setFieldEdit] = useState<boolean>(false);
@@ -882,7 +904,7 @@ const DynamicSectionWithField = ({
       isValid = false;
       toast.current.show({
         severity: "warn",
-        summary: "Warning",
+        summary: "Fill Section",
         content: (prop) =>
           toastNotify({
             iconName: "pi-exclamation-triangle",
@@ -904,7 +926,7 @@ const DynamicSectionWithField = ({
               iconName: "pi-exclamation-triangle",
               ClsName: "toast-imgcontainer-warning",
               type: "Warning",
-              msg: "Please enter a section name",
+              msg: "Please enter a current section name",
             }),
           life: 3000,
         });
@@ -912,7 +934,7 @@ const DynamicSectionWithField = ({
         isValid = false;
         toast.current.show({
           severity: "warn",
-          summary: "Warning",
+          summary: "Fill Section",
           content: (prop) =>
             toastNotify({
               iconName: "pi-exclamation-triangle",
@@ -1180,7 +1202,13 @@ const DynamicSectionWithField = ({
 
                     <Button
                       label="Add Choice"
-                      icon="pi pi-plus"
+                      icon={
+                        <LuPlus
+                          className={
+                            DynamicSectionWithFieldStyles.addSectionBtnIcon
+                          }
+                        />
+                      }
                       onClick={() => {
                         if (newChoice.trim() !== "") {
                           setNewField({
@@ -1193,7 +1221,8 @@ const DynamicSectionWithField = ({
                           setChoiceError(true);
                         }
                       }}
-                      className="customSubmitButton"
+                      className={DynamicSectionWithFieldStyles.addButton}
+                      style={{ marginLeft: "0" }}
                     />
                   </div>
                   {choiceError && (

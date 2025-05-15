@@ -5,6 +5,7 @@ import { useState, useEffect, useRef } from "react";
 import { Button } from "primereact/button";
 import { RadioButton } from "primereact/radiobutton";
 import { Toast } from "primereact/toast";
+import { MdOutlineEmail } from "react-icons/md";
 //Styles Imports:
 import EmailContainerStyles from "./EmailContainer.module.scss";
 //Commmon Service Imports:
@@ -805,55 +806,59 @@ const EmailContainer = ({
   return (
     <>
       <Toast ref={toast} />
-      <div className={EmailContainerStyles.heading}>Email template</div>
-      {!(actionBooleans?.isView || actionBooleans?.isEdit) && (
-        <div className={`${EmailContainerStyles.radioContainer}`}>
-          <div className={`${EmailContainerStyles.radioDiv}`}>
-            <RadioButton
-              inputId="existing"
-              name="email"
-              value="existing"
-              onChange={(e) => {
-                setSelectedEmail(e?.value);
-                sessionStorage.removeItem("customTemplates");
-              }}
-              checked={selectedEmail === "existing"}
-            />
-            <label
-              className={`${EmailContainerStyles.radioDivLabel}`}
-              htmlFor="existing"
-            >
-              Existing template
-            </label>
-          </div>
-          <div className={`${EmailContainerStyles.radioDiv}`}>
-            <RadioButton
-              inputId="custom"
-              name="email"
-              value="custom"
-              onChange={(e) => {
-                setSelectedEmail(e?.value);
-                sessionStorage.removeItem("selectedDropValues");
-              }}
-              checked={selectedEmail === "custom"}
-            />
-            <label className={`${EmailContainerStyles.radioDivLabel}`}>
-              Custom template
-            </label>
-          </div>
+      <div className="workFlowHeaderContainer">
+        <div className="workFlowHeaderIcon">
+          <MdOutlineEmail />
         </div>
-      )}
-      {validateError &&
-        !selectedEmail &&
-        actionBooleans?.isView === false &&
-        actionBooleans?.isEdit === false && (
-          <div style={{ marginBottom: "20px" }}>
-            <span className="errorMsg">
-              {validateError?.emailTemplateSelected}
-            </span>
-          </div>
-        )}
-      <div>
+        <div>Email Notifications</div>
+        <div style={{ letterSpacing: "0" }}>
+          {!(actionBooleans?.isView || actionBooleans?.isEdit) && (
+            <div className={`${EmailContainerStyles.radioContainer}`}>
+              <div className={`${EmailContainerStyles.radioDiv}`}>
+                <RadioButton
+                  inputId="existing"
+                  name="email"
+                  value="existing"
+                  onChange={(e) => {
+                    setSelectedEmail(e?.value);
+                    sessionStorage.removeItem("customTemplates");
+                  }}
+                  checked={selectedEmail === "existing"}
+                />
+                <label className="radioDivLabel" htmlFor="existing">
+                  Existing template
+                </label>
+              </div>
+              <div className={`${EmailContainerStyles.radioDiv}`}>
+                <RadioButton
+                  inputId="custom"
+                  name="email"
+                  value="custom"
+                  onChange={(e) => {
+                    setSelectedEmail(e?.value);
+                    sessionStorage.removeItem("selectedDropValues");
+                    sessionStorage.removeItem("selectedEmailBody");
+                  }}
+                  checked={selectedEmail === "custom"}
+                />
+                <label className="radioDivLabel">Custom template</label>
+              </div>
+            </div>
+          )}
+          {validateError &&
+            !selectedEmail &&
+            actionBooleans?.isView === false &&
+            actionBooleans?.isEdit === false && (
+              <div style={{ height: "0px", marginLeft: "40px" }}>
+                <span className="errorMsg">
+                  {validateError?.emailTemplateSelected}
+                </span>
+              </div>
+            )}
+        </div>
+      </div>
+
+      <div className={EmailContainerStyles.EmailContainer}>
         {selectedEmail == "existing" ? (
           <ExistingEmail ExisitingEmailData={getExistingEmailTemlateData} />
         ) : selectedEmail == "custom" || categoryClickingID !== null ? (
