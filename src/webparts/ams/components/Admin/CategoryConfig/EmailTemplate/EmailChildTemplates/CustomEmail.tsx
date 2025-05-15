@@ -6,12 +6,17 @@ import { Button } from "primereact/button";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import customEmailStyles from "./CustomEmail.module.scss";
+import "./CustomEmail.css";
 import { Label } from "office-ui-fabric-react";
 import { Config } from "../../../../../../../CommonServices/Config";
 import SPServices from "../../../../../../../CommonServices/SPServices";
-import { ICategoryEmailConfigDetails } from "../../../../../../../CommonServices/interface";
+import {
+  ICategoryEmailConfigDetails,
+  ITabviewDetails,
+} from "../../../../../../../CommonServices/interface";
 import {
   notesContainerDetails,
+  tabViewBar,
   toastNotify,
 } from "../../../../../../../CommonServices/CommonTemplates";
 import { Toast } from "primereact/toast";
@@ -34,7 +39,6 @@ const CustomEmail = ({
   const [templates, setTemplates] = useState<ICategoryEmailConfigDetails[]>([
     Config.CategoryEmailConfigDefault,
   ]);
-
   const [errors, setErrors] = useState<
     { templateName?: string; status?: string; emailBody?: string }[]
   >([]);
