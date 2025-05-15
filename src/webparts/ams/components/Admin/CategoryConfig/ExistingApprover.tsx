@@ -219,15 +219,9 @@ const ExistingApprover = ({
                     <h3>Stage {stageData.stage} approver</h3>
                   </div>
                 </div>
-                <div
-                  className={`${ExistingApproverStyles.approvalMessage} ${
-                    stageData.approvalProcess === 1
-                      ? ExistingApproverStyles.onlyOne
-                      : ExistingApproverStyles.everyone
-                  }`}
-                >
+                <div className={`${ExistingApproverStyles.approvalMessage}`}>
                   {stageData.approvalProcess === 1
-                    ? "Only one should approve"
+                    ? "Anyone can approve"
                     : "Everyone should approve"}
                 </div>
               </div>

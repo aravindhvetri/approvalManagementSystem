@@ -1,11 +1,25 @@
 /* Stage data table design........................ */
 .requestCardStage {
   background-color: #fff;
-  border-radius: 10px;
-  padding: 1rem;
-  border: 1px solid var(--liteGreen);
+  border-radius: 6px;
+  padding: 8px;
+  border: 1px solid var(--borderColor);
   display: flex;
   width: 100%;
+}
+.categoryName {
+  padding-top: 8px;
+}
+.requestCardBody {
+  padding-right: 8px;
+}
+.categoryTag {
+  border-radius: 5px;
+  font-size: 10px;
+  font-weight: 500;
+  display: inline-block;
+  background-color: var(--liteGreen);
+  color: var(--green);
 }
 .p-datatable .p-datatable-tbody > tr.p-highlight {
   background-color: transparent !important;
@@ -14,7 +28,11 @@
 .p-datatable .p-datatable-tbody > tr:hover {
   background-color: transparent !important;
 }
-
+/* Notes Container................................. */
+.notesContainer {
+  margin-top: 0px;
+  margin-bottom: 10px;
+}
 /* Stage button style.................. */
 .customAddStageButton {
   background-color: transparent;
@@ -26,4 +44,17 @@
 .customAddStageButton:hover {
   background-color: var(--green);
   color: var(--liteGreen);
+}
+/* Button style.............. */
+.modernButton {
+  gap: 0px;
+}
+.modernButton:hover {
+  background-color: var(--liteGreen);
+}
+.pi {
+  font-size: 12px;
+}
+.p-dropdown {
+  height: 34px;
 }

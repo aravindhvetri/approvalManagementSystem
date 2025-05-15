@@ -153,6 +153,7 @@ const ApprovalDashboard = ({
         Orderbydecorasc: true,
       });
       const tempStageArr: IApprovalStages[] = [];
+      console.log("Aphg", res);
       res?.forEach((item: any) => {
         tempStageArr.push({
           stage: item?.Stage,
@@ -206,7 +207,7 @@ const ApprovalDashboard = ({
 
   //Render Approvers column
   const renderApproversColumn = (rowData) => {
-    const approvers: IPeoplePickerDetails[] = rowData?.stages.flatMap((e) =>
+    const approvers: IPeoplePickerDetails[] = rowData?.stages?.flatMap((e) =>
       e?.approver.map((approver) => ({
         id: approver?.id,
         name: approver?.name,
@@ -237,6 +238,7 @@ const ApprovalDashboard = ({
         currentRec={currentRecord}
         isEdit={isEdit}
         usedCategories={usedCategories}
+        setUsedCategories={setUsedCategories}
         setIsEdit={setIsEdit}
         setCurrentRecord={setCurrentRecord}
         approvalTableRender={getApprovalConfig}
