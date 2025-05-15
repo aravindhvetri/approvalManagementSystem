@@ -313,53 +313,84 @@ const EmailWorkFlow = ({
   //MainContents Goes to RightSideBar:
   const EmailWorkFlowSideBarContents = () => (
     <>
-      <h4 className={EmailWorkFlowStyles.EmailWorkFlowSideBarHeading}>
-        {actionsBooleans.isEdit
-          ? "Edit email template"
-          : actionsBooleans.isView
-          ? "View email template"
-          : "Add email template"}
-      </h4>
-      {actionsBooleans.isEdit && usedCategories.length > 0 && (
-        <>{notesContainerDetails("⚠ Warning", warningNote)}</>
-      )}
-      <div>
-        <Label className={EmailWorkFlowStyles.label}>Name</Label>
-        <InputText
-          value={templateData?.templateName}
-          onChange={(e) => handleChange("templateName", e.target.value)}
-          disabled={actionsBooleans.isView}
-          style={{ width: "38%" }}
-        />
+      <div className="profile_header_content">
         <div>
-          {isValidation && !templateData?.templateName && (
-            <span className="errorMsg">Name is required</span>
-          )}
+          <h2>{`${
+            actionsBooleans.isEdit
+              ? "Edit "
+              : actionsBooleans.isView
+              ? "View "
+              : "Add "
+          }Email Workflow`}</h2>
+          <p>
+            {actionsBooleans.isEdit
+              ? "Modify the Email Workflow for category requests "
+              : actionsBooleans.isView
+              ? "View the Email Workflow for category requests "
+              : "Set up a new Email Workflow for category requests "}
+          </p>
         </div>
-        <div className={`${EmailWorkFlowStyles.EditorSection} card`}>
-          <ReactQuill
-            value={templateData?.emailBody}
-            onChange={(e) => handleChange("emailBody", e)}
-            style={{ height: "100%" }}
-            readOnly={actionsBooleans.isView}
+      </div>
+      <div className={EmailWorkFlowStyles.emailMainContainer}>
+        {actionsBooleans.isEdit && usedCategories.length > 0 && (
+          <>{notesContainerDetails("⚠ Warning", warningNote)}</>
+        )}
+        {!actionsBooleans.isView && (
+          <>{notesContainerDetails("ⓘ Info", infoNotes)}</>
+        )}
+        <div>
+          <Label className={EmailWorkFlowStyles.label}>Name</Label>
+          <InputText
+            value={templateData?.templateName}
+            onChange={(e) => handleChange("templateName", e.target.value)}
+            disabled={actionsBooleans.isView}
+            style={{ width: "38%" }}
           />
-          {/* <Editor
+          <div>
+            {isValidation && !templateData?.templateName && (
+              <span className="errorMsg">Name is required</span>
+            )}
+          </div>
+          <div className={`${EmailWorkFlowStyles.EditorSection} card`}>
+            <ReactQuill
+              value={templateData?.emailBody}
+              onChange={(e) => handleChange("emailBody", e)}
+              style={{ height: "100%" }}
+              readOnly={actionsBooleans.isView}
+            />
+            {/* <Editor
             value={templateData?.emailBody}
             onTextChange={(e) => handleChange("emailBody", e.htmlValue)}
             style={{ height: "320px" }}
             readOnly={actionsBooleans.isView}
           /> */}
-          <div>
-            {isValidation && !templateData?.emailBody && (
-              <span className="errorMsg">EmailBody is required</span>
-            )}
+            <div>
+              {isValidation && !templateData?.emailBody && (
+                <span className="errorMsg">EmailBody is required</span>
+              )}
+            </div>
           </div>
         </div>
-        <div className={EmailWorkFlowStyles.EmailWorkFlowSideBarButtons}>
-          {actionsBooleans.isView && (
+      </div>
+      <div className={EmailWorkFlowStyles.EmailWorkFlowSideBarButtons}>
+        {actionsBooleans.isView && (
+          <Button
+            icon="pi pi-times"
+            label="Close"
+            className="customCancelButton"
+            onClick={() => {
+              setEmailWorkFlowSideBarVisible(false);
+              setActionsBooleans({ ...Config.InitialActionsBooleans });
+              setTemplateData({ ...Config?.EmailTemplateConfigDetails });
+              setValidation(false);
+            }}
+          />
+        )}
+        {!actionsBooleans.isView && (
+          <>
             <Button
               icon="pi pi-times"
-              label="Close"
+              label="Cancel"
               className="customCancelButton"
               onClick={() => {
                 setEmailWorkFlowSideBarVisible(false);
@@ -368,35 +399,17 @@ const EmailWorkFlow = ({
                 setValidation(false);
               }}
             />
-          )}
-          {!actionsBooleans.isView && (
-            <>
-              <Button
-                icon="pi pi-times"
-                label="Cancel"
-                className="customCancelButton"
-                onClick={() => {
-                  setEmailWorkFlowSideBarVisible(false);
-                  setActionsBooleans({ ...Config.InitialActionsBooleans });
-                  setTemplateData({ ...Config?.EmailTemplateConfigDetails });
-                  setValidation(false);
-                }}
-              />
-              <Button
-                icon="pi pi-save"
-                label="Submit"
-                className="customSubmitButton"
-                onClick={() => {
-                  if (validateFunction()) {
-                    handleSubmit();
-                  }
-                }}
-              />
-            </>
-          )}
-        </div>
-        {!actionsBooleans.isView && (
-          <>{notesContainerDetails("ⓘ Info", infoNotes)}</>
+            <Button
+              icon="pi pi-save"
+              label="Submit"
+              className="customSubmitButton"
+              onClick={() => {
+                if (validateFunction()) {
+                  handleSubmit();
+                }
+              }}
+            />
+          </>
         )}
       </div>
     </>

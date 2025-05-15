@@ -13,6 +13,7 @@ import {
   IApprovalStages,
   IFinalSubmitDetails,
   INextStageFromCategorySideBar,
+  ITabviewDetails,
 } from "../../../../../../CommonServices/interface";
 import { Config } from "../../../../../../CommonServices/Config";
 import ExistingEmail from "./EmailChildTemplates/ExistingEmail";
@@ -20,7 +21,10 @@ import CustomEmail from "./EmailChildTemplates/CustomEmail";
 import SPServices from "../../../../../../CommonServices/SPServices";
 import { sp } from "@pnp/sp";
 import Loader from "../../../Loader/Loader";
-import { toastNotify } from "../../../../../../CommonServices/CommonTemplates";
+import {
+  tabViewBar,
+  toastNotify,
+} from "../../../../../../CommonServices/CommonTemplates";
 import { trim } from "lodash";
 
 const EmailContainer = ({
@@ -47,7 +51,7 @@ const EmailContainer = ({
   const [validateError, setValidateError] = useState({
     emailTemplateSelected: "",
   });
-
+  const [activeEmailTab, setActiveEmailTab] = useState(0);
   //Get ExistingEmailTempalte Datas:
   const getExistingEmailTemlateData = (ExistingEmailData: []) => {
     setExistingEmailData([...ExistingEmailData]);
@@ -784,6 +788,34 @@ const EmailContainer = ({
     }
   };
 
+  //Custom Email tab view bar
+  const emailTabViewBar = () => {
+    const TempApproveConfigTabContent: ITabviewDetails[] = [
+      {
+        id: 1,
+        name: "Approval Content",
+      },
+      {
+        id: 2,
+        name: "Rejection Content",
+      },
+      {
+        id: 3,
+        name: "Resubmit Content",
+      },
+      {
+        id: 3,
+        name: "Rework Content",
+      },
+    ];
+    const tempApproveConfigTabView = tabViewBar(
+      TempApproveConfigTabContent,
+      activeEmailTab,
+      setActiveEmailTab
+    );
+    return <>{tempApproveConfigTabView}</>;
+  };
+
   //ApprovalStageConfig Details Patch:
   const addApprovalStageConfigDetails = (
     parentId: number,
@@ -857,24 +889,40 @@ const EmailContainer = ({
             )}
         </div>
       </div>
-
-      <div className={EmailContainerStyles.EmailContainer}>
+      {(selectedEmail == "custom" || categoryClickingID !== null) && (
+        <div className={EmailContainerStyles.tabViewContainer}>
+          {emailTabViewBar()}
+        </div>
+      )}
+      <div
+        className={EmailContainerStyles.EmailContainer}
+        style={
+          selectedEmail == "existing"
+            ? { height: "342px" }
+            : selectedEmail == "custom" || categoryClickingID !== null
+            ? { height: "285px" }
+            : {}
+        }
+      >
         {selectedEmail == "existing" ? (
           <ExistingEmail ExisitingEmailData={getExistingEmailTemlateData} />
         ) : selectedEmail == "custom" || categoryClickingID !== null ? (
-          <CustomEmail
-            actionBooleans={actionBooleans}
-            categoryClickingID={categoryClickingID}
-            customEmailData={getCustomEmailTemlateData}
-            customEmailDataWithEmpty={getCustomEmailDataWithEmpty}
-            setCustomEmailTemplateSideBarVisible={
-              setEmailContainerFieldSideBarVisible
-            }
-          />
+          <>
+            <CustomEmail
+              actionBooleans={actionBooleans}
+              categoryClickingID={categoryClickingID}
+              customEmailData={getCustomEmailTemlateData}
+              customEmailDataWithEmpty={getCustomEmailDataWithEmpty}
+              setCustomEmailTemplateSideBarVisible={
+                setEmailContainerFieldSideBarVisible
+              }
+            />
+          </>
         ) : (
           ""
         )}
       </div>
+
       <div className={EmailContainerStyles.FlowButtonsContainer}>
         <div className={EmailContainerStyles.FlowPreviousButton}>
           <Button

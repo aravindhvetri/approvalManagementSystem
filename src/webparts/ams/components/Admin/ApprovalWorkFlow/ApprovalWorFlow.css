@@ -13,14 +13,6 @@
 .requestCardBody {
   padding-right: 8px;
 }
-.categoryTag {
-  border-radius: 5px;
-  font-size: 10px;
-  font-weight: 500;
-  display: inline-block;
-  background-color: var(--liteGreen);
-  color: var(--green);
-}
 .p-datatable .p-datatable-tbody > tr.p-highlight {
   background-color: transparent !important;
   color: black !important;

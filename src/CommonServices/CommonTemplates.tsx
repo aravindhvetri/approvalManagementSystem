@@ -276,6 +276,21 @@ export const RightSidebar = ({
                 "Approval Workflow",
                 "Configure your approval workflow for the approval process"
               )
+            : activeTabViewBar == 4
+            ? customHeader(
+                "Email Workflow",
+                "Configure your email workflow for the notification process"
+              )
+            : activeTabViewBar == 0
+            ? customHeader(
+                "Request Details",
+                "Configure your request for the approval"
+              )
+            : activeTabViewBar == 1
+            ? customHeader(
+                "Approval Summary",
+                "Track the status of all your assigned requests in one place"
+              )
             : ""
         }
         onHide={onHide}

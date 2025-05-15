@@ -504,7 +504,7 @@ li.p-highlight .p-tabview-nav-link {
   height: 15%;
 }
 .ql-toolbar.ql-snow {
-  background-color: rgba(206, 206, 206, 0.91);
+  background-color: #f3f3f3e8;
   border: 1px solid var(--InputBoxLiteGreen) !important;
 }
 .ql-toolbar.ql-snow:active {
@@ -900,6 +900,16 @@ li.p-highlight .p-tabview-nav-link {
   background-color: #000000b8;
   padding: 4px 10px 5px 10px;
   border-radius: 2px;
+}
+/* For Specific place category name */
+.categoryNameTag {
+  border-radius: 5px;
+  font-size: 10px;
+  font-weight: 500;
+  padding: 5px;
+  display: inline-block;
+  background-color: var(--liteGreen);
+  color: var(--green);
 }
 
 /* Modern Button Design with icon.................................*/

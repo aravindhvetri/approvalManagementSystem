@@ -335,7 +335,7 @@ const CustomApprover = ({
     return (
       <div className="categoryName">
         <>
-          <div className="categoryTag">
+          <div className="categoryNameTag">
             {data === 1
               ? "Anyone can approve"
               : data === 2
