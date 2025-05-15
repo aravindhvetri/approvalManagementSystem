@@ -1,28 +1,49 @@
 @import "../../../../../../../External/commonStyles.module.scss";
 
-.existingEmailContainer {
+.existingEmailSection {
   display: flex;
-  flex-direction: column;
-  gap: 30px;
-  margin-bottom: 30px;
-  .emailRow {
+  width: 100%;
+  gap: 2%;
+  margin-top: 30px;
+  .existingEmailContainer {
     display: flex;
-    align-items: center;
-    gap: 20px;
+    flex-direction: column;
+    gap: 30px;
+    width: 38%;
+    .emailRow {
+      display: flex;
+      align-items: center;
+      gap: 20px;
 
-    .label {
-      font-weight: 600;
-      font-size: 14px;
-      color: var(--green);
-      width: 70px;
-    }
-
-    .dropDownContainer {
-      flex: 1;
-      width: 100%;
-      .dropDown {
-        width: 46%;
+      .label {
+        font-size: 14px;
+        color: black;
+        font-weight: 400;
+        letter-spacing: 0.5px;
+        width: 70px;
       }
+
+      .dropDownContainer {
+        flex: 1;
+        width: 100%;
+        .dropDown {
+          width: 100%;
+        }
+      }
+    }
+  }
+  .emailBodyPreview {
+    border: 1px solid var(--borderColor);
+    padding: 10px;
+    border-radius: 6px;
+    width: 60%;
+    height: 300px;
+    overflow: auto;
+    .bodyLabel {
+      font-size: 14px;
+      color: black;
+      font-weight: 400;
+      letter-spacing: 0.5px;
     }
   }
 }

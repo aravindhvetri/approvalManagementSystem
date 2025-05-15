@@ -252,7 +252,7 @@ div[data-automationid="SiteHeader"] {
 .CustomSideBarContainer {
   width: 100%;
   box-shadow: var(--sideBarBoxShadow);
-  padding: 40px;
+  padding: 26px;
 }
 .p-sidebar-content {
   border: 1px solid #e4e4e7;
@@ -510,17 +510,20 @@ li.p-highlight .p-tabview-nav-link {
 
 .notesContainer {
   width: 100%;
-  padding: 10px;
-  box-shadow: rgb(234, 174, 174);
-  background-color: #e5e7e9;
-  border: 0;
-  border-radius: 10px;
-  margin-top: 30px;
-  margin-bottom: 30px;
+  padding: 18px;
+  border: 1px solid var(--borderColor);
+  border-radius: 4px;
+  margin-bottom: 8px;
   h1 {
     font-size: var(--fontSizebig);
     font-family: "Courier New", Courier, monospace;
     color: orangered;
+    margin: 0;
+  }
+
+  ul {
+    margin: 0;
+    padding-top: 10px;
   }
 
   li {
@@ -880,4 +883,11 @@ li.p-highlight .p-tabview-nav-link {
   background-color: #000000b8;
   padding: 4px 10px 5px 10px;
   border-radius: 2px;
+}
+.radioDivLabel {
+  padding: 0 50px 0 10px;
+  font-size: 14px;
+  color: black;
+  font-weight: 400;
+  letter-spacing: 0.5px;
 }

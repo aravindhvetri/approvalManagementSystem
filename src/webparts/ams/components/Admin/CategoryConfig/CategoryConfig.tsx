@@ -847,10 +847,7 @@ const CategoryConfig = ({
                           }}
                           checked={selectedApprover === "existing"}
                         />
-                        <label
-                          className={`${categoryConfigStyles.radioDivLabel}`}
-                          htmlFor="existing"
-                        >
+                        <label className="radioDivLabel" htmlFor="existing">
                           Existing approver
                         </label>
                       </div>
@@ -881,10 +878,7 @@ const CategoryConfig = ({
                           }}
                           checked={selectedApprover === "custom"}
                         />
-                        <label
-                          className={`${categoryConfigStyles.radioDivLabel}`}
-                          htmlFor="custom"
-                        >
+                        <label className="radioDivLabel" htmlFor="custom">
                           Custom approver
                         </label>
                       </div>

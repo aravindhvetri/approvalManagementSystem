@@ -1,20 +1,20 @@
 .InputSwitch .p-inputswitch-slider {
-  border: 1px solid #16a34a;
+  border: 1px solid black;
 }
 .InputSwitch .p-inputswitch-slider {
   border-radius: 20px !important;
   background: transparent;
 }
 .InputSwitch .p-inputswitch-slider:before {
-  background: #16a34a;
+  background: black;
   border-radius: 50%;
   width: 17px;
   height: 17px;
   left: 0.16rem;
-  margin-top: -9px;
+  margin-top: -8.6px;
 }
 .InputSwitch.p-highlight .p-inputswitch-slider {
-  background-color: #16a34a !important;
+  background-color: black !important;
 }
 .InputSwitch.p-highlight .p-inputswitch-slider:before {
   background: white !important;
@@ -32,7 +32,7 @@
 .p-dialog .p-dialog-header .p-dialog-title {
   font-weight: 600;
   font-size: 16px;
-  color: green;
+  color: black;
   text-decoration: underline;
   text-underline-offset: 6px;
 }
