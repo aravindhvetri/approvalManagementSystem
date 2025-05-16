@@ -801,11 +801,11 @@ const EmailContainer = ({
       },
       {
         id: 3,
-        name: "Resubmit Content",
+        name: "Resubmission Content",
       },
       {
-        id: 3,
-        name: "Rework Content",
+        id: 4,
+        name: "Submission Content",
       },
     ];
     const tempApproveConfigTabView = tabViewBar(
@@ -911,6 +911,7 @@ const EmailContainer = ({
             <CustomEmail
               actionBooleans={actionBooleans}
               categoryClickingID={categoryClickingID}
+              activeEmailTab={activeEmailTab}
               customEmailData={getCustomEmailTemlateData}
               customEmailDataWithEmpty={getCustomEmailDataWithEmpty}
               setCustomEmailTemplateSideBarVisible={

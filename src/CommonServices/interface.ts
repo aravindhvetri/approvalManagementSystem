@@ -231,7 +231,7 @@ export interface IFinalSubmitDetails {
 export interface ICategoryEmailConfigDetails {
   templateName: string;
   emailBody: string;
-  status: number;
+  status: string;
 }
 
 //email Message details

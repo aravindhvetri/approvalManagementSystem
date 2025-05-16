@@ -31,6 +31,7 @@ const statusOptions = [
 const CustomEmail = ({
   actionBooleans,
   setCustomEmailTemplateSideBarVisible,
+  activeEmailTab,
   customEmailData,
   categoryClickingID,
   customEmailDataWithEmpty,
@@ -42,7 +43,7 @@ const CustomEmail = ({
   const [errors, setErrors] = useState<
     { templateName?: string; status?: string; emailBody?: string }[]
   >([]);
-
+  console.log("templates", templates);
   //Notes
   const notes = [
     {
@@ -108,21 +109,40 @@ const CustomEmail = ({
     }
   };
 
-  const handleChange = (index, key, value) => {
+  // const handleChange = (index, key, value) => {
+  //   if (actionBooleans?.isView == false && actionBooleans?.isEdit == false) {
+  //     const newTemplates = templates.map((t, i) =>
+  //       i === index ? { ...t, [key]: value } : t
+  //     );
+  //     setTemplates(newTemplates);
+  //     customEmailData(newTemplates);
+  //     sessionStorage.setItem("customTemplates", JSON.stringify(newTemplates));
+
+  //     // Clear errors on valid input
+  //     const newErrors = [...errors];
+  //     if (newErrors[index]) {
+  //       newErrors[index][key] = value ? "" : `This field is required`;
+  //       setErrors(newErrors);
+  //     }
+  //   }
+  // };
+
+  const handleChange = (key, value, status) => {
+    debugger;
     if (actionBooleans?.isView == false && actionBooleans?.isEdit == false) {
-      const newTemplates = templates.map((t, i) =>
-        i === index ? { ...t, [key]: value } : t
+      const newTemplates = templates.map((t) =>
+        t["status"] === status ? { ...t, [key]: value } : t
       );
       setTemplates(newTemplates);
       customEmailData(newTemplates);
       sessionStorage.setItem("customTemplates", JSON.stringify(newTemplates));
 
       // Clear errors on valid input
-      const newErrors = [...errors];
-      if (newErrors[index]) {
-        newErrors[index][key] = value ? "" : `This field is required`;
-        setErrors(newErrors);
-      }
+      // const newErrors = [...errors];
+      // if (newErrors[index]) {
+      //   newErrors[index][key] = value ? "" : `This field is required`;
+      //   setErrors(newErrors);
+      // }
     }
   };
 
@@ -171,7 +191,43 @@ const CustomEmail = ({
     setErrors([...errors, {}]);
   };
 
+  //Check Tab Menu for email status
+  const getEmailStatus = (): string => {
+    switch (activeEmailTab) {
+      case 0:
+        return "Approval";
+      case 1:
+        return "Reject";
+      case 2:
+        return "ReSubmit";
+      case 3:
+        return "Submit";
+    }
+  };
+
   //useEffects
+  useEffect(() => {
+    if (templates?.length === 1 && templates[0]?.status === "") {
+      setTemplates([
+        {
+          templateName: "",
+          emailBody: "",
+          status: getEmailStatus(),
+        },
+      ]);
+    } else {
+      if (!templates?.some((e) => e.status === getEmailStatus())) {
+        setTemplates((prev: ICategoryEmailConfigDetails[]) => [
+          ...prev,
+          {
+            templateName: "",
+            emailBody: "",
+            status: getEmailStatus(),
+          },
+        ]);
+      }
+    }
+  }, [activeEmailTab]);
   useEffect(() => {
     const storedTemplates = sessionStorage.getItem("customTemplates");
     if (storedTemplates) {
@@ -191,8 +247,53 @@ const CustomEmail = ({
     <>
       <Toast ref={toast} />
       {actionBooleans?.isEdit && notesContainerDetails("ⓘ Info", notes)}
+      {!actionBooleans?.isView && !actionBooleans?.isEdit && (
+        <>{notesContainerDetails("ⓘ Info", infoNotes)}</>
+      )}
       <div>
-        {templates.map((template, index) => (
+        <div className={customEmailStyles.templateContainer}>
+          <div className={customEmailStyles.fieldsContainer}>
+            <div className={customEmailStyles.fieldsContainerChild}>
+              <Label className={customEmailStyles.label}>
+                Subject<span className="required">*</span>
+              </Label>
+              <InputText
+                disabled={actionBooleans?.isView || actionBooleans?.isEdit}
+                value={
+                  templates?.find((e) => e.status === getEmailStatus())
+                    ?.templateName
+                }
+                onChange={(e) =>
+                  handleChange("templateName", e.target.value, getEmailStatus())
+                }
+                style={{ width: "38%" }}
+                className={customEmailStyles.input}
+              />
+              {/* {errors[index]?.templateName && (
+                <span className="errorMsg">{errors[index].templateName}</span>
+              )} */}
+            </div>
+          </div>
+          <div className={`${customEmailStyles.EditorSection} card`}>
+            <Label className={customEmailStyles.label}>
+              Body content<span className="required">*</span>
+            </Label>
+            <ReactQuill
+              readOnly={actionBooleans?.isView || actionBooleans?.isEdit}
+              value={
+                templates?.find((e) => e.status === getEmailStatus())?.emailBody
+              }
+              onChange={(value) =>
+                handleChange("emailBody", value, getEmailStatus())
+              }
+              style={{ height: "100%" }}
+            />
+            {/* {errors[index]?.emailBody && (
+              <span className="errorMsg">{errors[index].emailBody}</span>
+            )} */}
+          </div>
+        </div>
+        {/* {templates.map((template, index) => (
           <div key={index} className={customEmailStyles.templateContainer}>
             <div className={customEmailStyles.fieldsContainer}>
               <div className={customEmailStyles.fieldsContainerChild}>
@@ -238,8 +339,8 @@ const CustomEmail = ({
               )}
             </div>
           </div>
-        ))}
-        {templates?.length == 4 ? (
+        ))} */}
+        {/* {templates?.length == 4 ? (
           ""
         ) : (
           <div className={customEmailStyles.addbutton}>
@@ -251,11 +352,8 @@ const CustomEmail = ({
               onClick={handleAdd}
             />
           </div>
-        )}
+        )} */}
       </div>
-      {!actionBooleans?.isView && !actionBooleans?.isEdit && (
-        <>{notesContainerDetails("ⓘ Info", infoNotes)}</>
-      )}
     </>
   );
 };

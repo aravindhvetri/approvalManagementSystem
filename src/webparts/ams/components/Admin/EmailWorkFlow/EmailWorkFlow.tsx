@@ -339,7 +339,9 @@ const EmailWorkFlow = ({
           <>{notesContainerDetails("ⓘ Info", infoNotes)}</>
         )}
         <div>
-          <Label className={EmailWorkFlowStyles.label}>Name</Label>
+          <Label className={EmailWorkFlowStyles.label}>
+            Subject<span className="required">*</span>
+          </Label>
           <InputText
             value={templateData?.templateName}
             onChange={(e) => handleChange("templateName", e.target.value)}
@@ -348,10 +350,14 @@ const EmailWorkFlow = ({
           />
           <div>
             {isValidation && !templateData?.templateName && (
-              <span className="errorMsg">Name is required</span>
+              <span className="errorMsg">Subject is required</span>
             )}
           </div>
+
           <div className={`${EmailWorkFlowStyles.EditorSection} card`}>
+            <Label className={EmailWorkFlowStyles.label}>
+              Body content<span className="required">*</span>
+            </Label>
             <ReactQuill
               value={templateData?.emailBody}
               onChange={(e) => handleChange("emailBody", e)}
@@ -366,7 +372,7 @@ const EmailWorkFlow = ({
           /> */}
             <div>
               {isValidation && !templateData?.emailBody && (
-                <span className="errorMsg">EmailBody is required</span>
+                <span className="errorMsg">Body content is required</span>
               )}
             </div>
           </div>
