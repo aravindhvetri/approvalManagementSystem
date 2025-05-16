@@ -165,7 +165,7 @@ export namespace Config {
   export const CategoryEmailConfigDefault: ICategoryEmailConfigDetails = {
     templateName: "",
     emailBody: "",
-    status: null,
+    status: "",
   };
 
   //Email Message Config Details:
