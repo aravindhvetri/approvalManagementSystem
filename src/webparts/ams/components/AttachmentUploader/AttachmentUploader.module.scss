@@ -9,5 +9,10 @@
 .fileList {
   display: flex;
   align-items: center;
-  margin-top: 10px;
+  margin: 0px 10px 10px 0px;
+}
+.fileListContainer {
+  height: 190px;
+  overflow: auto;
+  width: 410px;
 }

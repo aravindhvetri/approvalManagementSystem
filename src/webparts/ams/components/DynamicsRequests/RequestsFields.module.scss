@@ -1,9 +1,15 @@
 @import "../../../../External/commonStyles.module.scss";
 
-.formContainer {
+.formsContainer {
   display: flex;
   flex-direction: column;
   // gap: 1rem;
+
+  .formContainer {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 20px;
+  }
 
   .singlelineFields,
   .multilineFields {
@@ -13,12 +19,12 @@
 
   .singlelineFields {
     grid-template-columns: repeat(5, 1fr);
-    margin-bottom: 20px;
+    // margin-bottom: 20px;
   }
 
   .multilineFields {
     grid-template-columns: repeat(3, 1fr);
-    margin-bottom: 20px;
+    // margin-bottom: 20px;
   }
 
   .inputField {
@@ -47,7 +53,7 @@
   .approverSection {
     display: block;
     width: 100%;
-    margin-bottom: 10px;
+    margin-top: 10px;
   }
   .labelHeader {
     width: max-content;
@@ -55,12 +61,38 @@
     font-size: 13px;
     color: var(--green);
     border-bottom: 2px solid var(--green);
-    margin-bottom: 15px;
   }
 }
 
+.HistoryContainer {
+  display: flex;
+  width: 100%;
+  gap: 2%;
+  .history {
+    width: 60%;
+  }
+  .attachment {
+    margin-top: 40px;
+    width: 38%;
+  }
+}
+
+.fileUploadContainer {
+  display: flex;
+  gap: 10px;
+  ul {
+    margin: 0;
+  }
+}
+
+.formFieldContainer {
+  height: 420px;
+  margin-bottom: 20px;
+  overflow: auto;
+}
+
 .RequestFormContainer {
-  height: 324px;
+  height: 294px;
   overflow: auto;
   margin-bottom: 20px;
   padding: 0px 70px 0px 70px;
@@ -92,6 +124,13 @@
 }
 
 //Add request Filder dropdown
+.approverSectionContainer {
+  display: flex;
+  width: 100%;
+  gap: 2%;
+  margin-bottom: 10px;
+}
+
 .filterHeader {
   width: 100%;
   display: flex;
@@ -99,7 +138,7 @@
   justify-content: center;
   .filterHeaderContainer {
     padding: 6px;
-    width: 40%;
+    width: 60%;
     border-radius: 6px;
     text-align: center;
   }
