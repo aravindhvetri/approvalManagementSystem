@@ -36,6 +36,7 @@ import { sp } from "@pnp/sp/presets/all";
 import moment from "moment";
 import { Accordion, AccordionTab } from "primereact/accordion";
 import { FaCodePullRequest } from "react-icons/fa6";
+import { IoCloudUploadOutline } from "react-icons/io5";
 //Styles Imports:
 import dynamicFieldsStyles from "./RequestsFields.module.scss";
 import "../../../../External/style.css";
@@ -306,7 +307,7 @@ const AddRequestsFields = ({
     toast.current.show({
       severity: "warn",
       summary: "Validation Failed",
-      detail: "Please open the tab and complete all required fields.",
+      detail: "Please complete all required fields.",
       life: 3000,
     });
     return Object.keys(newErrors).length === 0;
@@ -531,7 +532,9 @@ const AddRequestsFields = ({
                 </div>
               </div>
             </Label>
-            <div style={{ display: "flex", justifyContent: "center" }}>
+            <div
+              style={{ display: "flex", justifyContent: "center", gap: "20px" }}
+            >
               <Dropdown
                 style={{ width: "185px" }}
                 value={selectedCategory}
@@ -544,6 +547,53 @@ const AddRequestsFields = ({
                 placeholder="Category"
                 className="w-full md:w-14rem"
               />
+              {selectedCategory ? (
+                <div className={dynamicFieldsStyles.fileUploadContainer}>
+                  {/* <Label className={dynamicFieldsStyles.label}>Attachments</Label> */}
+                  <>
+                    <div>
+                      <FileUpload
+                        className="addFileButton"
+                        name="demo[]"
+                        mode="basic"
+                        onSelect={(e) =>
+                          handleFileSelection(e, files, setFiles, toast, Config)
+                        }
+                        url="/api/upload"
+                        auto
+                        multiple
+                        maxFileSize={1000000}
+                        style={{ width: "14%" }}
+                        chooseLabel="File Upload"
+                        chooseOptions={{ icon: "pi pi-upload" }}
+                      />
+                    </div>
+                    <div style={{ height: "66px", overflow: "auto" }}>
+                      {files.length > 0 && (
+                        <ul style={{ listStyle: "none", padding: 0 }}>
+                          {files.map((file, index) => (
+                            <li
+                              className={attachmentStyles?.fileList}
+                              key={index}
+                            >
+                              <Tag
+                                className={attachmentStyles.filNameTag}
+                                value={file.name}
+                              />
+                              <GiCancel
+                                style={{ cursor: "pointer", color: "red" }}
+                                onClick={() => removeFile(file.name)}
+                              />
+                            </li>
+                          ))}
+                        </ul>
+                      )}
+                    </div>
+                  </>
+                </div>
+              ) : (
+                ""
+              )}
             </div>
           </div>
         </div>
@@ -837,49 +887,6 @@ const AddRequestsFields = ({
                   )
                 )}
               </Accordion>
-              <div>
-                <Label className={dynamicFieldsStyles.label}>Attachments</Label>
-                <>
-                  <div>
-                    <FileUpload
-                      className="addFileButton"
-                      name="demo[]"
-                      mode="basic"
-                      onSelect={(e) =>
-                        handleFileSelection(e, files, setFiles, toast, Config)
-                      }
-                      url="/api/upload"
-                      auto
-                      multiple
-                      maxFileSize={1000000}
-                      style={{ width: "14%" }}
-                      chooseLabel="Browse"
-                      chooseOptions={{ icon: "" }}
-                    />
-                  </div>
-                  <div style={{ marginTop: "20px" }}>
-                    {files.length > 0 && (
-                      <ul style={{ listStyle: "none", padding: 0 }}>
-                        {files.map((file, index) => (
-                          <li
-                            className={attachmentStyles?.fileList}
-                            key={index}
-                          >
-                            <Tag
-                              className={attachmentStyles.filNameTag}
-                              value={file.name}
-                            />
-                            <GiCancel
-                              style={{ cursor: "pointer", color: "red" }}
-                              onClick={() => removeFile(file.name)}
-                            />
-                          </li>
-                        ))}
-                      </ul>
-                    )}
-                  </div>
-                </>
-              </div>
             </>
           )}
         </div>
