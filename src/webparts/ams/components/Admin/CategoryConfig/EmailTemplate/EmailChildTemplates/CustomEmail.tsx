@@ -37,9 +37,9 @@ const CustomEmail = ({
   customEmailDataWithEmpty,
 }) => {
   const toast = useRef<Toast>(null);
-  const [templates, setTemplates] = useState<ICategoryEmailConfigDetails[]>([
-    Config.CategoryEmailConfigDefault,
-  ]);
+  const [templates, setTemplates] = useState<ICategoryEmailConfigDetails[]>(
+    Config.CategoryEmailConfigDefault
+  );
   const [errors, setErrors] = useState<
     { templateName?: string; status?: string; emailBody?: string }[]
   >([]);
@@ -134,8 +134,8 @@ const CustomEmail = ({
         t["status"] === status ? { ...t, [key]: value } : t
       );
       setTemplates(newTemplates);
-      customEmailData(newTemplates);
       sessionStorage.setItem("customTemplates", JSON.stringify(newTemplates));
+      customEmailData(newTemplates);
 
       // Clear errors on valid input
       // const newErrors = [...errors];
@@ -186,8 +186,7 @@ const CustomEmail = ({
       });
       return false;
     }
-
-    setTemplates([...templates, Config.CategoryEmailConfigDefault]);
+    // setTemplates([...templates, Config.CategoryEmailConfigDefault]);
     setErrors([...errors, {}]);
   };
 
@@ -206,31 +205,32 @@ const CustomEmail = ({
   };
 
   //useEffects
-  useEffect(() => {
-    if (templates?.length === 1 && templates[0]?.status === "") {
-      setTemplates([
-        {
-          templateName: "",
-          emailBody: "",
-          status: getEmailStatus(),
-        },
-      ]);
-    } else {
-      if (!templates?.some((e) => e.status === getEmailStatus())) {
-        setTemplates((prev: ICategoryEmailConfigDetails[]) => [
-          ...prev,
-          {
-            templateName: "",
-            emailBody: "",
-            status: getEmailStatus(),
-          },
-        ]);
-      }
-    }
-  }, [activeEmailTab]);
+  // useEffect(() => {
+  //   if (templates?.length === 1 && templates[0]?.status === "") {
+  //     setTemplates([
+  //       {
+  //         templateName: "",
+  //         emailBody: "",
+  //         status: getEmailStatus(),
+  //       },
+  //     ]);
+  //   } else {
+  //     if (!templates?.some((e) => e.status === getEmailStatus())) {
+  //       setTemplates((prev: ICategoryEmailConfigDetails[]) => [
+  //         ...prev,
+  //         {
+  //           templateName: "",
+  //           emailBody: "",
+  //           status: getEmailStatus(),
+  //         },
+  //       ]);
+  //     }
+  //   }
+  // }, [activeEmailTab]);
   useEffect(() => {
     const storedTemplates = sessionStorage.getItem("customTemplates");
     if (storedTemplates) {
+      console.log("storedTemplates", storedTemplates);
       const parsedTemplates = JSON.parse(storedTemplates);
       setTemplates(parsedTemplates);
     } else if (categoryClickingID) {
@@ -259,12 +259,36 @@ const CustomEmail = ({
               </Label>
               <InputText
                 disabled={actionBooleans?.isView || actionBooleans?.isEdit}
+                placeholder={`Example: ${getEmailStatus()} notification for request`}
                 value={
-                  templates?.find((e) => e.status === getEmailStatus())
-                    ?.templateName
+                  templates?.find(
+                    (e) =>
+                      e.status ===
+                      (activeEmailTab === 0
+                        ? "Approval"
+                        : activeEmailTab === 1
+                        ? "Reject"
+                        : activeEmailTab === 2
+                        ? "ReSubmit"
+                        : activeEmailTab === 3
+                        ? "Submit"
+                        : "")
+                  )?.templateName
                 }
                 onChange={(e) =>
-                  handleChange("templateName", e.target.value, getEmailStatus())
+                  handleChange(
+                    "templateName",
+                    e.target.value,
+                    activeEmailTab === 0
+                      ? "Approval"
+                      : activeEmailTab === 1
+                      ? "Reject"
+                      : activeEmailTab === 2
+                      ? "ReSubmit"
+                      : activeEmailTab === 3
+                      ? "Submit"
+                      : ""
+                  )
                 }
                 style={{ width: "38%" }}
                 className={customEmailStyles.input}
@@ -276,7 +300,10 @@ const CustomEmail = ({
           </div>
           <div className={`${customEmailStyles.EditorSection} card`}>
             <Label className={customEmailStyles.label}>
-              Body content<span className="required">*</span>
+              Body content<span className="required">* </span>
+              <span className="categoryNameTag">
+                Please adjust the sample content below as needed
+              </span>
             </Label>
             <ReactQuill
               readOnly={actionBooleans?.isView || actionBooleans?.isEdit}
