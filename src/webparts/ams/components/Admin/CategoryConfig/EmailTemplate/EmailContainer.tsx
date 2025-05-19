@@ -61,7 +61,7 @@ const EmailContainer = ({
   const getCustomEmailTemlateData = (CustomEmailData: []) => {
     setCustomEmailData([...CustomEmailData]);
   };
-
+  console.log("customEmailDataWithEmpty", customEmailDataWithEmpty);
   //Get CustomEmailDataWithEmpty:
   const getCustomEmailDataWithEmpty = (CustomEmailDataWithEmpty: []) => {
     if (actionBooleans?.isView == false && actionBooleans?.isEdit == false) {
@@ -246,7 +246,9 @@ const EmailContainer = ({
         const actualStatuses = CustomEmailFlowDetails?.map((item) =>
           item?.status?.trim()?.toLowerCase()
         );
-
+        const emptyEmailStatus = CustomEmailFlowDetails?.filter(
+          (e) => e?.templateName?.trim() === "" || e?.emailBody?.trim() === ""
+        );
         const hasEmptyFields = CustomEmailFlowDetails?.some(
           (item) =>
             !item?.templateName?.trim() ||
@@ -266,7 +268,9 @@ const EmailContainer = ({
           let errorMsg = "";
 
           if (hasEmptyFields) {
-            errorMsg = "Please enter all fields";
+            errorMsg = `Please complete the required fields for ${emptyEmailStatus
+              ?.map((e) => e?.status)
+              .join(" ,")} content`;
           } else if (CustomEmailFlowDetails.length < 4) {
             errorMsg = "Minimum 4 custom templates are required";
           } else if (!allStatusesPresent) {
@@ -286,7 +290,6 @@ const EmailContainer = ({
               }),
             life: 3000,
           });
-
           isValid = false;
         } else {
           validateError.emailTemplateSelected = "";

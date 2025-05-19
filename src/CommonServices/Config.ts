@@ -161,12 +161,104 @@ export namespace Config {
     dynamicSectionWithField: [],
   };
 
-  //CategoryEmail Config Details :
-  export const CategoryEmailConfigDefault: ICategoryEmailConfigDetails = {
-    templateName: "",
-    emailBody: "",
-    status: "",
-  };
+  export const CategoryEmailConfigDefault: ICategoryEmailConfigDetails[] = [
+    {
+      templateName: "",
+      emailBody: ` <p>Dear [$ToPerson],</p>
+
+    <p>
+      I hope this message finds you well. A new request has been submitted and requires your review and approval.
+    </p>
+
+    <p><strong>Request Details:</strong></p>
+    <ul>
+      <li><strong>Request ID:</strong> [$RequestID]</li>
+      <li><strong>Submitted By:</strong> [$Requestor]</li>
+      <li><strong>Date Submitted:</strong> [$RequestDate]</li>
+      <li><strong>Details:</strong> [$RequestDetails]</li>
+    </ul>
+
+    <p>
+      Please review the request and take the necessary action.
+    </p>
+
+    <p>Thank you,<br />
+    [$Requestor]</p>`,
+      status: "Approval",
+    },
+    {
+      templateName: "",
+      emailBody: ` <p>Dear [$ToPerson],</p>
+
+    <p>
+      I hope this message finds you well. A new request has been submitted and requires your review and approval.
+    </p>
+
+    <p><strong>Request Details:</strong></p>
+    <ul>
+      <li><strong>Request ID:</strong> [$RequestID]</li>
+      <li><strong>Submitted By:</strong> [$Requestor]</li>
+      <li><strong>Date Submitted:</strong> [$RequestDate]</li>
+      <li><strong>Details:</strong> [$RequestDetails]</li>
+    </ul>
+
+    <p>
+      Please review the request and take the necessary action.
+    </p>
+
+    <p>Thank you,<br />
+    [$Requestor]</p>`,
+      status: "Reject",
+    },
+    {
+      templateName: "",
+      emailBody: ` <p>Dear [$ToPerson],</p>
+
+    <p>
+      I hope this message finds you well. A new request has been submitted and requires your review and approval.
+    </p>
+
+    <p><strong>Request Details:</strong></p>
+    <ul>
+      <li><strong>Request ID:</strong> [$RequestID]</li>
+      <li><strong>Submitted By:</strong> [$Requestor]</li>
+      <li><strong>Date Submitted:</strong> [$RequestDate]</li>
+      <li><strong>Details:</strong> [$RequestDetails]</li>
+    </ul>
+
+    <p>
+      Please review the request and take the necessary action.
+    </p>
+
+    <p>Thank you,<br />
+    [$Requestor]</p>`,
+      status: "ReSubmit",
+    },
+    {
+      templateName: "",
+      emailBody: ` <p>Dear [$ToPerson],</p>
+
+    <p>
+      I hope this message finds you well. A new request has been submitted and requires your review and approval.
+    </p>
+
+    <p><strong>Request Details:</strong></p>
+    <ul>
+      <li><strong>Request ID:</strong> [$RequestID]</li>
+      <li><strong>Submitted By:</strong> [$Requestor]</li>
+      <li><strong>Date Submitted:</strong> [$RequestDate]</li>
+      <li><strong>Details:</strong> [$RequestDetails]</li>
+    </ul>
+
+    <p>
+      Please review the request and take the necessary action.
+    </p>
+
+    <p>Thank you,<br />
+    [$Requestor]</p>`,
+      status: "Submit",
+    },
+  ];
 
   //Email Message Config Details:
   export const emailMessageConfig: IemailMessage = {
