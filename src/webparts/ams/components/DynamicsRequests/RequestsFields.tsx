@@ -568,7 +568,7 @@ const RequestsFields = ({
   const DynamicRequestsFieldsSideBarContent = () => {
     return (
       <>
-        <div className={dynamicFieldsStyles.formsContainer}>
+        <div className={dynamicFieldsStyles.formContainer}>
           <div className="profile_header_content">
             <div>
               <h2>
@@ -586,7 +586,7 @@ const RequestsFields = ({
               ([sectionName, fields]: [string, ISectionColumnsConfig[]]) => (
                 <div
                   key={sectionName}
-                  className={dynamicFieldsStyles.formContainer}
+                  className={dynamicFieldsStyles.formsCotainer}
                 >
                   <h3 className="overAllHeading">{sectionName}</h3>
                   <div className={dynamicFieldsStyles.singlelineFields}>
@@ -1026,7 +1026,7 @@ const RequestsFields = ({
                   <div className="customDataTableContainer">
                     <DataTable
                       paginator
-                      rows={3}
+                      rows={5}
                       sortField="itemID"
                       sortOrder={-1}
                       scrollable
