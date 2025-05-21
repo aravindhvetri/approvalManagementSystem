@@ -308,7 +308,9 @@ const ApprovalWorkFlow = ({
 
   //Validation
   const validRequiredField = async (action) => {
+
     const tempApprovalConfigDetailsArr = await getApprovalConfigDetails();
+
     if (
       approvalFlowDetails?.apprvalFlowName?.trim().length === 0 ||
       approvalFlowDetails?.rejectionFlow?.trim().length === 0
@@ -366,15 +368,28 @@ const ApprovalWorkFlow = ({
   };
   // Final validation
   const finalValidation = (action) => {
+    // if (!validation?.approvalConfigValidation && !validation?.stageValidation) {
+    //   {
+    //     action === "addStage"
+    //       ? addStage()
+    //       : action === "submit"
+    //       ? currentRec?.id !== null
+    //         ? updateApprovalConfig(approvalFlowDetails)
+    //         : addApprovalConfigDetails(approvalFlowDetails)
+    //       : "";
+    //   }
+    // }
     if (!validation?.approvalConfigValidation && !validation?.stageValidation) {
-      {
-        action === "addStage"
-          ? addStage()
-          : action === "submit"
-          ? currentRec?.id !== null
-            ? updateApprovalConfig(approvalFlowDetails)
-            : addApprovalConfigDetails(approvalFlowDetails)
-          : "";
+      if (action === "addStage") {
+        addStage();
+      } else if (action === "submit") {
+        setShowLoader(true);
+
+        if (currentRec?.id !== null) {
+          updateApprovalConfig(approvalFlowDetails);
+        } else {
+          addApprovalConfigDetails(approvalFlowDetails);
+        }
       }
     }
     if (
@@ -476,6 +491,7 @@ const ApprovalWorkFlow = ({
   ///ApprovalConfigFlowContent
   const ApprovalConfigSidebarContent = () => (
     <>
+      {showLoader ? <Loader /> : ""}
       <div className="profile_header_content">
         <div>
           <h2>{`${
