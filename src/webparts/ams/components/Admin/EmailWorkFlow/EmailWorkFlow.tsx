@@ -61,6 +61,9 @@ const EmailWorkFlow = ({
     { info: " Enter [$ApproverComments] for replace of Approver comments" },
   ];
   const [showLoader, setShowLoader] = useState<boolean>(true);
+  const [showLoaderEmailWorkFlowSideBar, setShowLoaderEmailWorkFlowSideBar] =
+    useState<boolean>(false);
+  console.log("showLoader", showLoader);
   const [usedCategories, setUsedCategories] = useState([]);
   const warningNote = [
     {
@@ -183,6 +186,7 @@ const EmailWorkFlow = ({
   //Submit the Email Template:
   const handleSubmit = () => {
     setShowLoader(true);
+    setShowLoaderEmailWorkFlowSideBar(true);
     if (actionsBooleans.isEdit && templateData.id) {
       const json = {
         TemplateName: templateData.templateName,
@@ -199,6 +203,7 @@ const EmailWorkFlow = ({
           setActionsBooleans({ ...Config.InitialActionsBooleans });
           setTemplateData({ ...Config?.EmailTemplateConfigDetails });
           setShowLoader(false);
+          setShowLoaderEmailWorkFlowSideBar(false);
         })
         .catch((err) => console.log("Error in Updating Email Template", err));
     } else {
@@ -216,6 +221,7 @@ const EmailWorkFlow = ({
           setActionsBooleans({ ...Config.InitialActionsBooleans });
           setTemplateData({ ...Config?.EmailTemplateConfigDetails });
           setShowLoader(false);
+          setShowLoaderEmailWorkFlowSideBar(false);
         })
         .catch((err) => console.log("Error in Creating Email Template", err));
     }
@@ -313,6 +319,7 @@ const EmailWorkFlow = ({
   //MainContents Goes to RightSideBar:
   const EmailWorkFlowSideBarContents = () => (
     <>
+      {showLoaderEmailWorkFlowSideBar ? <Loader /> : ""}
       <div className="profile_header_content">
         <div>
           <h2>{`${
