@@ -57,7 +57,6 @@ const ApprovalWorkFlow = ({
     useState<IApprovalDetailsPatch>({
       ...Config.ApprovalConfigDefaultDetails,
     });
-  console.log("approvalFlowDetails", approvalFlowDetails);
   const [rejectionFlowChoice, setRejectionFlowChoice] =
     useState<IDropdownDetails>({
       ...Config.initialConfigDrop,
@@ -77,8 +76,6 @@ const ApprovalWorkFlow = ({
     },
   ];
   const [selectedStage, setSelectedStage] = useState({});
-  console.log("usedCategories", usedCategories);
-
   //ApprovalConfig Details Patch
   const addApprovalConfigDetails = (addData: IApprovalDetailsPatch) => {
     SPServices.SPAddItem({
@@ -102,6 +99,20 @@ const ApprovalWorkFlow = ({
         console.log("addApprovalConfigDetails error", err);
         setShowLoader(false);
       });
+  };
+  // Get Approval Config List Details
+  const getApprovalConfigDetails = async () => {
+    try {
+      const res = await SPServices.SPReadItems({
+        Listname: Config.ListNames.ApprovalConfig,
+        Select: "*,Category/Id,Category/Category",
+        Expand: "Category",
+      });
+      return res;
+    } catch {
+      (err) => console.log("getApprovalConfigDetails err", err);
+      return [];
+    }
   };
 
   //ApprovalStageConfig Details Patch
@@ -255,8 +266,6 @@ const ApprovalWorkFlow = ({
       ...approvalFlowDetails,
       totalStages: orderedStage.length,
     });
-    console.log("stageIndex", stageIndex);
-    console.log("orderedStage", orderedStage);
     if (selectedStage?.["stage"] === stageIndex + 1) {
       setSelectedStage(
         orderedStage.find(
@@ -299,6 +308,9 @@ const ApprovalWorkFlow = ({
 
   //Validation
   const validRequiredField = async (action) => {
+
+    const tempApprovalConfigDetailsArr = await getApprovalConfigDetails();
+
     if (
       approvalFlowDetails?.apprvalFlowName?.trim().length === 0 ||
       approvalFlowDetails?.rejectionFlow?.trim().length === 0
@@ -311,6 +323,22 @@ const ApprovalWorkFlow = ({
     ) {
       validation["approvalConfigValidation"] =
         "Atleast one stage approver is required";
+    } else if (
+      tempApprovalConfigDetailsArr?.some((e) => {
+        const isSameFlowName =
+          e?.ApprovalFlowName?.trim() ===
+          approvalFlowDetails?.apprvalFlowName?.trim();
+
+        const isDifferentId = currentRec?.["id"]
+          ? currentRec?.id !== e?.ID
+          : true;
+
+        return isSameFlowName && isDifferentId;
+      }) &&
+      action === "submit"
+    ) {
+      validation["approvalConfigValidation"] =
+        "Approval flow name is already exists!";
     } else if (
       (action === "addStage" || action === "submit" || action === "") &&
       approvalFlowDetails?.apprvalFlowName.trim() &&
@@ -664,6 +692,7 @@ const ApprovalWorkFlow = ({
                     personSelectionLimit={3}
                     groupName={""}
                     showtooltip={true}
+                    tooltipMessage="Search and select persons here"
                     disabled={!isEdit}
                     ensureUser={true}
                     defaultSelectedUsers={approvalFlowDetails?.stages[
@@ -797,6 +826,7 @@ const ApprovalWorkFlow = ({
             approver: [],
           },
         ],
+        totalStages: 1,
       }));
       setSelectedStage({
         stage: 1,

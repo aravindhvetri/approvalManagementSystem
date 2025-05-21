@@ -153,7 +153,6 @@ const ApprovalDashboard = ({
         Orderbydecorasc: true,
       });
       const tempStageArr: IApprovalStages[] = [];
-      console.log("Aphg", res);
       res?.forEach((item: any) => {
         tempStageArr.push({
           stage: item?.Stage,

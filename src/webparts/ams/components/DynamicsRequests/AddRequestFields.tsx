@@ -138,7 +138,7 @@ const AddRequestsFields = ({
         setDynamicFields((prevFields) => [...prevFields, ...tempArr]);
       })
       .catch((e) => {
-        console.log(e, "getSectionColumnsConfig");
+        console.log(e, "getSectionColumnsConfig err");
       });
   };
   //Approval Json Config  //Update CategoryID and Approval Json here
@@ -544,7 +544,7 @@ const AddRequestsFields = ({
                 }}
                 filter
                 optionLabel="name"
-                placeholder="Category"
+                placeholder="Select category"
                 className="w-full md:w-14rem"
               />
               {selectedCategory ? (
@@ -784,6 +784,7 @@ const AddRequestsFields = ({
                                     );
                                   }}
                                   showtooltip
+                                  tooltipMessage="Search and select persons here"
                                   ensureUser
                                   principalTypes={[PrincipalType.User]}
                                   resolveDelay={1000}

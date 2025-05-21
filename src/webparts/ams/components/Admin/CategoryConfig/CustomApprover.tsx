@@ -1,6 +1,6 @@
 //Default Export:
 import * as React from "react";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useImperativeHandle } from "react";
 //Prime React Imports:
 import { Button } from "primereact/button";
 import { InputText } from "primereact/inputtext";
@@ -38,6 +38,7 @@ const CustomApprover = ({
   setApproverSignatureDetails,
   categoryClickingID,
   actionBooleans,
+  runValidationFunction,
   category,
   context,
   setCustomApproverSideBarVisible,
@@ -86,45 +87,58 @@ const CustomApprover = ({
         console.log("getRejectionFlowChoices error", err);
       });
   };
-
-  //ApprovalConfig Details Patch
-  const addApprovalConfigDetails = (addData: IApprovalDetailsPatch) => {
-    SPServices.SPAddItem({
-      Listname: Config.ListNames.ApprovalConfig,
-      RequestJSON: {
-        ApprovalFlowName: addData?.apprvalFlowName,
-        TotalStages: addData?.totalStages,
-        RejectionFlow: addData?.rejectionFlow,
-      },
-    })
-      .then(async (res: any) => {
-        await addData?.stages?.forEach((stage) =>
-          addApprovalStageConfigDetails(res?.data.ID, stage)
-        );
-        setApprovalFlowDetails({ ...Config.ApprovalConfigDefaultDetails });
-        setCustomApproverSideBarVisible(false);
-      })
-      .catch((err) => console.log("addApprovalConfigDetails error", err));
+  // Get Approval Config List Details
+  const getApprovalConfigDetails = async () => {
+    try {
+      const res = await SPServices.SPReadItems({
+        Listname: Config.ListNames.ApprovalConfig,
+        Select: "*,Category/Id,Category/Category",
+        Expand: "Category",
+      });
+      return res;
+    } catch {
+      (err) => console.log("getApprovalConfigDetails err", err);
+      return [];
+    }
   };
+  // //ApprovalConfig Details Patch
+  // const addApprovalConfigDetails = (addData: IApprovalDetailsPatch) => {
+  //   SPServices.SPAddItem({
+  //     Listname: Config.ListNames.ApprovalConfig,
+  //     RequestJSON: {
+  //       ApprovalFlowName: addData?.apprvalFlowName,
+  //       TotalStages: addData?.totalStages,
+  //       RejectionFlow: addData?.rejectionFlow,
+  //     },
+  //   })
+  //     .then(async (res: any) => {
+  //       await addData?.stages?.forEach((stage) =>
+  //         addApprovalStageConfigDetails(res?.data.ID, stage)
+  //       );
+  //       setApprovalFlowDetails({ ...Config.ApprovalConfigDefaultDetails });
+  //       setCustomApproverSideBarVisible(false);
+  //     })
+  //     .catch((err) => console.log("addApprovalConfigDetails error", err));
+  // };
 
-  //ApprovalStageConfig Details Patch
-  const addApprovalStageConfigDetails = (
-    parentId: number,
-    stage: IApprovalStages
-  ) => {
-    const tempApprovers = stage?.approver?.map((e) => e.id);
-    SPServices.SPAddItem({
-      Listname: Config.ListNames.ApprovalStageConfig,
-      RequestJSON: {
-        ParentApprovalId: parentId,
-        Stage: stage?.stage,
-        ApprovalProcess: stage?.approvalProcess,
-        ApproverId: { results: tempApprovers },
-      },
-    })
-      .then((res: any) => {})
-      .catch((err) => console.log("addApprovalStageConfigDetails error", err));
-  };
+  // //ApprovalStageConfig Details Patch
+  // const addApprovalStageConfigDetails = (
+  //   parentId: number,
+  //   stage: IApprovalStages
+  // ) => {
+  //   const tempApprovers = stage?.approver?.map((e) => e.id);
+  //   SPServices.SPAddItem({
+  //     Listname: Config.ListNames.ApprovalStageConfig,
+  //     RequestJSON: {
+  //       ParentApprovalId: parentId,
+  //       Stage: stage?.stage,
+  //       ApprovalProcess: stage?.approvalProcess,
+  //       ApproverId: { results: tempApprovers },
+  //     },
+  //   })
+  //     .then((res: any) => {})
+  //     .catch((err) => console.log("addApprovalStageConfigDetails error", err));
+  // };
 
   //onChange handle
   const onChangeHandle = (key, value) => {
@@ -214,20 +228,33 @@ const CustomApprover = ({
 
   //Validation
   const validRequiredField = async (action) => {
+    const tempApprovalConfigDetailsArr = await getApprovalConfigDetails();
+
     if (
       approvalFlowDetails?.apprvalFlowName.trim().length === 0 ||
       approvalFlowDetails?.rejectionFlow.trim().length === 0
     ) {
       validation["approvalConfigValidation"] =
         "Workflow name and Rejection process both are required";
-    } else if (
-      approvalFlowDetails?.stages.length === 0 &&
-      action === "submit"
-    ) {
+    } else if (approvalFlowDetails?.stages.length === 0 && action === "next") {
       validation["approvalConfigValidation"] =
         "Atleast one stage approver is required";
     } else if (
-      (action === "addStage" || action === "submit") &&
+      tempApprovalConfigDetailsArr?.some((e) => {
+        const isSameFlowName =
+          e?.ApprovalFlowName?.trim() ===
+          approvalFlowDetails?.apprvalFlowName?.trim();
+
+        return (
+          isSameFlowName && !actionBooleans?.isEdit && !actionBooleans?.isView
+        );
+      }) &&
+      action === "next"
+    ) {
+      validation["approvalConfigValidation"] =
+        "Approval flow name is already exists!";
+    } else if (
+      (action === "addStage" || action === "next") &&
       approvalFlowDetails?.apprvalFlowName.trim() &&
       approvalFlowDetails?.rejectionFlow.trim()
     ) {
@@ -251,21 +278,22 @@ const CustomApprover = ({
       }
     }
     await setValidation({ ...validation });
-    finalValidation(action);
-  };
-
-  // Final validation
-  const finalValidation = (action) => {
     if (!validation?.approvalConfigValidation && !validation?.stageValidation) {
-      {
-        action === "addStage"
-          ? addStage()
-          : action === "submit"
-          ? addApprovalConfigDetails(approvalFlowDetails)
-          : "";
+      if (action === "addStage") {
+        addStage();
+      } else if (action === "next") {
+        return true;
+      }
+    } else {
+      if (action === "next") {
+        return false;
       }
     }
   };
+  //Sent validRequiredField function to parent component
+  useImperativeHandle(runValidationFunction, () => ({
+    ValidationFunc: () => validRequiredField("next"),
+  }));
 
   //particular categoryID Details:
   const fetchCategoryDetails = async () => {
@@ -300,7 +328,6 @@ const CustomApprover = ({
   };
 
   const fetchApprovalStages = async (parentId) => {
-    console.log("parentId", parentId);
     try {
       const res: any = await SPServices.SPReadItems({
         Listname: Config.ListNames.ApprovalStageConfig,
@@ -315,7 +342,6 @@ const CustomApprover = ({
           },
         ],
       });
-      console.log("Stages res", res);
       return res?.map((stage, index) => ({
         stage: index + 1,
         approvalProcess: stage?.ApprovalProcess || null,
@@ -418,7 +444,6 @@ const CustomApprover = ({
       </DataTable>
     );
   };
-  console.log("approvalFlowDetails", approvalFlowDetails);
   useEffect(() => {
     getRejectionFlowChoices();
     const storedData = sessionStorage.getItem("approvalFlowDetails");
@@ -427,8 +452,6 @@ const CustomApprover = ({
       let tempSelecetedStage: {} = JSON.parse(storedData)?.["stages"]?.find(
         (e) => e?.stage === 1
       );
-
-      console.log("tempSelecetedStage", tempSelecetedStage);
       setSelectedStage(tempSelecetedStage);
     } else {
       setApprovalFlowDetails((prev: IApprovalDetailsPatch) => ({
@@ -474,7 +497,6 @@ const CustomApprover = ({
 
   return (
     <>
-
       {/* <div className={`${CustomApproverStyles.topSection}`}>
       {actionBooleans?.isEdit && (
         <div>{notesContainerDetails("ⓘ Info", notes)}</div>
@@ -693,6 +715,7 @@ const CustomApprover = ({
                   personSelectionLimit={3}
                   groupName={""}
                   showtooltip={true}
+                  tooltipMessage="Search and select persons here"
                   disabled={actionBooleans?.isEdit || actionBooleans?.isView}
                   ensureUser={true}
                   defaultSelectedUsers={approvalFlowDetails?.stages[
