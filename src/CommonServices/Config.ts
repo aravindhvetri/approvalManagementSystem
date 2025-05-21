@@ -122,7 +122,26 @@ export namespace Config {
   export const EmailTemplateConfigDetails: IEmailTemplateConfigDetails = {
     id: null,
     templateName: "",
-    emailBody: "",
+    emailBody: ` <p>Dear [$ToPerson],</p>
+
+    <p>
+      I hope this message finds you well. A new request has been submitted and requires your review and approval.
+    </p>
+
+    <p><strong>Request Details:</strong></p>
+    <ul>
+      <li><strong>Request ID:</strong> [$RequestID]</li>
+      <li><strong>Submitted By:</strong> [$Requestor]</li>
+      <li><strong>Date Submitted:</strong> [$RequestDate]</li>
+      <li><strong>Details:</strong> [$RequestDetails]</li>
+    </ul>
+
+    <p>
+      Please review the request and take the necessary action.
+    </p>
+
+    <p>Thank you,<br />
+    [$Requestor]</p>`,
   };
 
   //Next Stage From Category RighSideBar:

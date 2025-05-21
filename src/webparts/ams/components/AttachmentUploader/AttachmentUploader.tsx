@@ -39,7 +39,6 @@ const AttachmentUploader = ({ context, datas }) => {
       }
 
       setFiles([]);
-      console.log("All files uploaded successfully!");
     } catch (error) {
       console.error("Error uploading files:", error);
     }

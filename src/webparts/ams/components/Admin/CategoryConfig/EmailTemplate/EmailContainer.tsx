@@ -61,7 +61,6 @@ const EmailContainer = ({
   const getCustomEmailTemlateData = (CustomEmailData: []) => {
     setCustomEmailData([...CustomEmailData]);
   };
-  console.log("customEmailDataWithEmpty", customEmailDataWithEmpty);
   //Get CustomEmailDataWithEmpty:
   const getCustomEmailDataWithEmpty = (CustomEmailDataWithEmpty: []) => {
     if (actionBooleans?.isView == false && actionBooleans?.isEdit == false) {
@@ -82,6 +81,19 @@ const EmailContainer = ({
     sessionStorage.setItem("selectedEmail", selectedEmail);
   }, [selectedEmail]);
 
+  //Get email template config list
+  const getEmailTemplateDetails = async () => {
+    try {
+      const res = await SPServices.SPReadItems({
+        Listname: Config.ListNames.EmailTemplateConfig,
+        Select: "*",
+      });
+      return res;
+    } catch {
+      (err) => console.log("getEmailTemplateDetails", getEmailTemplateDetails);
+      return [];
+    }
+  };
   // Get Category Sections
   const getCategorySectionDetails = async (dataID) => {
     try {
@@ -186,7 +198,7 @@ const EmailContainer = ({
       .catch((err) => console.log("updatesectionColumnsConfigList err", err));
   };
 
-  const valiadateFunc = (isDraft: boolean) => {
+  const valiadateFunc = async (isDraft: boolean) => {
     let isValid = true;
     if (selectedEmail === "") {
       validateError.emailTemplateSelected =
@@ -241,42 +253,73 @@ const EmailContainer = ({
 
       if (selectedEmail === "custom") {
         const CustomEmailFlowDetails = customEmailDataWithEmpty;
-
-        const requiredStatuses = ["Approval", "Reject", "ReSubmit", "Submit"];
-        const actualStatuses = CustomEmailFlowDetails?.map((item) =>
-          item?.status?.trim()?.toLowerCase()
-        );
+        var templateNameAlreadyExist = [];
+        // const requiredStatuses = ["Approval", "Reject", "ReSubmit", "Submit"];
+        // const actualStatuses = CustomEmailFlowDetails?.map((item) =>
+        //   item?.status?.trim()?.toLowerCase()
+        // );
         const emptyEmailStatus = CustomEmailFlowDetails?.filter(
-          (e) => e?.templateName?.trim() === "" || e?.emailBody?.trim() === ""
+          (e) =>
+            e?.templateName?.trim() === "" ||
+            e?.emailBody?.replace(/<p><br><\/p>/gi, "")?.trim() === ""
         );
-        const hasEmptyFields = CustomEmailFlowDetails?.some(
-          (item) =>
-            !item?.templateName?.trim() ||
-            !item?.emailBody?.trim() ||
-            !item?.status?.trim()
+        const duplicateTemplateNameCounts = {};
+        CustomEmailFlowDetails.forEach(
+          ({ templateName }) =>
+            (duplicateTemplateNameCounts[templateName.trim()] =
+              (duplicateTemplateNameCounts[templateName.trim()] || 0) + 1)
         );
+        const sameTemplateNameExist = CustomEmailFlowDetails.filter(
+          (e) => duplicateTemplateNameCounts[e?.templateName.trim()] > 1
+        );
+        if (!(actionBooleans?.isView || actionBooleans?.isEdit)) {
+          const tempArr = await getEmailTemplateDetails();
+          templateNameAlreadyExist = CustomEmailFlowDetails.filter((e) =>
+            tempArr
+              ?.map((e) => e?.TemplateName?.trim())
+              .includes(e.templateName?.trim())
+          );
+        }
+        // const hasEmptyFields = CustomEmailFlowDetails?.some(
+        //   (item) =>
+        //     !item?.templateName?.trim() ||
+        //     !item?.emailBody?.trim() ||
+        //     !item?.status?.trim()
+        // );
 
-        const allStatusesPresent = requiredStatuses.every((status) =>
-          actualStatuses.includes(status.toLowerCase())
-        );
+        // const allStatusesPresent = requiredStatuses.every((status) =>
+        //   actualStatuses.includes(status.toLowerCase())
+        // );
 
         if (
-          hasEmptyFields ||
+          emptyEmailStatus.length > 0 ||
           CustomEmailFlowDetails.length < 4 ||
-          !allStatusesPresent
+          sameTemplateNameExist.length > 0 ||
+          templateNameAlreadyExist.length > 0
         ) {
           let errorMsg = "";
 
-          if (hasEmptyFields) {
+          if (emptyEmailStatus.length > 0) {
             errorMsg = `Please complete the required fields for ${emptyEmailStatus
               ?.map((e) => e?.status)
               .join(" ,")} content`;
+          } else if (sameTemplateNameExist.length > 0) {
+            errorMsg = `${sameTemplateNameExist
+              ?.map((e) => e?.status)
+              ?.join(" ,")} contents have same template name`;
+          } else if (templateNameAlreadyExist.length > 0) {
+            errorMsg = `${templateNameAlreadyExist
+              .map((e) => e?.status)
+              .join(" ,")} content template ${
+              templateNameAlreadyExist.length > 1 ? "names are" : " name is"
+            } already exists!`;
           } else if (CustomEmailFlowDetails.length < 4) {
             errorMsg = "Minimum 4 custom templates are required";
-          } else if (!allStatusesPresent) {
-            errorMsg =
-              "Custom email templates must include all 4 statuses: Approval, Reject, ReSubmit, and Submit";
           }
+          // else if (!allStatusesPresent) {
+          //   errorMsg =
+          //     "Custom email templates must include all 4 statuses: Approval, Reject, ReSubmit, and Submit";
+          // }
 
           toast.current.show({
             severity: "warn",

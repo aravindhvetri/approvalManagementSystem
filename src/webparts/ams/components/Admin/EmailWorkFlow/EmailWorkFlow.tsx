@@ -253,7 +253,10 @@ const EmailWorkFlow = ({
 
   const validateFunction = () => {
     let isValidation: boolean = false;
-    if (!templateData?.templateName || !templateData?.emailBody) {
+    if (
+      templateData?.templateName?.trim() === "" ||
+      templateData?.emailBody?.replace(/<p><br><\/p>/gi, "")?.trim() === ""
+    ) {
       isValidation = true;
       setValidation(true);
       return false;
@@ -340,23 +343,32 @@ const EmailWorkFlow = ({
         )}
         <div>
           <Label className={EmailWorkFlowStyles.label}>
-            Subject<span className="required">*</span>
+            Template Name<span className="required">* </span>
+            <span className="categoryNameTag">
+              Template Name is considered as subject of the email
+            </span>
           </Label>
           <InputText
             value={templateData?.templateName}
+            placeholder={`Example: Approval/Rejection notification for request`}
             onChange={(e) => handleChange("templateName", e.target.value)}
             disabled={actionsBooleans.isView}
             style={{ width: "38%" }}
           />
           <div>
-            {isValidation && !templateData?.templateName && (
-              <span className="errorMsg">Subject is required</span>
+            {isValidation && templateData?.templateName?.trim() === "" && (
+              <span className="errorMsg">Template Name is required</span>
             )}
           </div>
 
           <div className={`${EmailWorkFlowStyles.EditorSection} card`}>
             <Label className={EmailWorkFlowStyles.label}>
-              Body content<span className="required">*</span>
+              Body content<span className="required">* </span>
+              {!templateData?.id && (
+                <span className="categoryNameTag">
+                  Please adjust the sample content below as needed
+                </span>
+              )}
             </Label>
             <ReactQuill
               value={templateData?.emailBody}
@@ -371,9 +383,12 @@ const EmailWorkFlow = ({
             readOnly={actionsBooleans.isView}
           /> */}
             <div>
-              {isValidation && !templateData?.emailBody && (
-                <span className="errorMsg">Body content is required</span>
-              )}
+              {isValidation &&
+                templateData?.emailBody
+                  ?.replace(/<p><br><\/p>/gi, "")
+                  ?.trim() === "" && (
+                  <span className="errorMsg">Body content is required</span>
+                )}
             </div>
           </div>
         </div>
@@ -424,7 +439,11 @@ const EmailWorkFlow = ({
   useEffect(() => {
     getEmailTemplateContents();
   }, []);
-
+  useEffect(() => {
+    if (!setEmailWorkFlowSideBarVisible) {
+      setTemplateData({ ...Config?.EmailTemplateConfigDetails });
+    }
+  }, [setEmailWorkFlowSideBarVisible]);
   useEffect(() => {
     setEmailWorkFlowSideBarContent((prev: IRightSideBarContents) => ({
       ...prev,

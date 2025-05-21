@@ -104,8 +104,6 @@ const DynamicSectionWithField = ({
   const [isValidation, setIsValidation] = useState<boolean>(false);
   const [choiceError, setChoiceError] = useState<boolean>(false);
   const [fieldEdit, setFieldEdit] = useState<boolean>(false);
-  console.log("finalSubmit", finalSubmit);
-
   const handleSaveField = () => {
     const updatedSections = [...sections];
     if (newField.sectionIndex !== null) {
@@ -1382,6 +1380,7 @@ const DynamicSectionWithField = ({
                     personSelectionLimit={1}
                     groupName={""}
                     showtooltip={true}
+                    tooltipMessage="Search and select persons here"
                     ensureUser={true}
                     principalTypes={[PrincipalType.User]}
                     resolveDelay={1000}
@@ -1391,6 +1390,7 @@ const DynamicSectionWithField = ({
                   <PeoplePicker
                     context={context}
                     personSelectionLimit={5}
+                    tooltipMessage="Search and select persons here"
                     groupName={""}
                     showtooltip={true}
                     ensureUser={true}

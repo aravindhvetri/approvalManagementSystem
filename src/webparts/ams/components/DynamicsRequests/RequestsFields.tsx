@@ -720,6 +720,7 @@ const RequestsFields = ({
                                 }
                                 groupName={""}
                                 showtooltip={true}
+                                tooltipMessage="Search and select persons here"
                                 ensureUser={true}
                                 principalTypes={[PrincipalType.User]}
                                 resolveDelay={1000}

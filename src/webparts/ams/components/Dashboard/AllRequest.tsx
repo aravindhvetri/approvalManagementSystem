@@ -44,7 +44,6 @@ const AllRequestPage = ({
   const [requestsDetails, setRequestsDetails] = useState<IRequestHubDetails[]>(
     []
   );
-  console.log(requestsDetails, "requestsDetails");
   //Record Action
   const [recordAction, setRecordAction] = useState<string>("");
   const [navigateFrom, setNavigateFrom] = useState<string>("");
@@ -122,7 +121,6 @@ const AllRequestPage = ({
 
   //Filter Condition
   const filterRecords = (tempArr) => {
-    console.log("temArr", tempArr);
     if (searchValue) {
       const tempSearchFilter = tempArr?.filter((item) => {
         return (
