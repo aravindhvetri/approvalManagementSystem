@@ -112,6 +112,7 @@ export interface IToaster {
   ClsName: string;
   type: "Warning" | "Success" | "Alert";
   msg: string;
+  image?: string;
 }
 
 //RequestHub Details:

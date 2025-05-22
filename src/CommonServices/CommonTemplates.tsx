@@ -306,7 +306,19 @@ export const toastNotify = (item: IToaster) => {
   return (
     <div className="flex flex-row align-items-center toastContainer">
       <div className={item.ClsName}>
-        <i className={`pi ${item.iconName}`}></i>
+        {
+          <>
+            {item.image ? (
+              <img
+                src={item.image}
+                alt="toast icon"
+                style={{ width: 40, height: 40 }}
+              />
+            ) : (
+              <i className={`pi ${item.iconName}`}></i>
+            )}
+          </>
+        }
       </div>
       <div>
         <div className="toast-heading">{item.type}</div>
@@ -350,7 +362,10 @@ export const multiplePeoplePickerTemplate = (users: IPeoplePickerDetails[]) => {
             }
           })}
 
-          {users.length > 2 ? (
+          {users.filter(
+            (item, index, self) =>
+              index === self.findIndex((t) => t.email === item.email)
+          ).length > 2 ? (
             <TooltipHost
               className="all-member-users"
               content={

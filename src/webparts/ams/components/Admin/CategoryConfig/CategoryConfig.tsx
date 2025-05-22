@@ -418,8 +418,9 @@ const CategoryConfig = ({
                   ClsName: "toast-imgcontainer-warning",
                   type: "Warning",
                   msg: "Please select an existing flow",
+                  image: require("../../../../../../src/webparts/ams/assets/no-data.gif"),
                 }),
-              life: 3000,
+              life: 300000,
             });
             isValid = false;
           } else {

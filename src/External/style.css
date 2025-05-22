@@ -392,7 +392,7 @@ input::placeholder {
 }
 .toast-imgcontainer-warning {
   padding: 10px;
-  background-color: #d2ab2e;
+  /* background-color: #d2ab2e; */
   border-radius: 6px;
 }
 /*MultiPeoplePicker Common Styles..........................................*/
@@ -470,12 +470,9 @@ li.p-highlight .p-tabview-nav-link {
   border: none;
   background-color: #ecf0f1;
   display: flex;
+  justify-content: start !important;
   padding: 3px;
   border-radius: 5px;
-}
-
-.p-tabview-nav .p-unselectable-text {
-  width: 20%;
 }
 
 .p-tabview-nav-link {
