@@ -304,13 +304,18 @@ const AddRequestsFields = ({
       }
     });
     setErrors(newErrors);
-    toast.current.show({
-      severity: "warn",
-      summary: "Validation Failed",
-      detail: "Please complete all required fields.",
-      life: 3000,
-    });
-    return Object.keys(newErrors).length === 0;
+    if (Object.keys(newErrors).length > 0) {
+      toast.current.show({
+        severity: "warn",
+        summary: "Validation Failed",
+        detail: "Please complete all required fields.",
+        life: 3000,
+      });
+      return false;
+    }
+
+    return true;
+    // return Object.keys(newErrors).length === 0;
   };
 
   //Remove file :
@@ -508,6 +513,7 @@ const AddRequestsFields = ({
   const DynamicRequestsFieldsSideBarContent = () => {
     return (
       <>
+        {showLoader ? <Loader /> : ""}
         <div className={dynamicFieldsStyles.filterHeader}>
           <div className={dynamicFieldsStyles.filterHeaderContainer}>
             <div style={{ display: "flex", justifyContent: "center" }}>
