@@ -52,6 +52,9 @@ const EmailContainer = ({
     emailTemplateSelected: "",
   });
   const [activeEmailTab, setActiveEmailTab] = useState(0);
+  console.log("existingEmailData", existingEmailData);
+  console.log("customEmailData", customEmailData);
+
   //Get ExistingEmailTempalte Datas:
   const getExistingEmailTemlateData = (ExistingEmailData: []) => {
     setExistingEmailData([...ExistingEmailData]);
@@ -899,6 +902,8 @@ const EmailContainer = ({
                   value="existing"
                   onChange={(e) => {
                     setSelectedEmail(e?.value);
+                    setExistingEmailData([]);
+                    setCustomEmailData([]);
                     sessionStorage.removeItem("customTemplates");
                   }}
                   checked={selectedEmail === "existing"}
@@ -914,6 +919,8 @@ const EmailContainer = ({
                   value="custom"
                   onChange={(e) => {
                     setSelectedEmail(e?.value);
+                    setExistingEmailData([]);
+                    setCustomEmailData([]);
                     sessionStorage.removeItem("selectedDropValues");
                     sessionStorage.removeItem("selectedEmailBody");
                   }}
