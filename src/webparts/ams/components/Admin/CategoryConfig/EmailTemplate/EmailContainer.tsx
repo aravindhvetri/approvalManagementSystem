@@ -220,6 +220,7 @@ const EmailContainer = ({
                 ClsName: "toast-imgcontainer-warning",
                 type: "Warning",
                 msg: "Please select an existing email flow",
+                image: require("../../../../../../../src/webparts/ams/assets/giphy.gif"),
               }),
             life: 3000,
           });
@@ -240,6 +241,7 @@ const EmailContainer = ({
                     ClsName: "toast-imgcontainer-warning",
                     type: "Warning",
                     msg: "One or more email templates are missing in the flow",
+                    image: require("../../../../../../../src/webparts/ams/assets/giphy.gif"),
                   }),
                 life: 3000,
               });
@@ -333,6 +335,7 @@ const EmailContainer = ({
                 ClsName: "toast-imgcontainer-warning",
                 type: "Warning",
                 msg: errorMsg,
+                image: require("../../../../../../../src/webparts/ams/assets/giphy.gif"),
               }),
             life: 3000,
           });
@@ -908,7 +911,16 @@ const EmailContainer = ({
                   }}
                   checked={selectedEmail === "existing"}
                 />
-                <label className="radioDivLabel" htmlFor="existing">
+                <label
+                  className="radioDivLabel"
+                  htmlFor="existing"
+                  onClick={() => {
+                    setSelectedEmail("existing");
+                    setExistingEmailData([]);
+                    setCustomEmailData([]);
+                    sessionStorage.removeItem("customTemplates");
+                  }}
+                >
                   Existing template
                 </label>
               </div>
@@ -926,7 +938,18 @@ const EmailContainer = ({
                   }}
                   checked={selectedEmail === "custom"}
                 />
-                <label className="radioDivLabel">Custom template</label>
+                <label
+                  className="radioDivLabel"
+                  onClick={() => {
+                    setSelectedEmail("custom");
+                    setExistingEmailData([]);
+                    setCustomEmailData([]);
+                    sessionStorage.removeItem("selectedDropValues");
+                    sessionStorage.removeItem("selectedEmailBody");
+                  }}
+                >
+                  Custom template
+                </label>
               </div>
             </div>
           )}

@@ -20,6 +20,7 @@ import {
 import {
   generateRequestID,
   sendNotification,
+  toastNotify,
 } from "../../../../CommonServices/CommonTemplates";
 //primeReact Imports:
 import { InputText } from "primereact/inputtext";
@@ -308,7 +309,14 @@ const AddRequestsFields = ({
       toast.current.show({
         severity: "warn",
         summary: "Validation Failed",
-        detail: "Please complete all required fields.",
+        content: (props) =>
+          toastNotify({
+            iconName: "pi-exclamation-triangle",
+            ClsName: "toast-imgcontainer-warning",
+            type: "Warning",
+            msg: "Please complete all required fields.",
+            image: require("../../../../../src/webparts/ams/assets/giphy.gif"),
+          }),
         life: 3000,
       });
       return false;
@@ -496,7 +504,14 @@ const AddRequestsFields = ({
         toast.current?.show({
           severity: "warn",
           summary: "Warning",
-          detail: "Some file names already exist!",
+          content: (prop) =>
+            toastNotify({
+              iconName: "pi-exclamation-triangle",
+              ClsName: "toast-imgcontainer-warning",
+              type: "Warning",
+              msg: "Some file names already exist!",
+              image: require("../../../../../src/webparts/ams/assets/giphy.gif"),
+            }),
           life: 3000,
         });
       }

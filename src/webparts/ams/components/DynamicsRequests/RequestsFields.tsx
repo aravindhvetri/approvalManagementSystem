@@ -15,6 +15,7 @@ import {
 import {
   peoplePickerTemplate,
   statusTemplate,
+  toastNotify,
 } from "../../../../CommonServices/CommonTemplates";
 //primeReact Imports:
 import { InputText } from "primereact/inputtext";
@@ -470,7 +471,14 @@ const RequestsFields = ({
         toast.current?.show({
           severity: "warn",
           summary: "Warning",
-          detail: "Some file names already exist!",
+          content: (props) =>
+            toastNotify({
+              iconName: "pi-exclamation-triangle",
+              ClsName: "toast-imgcontainer-warning",
+              type: "Warning",
+              msg: "Some file names already exist!",
+              image: require("../../../../../src/webparts/ams/assets/giphy.gif"),
+            }),
           life: 3000,
         });
       }
