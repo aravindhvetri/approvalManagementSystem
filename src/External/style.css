@@ -1,7 +1,19 @@
 /* Common WebPart FullWidth and CanvasZone Default Code */
+/* .fc-theme-standard .fc-scrollgrid {
+  border: none !important;
+}
+*::-webkit-scrollbar {
+  height: 8px;
+  width: 8px;
+}
+
+*::-webkit-scrollbar-thumb {
+  border-radius: 10px;
+  background-color: rgb(192, 192, 192);
+}
 #workbenchPageContent > div > div > div {
   padding: 0px !important;
-}
+} */
 #workbenchPageContent {
   max-width: 100%;
 }

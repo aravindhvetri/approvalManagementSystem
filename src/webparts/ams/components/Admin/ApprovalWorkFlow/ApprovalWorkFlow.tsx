@@ -68,6 +68,7 @@ const ApprovalWorkFlow = ({
     ...Config.ApprovalFlowValidation,
   });
   const [showLoader, setShowLoader] = useState<boolean>(false);
+  console.log(showLoader, "showLoader");
   const warningNote = [
     {
       info: ` This email flow is already used by the following categories: ${usedCategories.join(
@@ -308,7 +309,6 @@ const ApprovalWorkFlow = ({
 
   //Validation
   const validRequiredField = async (action) => {
-
     const tempApprovalConfigDetailsArr = await getApprovalConfigDetails();
 
     if (
@@ -845,6 +845,7 @@ const ApprovalWorkFlow = ({
     rejectionFlowChoice?.rejectionFlowDrop,
     validation,
     selectedStage,
+    showLoader,
   ]);
   useEffect(() => {
     getRejectionFlowChoices();

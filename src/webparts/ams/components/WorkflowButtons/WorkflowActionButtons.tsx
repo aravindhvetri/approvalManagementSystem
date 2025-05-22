@@ -220,7 +220,6 @@ const WorkflowActionButtons = ({
 
     if (isSignatureRequired && isSignatureEmpty && showSignatureByStage) {
       setApproverDescriptionErrMsg("* Signature is mandatory");
-      setShowLoader(false);
       return;
     }
 
@@ -256,7 +255,7 @@ const WorkflowActionButtons = ({
 
     if (errorMessage) {
       setApproverDescriptionErrMsg(errorMessage);
-      setShowLoader(false);
+      // setShowLoader(false);
       return;
     }
 
@@ -536,7 +535,7 @@ const WorkflowActionButtons = ({
               statusCode
             );
             setRequestsSideBarVisible(false);
-            setShowLoader(false);
+            await setShowLoader(false);
           })
           .catch((err: any) => {
             console.log("error getRequestHubDetails", err);
