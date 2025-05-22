@@ -377,13 +377,20 @@ input::placeholder {
 }
 .toast-Heading {
   font-size: 16px;
-  font-weight: 500;
+  margin-bottom: 5px;
+  font-weight: 600;
 }
 .toast-message {
-  font-size: 14px;
+  font-size: 13px;
 }
+.p-toast .p-toast-message .p-toast-message-content {
+  padding: 1rem;
+  letter-spacing: 0.5px;
+}
+
 .p-toast .p-toast-message .p-toast-icon-close {
   margin-top: 6px;
+  color: black;
 }
 .toast-imgcontainer-success {
   padding: 10px;
@@ -391,9 +398,16 @@ input::placeholder {
   border-radius: 6px;
 }
 .toast-imgcontainer-warning {
-  padding: 10px;
-  /* background-color: #d2ab2e; */
-  border-radius: 6px;
+  padding: 3px;
+  /* background-color: #feb82f;
+  border-radius: 6px; */
+}
+.p-toast .p-toast-message.p-toast-message-warn {
+  background: #feb82f;
+  border: none;
+  box-shadow: rgb(0 0 0 / 25%) 0px 13px 27px -5px,
+    rgb(0 0 0 / 30%) 0px 8px 16px -8px;
+  color: black;
 }
 /*MultiPeoplePicker Common Styles..........................................*/
 .user-selector-group .ms-Image {

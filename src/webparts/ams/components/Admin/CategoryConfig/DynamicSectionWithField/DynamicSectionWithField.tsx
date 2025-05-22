@@ -93,7 +93,14 @@ const DynamicSectionWithField = ({
       toast.current.show({
         severity: "warn",
         summary: "Fill Section",
-        detail: "Please fill the current section before adding a new one.",
+        content: (prop) =>
+          toastNotify({
+            iconName: "pi-exclamation-triangle",
+            ClsName: "toast-imgcontainer-warning",
+            type: "Warning",
+            msg: "Please fill the current section before adding a new one.",
+            image: require("../../../../../../../src/webparts/ams/assets/giphy.gif"),
+          }),
         life: 3000,
       });
       return;
@@ -909,6 +916,7 @@ const DynamicSectionWithField = ({
             ClsName: "toast-imgcontainer-warning",
             type: "Warning",
             msg: "Atleast one section is required",
+            image: require("../../../../../../../src/webparts/ams/assets/giphy.gif"),
           }),
         life: 3000,
       });
@@ -925,6 +933,7 @@ const DynamicSectionWithField = ({
               ClsName: "toast-imgcontainer-warning",
               type: "Warning",
               msg: "Please enter a current section name",
+              image: require("../../../../../../../src/webparts/ams/assets/giphy.gif"),
             }),
           life: 3000,
         });
@@ -939,6 +948,7 @@ const DynamicSectionWithField = ({
               ClsName: "toast-imgcontainer-warning",
               type: "Warning",
               msg: "Atleast one Field is required",
+              image: require("../../../../../../../src/webparts/ams/assets/giphy.gif"),
             }),
           life: 3000,
         });
@@ -998,6 +1008,7 @@ const DynamicSectionWithField = ({
             ClsName: "toast-imgcontainer-warning",
             type: "Warning",
             msg: "Field name already exists",
+            image: require("../../../../../../../src/webparts/ams/assets/giphy.gif"),
           }),
         life: 3000,
       });
