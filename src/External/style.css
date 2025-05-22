@@ -470,7 +470,7 @@ li.p-highlight .p-tabview-nav-link {
   border: none;
   background-color: #ecf0f1;
   display: flex;
-  justify-content: start !important;
+  justify-content: space-between;
   padding: 3px;
   border-radius: 5px;
 }
@@ -479,7 +479,7 @@ li.p-highlight .p-tabview-nav-link {
   font-size: 14px;
   font-weight: 500;
   color: #979a9a;
-  padding: 10px 96px;
+  padding: 10px 86.2px;
   border: none;
   background-color: transparent;
   transition: background-color 0.4s ease-in-out, color 0.4s ease-in-out;
