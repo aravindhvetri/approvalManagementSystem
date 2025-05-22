@@ -85,6 +85,10 @@ div[data-automationid="SiteHeader"] {
   margin-bottom: 10px;
   height: auto;
 }
+.p-datatable-emptymessage {
+  font-size: 14px;
+  color: #979aa5;
+}
 .p-datatable .p-datatable-thead > tr > th {
   border: none !important;
   padding: 0;
@@ -442,35 +446,6 @@ input::placeholder {
 }
 
 /* Tabview Common Styles.................................................... */
-
-/* .p-tabview {
-  padding: 0;
-  margin: 0;
-  height: 100%;
-}
-.p-tabview-selected {
-  border: 0px !important;
-}
-.p-tabview-panels {
-  padding: 0;
-}
-.p-tabview-nav-link {
-  font-size: var(--fontSizebig);
-  font-weight: 500;
-  border: 0;
-}
-li.p-highlight .p-tabview-nav-link {
-  border-bottom: 4px solid var(--green);
-  font-weight: bold;
-  color: var(--green);
-}
-
-.p-tabview-nav {
-  border: 0;
-}
-.p-menuitem-link {
-  border: 0;
-} */
 .p-tabview {
   padding: 0;
   margin: 0;
