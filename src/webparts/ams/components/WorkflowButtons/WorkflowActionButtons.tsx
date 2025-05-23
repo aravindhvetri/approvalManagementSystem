@@ -217,12 +217,10 @@ const WorkflowActionButtons = ({
   const onApprovalClick = async () => {
     const isSignatureRequired = signatureFieldConfig?.isMandatory === true;
     const isSignatureEmpty = !approvalDetails?.signature;
-
     if (isSignatureRequired && isSignatureEmpty && showSignatureByStage) {
       setApproverDescriptionErrMsg("* Signature is mandatory");
       return;
     }
-
     setApproverDescriptionErrMsg("");
     setShowLoader(true);
     try {

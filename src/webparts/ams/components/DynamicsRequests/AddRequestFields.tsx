@@ -56,6 +56,8 @@ const AddRequestsFields = ({
   const [dynamicFields, setDynamicFields] = useState<ISectionColumnsConfig[]>(
     []
   );
+  console.log("dynamicFields", dynamicFields);
+
   const [formData, setFormData] = useState<any>({});
   const [errors, setErrors] = useState({});
   const [selectedCategory, setSelectedCategory] =
@@ -65,13 +67,14 @@ const AddRequestsFields = ({
     useState<IRequestIdFormatWithDigit>({
       ...Config.requestIdFormatWithDigit,
     });
+
   //CategorySectionConfig List
   const getCategorySectionConfigDetails = () => {
     SPServices.SPReadItems({
       Listname: Config.ListNames?.CategorySectionConfig,
       Select: "*,Category/Id",
       Expand: "Category",
-      Orderby: "Modified",
+      Orderby: "ID",
       Orderbydecorasc: false,
       Filter: [
         {
@@ -86,62 +89,73 @@ const AddRequestsFields = ({
         },
       ],
     })
-      .then((res: any) => {
-        res.forEach(async (item: any) => {
-          await getSectionColumnsConfigDetails(item?.SectionName, item?.ID);
-        });
+      .then(async (res: any) => {
+        let tempRes = res.sort((a, b) => a.ID - b.ID);
+        let allFields: ISectionColumnsConfig[] = [];
+        for (const item of tempRes) {
+          console.log("item", item);
+          const sectionFields = await getSectionColumnsConfigDetails(
+            item?.SectionName,
+            item?.ID
+          );
+          allFields = [...allFields, ...sectionFields];
+        }
+        setDynamicFields(allFields);
       })
+
       .catch((err) => {
         console.log(err, "getCategorySectionConfigDetails");
       });
   };
   //SectionColumnsConfig List
-  const getSectionColumnsConfigDetails = (
+  const getSectionColumnsConfigDetails = async (
     secionName: string,
     secionID: number
-  ) => {
-    SPServices.SPReadItems({
-      Listname: Config.ListNames.SectionColumnsConfig,
-      Select: "*,ParentSection/Id",
-      Expand: "ParentSection",
-      Orderby: "Modified",
-      Orderbydecorasc: false,
-      Filter: [
-        {
-          FilterKey: "ParentSection",
-          Operator: "eq",
-          FilterValue: secionID.toString(),
-        },
-        {
-          FilterKey: "IsDelete",
-          Operator: "eq",
-          FilterValue: "false",
-        },
-      ],
-    })
-      .then((res) => {
-        const tempArr: ISectionColumnsConfig[] = [];
-        res.forEach((item: any) => {
-          tempArr.push({
-            id: item?.ID,
-            sectionName: secionName,
-            columnName: item?.ColumnInternalName,
-            columnDisplayName: item?.ColumnExternalName,
-            columnType: item?.ColumnType,
-            isRequired: item?.IsRequired,
-            viewStage: JSON.parse(item?.ViewStage),
-            choices:
-              (JSON.parse(item?.ChoiceValues) &&
-                JSON.parse(item?.ChoiceValues)[0].Options) ||
-              [],
-          });
-        });
-        setDynamicFields((prevFields) => [...prevFields, ...tempArr]);
-      })
-      .catch((e) => {
-        console.log(e, "getSectionColumnsConfig err");
+  ): Promise<ISectionColumnsConfig[]> => {
+    try {
+      const res = await SPServices.SPReadItems({
+        Listname: Config.ListNames.SectionColumnsConfig,
+        Select: "*,ParentSection/Id",
+        Expand: "ParentSection",
+        Orderby: "ID",
+        Orderbydecorasc: false,
+        Filter: [
+          {
+            FilterKey: "ParentSection",
+            Operator: "eq",
+            FilterValue: secionID.toString(),
+          },
+          {
+            FilterKey: "IsDelete",
+            Operator: "eq",
+            FilterValue: "false",
+          },
+        ],
       });
+      const tempArr: ISectionColumnsConfig[] = [];
+      let tempResColumns = res.sort((a: any, b: any) => a.ID - b.ID);
+      tempResColumns.forEach((item: any) => {
+        tempArr.push({
+          id: item?.ID,
+          sectionName: secionName,
+          columnName: item?.ColumnInternalName,
+          columnDisplayName: item?.ColumnExternalName,
+          columnType: item?.ColumnType,
+          isRequired: item?.IsRequired,
+          viewStage: JSON.parse(item?.ViewStage),
+          choices:
+            (JSON.parse(item?.ChoiceValues) &&
+              JSON.parse(item?.ChoiceValues)[0].Options) ||
+            [],
+        });
+      });
+      return tempArr;
+    } catch (e) {
+      console.log(e, "getSectionColumnsConfig err");
+      return [];
+    }
   };
+
   //Approval Json Config  //Update CategoryID and Approval Json here
   const getapprovalJson = () => {
     SPServices.SPReadItems({

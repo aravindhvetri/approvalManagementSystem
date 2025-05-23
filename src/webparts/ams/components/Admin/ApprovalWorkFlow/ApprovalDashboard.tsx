@@ -110,8 +110,8 @@ const ApprovalDashboard = ({
           FilterValue: "false",
         },
       ],
-      Orderby: "Id",
-      Orderbydecorasc: false,
+      Orderby: "Modified",
+      Orderbydecorasc: true,
     })
       .then(async (res) => {
         const tempArr: IApprovalConfigDetails[] = [];
