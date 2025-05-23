@@ -105,61 +105,69 @@ const RequestsFields = ({
         },
       ],
     })
-      .then((res: any) => {
-        res.forEach((item: any) => {
-          getSectionColumnsConfigDetails(item?.SectionName, item?.ID);
-        });
+      .then(async (res: any) => {
+        let tempRes = res.sort((a, b) => a.ID - b.ID);
+        let allFields: ISectionColumnsConfig[] = [];
+        for (const item of tempRes) {
+          const sectionFields = await getSectionColumnsConfigDetails(
+            item?.SectionName,
+            item?.ID
+          );
+          allFields = [...allFields, ...sectionFields];
+        }
+        setDynamicFields(allFields);
       })
       .catch((err) => {
         console.log(err, "getCategorySectionConfigDetails");
       });
   };
   //SectionColumnsConfig List
-  const getSectionColumnsConfigDetails = (
+  const getSectionColumnsConfigDetails = async (
     secionName: string,
     secionID: number
-  ) => {
-    SPServices.SPReadItems({
-      Listname: Config.ListNames.SectionColumnsConfig,
-      Select: "*,ParentSection/Id",
-      Expand: "ParentSection",
-      Orderby: "Modified",
-      Orderbydecorasc: false,
-      Filter: [
-        {
-          FilterKey: "ParentSection",
-          Operator: "eq",
-          FilterValue: secionID.toString(),
-        },
-        {
-          FilterKey: "IsDelete",
-          Operator: "eq",
-          FilterValue: "false",
-        },
-      ],
-    })
-      .then((res) => {
-        const tempArr: ISectionColumnsConfig[] = [];
-        res.forEach((item: any) => {
-          tempArr.push({
-            id: item?.ID,
-            sectionName: secionName,
-            columnName: item?.ColumnInternalName,
-            columnDisplayName: item?.ColumnExternalName,
-            columnType: item?.ColumnType,
-            isRequired: item?.IsRequired,
-            viewStage: JSON.parse(item?.ViewStage),
-            choices:
-              (JSON.parse(item?.ChoiceValues) &&
-                JSON.parse(item?.ChoiceValues)[0].Options) ||
-              [],
-          });
-        });
-        setDynamicFields((prevFields) => [...prevFields, ...tempArr]);
-      })
-      .catch((e) => {
-        console.log(e, "getSectionColumnsConfig err");
+  ): Promise<ISectionColumnsConfig[]> => {
+    try {
+      const res = await SPServices.SPReadItems({
+        Listname: Config.ListNames.SectionColumnsConfig,
+        Select: "*,ParentSection/Id",
+        Expand: "ParentSection",
+        Orderby: "ID",
+        Orderbydecorasc: false,
+        Filter: [
+          {
+            FilterKey: "ParentSection",
+            Operator: "eq",
+            FilterValue: secionID.toString(),
+          },
+          {
+            FilterKey: "IsDelete",
+            Operator: "eq",
+            FilterValue: "false",
+          },
+        ],
       });
+      const tempArr: ISectionColumnsConfig[] = [];
+      let tempResColumns = res.sort((a: any, b: any) => a.ID - b.ID);
+      tempResColumns.forEach((item: any) => {
+        tempArr.push({
+          id: item?.ID,
+          sectionName: secionName,
+          columnName: item?.ColumnInternalName,
+          columnDisplayName: item?.ColumnExternalName,
+          columnType: item?.ColumnType,
+          isRequired: item?.IsRequired,
+          viewStage: JSON.parse(item?.ViewStage),
+          choices:
+            (JSON.parse(item?.ChoiceValues) &&
+              JSON.parse(item?.ChoiceValues)[0].Options) ||
+            [],
+        });
+      });
+      return tempArr;
+    } catch (e) {
+      console.log(e, "getSectionColumnsConfig err");
+      return [];
+    }
   };
 
   //Get RequestHub details
@@ -966,7 +974,10 @@ const RequestsFields = ({
                         <div className={dynamicFieldsStyles.signatureSection}>
                           <div>
                             <Label className={dynamicFieldsStyles.label}>
-                              Sign Below
+                              Sign Below{" "}
+                              {signatureFieldConfig?.isMandatory && (
+                                <span className="required">*</span>
+                              )}
                             </Label>
                           </div>
                           {approvalDetails?.signature && (
