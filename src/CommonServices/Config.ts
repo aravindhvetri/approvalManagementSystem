@@ -7,6 +7,7 @@ import {
   ICardDataCountDetails,
   ICategoryDraft,
   ICategoryEmailConfigDetails,
+  IDelModal,
   IDropdownDetails,
   IemailMessage,
   IEmailTemplateConfigDetails,
@@ -309,5 +310,11 @@ export namespace Config {
   export const draftedCategoryDetails: ICategoryDraft = {
     isDraft: false,
     draftedState: null,
+  };
+
+  //Delete confirmation Details:
+  export const initialdelModal: IDelModal = {
+    isOpen: false,
+    id: null,
   };
 }

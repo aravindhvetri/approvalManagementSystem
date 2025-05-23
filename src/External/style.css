@@ -970,3 +970,107 @@ li.p-highlight .p-tabview-nav-link {
   width: 10px;
   height: 10px;
 }
+
+/*Delete Confirmation popup styles......................................... */
+.modal-template .p-dialog-header {
+  padding: 10px 0px;
+}
+
+.modal-template .p-dialog-content {
+  padding: 0;
+}
+.modal-template {
+  position: relative;
+}
+.modal-template .p-dialog-header-icons {
+  position: absolute;
+  right: 3%;
+  top: 7%;
+}
+.confirmation .p-dialog-header-icon {
+  display: none;
+}
+.modal-container {
+  padding: 14px 20px;
+}
+.modalIconContainer {
+  position: absolute;
+  top: -28px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  border-radius: 50%;
+  right: 43%;
+  box-shadow: 10px 3px 30px 0px rgba(0, 0, 0, 0.75);
+  background: #fd5252;
+}
+.modalIconContainer svg {
+  font-size: 1.6rem !important;
+  color: #fff;
+}
+.modal-content {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+.modal-content p {
+  margin: 10px 0px 0px 0px;
+  font-size: 14px;
+  text-align: center;
+}
+.p-dialog:has(.modal-form-container) .modal-header h3 {
+  margin: 0;
+  border-bottom: 3px solid #0a1b39;
+  color: #0a1b39;
+  font-weight: 600;
+  padding-bottom: 5px;
+  font-size: 18px;
+}
+.modal-header {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+.modal-header h3,
+.modal-header h4 {
+  margin: 0;
+  border-bottom: 3px solid #0a1b39;
+  padding-bottom: 5px;
+}
+.modal-btn-section {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+}
+.cancel-btn {
+  background-color: var(--dataTableBodyTextColor);
+  color: white;
+  border: none;
+  border-radius: 3px;
+  padding: 0.5rem 1.5rem;
+  height: 32px;
+  font-size: 0.875rem;
+}
+.submit-btn {
+  background-color: var(--green);
+  color: white;
+  border: none;
+  border-radius: 3px;
+  height: 32px;
+  padding: 0.5rem 1.5rem;
+  font-size: 0.875rem;
+  display: flex;
+  align-items: center;
+}
+.submit-btn .pi-plus:before {
+  font-size: 0.75rem;
+}
+.p-dialog .p-dialog-header {
+  border-bottom: 1px solid transparent;
+}
+.p-dialog {
+  border: 1px solid transparent;
+}

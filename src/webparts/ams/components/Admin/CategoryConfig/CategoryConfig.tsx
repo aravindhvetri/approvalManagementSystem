@@ -11,6 +11,7 @@ import {
   IApproverSignatureFeildConfig,
   ICategoryDetails,
   ICategoryDraft,
+  IDelModal,
   IFinalSubmitDetails,
   INextStageFromCategorySideBar,
   IRequestIdFormatWithDigit,
@@ -39,6 +40,7 @@ import { Steps } from "primereact/steps";
 import { BiSolidCategory } from "react-icons/bi";
 import { FaCheck } from "react-icons/fa";
 import { LuWorkflow } from "react-icons/lu";
+import { RiDeleteBinLine } from "react-icons/ri";
 //Component Imports:
 import DynamicSectionWithField from "./DynamicSectionWithField/DynamicSectionWithField";
 import EmailContainer from "./EmailTemplate/EmailContainer";
@@ -47,6 +49,7 @@ import { set } from "@microsoft/sp-lodash-subset";
 import { Checkbox } from "primereact/checkbox";
 import { Dropdown } from "primereact/dropdown";
 import { MultiSelect } from "primereact/multiselect";
+import { Dialog } from "primereact/dialog";
 
 const CategoryConfig = ({
   context,
@@ -64,7 +67,9 @@ const CategoryConfig = ({
   ];
   const steps = ["Category Config", "Dynamic Fields", "Email Config"];
   const [activeStep, setActiveStep] = useState(0);
-
+  const [delModal, setDelModal] = useState<IDelModal>({
+    ...Config.initialdelModal,
+  });
   const toast = useRef<Toast>(null);
   const [categoryDetails, setCategoryDetails] = useState<ICategoryDetails[]>(
     []
@@ -181,7 +186,8 @@ const CategoryConfig = ({
       label: "Delete",
       className: "customDelete",
       icon: "pi pi-trash",
-      command: () => isDeleteCategory(rowData?.id),
+      // command: () => isDeleteCategory(rowData?.id),
+      command: () => setDelModal({ isOpen: true, id: rowData?.id }),
     },
   ];
 
@@ -223,15 +229,16 @@ const CategoryConfig = ({
   };
 
   //IsDelete update for categroy
-  const isDeleteCategory = (itemID: number) => {
+  const isDeleteCategory = () => {
     SPServices.SPUpdateItem({
       Listname: Config.ListNames.CategoryConfig,
-      ID: itemID,
+      ID: delModal.id,
       RequestJSON: {
         IsDelete: true,
       },
     }).then((res) => {
       getCategoryConfigDetails();
+      setDelModal({ isOpen: false, id: null });
     });
   };
 
@@ -1205,6 +1212,45 @@ const CategoryConfig = ({
           </div>
         </>
       )}
+      <Dialog
+        className="modal-template confirmation"
+        draggable={false}
+        blockScroll={false}
+        resizable={false}
+        visible={delModal.isOpen}
+        style={{ width: "20rem" }}
+        onHide={() => {
+          setDelModal({ isOpen: false, id: null });
+        }}
+      >
+        <div className="modal-container">
+          <div className="modalIconContainer">
+            <RiDeleteBinLine />
+          </div>
+          <div className="modal-content">
+            <div>
+              <div className="modal-header">
+                <h4>Confirmation</h4>
+              </div>
+              <p>Are you sure, you want to delete this category?</p>
+            </div>
+          </div>
+          <div className="modal-btn-section">
+            <Button
+              label="No"
+              className={`cancel-btn`}
+              onClick={() => {
+                setDelModal({ isOpen: false, id: null });
+              }}
+            />
+            <Button
+              className={`submit-btn`}
+              label="Yes"
+              onClick={() => isDeleteCategory()}
+            />
+          </div>
+        </div>
+      </Dialog>
     </>
   );
 };

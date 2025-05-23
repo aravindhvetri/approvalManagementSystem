@@ -7,6 +7,7 @@ import {
   IToaster,
   ITabviewDetails,
   ICardDetails,
+  IDelModal,
 } from "./interface";
 import {
   DirectionalHint,
@@ -17,20 +18,23 @@ import {
   TooltipDelay,
   TooltipHost,
 } from "@fluentui/react";
-//React Icons Imports - Using Status Template Only :
+//React Icons Imports:
 import { FaRegCheckCircle } from "react-icons/fa";
 import { FaRegTimesCircle } from "react-icons/fa";
 import { LuClock9 } from "react-icons/lu";
+import { FaCheck } from "react-icons/fa6";
 //PrimeReact Imports:
 import { Menu } from "primereact/menu";
 import { Button } from "primereact/button";
 import { Sidebar } from "primereact/sidebar";
 import { TabView, TabPanel } from "primereact/tabview";
+import { Dialog } from "primereact/dialog";
 //Common Style Imports:
 import styles from "../External/commonStyles.module.scss";
 import "../External/style.css";
 import { sp } from "@pnp/sp/presets/all";
 import { Card } from "primereact/card";
+import { Config } from "./Config";
 
 //PeoplePicker Template:
 export const peoplePickerTemplate = (user: IPeoplePickerDetails) => {
@@ -552,5 +556,50 @@ export const showCard = (cardDetails: ICardDetails) => {
       </div>
       <div className={styles.cardCount}>{cardDetails?.cardContent}</div>
     </Card>
+  );
+};
+
+//Delete Confirmation popup:
+export const deleteConfirmationPopup = (deleModal, setDelModal, delFunc) => {
+  return (
+    <Dialog
+      className="modal-template confirmation"
+      draggable={false}
+      blockScroll={false}
+      resizable={false}
+      visible={deleModal.isOpen}
+      style={{ width: "20rem" }}
+      onHide={() => {
+        setDelModal({ isOpen: false, id: null });
+      }}
+    >
+      <div className="modal-container">
+        <div className="modalIconContainer">
+          <FaCheck />
+        </div>
+        <div className="modal-content">
+          <div>
+            <div className="modal-header">
+              <h4>Confirmation</h4>
+            </div>
+            <p>Are you sure, you want to edit this process?</p>
+          </div>
+        </div>
+        <div className="modal-btn-section">
+          <Button
+            label="No"
+            className={`cancel-btn`}
+            onClick={() => {
+              setDelModal({ isOpen: false, id: null });
+            }}
+          />
+          <Button
+            className={`submit-btn`}
+            label="Yes"
+            onClick={() => delFunc()}
+          />
+        </div>
+      </div>
+    </Dialog>
   );
 };
