@@ -251,3 +251,29 @@
     }
   }
 }
+//Choice List styles :
+.choiceListContainer {
+  margin-top: 10px;
+  display: flex;
+  gap: 6px;
+  width: 100%;
+  flex-wrap: wrap;
+}
+
+.choiceItem {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  justify-content: space-between;
+  background-color: #000000ba;
+  color: white;
+  padding: 4px;
+  border-radius: 2px;
+  font-size: 13px;
+}
+
+.deleteChoiceBtn {
+  color: white;
+  font-size: 18px;
+  cursor: pointer;
+}
