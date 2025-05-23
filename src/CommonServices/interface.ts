@@ -272,3 +272,9 @@ export interface ICategoryDraft {
   isDraft: boolean;
   draftedState: number;
 }
+
+//Delete Confirmation Interface
+export interface IDelModal {
+  isOpen: boolean;
+  id: number;
+}

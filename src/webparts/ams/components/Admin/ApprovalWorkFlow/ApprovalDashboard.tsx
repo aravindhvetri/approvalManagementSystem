@@ -15,6 +15,7 @@ import {
 import {
   IApprovalConfigDetails,
   IApprovalStages,
+  IDelModal,
   IPeoplePickerDetails,
 } from "../../../../../CommonServices/interface";
 import { DataTable } from "primereact/datatable";
@@ -25,6 +26,8 @@ import Loader from "../../Loader/Loader";
 import { Button } from "primereact/button";
 import { LuWorkflow } from "react-icons/lu";
 import { LuBadgePlus } from "react-icons/lu";
+import { Dialog } from "primereact/dialog";
+import { RiDeleteBinLine } from "react-icons/ri";
 
 const ApprovalDashboard = ({
   setApprovalSideBarContent,
@@ -36,6 +39,9 @@ const ApprovalDashboard = ({
   const [approvalConfigDetails, setApprovalConfigDetails] = useState<
     IApprovalConfigDetails[]
   >([]);
+  const [delModal, setDelModal] = useState<IDelModal>({
+    ...Config.initialdelModal,
+  });
   const [isEdit, setIsEdit] = useState<boolean>(true);
   const [currentRecord, setCurrentRecord] = useState<IApprovalConfigDetails>();
   const [showLoader, setShowLoader] = useState<boolean>(true);
@@ -91,9 +97,10 @@ const ApprovalDashboard = ({
       label: "Delete",
       icon: "pi pi-trash",
       className: "customDelete",
-      command: () => {
-        updateIsDelete(rowData?.id);
-      },
+      // command: () => {
+      //   updateIsDelete(rowData?.id);
+      // },
+      command: () => setDelModal({ isOpen: true, id: rowData?.id }),
     },
   ];
 
@@ -171,13 +178,16 @@ const ApprovalDashboard = ({
   };
 
   //IsDelete update in Approval config
-  const updateIsDelete = (ItemId) => {
+  const updateIsDelete = () => {
     SPServices.SPUpdateItem({
       Listname: Config.ListNames.ApprovalConfig,
-      ID: ItemId,
+      ID: delModal.id,
       RequestJSON: { IsDelete: true },
     })
-      .then(() => getApprovalConfig())
+      .then(() => {
+        getApprovalConfig();
+        setDelModal({ isOpen: false, id: null });
+      })
       .catch((err) => console.log("updateIsDelete error", err));
   };
 
@@ -339,6 +349,45 @@ const ApprovalDashboard = ({
           </div>
         </>
       )}
+      <Dialog
+        className="modal-template confirmation"
+        draggable={false}
+        blockScroll={false}
+        resizable={false}
+        visible={delModal.isOpen}
+        style={{ width: "20rem" }}
+        onHide={() => {
+          setDelModal({ isOpen: false, id: null });
+        }}
+      >
+        <div className="modal-container">
+          <div className="modalIconContainer">
+            <RiDeleteBinLine />
+          </div>
+          <div className="modal-content">
+            <div>
+              <div className="modal-header">
+                <h4>Confirmation</h4>
+              </div>
+              <p>Are you sure, you want to delete this approval process?</p>
+            </div>
+          </div>
+          <div className="modal-btn-section">
+            <Button
+              label="No"
+              className={`cancel-btn`}
+              onClick={() => {
+                setDelModal({ isOpen: false, id: null });
+              }}
+            />
+            <Button
+              className={`submit-btn`}
+              label="Yes"
+              onClick={() => updateIsDelete()}
+            />
+          </div>
+        </div>
+      </Dialog>
     </>
   );
 };

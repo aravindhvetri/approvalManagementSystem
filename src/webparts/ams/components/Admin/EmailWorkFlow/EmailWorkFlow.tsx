@@ -6,6 +6,7 @@ import SPServices from "../../../../../CommonServices/SPServices";
 import { Config } from "../../../../../CommonServices/Config";
 import {
   IActionBooleans,
+  IDelModal,
   IEmailTemplateConfigDetails,
   IRightSideBarContents,
 } from "../../../../../CommonServices/interface";
@@ -25,11 +26,13 @@ import "react-quill/dist/quill.snow.css";
 import { Toast } from "primereact/toast";
 import { MdMarkEmailRead } from "react-icons/md";
 import { LuBadgePlus } from "react-icons/lu";
+import { RiDeleteBinLine } from "react-icons/ri";
 //Styles Imports:
 import EmailWorkFlowStyles from "./EmailWorkFlow.module.scss";
 import "./EmailWorkFlowStyle.css";
 import "../../../../../External/style.css";
 import Loader from "../../Loader/Loader";
+import { Dialog } from "primereact/dialog";
 
 const EmailWorkFlow = ({
   setEmailWorkFlowSideBarContent,
@@ -40,6 +43,9 @@ const EmailWorkFlow = ({
   const [getEmailTemplateContent, setEmailTemplateContent] = useState<
     IEmailTemplateConfigDetails[]
   >([]);
+  const [delModal, setDelModal] = useState<IDelModal>({
+    ...Config.initialdelModal,
+  });
   const [actionsBooleans, setActionsBooleans] = useState<IActionBooleans>({
     ...Config.InitialActionsBooleans,
   });
@@ -161,17 +167,18 @@ const EmailWorkFlow = ({
   };
 
   //Handle Delete:
-  const handleDelete = (rowData: IEmailTemplateConfigDetails) => {
+  const handleDelete = () => {
     const json = {
       IsDelete: true,
     };
     SPServices.SPUpdateItem({
       Listname: Config.ListNames?.EmailTemplateConfig,
-      ID: rowData.id,
+      ID: delModal.id,
       RequestJSON: json,
     })
       .then(() => {
         getEmailTemplateContents();
+        setDelModal({ isOpen: false, id: null });
       })
       .catch((err) => {
         console.log("Error in Deleting Email Template", err);
@@ -245,7 +252,8 @@ const EmailWorkFlow = ({
       label: "Delete",
       className: "customDelete",
       icon: "pi pi-trash",
-      command: () => handleDelete(rowData),
+      // command: () => handleDelete(rowData),
+      command: () => setDelModal({ isOpen: true, id: rowData?.id }),
     },
   ];
 
@@ -544,6 +552,45 @@ const EmailWorkFlow = ({
           </div>
         </>
       )}
+      <Dialog
+        className="modal-template confirmation"
+        draggable={false}
+        blockScroll={false}
+        resizable={false}
+        visible={delModal.isOpen}
+        style={{ width: "20rem" }}
+        onHide={() => {
+          setDelModal({ isOpen: false, id: null });
+        }}
+      >
+        <div className="modal-container">
+          <div className="modalIconContainer">
+            <RiDeleteBinLine />
+          </div>
+          <div className="modal-content">
+            <div>
+              <div className="modal-header">
+                <h4>Confirmation</h4>
+              </div>
+              <p>Are you sure, you want to delete this email template?</p>
+            </div>
+          </div>
+          <div className="modal-btn-section">
+            <Button
+              label="No"
+              className={`cancel-btn`}
+              onClick={() => {
+                setDelModal({ isOpen: false, id: null });
+              }}
+            />
+            <Button
+              className={`submit-btn`}
+              label="Yes"
+              onClick={() => handleDelete()}
+            />
+          </div>
+        </div>
+      </Dialog>
     </>
   );
 };
