@@ -268,8 +268,8 @@ export const RightSidebar = ({
         header={
           activeTabViewBar == 2
             ? customHeader(
-                "Purchase Workflow",
-                "Configure your purchase approval process"
+                "Category Workflow",
+                "Configure your category workflow for the request process"
               )
             : activeTabViewBar == 3
             ? customHeader(

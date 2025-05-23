@@ -588,11 +588,23 @@ const CategoryConfig = ({
         /> */}
         <div className="profile_header_content">
           <div>
-            <h2>Request Workflow</h2>
-            <p>Set up a streamlined approval process for requests</p>
+            <h2>
+              {actionsBooleans.isView
+                ? "View"
+                : actionsBooleans.isEdit
+                ? "Edit"
+                : "Create"}{" "}
+              Category Details
+            </h2>
+            <p>
+              {actionsBooleans.isView
+                ? "View the category details for your reference."
+                : actionsBooleans.isEdit
+                ? "Update category details and manage the workflows for the future request."
+                : "Set up a new category and the entire workflows for the future request."}
+            </p>
           </div>
         </div>
-
         <div className="custom-steps-wrapper">
           {steps.map((label, index) => (
             <div className="custom-step" key={index}>
