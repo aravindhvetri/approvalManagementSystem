@@ -17,6 +17,7 @@ import { IoMdEye } from "react-icons/io";
 import { InputTextarea } from "primereact/inputtextarea";
 import { AiOutlineAppstore } from "react-icons/ai";
 import { LuPlus } from "react-icons/lu";
+import { MdCancel } from "react-icons/md";
 import { LuTrash2 } from "react-icons/lu";
 //Styles Imports:
 import DynamicSectionWithFieldStyles from "./DynamicSectionWithField.module.scss";
@@ -970,6 +971,39 @@ const DynamicSectionWithField = ({
     return isValid;
   };
 
+  //Dynamic choice added function:
+  const handleChoiceAdded = () => {
+    const trimmedChoice = newChoice.trim();
+    const isDuplicate = newField.choices.some(
+      (choice) => choice.toLowerCase() === trimmedChoice.toLowerCase()
+    );
+
+    if (trimmedChoice === "") {
+      setChoiceError(true);
+    } else if (isDuplicate) {
+      toast.current.show({
+        severity: "warn",
+        summary: "Warning",
+        content: (prop) =>
+          toastNotify({
+            iconName: "pi-exclamation-triangle",
+            ClsName: "toast-imgcontainer-warning",
+            type: "Warning",
+            msg: `${trimmedChoice} already exists`,
+            image: require("../../../../../../../src/webparts/ams/assets/giphy.gif"),
+          }),
+        life: 3000,
+      });
+    } else {
+      setNewField({
+        ...newField,
+        choices: [...newField.choices, trimmedChoice],
+      });
+      setNewChoice("");
+      setChoiceError(false);
+    }
+  };
+
   //Field Validation Function:
   const FieldValidateFunc = async () => {
     let isValidation =
@@ -1218,21 +1252,56 @@ const DynamicSectionWithField = ({
                           }
                         />
                       }
-                      onClick={() => {
-                        if (newChoice.trim() !== "") {
-                          setNewField({
-                            ...newField,
-                            choices: [...newField.choices, newChoice],
-                          });
-                          setNewChoice("");
-                          setChoiceError(false);
-                        } else {
-                          setChoiceError(true);
-                        }
-                      }}
+                      onClick={() =>
+                        //   {
+                        //   if (newChoice.trim() !== "") {
+                        //     setNewField({
+                        //       ...newField,
+                        //       choices: [...newField.choices, newChoice],
+                        //     });
+                        //     setNewChoice("");
+                        //     setChoiceError(false);
+                        //   } else {
+                        //     setChoiceError(true);
+                        //   }
+                        // }
+                        handleChoiceAdded()
+                      }
                       className={DynamicSectionWithFieldStyles.addButton}
                       style={{ marginLeft: "0" }}
                     />
+                  </div>
+                  <div>
+                    {newField.choices?.length > 0 && (
+                      <div
+                        className={
+                          DynamicSectionWithFieldStyles.choiceListContainer
+                        }
+                      >
+                        {newField.choices.map((choice, index) => (
+                          <div
+                            key={index}
+                            className={DynamicSectionWithFieldStyles.choiceItem}
+                          >
+                            <span>{choice}</span>
+                            <MdCancel
+                              className={
+                                DynamicSectionWithFieldStyles.deleteChoiceBtn
+                              }
+                              onClick={() => {
+                                const updatedChoices = newField.choices.filter(
+                                  (c, i) => i !== index
+                                );
+                                setNewField({
+                                  ...newField,
+                                  choices: updatedChoices,
+                                });
+                              }}
+                            />
+                          </div>
+                        ))}
+                      </div>
+                    )}
                   </div>
                   {choiceError && (
                     <span className="errorMsg">Choice cannot be empty</span>
