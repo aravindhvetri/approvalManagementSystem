@@ -546,7 +546,6 @@ const EmailContainer = ({
             });
           });
         }
-
         alert("Process completed successfully!");
         sessionStorage.clear();
         setNextStageFromCategory({ ...Config.NextStageFromCategorySideBar });
