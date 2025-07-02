@@ -557,6 +557,15 @@ li.p-highlight .p-tabview-nav-link {
     margin-right: 8px;
   }
 }
+.notesList {
+  display: flex;
+  flex-wrap: wrap;
+  width: 100%;
+  gap: 10px;
+}
+.notesChild {
+  width: 32%;
+}
 /* Common Styles for the RadioButtons.......................................... */
 .p-radiobutton.p-highlight .p-radiobutton-box {
   border-color: var(--green);
@@ -774,7 +783,6 @@ li.p-highlight .p-tabview-nav-link {
   position: absolute;
   top: 15px;
   left: -3%;
-
   width: 64%;
   height: 3px;
   background-color: #dee2e6;
@@ -788,6 +796,8 @@ li.p-highlight .p-tabview-nav-link {
 
 /* Data Card Styles......................................... */
 .p-card {
+  position: relative;
+  overflow: hidden;
   height: 100%;
   width: 25%;
   border-left: 4px solid #b4b5c1;
@@ -797,6 +807,8 @@ li.p-highlight .p-tabview-nav-link {
   padding: 14px;
   height: 100%;
   width: 100%;
+  position: relative;
+  z-index: 1;
 }
 .p-card .p-card-title {
   font-size: 15px;
@@ -804,6 +816,42 @@ li.p-highlight .p-tabview-nav-link {
 }
 .p-card .p-card-content {
   padding: 0;
+}
+.p-card::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  right: 38px;
+  width: 0;
+  height: 0;
+  /* background-color: #b29d9a; */
+  border-radius: 2px;
+  transform: translate(-50%, -50%);
+  transition: width 0.4s ease, height 0.4s ease;
+  z-index: 0;
+}
+.p-card:hover::before {
+  width: 204px;
+  height: 92px;
+}
+.p-card:hover {
+  color: white;
+}
+
+.p-card[data-status="total"]:hover::before {
+  background-color: #9a9d9d;
+}
+
+.p-card[data-status="pending"]:hover::before {
+  background-color: #2a6d9c;
+}
+
+.p-card[data-status="approved"]:hover::before {
+  background-color: #16a34a;
+}
+
+.p-card[data-status="rejected"]:hover::before {
+  background-color: #b23d3f;
 }
 
 /* Data Card Body styles......................................... */
@@ -894,11 +942,13 @@ li.p-highlight .p-tabview-nav-link {
 .categoryName {
   display: flex;
   gap: 6px;
-  padding-top: 16px;
+  padding-top: 8px;
   font-size: 13px;
   color: var(--dataTableBodyTextColor);
   letter-spacing: 1px;
   align-items: center;
+  flex-wrap: wrap;
+  width: 100%;
 }
 .categoryTag {
   font-size: 12px;
@@ -909,13 +959,15 @@ li.p-highlight .p-tabview-nav-link {
 }
 /* For Specific place category name */
 .categoryNameTag {
-  border-radius: 5px;
-  font-size: 10px;
-  font-weight: 500;
+  border-radius: 2px;
+  font-size: 12px;
+  font-weight: 400;
   padding: 5px;
   display: inline-block;
   background-color: var(--liteGreen);
-  color: var(--green);
+  color: black;
+  margin-left: 10px;
+  letter-spacing: 0.5px;
 }
 
 /* Modern Button Design with icon.................................*/

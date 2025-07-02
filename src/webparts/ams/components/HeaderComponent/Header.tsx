@@ -176,7 +176,7 @@ const Header = ({ context, currentPage }) => {
         // }
         {
           id: 3,
-          name: "Custom Workflows",
+          name: "Category Workflows",
         },
         {
           id: 4,
@@ -246,8 +246,7 @@ const Header = ({ context, currentPage }) => {
                 setSideBarVisible(true);
                 setActiveTabViewBar(2);
               }}
-              label="Create Custom Workflow"
-              // icon={<LuBadgePlus />}
+              label="Create Category Workflow"
             />
           </div>
         )}

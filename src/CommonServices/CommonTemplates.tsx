@@ -454,6 +454,20 @@ export const notesContainerDetails = (header, data) => {
   return (
     <div className="notesContainer">
       <h1>{header}</h1>
+      <ul className="notesList">
+        {data.map((e: any) => {
+          return <li className="notesChild"> {e?.info}</li>;
+        })}
+      </ul>
+    </div>
+  );
+};
+
+//Notes Container
+export const notesContainerDetailsSingleLine = (header, data) => {
+  return (
+    <div className="notesContainer">
+      <h1>{header}</h1>
       <ul>
         {data.map((e: any) => {
           return <li> {e?.info}</li>;
@@ -548,8 +562,36 @@ export const getSpGroupMembers = async (groupName) => {
 
 //Show Card with details
 export const showCard = (cardDetails: ICardDetails) => {
+  const getStatusData = (title: string) => {
+    switch (title) {
+      case "Total Requests":
+        return "total";
+      case "Pending Requests":
+        return "pending";
+      case "Approved Requests":
+        return "approved";
+      case "Rejected Requests":
+        return "rejected";
+      default:
+        return "default";
+    }
+  };
   return (
-    <Card className="custom-card">
+    //Old code:
+    // <Card className="custom-card">
+    //   <div className={styles.cardHeader}>
+    //     <span className="card-title">{cardDetails?.cardTitle}</span>
+    //     <span className={styles.cardIcon}>{cardDetails?.icon}</span>
+    //   </div>
+    //   <div className={styles.cardCount}>{cardDetails?.cardContent}</div>
+    // </Card>
+
+    //New code:
+    <Card
+      className="p-card"
+      data-status={getStatusData(cardDetails?.cardTitle)}
+      style={{ position: "relative" }}
+    >
       <div className={styles.cardHeader}>
         <span className="card-title">{cardDetails?.cardTitle}</span>
         <span className={styles.cardIcon}>{cardDetails?.icon}</span>

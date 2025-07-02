@@ -16,6 +16,7 @@ import {
 } from "../../../../../../../CommonServices/interface";
 import {
   notesContainerDetails,
+  notesContainerDetailsSingleLine,
   tabViewBar,
   toastNotify,
 } from "../../../../../../../CommonServices/CommonTemplates";
@@ -244,10 +245,8 @@ const CustomEmail = ({
   return (
     <>
       <Toast ref={toast} />
-      {actionBooleans?.isEdit && notesContainerDetails("ⓘ Info", notes)}
-      {!actionBooleans?.isView && !actionBooleans?.isEdit && (
-        <>{notesContainerDetails("ⓘ Info", infoNotes)}</>
-      )}
+      {actionBooleans?.isEdit &&
+        notesContainerDetailsSingleLine("ⓘ Info", notes)}
       <div>
         <div className={customEmailStyles.templateContainer}>
           <div className={customEmailStyles.fieldsContainer}>
@@ -298,6 +297,11 @@ const CustomEmail = ({
             {/* {errors[index]?.emailBody && (
               <span className="errorMsg">{errors[index].emailBody}</span>
             )} */}
+          </div>
+          <div style={{ marginTop: "56px" }}>
+            {!actionBooleans?.isView && !actionBooleans?.isEdit && (
+              <>{notesContainerDetails("ⓘ Info", infoNotes)}</>
+            )}
           </div>
         </div>
         {/* {templates.map((template, index) => (

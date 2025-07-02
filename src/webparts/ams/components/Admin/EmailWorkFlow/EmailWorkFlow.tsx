@@ -13,6 +13,7 @@ import {
 import {
   ActionsMenu,
   notesContainerDetails,
+  notesContainerDetailsSingleLine,
   toastNotify,
 } from "../../../../../CommonServices/CommonTemplates";
 //PrimeReact Imports:
@@ -69,7 +70,6 @@ const EmailWorkFlow = ({
   const [showLoader, setShowLoader] = useState<boolean>(true);
   const [showLoaderEmailWorkFlowSideBar, setShowLoaderEmailWorkFlowSideBar] =
     useState<boolean>(false);
-  console.log("showLoader", showLoader);
   const [usedCategories, setUsedCategories] = useState([]);
   const warningNote = [
     {
@@ -352,10 +352,7 @@ const EmailWorkFlow = ({
       </div>
       <div className={EmailWorkFlowStyles.emailMainContainer}>
         {actionsBooleans.isEdit && usedCategories.length > 0 && (
-          <>{notesContainerDetails("⚠ Warning", warningNote)}</>
-        )}
-        {!actionsBooleans.isView && (
-          <>{notesContainerDetails("ⓘ Info", infoNotes)}</>
+          <>{notesContainerDetailsSingleLine("⚠ Warning", warningNote)}</>
         )}
         <div>
           <Label className={EmailWorkFlowStyles.label}>
@@ -407,6 +404,11 @@ const EmailWorkFlow = ({
                 )}
             </div>
           </div>
+        </div>
+        <div style={{ marginTop: "20px" }}>
+          {!actionsBooleans.isView && (
+            <>{notesContainerDetails("ⓘ Info", infoNotes)}</>
+          )}
         </div>
       </div>
       <div className={EmailWorkFlowStyles.EmailWorkFlowSideBarButtons}>

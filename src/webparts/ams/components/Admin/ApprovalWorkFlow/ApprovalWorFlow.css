@@ -7,9 +7,6 @@
   display: flex;
   width: 100%;
 }
-.categoryName {
-  padding-top: 8px;
-}
 .requestCardBody {
   padding-right: 8px;
 }

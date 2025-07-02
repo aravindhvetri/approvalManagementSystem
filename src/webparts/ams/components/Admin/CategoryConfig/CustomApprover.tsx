@@ -28,6 +28,7 @@ import SPServices from "../../../../../CommonServices/SPServices";
 import {
   multiplePeoplePickerTemplate,
   notesContainerDetails,
+  notesContainerDetailsSingleLine,
   peoplePickerTemplate,
 } from "../../../../../CommonServices/CommonTemplates";
 import { DataTable } from "primereact/datatable";
@@ -392,7 +393,7 @@ const CustomApprover = ({
         selectionMode="single"
         selection={selectedStage}
         scrollable
-        scrollHeight="242px"
+        scrollHeight="246px"
         onSelectionChange={(e) => {
           e.value && setSelectedStage(e.value);
         }}
@@ -617,7 +618,7 @@ const CustomApprover = ({
         <div>{notesContainerDetails("ⓘ Info", notes)}</div>
       )} */}
       {actionBooleans?.isEdit && (
-        <div>{notesContainerDetails("ⓘ Info", notes)}</div>
+        <div>{notesContainerDetailsSingleLine("ⓘ Info", notes)}</div>
       )}
       <div className={`${ApprovalWorkFlowStyles.topSection}`}>
         <div className={`${ApprovalWorkFlowStyles.nameDiv}`}>
