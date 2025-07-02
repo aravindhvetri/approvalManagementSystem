@@ -872,7 +872,11 @@ const CategoryConfig = ({
                           }}
                           checked={selectedApprover === "existing"}
                         />
-                        <label className="radioDivLabel" htmlFor="existing">
+                        <label
+                          style={{ cursor: "pointer" }}
+                          className="radioDivLabel"
+                          htmlFor="existing"
+                        >
                           Existing approver
                         </label>
                       </div>
@@ -903,7 +907,11 @@ const CategoryConfig = ({
                           }}
                           checked={selectedApprover === "custom"}
                         />
-                        <label className="radioDivLabel" htmlFor="custom">
+                        <label
+                          style={{ cursor: "pointer" }}
+                          className="radioDivLabel"
+                          htmlFor="custom"
+                        >
                           Custom approver
                         </label>
                       </div>
@@ -1180,7 +1188,7 @@ const CategoryConfig = ({
                     lineHeight: "2.25rem",
                   }}
                 >
-                  Custom Workflows
+                  Category Workflows
                 </h2>
                 <p>
                   Configure WorkFlows and define their structure for request

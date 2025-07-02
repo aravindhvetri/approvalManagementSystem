@@ -26,6 +26,7 @@ import {
   toastNotify,
 } from "../../../../../../CommonServices/CommonTemplates";
 import { trim } from "lodash";
+import { Dialog } from "primereact/dialog";
 
 const EmailContainer = ({
   actionBooleans,
@@ -52,8 +53,7 @@ const EmailContainer = ({
     emailTemplateSelected: "",
   });
   const [activeEmailTab, setActiveEmailTab] = useState(0);
-  console.log("existingEmailData", existingEmailData);
-  console.log("customEmailData", customEmailData);
+  const [delModal, setDelModal] = useState(false);
 
   //Get ExistingEmailTempalte Datas:
   const getExistingEmailTemlateData = (ExistingEmailData: []) => {
@@ -546,16 +546,8 @@ const EmailContainer = ({
             });
           });
         }
-        alert("Process completed successfully!");
-        sessionStorage.clear();
-        setNextStageFromCategory({ ...Config.NextStageFromCategorySideBar });
-        setEmailContainerFieldSideBarVisible(false);
-        setSelectedApprover("");
-        setCategoryInputs("");
-        setFinalSubmit({ ...Config.finalSubmitDetails });
-        getCategoryConfigDetails();
-        setShowLoader(false);
-        setActiveStep(0);
+        // alert("Process completed successfully!");
+        setDelModal(true);
       } catch {
         (err) => console.log("Update categoryConfig Details error", err);
         setShowLoader(false);
@@ -750,16 +742,17 @@ const EmailContainer = ({
           }
         }
 
-        alert("Process completed successfully!");
-        sessionStorage.clear();
-        setNextStageFromCategory({ ...Config.NextStageFromCategorySideBar });
-        setEmailContainerFieldSideBarVisible(false);
-        setSelectedApprover("");
-        setCategoryInputs("");
-        setFinalSubmit({ ...Config.finalSubmitDetails });
-        getCategoryConfigDetails();
-        setShowLoader(false);
-        setActiveStep(0);
+        // alert("Process completed successfully!");
+        // sessionStorage.clear();
+        // setNextStageFromCategory({ ...Config.NextStageFromCategorySideBar });
+        // setEmailContainerFieldSideBarVisible(false);
+        // setSelectedApprover("");
+        // setCategoryInputs("");
+        // setFinalSubmit({ ...Config.finalSubmitDetails });
+        // getCategoryConfigDetails();
+        // setShowLoader(false);
+        // setActiveStep(0);
+        setDelModal(true);
       } catch (err) {
         console.error("Error in handleSubmit:", err);
         alert("An error occurred while processing the request.");
@@ -911,6 +904,7 @@ const EmailContainer = ({
                   checked={selectedEmail === "existing"}
                 />
                 <label
+                  style={{ cursor: "pointer" }}
                   className="radioDivLabel"
                   htmlFor="existing"
                   onClick={() => {
@@ -938,6 +932,7 @@ const EmailContainer = ({
                   checked={selectedEmail === "custom"}
                 />
                 <label
+                  style={{ cursor: "pointer" }}
                   className="radioDivLabel"
                   onClick={() => {
                     setSelectedEmail("custom");
@@ -998,7 +993,6 @@ const EmailContainer = ({
           ""
         )}
       </div>
-
       <div className={EmailContainerStyles.FlowButtonsContainer}>
         <div className={EmailContainerStyles.FlowPreviousButton}>
           <Button
@@ -1051,27 +1045,6 @@ const EmailContainer = ({
                   setActiveStep(0);
                 }}
               />
-              {/* {(categoryClickingID === null ||
-                (actionBooleans.isEdit &&
-                  categoryDraft.isDraft &&
-                  activeStep >= categoryDraft.draftedState)) && (
-                <Button
-                  icon="pi pi-save"
-                  label="Draft"
-                  onClick={() => {
-                    if (
-                      actionBooleans?.isView === false &&
-                      actionBooleans?.isEdit === false
-                    ) {
-                      valiadateFunc(true);
-                    } else {
-                      setShowLoader(true);
-                      finalHandleSubmit(true);
-                    }
-                  }}
-                  className="customCancelButton"
-                />
-              )} */}
               <Button
                 icon="pi pi-save"
                 label="Submit"
@@ -1093,6 +1066,56 @@ const EmailContainer = ({
         </div>
       </div>
       {showLoader ? <Loader /> : ""}
+      <Dialog
+        className="modal-template confirmation"
+        draggable={false}
+        blockScroll={false}
+        resizable={false}
+        visible={delModal}
+        style={{ width: "20rem" }}
+        onHide={() => {
+          setDelModal(false);
+        }}
+      >
+        <div className="modal-container">
+          <div className={EmailContainerStyles.modalHeader}>
+            <img
+              src={require("../../../../../../../src/webparts/ams/assets/successGif.gif")}
+              alt="NoImage"
+              width="180px"
+              height="180px"
+            ></img>
+          </div>
+          <div className="modal-content">
+            <div>
+              <div className="modal-header">
+                <h4>Success</h4>
+              </div>
+              <p>Your process has been successfully submitted</p>
+            </div>
+          </div>
+          <div className="modal-btn-section">
+            <Button
+              label="OK"
+              className={`submit-btn`}
+              onClick={() => {
+                sessionStorage.clear();
+                setNextStageFromCategory({
+                  ...Config.NextStageFromCategorySideBar,
+                });
+                setEmailContainerFieldSideBarVisible(false);
+                setSelectedApprover("");
+                setCategoryInputs("");
+                setFinalSubmit({ ...Config.finalSubmitDetails });
+                getCategoryConfigDetails();
+                setShowLoader(false);
+                setActiveStep(0);
+                setDelModal(false);
+              }}
+            />
+          </div>
+        </div>
+      </Dialog>
     </>
   );
 };

@@ -207,9 +207,11 @@ const RequestsFields = ({
     const requestId = `${id}`;
     sp.web.lists
       .getByTitle(Config.LibraryNames?.AttachmentsLibrary)
-      .items.select("*,FileLeafRef,FileRef,FileDirRef")
+      .items.select(
+        "*,FileLeafRef,FileRef,FileDirRef,Author/Id,Author/Title,Author/EMail"
+      )
       .filter(`RequestID eq '${requestId}' and IsDelete eq false`)
-      .expand("File")
+      .expand("File,Author")
       .orderBy("Modified", false)
       .get()
       .then((res: any) => {
@@ -220,6 +222,7 @@ const RequestsFields = ({
               name: val?.File?.Name || "",
               ulr: val?.File?.ServerRelativeUrl || "",
               createdDate: val?.Created ? new Date(val?.Created) : null,
+              authorEmail: val?.Author?.EMail || "",
             });
           });
         }
@@ -449,7 +452,14 @@ const RequestsFields = ({
   }, {});
 
   //Handle File Selection:
-  const handleFileSelection = async (e, files, setFiles, toast, Config) => {
+  const handleFileSelection = async (
+    e,
+    files,
+    setFiles,
+    toast,
+    Config,
+    currentUserEmail
+  ) => {
     try {
       const existingSPFiles = await sp.web.lists
         .getByTitle(Config.LibraryNames?.AttachmentsLibrary)
@@ -1108,7 +1118,14 @@ const RequestsFields = ({
                         name="demo[]"
                         mode="basic"
                         onSelect={(e) =>
-                          handleFileSelection(e, files, setFiles, toast, Config)
+                          handleFileSelection(
+                            e,
+                            files,
+                            setFiles,
+                            toast,
+                            Config,
+                            loginUser
+                          )
                         }
                         url="/api/upload"
                         auto
@@ -1142,12 +1159,17 @@ const RequestsFields = ({
                                 </span>
                               }
                             />
-                            {recordAction === "Edit" && (
-                              <GiCancel
-                                style={{ cursor: "pointer", color: "red" }}
-                                onClick={() => removeFile(file?.name)}
-                              />
-                            )}
+                            {recordAction === "Edit" &&
+                              (file?.objectURL ||
+                                file?.authorEmail === loginUser) && (
+                                <GiCancel
+                                  style={{
+                                    cursor: "pointer",
+                                    color: "red",
+                                  }}
+                                  onClick={() => removeFile(file?.name)}
+                                />
+                              )}
                           </li>
                         ))}
                       </ul>

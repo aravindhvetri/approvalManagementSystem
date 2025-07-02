@@ -33,6 +33,7 @@ import {
   customHeader,
   multiplePeoplePickerTemplate,
   notesContainerDetails,
+  notesContainerDetailsSingleLine,
   peoplePickerTemplate,
   statusTemplate,
 } from "../../../../../CommonServices/CommonTemplates";
@@ -68,7 +69,6 @@ const ApprovalWorkFlow = ({
     ...Config.ApprovalFlowValidation,
   });
   const [showLoader, setShowLoader] = useState<boolean>(false);
-  console.log(showLoader, "showLoader");
   const warningNote = [
     {
       info: ` This email flow is already used by the following categories: ${usedCategories.join(
@@ -510,7 +510,7 @@ const ApprovalWorkFlow = ({
       </div>
       <div className={`${ApprovalWorkFlowStyles.mainApprovalContainer}`}>
         {isEdit && currentRec?.id !== null && usedCategories.length > 0 && (
-          <>{notesContainerDetails("⚠ Warning", warningNote)}</>
+          <>{notesContainerDetailsSingleLine("⚠ Warning", warningNote)}</>
         )}
         <div
           className={`${ApprovalWorkFlowStyles.topSection}`}

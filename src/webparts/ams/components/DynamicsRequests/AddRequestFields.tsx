@@ -56,7 +56,6 @@ const AddRequestsFields = ({
   const [dynamicFields, setDynamicFields] = useState<ISectionColumnsConfig[]>(
     []
   );
-  console.log("dynamicFields", dynamicFields);
 
   const [formData, setFormData] = useState<any>({});
   const [errors, setErrors] = useState({});
@@ -93,7 +92,6 @@ const AddRequestsFields = ({
         let tempRes = res.sort((a, b) => a.ID - b.ID);
         let allFields: ISectionColumnsConfig[] = [];
         for (const item of tempRes) {
-          console.log("item", item);
           const sectionFields = await getSectionColumnsConfigDetails(
             item?.SectionName,
             item?.ID
