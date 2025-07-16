@@ -4,29 +4,14 @@ import { useState, useEffect, useRef } from "react";
 //PrimeReact Imports:
 import { Button } from "primereact/button";
 import { InputText } from "primereact/inputtext";
-import { Dropdown } from "primereact/dropdown";
-import { Dialog } from "primereact/dialog";
-import { Checkbox } from "primereact/checkbox";
-import { IoIosAddCircle } from "react-icons/io";
-import { InputSwitch } from "primereact/inputswitch";
-import { DataTable } from "primereact/datatable";
-import { Column } from "primereact/column";
 import { TbEdit } from "react-icons/tb";
-import { RiDeleteBinLine } from "react-icons/ri";
-import { IoMdEye } from "react-icons/io";
-import { InputTextarea } from "primereact/inputtextarea";
 import { AiOutlineAppstore } from "react-icons/ai";
 import { LuPlus } from "react-icons/lu";
-import { MdCancel } from "react-icons/md";
 import { LuTrash2 } from "react-icons/lu";
 //Styles Imports:
 import DynamicSectionWithFieldStyles from "./DynamicSectionWithField.module.scss";
 import "../../../../../../External/style.css";
 import "./DynamicSectionWithField.css";
-import {
-  PeoplePicker,
-  PrincipalType,
-} from "@pnp/spfx-controls-react/lib/PeoplePicker";
 //Common Service Imports:
 import { Config } from "../../../../../../CommonServices/Config";
 import {
@@ -43,7 +28,8 @@ import {
 import { sp } from "@pnp/sp";
 import SPServices from "../../../../../../CommonServices/SPServices";
 import { Toast } from "primereact/toast";
-import { Calendar } from "primereact/calendar";
+import { IoCheckmark } from "react-icons/io5";
+import FieldForms from "./FieldForms";
 
 const DynamicSectionWithField = ({
   finalSubmit,
@@ -62,7 +48,14 @@ const DynamicSectionWithField = ({
   setFinalSubmit,
 }) => {
   const toast = useRef<Toast>(null);
-  const [sections, setSections] = useState([]);
+  const [sections, setSections] = useState([
+    {
+      name: "Section 1",
+      isEditing: false,
+      showFieldForm: false,
+      columns: [],
+    },
+  ]);
   const [showPopup, setShowPopup] = useState(false);
   const [newChoice, setNewChoice] = useState("");
   const [newField, setNewField] = useState<any>({
@@ -74,13 +67,30 @@ const DynamicSectionWithField = ({
     stages: [],
     choices: [],
   });
-  const [previewVisible, setPreviewVisible] = useState(false);
-  const [previewFields, setPreviewFields] = useState<any>([]);
+  const [isValidation, setIsValidation] = useState<boolean>(false);
+  const [choiceError, setChoiceError] = useState<boolean>(false);
+  const [fieldEdit, setFieldEdit] = useState<boolean>(false);
   const [approvalStage, setApprovalStage] = useState([]);
+  const [editingFieldSectionIndex, setEditingFieldSectionIndex] = useState<
+    number | null
+  >(null);
+  const [editingFieldIndex, setEditingFieldIndex] = useState<number | null>(
+    null
+  );
+  console.log(sections, "sections");
+  console.log(editingFieldSectionIndex, "editingFieldSectionIndex");
 
+  //Sections Adding Func:
   const addDynamicSection = () => {
     if (sections.length === 0) {
-      setSections([{ name: "", sectionID: null, columns: [] }]);
+      setSections([
+        {
+          name: `Section 1`,
+          isEditing: false,
+          showFieldForm: false,
+          columns: [],
+        },
+      ]);
       return;
     }
     const lastSection = sections[sections.length - 1];
@@ -106,107 +116,220 @@ const DynamicSectionWithField = ({
       });
       return;
     }
-    setSections([...sections, { name: "", sectionID: null, columns: [] }]);
+    setSections([
+      ...sections,
+      {
+        name: `Section ${sections.length + 1}`,
+        isEditing: false,
+        showFieldForm: false,
+        columns: [],
+      },
+    ]);
   };
 
-  const [isValidation, setIsValidation] = useState<boolean>(false);
-  const [choiceError, setChoiceError] = useState<boolean>(false);
-  const [fieldEdit, setFieldEdit] = useState<boolean>(false);
+  //Section Name Edit Func :
+  const handleSectionNameEditFunc = (sectionIndex) => {
+    const anyEditing = sections.some((section) => section.showFieldForm);
+    if (anyEditing) {
+      toast.current.show({
+        severity: "warn",
+        summary: "Fill Section",
+        content: (prop) =>
+          toastNotify({
+            iconName: "pi-exclamation-triangle",
+            ClsName: "toast-imgcontainer-warning",
+            type: "Warning",
+            msg: `${Config?.ToastCommonMessage}`,
+            image: require("../../../../../../../src/webparts/ams/assets/giphy.gif"),
+          }),
+        life: 3000,
+      });
+      return;
+    }
+    const updatedSections = [...sections];
+    updatedSections[sectionIndex].isEditing = true;
+    setSections(updatedSections);
+  };
+
+  //Sections Deleted Func:
+  const handleDeleteSection = (index: number) => {
+    const anyEditing = sections.some((section) => section.showFieldForm);
+    if (anyEditing) {
+      toast.current.show({
+        severity: "warn",
+        summary: "Fill Section",
+        content: (prop) =>
+          toastNotify({
+            iconName: "pi-exclamation-triangle",
+            ClsName: "toast-imgcontainer-warning",
+            type: "Warning",
+            msg: `${Config?.ToastCommonMessage}`,
+            image: require("../../../../../../../src/webparts/ams/assets/giphy.gif"),
+          }),
+        life: 3000,
+      });
+      return;
+    }
+    const updatedSections = [...sections];
+    updatedSections.splice(index, 1);
+
+    // Re-index Section Names after deletion
+    const reIndexedSections = updatedSections.map((section, idx) => ({
+      ...section,
+      name: `Section ${idx + 1}`,
+    }));
+    setSections(reIndexedSections);
+  };
+
+  //Add forms Func:
+  const handleAddFieldFunc = (sectionIndex) => {
+    const anyEditing = sections.some((section) => section.showFieldForm);
+    if (anyEditing) {
+      toast.current.show({
+        severity: "warn",
+        summary: "Fill Section",
+        content: (prop) =>
+          toastNotify({
+            iconName: "pi-exclamation-triangle",
+            ClsName: "toast-imgcontainer-warning",
+            type: "Warning",
+            msg: `${Config?.ToastCommonMessage}`,
+            image: require("../../../../../../../src/webparts/ams/assets/giphy.gif"),
+          }),
+        life: 3000,
+      });
+      return;
+    }
+
+    const updated = [...sections];
+    updated[sectionIndex].showFieldForm = true;
+    setSections(updated);
+
+    setEditingFieldSectionIndex(null);
+    setEditingFieldIndex(null);
+    setNewField({
+      sectionIndex,
+      name: "",
+      type: "",
+      stages: [],
+      required: false,
+      choices: [],
+    });
+    setFieldEdit(false);
+  };
+
+  //Field Forms Save Button Func:
   const handleSaveField = () => {
     const updatedSections = [...sections];
-    if (newField.sectionIndex !== null) {
-      if (newField.rowIndex !== undefined) {
-        // Update existing field
+    if (newField.sectionIndex !== null && newField.sectionIndex !== undefined) {
+      if (newField.rowIndex !== undefined && newField.rowIndex !== null) {
+        // Edit existing field
         updatedSections[newField.sectionIndex].columns[newField.rowIndex] = {
-          columnID: newField.columnID || null,
-          name: newField.name,
-          type: newField.type,
-          required: newField.required,
-          stages: newField.stages,
+          ...newField,
           choices: newField.type === "Choice" ? newField.choices : [],
         };
       } else {
         // Add new field
         updatedSections[newField.sectionIndex].columns.push({
-          columnID: newField.columnID || null,
-          name: newField.name,
-          type: newField.type,
-          required: newField.required,
-          stages: newField.stages,
+          ...newField,
           choices: newField.type === "Choice" ? newField.choices : [],
         });
       }
-      setSections(updatedSections);
     }
 
-    // Reset state:
-    setNewField({
-      columnID: null,
-      sectionIndex: null,
-      name: "",
-      type: null,
-      required: false,
-      stages: [],
-      choices: [],
-      rowIndex: undefined,
-    });
-    setShowPopup(false);
-    setChoiceError(false);
-    setIsValidation(false);
+    // Reset all forms
+    const resetSections = updatedSections.map((section) => ({
+      ...section,
+      showFieldForm: false,
+    }));
+
+    setSections(resetSections);
+    setNewField({});
     setFieldEdit(false);
+    setEditingFieldSectionIndex(null);
+    setEditingFieldIndex(null);
   };
 
-  const handleDeleteSection = (index: number) => {
-    const updatedSections = [...sections];
-    updatedSections.splice(index, 1);
-    setSections(updatedSections);
-  };
-
-  const RequiredBodyTemplate = (rowData) => {
-    return <div>{rowData?.required ? "Yes" : "No"}</div>;
-  };
-
-  const ActionBodyTemplate = (rowData, sectionIndex, rowIndex) => {
-    return (
-      <div className={DynamicSectionWithFieldStyles.ActionIconsContainer}>
-        <div className={DynamicSectionWithFieldStyles?.actionIconLayer}>
-          <TbEdit
-            onClick={() => handleEditField(rowData, sectionIndex, rowIndex)}
-          />
-        </div>
-        <div className={DynamicSectionWithFieldStyles?.actionIconLayer}>
-          <RiDeleteBinLine
-            onClick={() => handleDeleteField(sectionIndex, rowIndex)}
-          />
-        </div>
-      </div>
-    );
-  };
-
+  //Field Forms particular item Edited Func:
   const handleEditField = (rowData, sectionIndex, rowIndex) => {
+    const anyEditing = sections.some((section) => section.showFieldForm);
+    if (anyEditing) {
+      toast.current.show({
+        severity: "warn",
+        summary: "Fill Section",
+        content: (prop) =>
+          toastNotify({
+            iconName: "pi-exclamation-triangle",
+            ClsName: "toast-imgcontainer-warning",
+            type: "Warning",
+            msg: `${Config?.ToastCommonMessage}`,
+            image: require("../../../../../../../src/webparts/ams/assets/giphy.gif"),
+          }),
+        life: 3000,
+      });
+      return;
+    }
+
     setNewField({
       ...rowData,
-      sectionIndex,
-      rowIndex,
+      sectionIndex: sectionIndex,
+      rowIndex: rowIndex,
     });
-    setShowPopup(true);
+
+    setEditingFieldSectionIndex(sectionIndex);
+    setEditingFieldIndex(rowIndex);
+
+    const updatedSections = [...sections];
+    updatedSections.forEach((section, idx) => {
+      section.showFieldForm = idx === sectionIndex;
+    });
+    setSections(updatedSections);
+
     setFieldEdit(true);
   };
 
-  const handleDeleteField = (sectionIndex, rowIndex) => {
-    const updatedSections = [...sections];
-    updatedSections[sectionIndex].columns.splice(rowIndex, 1);
-    setSections(updatedSections);
+  //Field Forms Cancel Button Func:
+  const handleCancelField = () => {
+    const resetSections = sections.map((section) => ({
+      ...section,
+      showFieldForm: false,
+    }));
+    setSections(resetSections);
+
+    setActiveStep(1);
+    setIsValidation(false);
+    setChoiceError(false);
+    setFieldEdit(false);
+    setNewField({});
+    setEditingFieldSectionIndex(null);
+    setEditingFieldIndex(null);
   };
 
-  const handlePreview = (sectionIndex) => {
-    setPreviewFields({
-      sectionName: sections[sectionIndex].name,
-      columns: sections[sectionIndex].columns,
-    });
-    setPreviewVisible(true);
+  //Field Forms particular item deleted Func:
+  const handleDeleteField = (sectionIndex, fieldIndex) => {
+    const anyEditing = sections.some((section) => section.showFieldForm);
+    if (anyEditing) {
+      toast.current.show({
+        severity: "warn",
+        summary: "Fill Section",
+        content: (prop) =>
+          toastNotify({
+            iconName: "pi-exclamation-triangle",
+            ClsName: "toast-imgcontainer-warning",
+            type: "Warning",
+            msg: `${Config?.ToastCommonMessage}`,
+            image: require("../../../../../../../src/webparts/ams/assets/giphy.gif"),
+          }),
+        life: 3000,
+      });
+      return;
+    }
+    const updated = [...sections];
+    updated[sectionIndex].columns.splice(fieldIndex, 1);
+    setSections(updated);
   };
-  //Category in draft
+
+  //Category in draft:
   const draftCategory = async () => {
     if (categoryClickingID) {
       try {
@@ -567,7 +690,7 @@ const DynamicSectionWithField = ({
     }
   };
 
-  // Get Category Sections
+  // Get Category Sections Details:
   const getCategorySectionDetails = async (dataID) => {
     try {
       const res = await SPServices.SPReadItems({
@@ -593,7 +716,7 @@ const DynamicSectionWithField = ({
     }
   };
 
-  //Update sectionConfigList
+  //Update sectionConfigList:
   const updateSectionConfigList = (ItemID, dataJson: {}) => {
     SPServices.SPUpdateItem({
       Listname: Config.ListNames.CategorySectionConfig,
@@ -606,7 +729,7 @@ const DynamicSectionWithField = ({
       .catch((err) => console.log("updateSectionConfigList err", err));
   };
 
-  // Get Category Sections
+  // Get Category SectionColumns Details:
   const getCategorySectionColumnsDetails = async (dataID) => {
     try {
       const res = await SPServices.SPReadItems({
@@ -632,7 +755,7 @@ const DynamicSectionWithField = ({
     }
   };
 
-  //Update sectionConfigList
+  //Update sectionConfigList:
   const addSectionConfigList = async (dataJson: {}) => {
     try {
       const res = await SPServices.SPAddItem({
@@ -645,7 +768,7 @@ const DynamicSectionWithField = ({
     }
   };
 
-  //Update sectionColumnsConfigList
+  //Update sectionColumnsConfigList:
   const addsectionColumnsConfigList = async (dataJson: {}) => {
     try {
       const res = await SPServices.SPAddItem({
@@ -658,7 +781,7 @@ const DynamicSectionWithField = ({
     }
   };
 
-  //Update sectionColumnsConfigList
+  //Update sectionColumnsConfigList:
   const updatesectionColumnsConfigList = (ItemID, dataJson: {}) => {
     SPServices.SPUpdateItem({
       Listname: Config.ListNames.SectionColumnsConfig,
@@ -671,7 +794,7 @@ const DynamicSectionWithField = ({
       .catch((err) => console.log("updatesectionColumnsConfigList err", err));
   };
 
-  //Add to Column in Our SharepointList
+  //Add to Column in Our SharepointList:
   const addColumnToList = async (list, fieldTypeKind, columnName, choices) => {
     const tempColumnName = columnName.replace(/\s/g, "");
     try {
@@ -761,7 +884,7 @@ const DynamicSectionWithField = ({
       .catch((err) => console.log("addApprovalStageConfigDetails error", err));
   };
 
-  //Get CategorySectionConfigDetails:
+  //Get Category SectionConfig Details:
   const getCategorySectionConfigDetails = () => {
     SPServices.SPReadItems({
       Listname: Config.ListNames?.CategorySectionConfig,
@@ -798,7 +921,7 @@ const DynamicSectionWithField = ({
       });
   };
 
-  // Get Sections Columns Config
+  // Get Sections Columns Config:
   const getSectionsColumnsConfig = async (parentSectionID, index) => {
     try {
       const res = await SPServices.SPReadItems({
@@ -843,7 +966,7 @@ const DynamicSectionWithField = ({
     }
   };
 
-  //Get Approval Stage Count
+  //Get Approval Stage Count:
   const getApprovalStageCount = async () => {
     var totalStages = 0;
     if (sessionStorage.getItem("approvalFlowDetails")) {
@@ -867,45 +990,25 @@ const DynamicSectionWithField = ({
     }
   };
 
-  useEffect(() => {
-    getApprovalStageCount();
-    const storedSections = sessionStorage.getItem("dynamicSections");
-    if (storedSections) {
-      setSections(JSON.parse(storedSections));
-    }
-  }, []);
-
-  useEffect(() => {
-    sessionStorage.setItem("dynamicSections", JSON.stringify(sections));
-    setFinalSubmit((prev: IFinalSubmitDetails) => ({
-      ...prev,
-      dynamicSectionWithField: sections,
-    }));
-  }, [sections]);
-
-  useEffect(() => {
-    if (categoryClickingID && !sessionStorage.getItem("categoryClickingID")) {
-      sessionStorage.setItem("categoryClickingID", categoryClickingID);
-      getCategorySectionConfigDetails();
-    }
-  }, [categoryClickingID]);
-  useEffect(() => {
-    if (!showPopup) {
-      setNewField({
-        columnID: null,
-        sectionIndex: null,
-        name: "",
-        type: null,
-        required: false,
-        stages: [],
-        choices: [],
-        rowIndex: undefined,
-      });
-    }
-  }, [showPopup]);
-
   const validateFunction = (isDraft) => {
     let isValid = true;
+    const anyEditing = sections.some((section) => section.showFieldForm);
+    if (anyEditing) {
+      toast.current.show({
+        severity: "warn",
+        summary: "Fill Section",
+        content: (prop) =>
+          toastNotify({
+            iconName: "pi-exclamation-triangle",
+            ClsName: "toast-imgcontainer-warning",
+            type: "Warning",
+            msg: `${Config?.ToastCommonMessage}`,
+            image: require("../../../../../../../src/webparts/ams/assets/giphy.gif"),
+          }),
+        life: 3000,
+      });
+      return;
+    }
     if (sections?.length == 0) {
       isValid = false;
       toast.current.show({
@@ -1006,8 +1109,9 @@ const DynamicSectionWithField = ({
 
   //Field Validation Function:
   const FieldValidateFunc = async () => {
+    console.log(newField, "newField");
     let isValidation =
-      !newField?.name || !newField?.type || newField?.stages?.length === 0;
+      !newField?.name || !newField?.type || newField?.stages.length == 0;
     setIsValidation(isValidation);
     if (isValidation) return false;
 
@@ -1051,6 +1155,43 @@ const DynamicSectionWithField = ({
     return true;
   };
 
+  useEffect(() => {
+    getApprovalStageCount();
+    const storedSections = sessionStorage.getItem("dynamicSections");
+    if (storedSections) {
+      setSections(JSON.parse(storedSections));
+    }
+  }, []);
+
+  useEffect(() => {
+    sessionStorage.setItem("dynamicSections", JSON.stringify(sections));
+    setFinalSubmit((prev: IFinalSubmitDetails) => ({
+      ...prev,
+      dynamicSectionWithField: sections,
+    }));
+  }, [sections]);
+
+  useEffect(() => {
+    if (categoryClickingID && !sessionStorage.getItem("categoryClickingID")) {
+      sessionStorage.setItem("categoryClickingID", categoryClickingID);
+      getCategorySectionConfigDetails();
+    }
+  }, [categoryClickingID]);
+  useEffect(() => {
+    if (!showPopup) {
+      setNewField({
+        columnID: null,
+        sectionIndex: null,
+        name: "",
+        type: null,
+        required: false,
+        stages: [],
+        choices: [],
+        rowIndex: undefined,
+      });
+    }
+  }, [showPopup]);
+
   return (
     <>
       <Toast ref={toast} />
@@ -1059,17 +1200,17 @@ const DynamicSectionWithField = ({
           <AiOutlineAppstore />
         </div>
         <div>Form Configuration</div>
-        {categoryClickingID === null && (
-          <Button
-            icon={<LuPlus className="modernBtnIcon" />}
-            label="Add Section"
-            onClick={addDynamicSection}
-            className="modernButton"
-            style={{ marginLeft: "30px" }}
-          />
-        )}
+        {categoryClickingID === null &&
+          sections[sections.length - 1]?.columns.length > 0 && (
+            <Button
+              icon={<LuPlus className="modernBtnIcon" />}
+              label="Add Section"
+              onClick={addDynamicSection}
+              className="modernButton"
+              style={{ marginLeft: "30px" }}
+            />
+          )}
       </div>
-      {/* <div className={DynamicSectionWithFieldStyles.heading}>Fields</div> */}
       <div className={`${DynamicSectionWithFieldStyles.container} container`}>
         <div className={DynamicSectionWithFieldStyles.sectionWrapper}>
           {sections.map((section, sectionIndex) => (
@@ -1077,414 +1218,267 @@ const DynamicSectionWithField = ({
               key={sectionIndex}
               className={DynamicSectionWithFieldStyles.sectionContainer}
             >
+              {/* Section Name Input */}
               <div className={DynamicSectionWithFieldStyles.sectionlabelHeader}>
-                <Label className={DynamicSectionWithFieldStyles.label}>
-                  Section name
-                </Label>
-                {categoryClickingID === null && sections?.length > 1 && (
-                  <LuTrash2
-                    className={DynamicSectionWithFieldStyles.deleteIcon}
-                    onClick={() => handleDeleteSection(sectionIndex)}
-                  />
-                )}
+                <div
+                  className={
+                    DynamicSectionWithFieldStyles.sectionInputContainer
+                  }
+                >
+                  {section.isEditing ? (
+                    <div
+                      className={
+                        DynamicSectionWithFieldStyles.sectionInputContainer
+                      }
+                    >
+                      <InputText
+                        value={section.name}
+                        placeholder="Enter your section name"
+                        onChange={(e) => {
+                          const updatedSections = [...sections];
+                          updatedSections[sectionIndex].name = e.target.value;
+                          setSections(updatedSections);
+                        }}
+                        className={DynamicSectionWithFieldStyles.sectionInput}
+                      />
+                      <div className="actionIconLayer">
+                        <IoCheckmark
+                          onClick={() => {
+                            const updatedSections = [...sections];
+                            updatedSections[sectionIndex].isEditing = false;
+                            setSections(updatedSections);
+                          }}
+                          style={{ cursor: "pointer", fontSize: "18px" }}
+                        />
+                      </div>
+                    </div>
+                  ) : (
+                    <>
+                      <Label className={DynamicSectionWithFieldStyles.label}>
+                        {section?.name}
+                      </Label>
+                      {(actionBooleans?.isEdit ||
+                        categoryClickingID === null) && (
+                        <div className="actionIconLayer">
+                          <TbEdit
+                            onClick={() => {
+                              handleSectionNameEditFunc(sectionIndex);
+                            }}
+                            style={{ cursor: "pointer" }}
+                          />
+                        </div>
+                      )}
+                    </>
+                  )}
+                </div>
+                <div>
+                  {(actionBooleans?.isEdit || categoryClickingID === null) &&
+                    sections?.length > 1 && (
+                      <LuTrash2
+                        className={DynamicSectionWithFieldStyles.deleteIcon}
+                        onClick={() => {
+                          handleDeleteSection(sectionIndex);
+                        }}
+                      />
+                    )}
+                </div>
               </div>
-              <InputText
-                disabled={actionBooleans?.isView && categoryClickingID !== null}
-                value={section.name}
-                onChange={(e) => {
-                  const updatedSections = [...sections];
-                  updatedSections[sectionIndex].name = e.target.value;
-                  setSections(updatedSections);
-                }}
-                placeholder="Enter here"
-                className={DynamicSectionWithFieldStyles.sectionInput}
-              />
-              {section.columns?.length > 0 ? (
+
+              {/* Fields List */}
+              {section.columns?.length > 0 && (
                 <>
                   <Label className={DynamicSectionWithFieldStyles.label}>
                     Fields
                   </Label>
-                  <div className="customDataTableContainer">
-                    <DataTable
-                      value={section.columns}
-                      emptyMessage={
-                        <>
-                          <p style={{ textAlign: "center" }}>
-                            No Records Found
-                          </p>
-                        </>
-                      }
-                    >
-                      <Column header="Name" field="name"></Column>
-                      <Column header="Type" field="type"></Column>
-                      <Column
-                        header="Required"
-                        body={RequiredBodyTemplate}
-                      ></Column>
-                      <Column
-                        header="Approver"
-                        body={(row) => stageBodyTemplate(row)}
-                      ></Column>
-                      {(actionBooleans?.isEdit ||
-                        categoryClickingID === null) && (
-                        <Column
-                          header="Action"
-                          body={(row, { rowIndex }) =>
-                            ActionBodyTemplate(row, sectionIndex, rowIndex)
-                          }
-                        ></Column>
-                      )}
-                    </DataTable>
+                  <div>
+                    {section.columns.map((field, fieldIndex) => (
+                      <div key={fieldIndex}>
+                        {editingFieldSectionIndex === sectionIndex &&
+                        editingFieldIndex === fieldIndex ? (
+                          section.showFieldForm && (
+                            <FieldForms
+                              newField={newField}
+                              setNewField={setNewField}
+                              columnTypes={columnTypes}
+                              approvalStage={approvalStage}
+                              isValidation={isValidation}
+                              newChoice={newChoice}
+                              setNewChoice={setNewChoice}
+                              choiceError={choiceError}
+                              setChoiceError={setChoiceError}
+                              handleChoiceAdded={handleChoiceAdded}
+                              handleCancelField={handleCancelField}
+                              FieldValidateFunc={FieldValidateFunc}
+                              handleSaveField={handleSaveField}
+                              DynamicSectionWithFieldStyles={
+                                DynamicSectionWithFieldStyles
+                              }
+                            />
+                          )
+                        ) : (
+                          <div
+                            className={DynamicSectionWithFieldStyles.fieldItem}
+                          >
+                            <div
+                              className={
+                                DynamicSectionWithFieldStyles.fieldDetail
+                              }
+                            >
+                              <Label
+                                className={
+                                  DynamicSectionWithFieldStyles.DetailName
+                                }
+                              >
+                                Name
+                              </Label>
+                              <div
+                                className={
+                                  DynamicSectionWithFieldStyles.fieldValue
+                                }
+                              >
+                                {field.name}
+                              </div>
+                            </div>
+                            <div
+                              className={
+                                DynamicSectionWithFieldStyles.fieldDetail
+                              }
+                            >
+                              <Label
+                                className={
+                                  DynamicSectionWithFieldStyles.DetailName
+                                }
+                              >
+                                Type
+                              </Label>
+                              <div
+                                className={
+                                  DynamicSectionWithFieldStyles.fieldValue
+                                }
+                              >
+                                {field.type}
+                              </div>
+                            </div>
+                            <div
+                              className={
+                                DynamicSectionWithFieldStyles.fieldDetail
+                              }
+                            >
+                              <Label
+                                className={
+                                  DynamicSectionWithFieldStyles.DetailName
+                                }
+                              >
+                                Required
+                              </Label>
+                              <div
+                                className={
+                                  DynamicSectionWithFieldStyles.fieldValue
+                                }
+                              >
+                                {field.required ? "Yes" : "No"}
+                              </div>
+                            </div>
+                            <div
+                              className={
+                                DynamicSectionWithFieldStyles.fieldDetail
+                              }
+                            >
+                              <Label
+                                className={
+                                  DynamicSectionWithFieldStyles.DetailName
+                                }
+                              >
+                                Approver
+                              </Label>
+                              <div
+                                className={
+                                  DynamicSectionWithFieldStyles.fieldValue
+                                }
+                              >
+                                {field.stages?.map((stage, idx) => (
+                                  <span
+                                    key={idx}
+                                    className={
+                                      DynamicSectionWithFieldStyles.stageTag
+                                    }
+                                  >
+                                    {stage}
+                                  </span>
+                                ))}
+                              </div>
+                            </div>
+                            {(actionBooleans?.isEdit ||
+                              categoryClickingID === null) && (
+                              <div
+                                className={
+                                  DynamicSectionWithFieldStyles.fieldActions
+                                }
+                              >
+                                <div className="actionIconLayer">
+                                  <TbEdit
+                                    onClick={() => {
+                                      handleEditField(
+                                        field,
+                                        sectionIndex,
+                                        fieldIndex
+                                      );
+                                    }}
+                                  />
+                                </div>
+                                <div className="actionIconLayer">
+                                  <LuTrash2
+                                    onClick={() => {
+                                      handleDeleteField(
+                                        sectionIndex,
+                                        fieldIndex
+                                      );
+                                    }}
+                                  />
+                                </div>
+                              </div>
+                            )}
+                          </div>
+                        )}
+                      </div>
+                    ))}
                   </div>
                 </>
-              ) : (
-                ""
               )}
-              <div style={{ display: "flex", justifyContent: "space-between" }}>
-                {(actionBooleans?.isEdit || categoryClickingID === null) && (
-                  <Button
-                    icon={<LuPlus className="modernBtnIcon" />}
-                    label="Add Field"
-                    onClick={() => {
-                      setNewField({ ...newField, sectionIndex });
-                      setShowPopup(true);
-                    }}
-                    className="modernButton"
-                  />
-                )}
-                {/* {section.columns?.length >= 2 ? (
-                  <Button
-                    icon={
-                      <IoMdEye
-                        className={
-                          DynamicSectionWithFieldStyles.addSectionBtnIcon
-                        }
-                      />
-                    }
-                    label="preview"
-                    onClick={() => handlePreview(sectionIndex)}
-                    className={DynamicSectionWithFieldStyles.addButton}
-                    style={{ marginLeft: "0" }}
-                  />
-                ) : (
-                  ""
-                )} */}
-              </div>
+              {editingFieldSectionIndex === null && section.showFieldForm && (
+                <FieldForms
+                  newField={newField}
+                  setNewField={setNewField}
+                  columnTypes={columnTypes}
+                  approvalStage={approvalStage}
+                  isValidation={isValidation}
+                  newChoice={newChoice}
+                  setNewChoice={setNewChoice}
+                  choiceError={choiceError}
+                  setChoiceError={setChoiceError}
+                  handleChoiceAdded={handleChoiceAdded}
+                  handleCancelField={handleCancelField}
+                  FieldValidateFunc={FieldValidateFunc}
+                  handleSaveField={handleSaveField}
+                  DynamicSectionWithFieldStyles={DynamicSectionWithFieldStyles}
+                />
+              )}
+
+              {/* Add Field Button */}
+              {(actionBooleans?.isEdit || categoryClickingID === null) && (
+                <Button
+                  icon={<LuPlus />}
+                  label="Add Field"
+                  onClick={() => {
+                    handleAddFieldFunc(sectionIndex);
+                  }}
+                  className="modernButton"
+                  style={{ marginTop: "10px", width: "18%" }}
+                />
+              )}
             </div>
           ))}
         </div>
-        <Dialog
-          visible={showPopup}
-          onHide={() => setShowPopup(false)}
-          header="Create Field"
-          className={DynamicSectionWithFieldStyles.dialog}
-        >
-          <div>
-            <div className={DynamicSectionWithFieldStyles.columnNameContainer}>
-              <Label className={DynamicSectionWithFieldStyles.label}>
-                Name
-              </Label>
-              <InputText
-                value={newField.name}
-                onChange={(e) =>
-                  setNewField({ ...newField, name: e.target.value })
-                }
-                placeholder="Enter name"
-                className={DynamicSectionWithFieldStyles.columnNameInput}
-                maxLength={25}
-              />
-              {isValidation && !newField?.name && (
-                <span className="errorMsg">Field Name is required</span>
-              )}
-            </div>
-            {newField?.columnID === null && (
-              <div
-                className={DynamicSectionWithFieldStyles.columnNameContainer}
-              >
-                <Label className={DynamicSectionWithFieldStyles.label}>
-                  Type
-                </Label>
-                <Dropdown
-                  value={newField.type}
-                  options={columnTypes}
-                  onChange={(e) =>
-                    setNewField({
-                      ...newField,
-                      type: e.value,
-                      required:
-                        e.value === "YesorNo" ? false : newField?.required,
-                      choices: e.value === "Choice" ? [] : newField.choices,
-                    })
-                  }
-                  optionLabel="name"
-                  placeholder="Select Type"
-                  style={{ padding: "4px" }}
-                  className={DynamicSectionWithFieldStyles.columnNameInput}
-                />
-                {isValidation && !newField?.type && (
-                  <span className="errorMsg">Field type is required</span>
-                )}
-              </div>
-            )}
-            <div className={DynamicSectionWithFieldStyles.columnNameContainer}>
-              {newField.type === "Choice" && newField?.columnID === null && (
-                <>
-                  <div
-                    className={DynamicSectionWithFieldStyles.choiceContainer}
-                  >
-                    <InputText
-                      value={newChoice}
-                      // onChange={(e) => setNewChoice(e.target.value)}
-                      onChange={(e) => {
-                        setNewChoice(e.target.value);
-                        if (e.target.value.trim() !== "") setChoiceError(false);
-                      }}
-                      placeholder="Enter new choice"
-                      className={DynamicSectionWithFieldStyles.choiceInput}
-                    />
-
-                    <Button
-                      label="Add Choice"
-                      icon={
-                        <LuPlus
-                          className={
-                            DynamicSectionWithFieldStyles.addSectionBtnIcon
-                          }
-                        />
-                      }
-                      onClick={() =>
-                        //   {
-                        //   if (newChoice.trim() !== "") {
-                        //     setNewField({
-                        //       ...newField,
-                        //       choices: [...newField.choices, newChoice],
-                        //     });
-                        //     setNewChoice("");
-                        //     setChoiceError(false);
-                        //   } else {
-                        //     setChoiceError(true);
-                        //   }
-                        // }
-                        handleChoiceAdded()
-                      }
-                      className={DynamicSectionWithFieldStyles.addButton}
-                      style={{ marginLeft: "0" }}
-                    />
-                  </div>
-                  <div>
-                    {newField.choices?.length > 0 && (
-                      <div
-                        className={
-                          DynamicSectionWithFieldStyles.choiceListContainer
-                        }
-                      >
-                        {newField.choices.map((choice, index) => (
-                          <div
-                            key={index}
-                            className={DynamicSectionWithFieldStyles.choiceItem}
-                          >
-                            <span>{choice}</span>
-                            <MdCancel
-                              className={
-                                DynamicSectionWithFieldStyles.deleteChoiceBtn
-                              }
-                              onClick={() => {
-                                const updatedChoices = newField.choices.filter(
-                                  (c, i) => i !== index
-                                );
-                                setNewField({
-                                  ...newField,
-                                  choices: updatedChoices,
-                                });
-                              }}
-                            />
-                          </div>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                  {choiceError && (
-                    <span className="errorMsg">Choice cannot be empty</span>
-                  )}
-                </>
-              )}
-            </div>
-
-            {!(newField.type === "YesorNo") && (
-              <div
-                className={DynamicSectionWithFieldStyles.columnNameContainer}
-              >
-                <Label className={DynamicSectionWithFieldStyles.label}>
-                  Require that this column contains information
-                </Label>
-                <InputSwitch
-                  checked={newField.required}
-                  onChange={(e) =>
-                    setNewField({
-                      ...newField,
-                      required: e.value,
-                    })
-                  }
-                  className="InputSwitch"
-                />
-              </div>
-            )}
-            <div className={DynamicSectionWithFieldStyles.columnNameContainer}>
-              <Label className={DynamicSectionWithFieldStyles.label}>
-                Need to show on
-              </Label>
-              {approvalStage?.map((stage) => (
-                <div
-                  className={`${DynamicSectionWithFieldStyles.stageContainer} stageContainer`}
-                  key={stage}
-                >
-                  <Checkbox
-                    inputId={stage}
-                    checked={newField.stages.includes(stage)}
-                    onChange={(e) => {
-                      const selectedStages = e.checked
-                        ? [...newField.stages, stage]
-                        : newField.stages.filter((s) => s !== stage);
-                      setNewField({ ...newField, stages: selectedStages });
-                    }}
-                  />
-                  <label>{stage}</label>
-                </div>
-              ))}
-              {isValidation && newField?.stages?.length == 0 && (
-                <span className="errorMsg">Field stage is required</span>
-              )}
-            </div>
-            <div className={DynamicSectionWithFieldStyles.dialogButtons}>
-              <Button
-                label="Cancel"
-                icon="pi pi-times"
-                onClick={() => {
-                  setShowPopup(false);
-                  setIsValidation(false);
-                  setChoiceError(false);
-                  setFieldEdit(false);
-                  setActiveStep(1);
-                }}
-                className="customCancelButton"
-              />
-              <Button
-                label="Save"
-                icon="pi pi-save"
-                onClick={async () => {
-                  const isValid = await FieldValidateFunc();
-                  if (isValid) {
-                    handleSaveField();
-                  }
-                }}
-                autoFocus
-                className="customSubmitButton"
-                disabled={choiceError}
-              />
-            </div>
-          </div>
-        </Dialog>
-        <Dialog
-          visible={previewVisible}
-          onHide={() => setPreviewVisible(false)}
-          header="Preview Fields"
-          className={DynamicSectionWithFieldStyles.previewDailog}
-        >
-          <div
-            className={DynamicSectionWithFieldStyles.previewFieldSectionName}
-          >
-            {previewFields?.sectionName}
-          </div>
-          <div className={DynamicSectionWithFieldStyles.previewFieldContainer}>
-            {previewFields?.columns?.map((field, index) => (
-              <div
-                key={index}
-                className={DynamicSectionWithFieldStyles.previewField}
-              >
-                <Label className={DynamicSectionWithFieldStyles.label}>
-                  {field.name}
-                </Label>
-                {field.type === "text" && (
-                  <InputText
-                    value=""
-                    disabled
-                    className={DynamicSectionWithFieldStyles.previewInput}
-                  />
-                )}
-                {field.type === "Number" && (
-                  <InputText
-                    keyfilter="num"
-                    value=""
-                    disabled
-                    className={DynamicSectionWithFieldStyles.previewInput}
-                  />
-                )}
-                {field.type === "textarea" && (
-                  <InputTextarea
-                    value=""
-                    disabled
-                    className={DynamicSectionWithFieldStyles.previewTextArea}
-                  />
-                )}
-                {field.type === "Choice" && (
-                  <Dropdown
-                    value={null}
-                    options={field.choices.map((choice) => ({
-                      label: choice,
-                      value: choice,
-                    }))}
-                    // disabled
-                    className={DynamicSectionWithFieldStyles.previewDropdown}
-                  />
-                )}
-                {field.type === "Date" && (
-                  <Calendar
-                    dateFormat="dd/mm/yy"
-                    showIcon
-                    className={DynamicSectionWithFieldStyles.previewInput}
-                  />
-                )}
-                {field.type === "DateTime" && (
-                  <Calendar
-                    id="calendar-12h"
-                    showTime
-                    hourFormat="12"
-                    dateFormat="dd/mm/yy"
-                    showIcon
-                    className={DynamicSectionWithFieldStyles.previewInput}
-                  />
-                )}
-                {field.type === "Person" && (
-                  <PeoplePicker
-                    context={context}
-                    personSelectionLimit={1}
-                    groupName={""}
-                    showtooltip={true}
-                    tooltipMessage="Search and select persons here"
-                    ensureUser={true}
-                    principalTypes={[PrincipalType.User]}
-                    resolveDelay={1000}
-                  />
-                )}
-                {field.type === "PersonMulti" && (
-                  <PeoplePicker
-                    context={context}
-                    personSelectionLimit={5}
-                    tooltipMessage="Search and select persons here"
-                    groupName={""}
-                    showtooltip={true}
-                    ensureUser={true}
-                    principalTypes={[PrincipalType.User]}
-                    resolveDelay={1000}
-                  />
-                )}
-                {field.type === "YesorNo" && (
-                  <Checkbox checked={false}></Checkbox>
-                )}
-              </div>
-            ))}
-          </div>
-        </Dialog>
       </div>
       <div className={DynamicSectionWithFieldStyles.FlowButtonsContainer}>
         <div className={DynamicSectionWithFieldStyles.FlowPreviousButton}>

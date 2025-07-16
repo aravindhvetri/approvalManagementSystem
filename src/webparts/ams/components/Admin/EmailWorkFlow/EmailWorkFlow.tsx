@@ -501,13 +501,7 @@ const EmailWorkFlow = ({
           <div className="customDataTableCardContainer">
             <div className="profile_header_content">
               <div>
-                <h2
-                  style={{
-                    lineHeight: "2.25rem",
-                  }}
-                >
-                  Email Config
-                </h2>
+                <h2>Email Config</h2>
                 <p>
                   Set up and manage email templates used in the request and
                   approval process

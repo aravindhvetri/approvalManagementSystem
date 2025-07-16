@@ -19,6 +19,7 @@ import {
 } from "../../../../CommonServices/interface";
 import {
   generateRequestID,
+  getFileIcon,
   sendNotification,
   toastNotify,
 } from "../../../../CommonServices/CommonTemplates";
@@ -51,12 +52,13 @@ const AddRequestsFields = ({
   setDynamicRequestsSideBarVisible,
 }) => {
   const toast = useRef(null);
+  const [Ok, setOk] = useState<boolean>(false);
   const serverRelativeUrl = context?._pageContext?._site?.serverRelativeUrl;
   const [files, setFiles] = useState([]);
   const [dynamicFields, setDynamicFields] = useState<ISectionColumnsConfig[]>(
     []
   );
-
+  const clearFiles = useRef(null);
   const [formData, setFormData] = useState<any>({});
   const [errors, setErrors] = useState({});
   const [selectedCategory, setSelectedCategory] =
@@ -447,6 +449,7 @@ const AddRequestsFields = ({
                       );
                       setDynamicRequestsSideBarVisible(false);
                       setShowLoader(false);
+                      setOk(false);
                     })
                     .catch((err) =>
                       console.log("get EmailTemplateConfig error", err)
@@ -536,14 +539,37 @@ const AddRequestsFields = ({
     }
   };
 
+  //DownLoad File Function:
+  const downloadFile = (file) => {
+    console.log(file, "file");
+    const anchortag = document.createElement("a");
+    anchortag.setAttribute("href", file?.objectURL);
+    anchortag.setAttribute("target", "_blank");
+    anchortag.setAttribute("download", "");
+    anchortag.click();
+    anchortag.remove();
+  };
+
   //DynamicRequestFieldsSideBarContent Return Function:
   const DynamicRequestsFieldsSideBarContent = () => {
     return (
       <>
         {showLoader ? <Loader /> : ""}
-        <div className={dynamicFieldsStyles.filterHeader}>
-          <div className={dynamicFieldsStyles.filterHeaderContainer}>
-            <div style={{ display: "flex", justifyContent: "center" }}>
+        <div
+          style={Ok ? { display: "block", marginTop: "0px" } : {}}
+          className={dynamicFieldsStyles.filterHeader}
+        >
+          <div
+            style={Ok ? { width: "100%" } : {}}
+            className={dynamicFieldsStyles.filterHeaderContainer}
+          >
+            <div
+              style={
+                Ok
+                  ? { display: "none" }
+                  : { display: "flex", justifyContent: "center" }
+              }
+            >
               <FaCodePullRequest className={dynamicFieldsStyles.icon} />
             </div>
             <Label
@@ -551,25 +577,31 @@ const AddRequestsFields = ({
               className={dynamicFieldsStyles.label}
             >
               <div
-                style={{ justifyContent: "center" }}
+                style={
+                  Ok
+                    ? { justifyContent: "start", marginBottom: "0px" }
+                    : { justifyContent: "center", marginBottom: "6px" }
+                }
                 className="profile_header_content"
               >
                 <div>
-                  <h3 style={{ fontSize: "18px", fontWeight: 500 }}>
+                  <h3
+                    style={{
+                      fontSize: "18px",
+                      fontWeight: 500,
+                    }}
+                  >
                     Create Request
                   </h3>
-                  <p>
-                    Submit a new Request for approval through the organization's
-                    workflow
-                  </p>
                 </div>
               </div>
             </Label>
             <div
-              style={{ display: "flex", justifyContent: "center", gap: "20px" }}
+              style={Ok ? { justifyContent: "start" } : {}}
+              className={dynamicFieldsStyles.dropDownContainer}
             >
               <Dropdown
-                style={{ width: "185px" }}
+                style={{ width: "250px" }}
                 value={selectedCategory}
                 options={categoryFilterValue.categoryDrop}
                 onChange={(e) => {
@@ -580,351 +612,452 @@ const AddRequestsFields = ({
                 placeholder="Select category"
                 className="w-full md:w-14rem"
               />
-              {selectedCategory ? (
-                <div className={dynamicFieldsStyles.fileUploadContainer}>
-                  {/* <Label className={dynamicFieldsStyles.label}>Attachments</Label> */}
-                  <>
-                    <div>
-                      <FileUpload
-                        className="addFileButton"
-                        name="demo[]"
-                        mode="basic"
-                        onSelect={(e) =>
-                          handleFileSelection(e, files, setFiles, toast, Config)
-                        }
-                        url="/api/upload"
-                        auto
-                        multiple
-                        maxFileSize={1000000}
-                        style={{ width: "14%" }}
-                        chooseLabel="File Upload"
-                        chooseOptions={{ icon: "pi pi-upload" }}
-                      />
-                    </div>
-                    <div style={{ height: "66px", overflow: "auto" }}>
-                      {files.length > 0 && (
-                        <ul style={{ listStyle: "none", padding: 0 }}>
-                          {files.map((file, index) => (
-                            <li
-                              className={attachmentStyles?.fileList}
-                              key={index}
-                            >
-                              <Tag
-                                className={attachmentStyles.filNameTag}
-                                value={file.name}
-                              />
-                              <GiCancel
-                                style={{ cursor: "pointer", color: "red" }}
-                                onClick={() => removeFile(file.name)}
-                              />
-                            </li>
-                          ))}
-                        </ul>
-                      )}
-                    </div>
-                  </>
+              {selectedCategory && Ok == false && (
+                <div>
+                  <Button onClick={() => setOk(true)} className="modernButton">
+                    Ok
+                  </Button>
                 </div>
-              ) : (
-                ""
               )}
+              {Ok && (
+                <div
+                  className={`${
+                    Ok ? "OkCheckingContainer" : ""
+                  } dragAndDropAttachmentContainer`}
+                >
+                  <FileUpload
+                    className="dragAndDropBtn"
+                    ref={clearFiles}
+                    name="demo[]"
+                    onSelect={(e) => {
+                      handleFileSelection(e, files, setFiles, toast, Config);
+                      clearFiles.current.clear();
+                    }}
+                    uploadHandler={() => {}}
+                    url="/api/upload"
+                    multiple
+                    maxFileSize={1000000}
+                    chooseLabel="File Upload"
+                    chooseOptions={{ icon: "pi pi-upload" }}
+                    emptyTemplate={
+                      <>
+                        <div className={attachmentStyles.emptyMessage}>
+                          <div
+                            className={attachmentStyles.emptyMessageImageDiv}
+                          >
+                            <img src={require("../../assets/cloud.png")}></img>
+                          </div>
+                        </div>
+                        <span className={attachmentStyles.emptyMessageContent}>
+                          Drag or upload your files
+                        </span>
+                      </>
+                    }
+                  />
+                </div>
+              )}
+            </div>
+            <div>
+              {/* <Label className={dynamicFieldsStyles.label}>Attachments</Label> */}
+              <>
+                {Ok ? (
+                  ""
+                ) : (
+                  <div className="dragAndDropAttachmentContainer">
+                    <FileUpload
+                      className="dragAndDropBtn"
+                      ref={clearFiles}
+                      name="demo[]"
+                      onSelect={(e) => {
+                        handleFileSelection(e, files, setFiles, toast, Config);
+                        clearFiles.current.clear();
+                      }}
+                      uploadHandler={() => {}}
+                      url="/api/upload"
+                      multiple
+                      maxFileSize={1000000}
+                      style={{
+                        width: "60%",
+                        margin: "auto",
+                        paddingTop: "10px",
+                      }}
+                      chooseLabel="File Upload"
+                      chooseOptions={{ icon: "pi pi-upload" }}
+                      emptyTemplate={
+                        <>
+                          <div className={attachmentStyles.emptyMessage}>
+                            <div
+                              className={attachmentStyles.emptyMessageImageDiv}
+                            >
+                              <img
+                                src={require("../../assets/cloud.png")}
+                              ></img>
+                            </div>
+                          </div>
+                          <span
+                            className={attachmentStyles.emptyMessageContent}
+                          >
+                            Drag or upload your files
+                          </span>
+                        </>
+                      }
+                    />
+                  </div>
+                )}
+                <div
+                  style={{
+                    height: Ok && files?.length > 6 ? "86px" : Ok ? "auto" : "",
+                  }}
+                  className={attachmentStyles.filesMasterDiv}
+                >
+                  {files.length > 0 && (
+                    <div className={attachmentStyles.filesSection}>
+                      {files.map((file, index) => (
+                        <div
+                          style={Ok ? { width: "16%" } : {}}
+                          className={attachmentStyles.filesShowingContainer}
+                        >
+                          <div className={attachmentStyles.labelContainer}>
+                            <div className={attachmentStyles.filesIcons}>
+                              {getFileIcon(file?.name)}
+                            </div>
+                            <div
+                              title={file?.name}
+                              className={attachmentStyles.fileLabel}
+                              onClick={() => downloadFile(file)}
+                            >
+                              {file?.name.length > 25
+                                ? `${file?.name.slice(0, 25)}...`
+                                : file?.name}
+                            </div>
+                          </div>
+                          <div className={attachmentStyles.cancelIcon}>
+                            <GiCancel
+                              style={{ cursor: "pointer", color: "red" }}
+                              onClick={() => removeFile(file?.name)}
+                            />
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </>
             </div>
           </div>
         </div>
-        <div className={dynamicFieldsStyles.RequestFormContainer}>
-          {dynamicFields.length > 0 && (
-            <>
-              <Accordion multiple activeIndex={null}>
-                {Object.entries(groupedFields).map(
-                  (
-                    [sectionName, fields]: [string, ISectionColumnsConfig[]],
-                    idx
-                  ) => (
-                    <AccordionTab key={idx} header={sectionName}>
-                      <div className={dynamicFieldsStyles.formContainer}>
-                        <div className={dynamicFieldsStyles.singlelineFields}>
-                          {fields
-                            .filter((f) => f.columnType === "Singleline")
-                            .map((field) => (
-                              <div
-                                key={field.id}
-                                className={dynamicFieldsStyles.inputField}
-                              >
-                                <Label className={dynamicFieldsStyles.label}>
-                                  {field.columnDisplayName}
-                                  {field?.isRequired && (
-                                    <span className="required">*</span>
+        {Ok && (
+          <div
+            style={{
+              height:
+                files?.length > 6
+                  ? "388px"
+                  : files?.length >= 1
+                  ? "432px"
+                  : undefined,
+            }}
+            className={dynamicFieldsStyles.RequestFormContainer}
+          >
+            {dynamicFields.length > 0 && (
+              <>
+                <Accordion multiple activeIndex={null}>
+                  {Object.entries(groupedFields).map(
+                    (
+                      [sectionName, fields]: [string, ISectionColumnsConfig[]],
+                      idx
+                    ) => (
+                      <AccordionTab key={idx} header={sectionName}>
+                        <div className={dynamicFieldsStyles.formContainer}>
+                          <div className={dynamicFieldsStyles.singlelineFields}>
+                            {fields
+                              .filter((f) => f.columnType === "Singleline")
+                              .map((field) => (
+                                <div
+                                  key={field.id}
+                                  className={dynamicFieldsStyles.inputField}
+                                >
+                                  <Label className={dynamicFieldsStyles.label}>
+                                    {field.columnDisplayName}
+                                    {field?.isRequired && (
+                                      <span className="required">*</span>
+                                    )}
+                                  </Label>
+                                  <InputText
+                                    id={field.columnName}
+                                    value={formData[field.columnName] || ""}
+                                    onChange={(e) =>
+                                      handleInputChange(
+                                        field.columnName,
+                                        e.target.value
+                                      )
+                                    }
+                                  />
+                                  {errors[field.columnName] && (
+                                    <span
+                                      className={dynamicFieldsStyles.errorMsg}
+                                    >
+                                      {errors[field.columnName]}
+                                    </span>
                                   )}
-                                </Label>
-                                <InputText
-                                  id={field.columnName}
-                                  value={formData[field.columnName] || ""}
-                                  onChange={(e) =>
-                                    handleInputChange(
-                                      field.columnName,
-                                      e.target.value
-                                    )
-                                  }
-                                />
-                                {errors[field.columnName] && (
-                                  <span
-                                    className={dynamicFieldsStyles.errorMsg}
-                                  >
-                                    {errors[field.columnName]}
-                                  </span>
-                                )}
-                              </div>
-                            ))}
+                                </div>
+                              ))}
 
-                          {fields
-                            .filter((f) => f.columnType === "Number")
-                            .map((field) => (
-                              <div
-                                key={field.id}
-                                className={dynamicFieldsStyles.inputField}
-                              >
-                                <Label className={dynamicFieldsStyles.label}>
-                                  {field.columnDisplayName}
-                                  {field?.isRequired && (
-                                    <span className="required">*</span>
+                            {fields
+                              .filter((f) => f.columnType === "Number")
+                              .map((field) => (
+                                <div
+                                  key={field.id}
+                                  className={dynamicFieldsStyles.inputField}
+                                >
+                                  <Label className={dynamicFieldsStyles.label}>
+                                    {field.columnDisplayName}
+                                    {field?.isRequired && (
+                                      <span className="required">*</span>
+                                    )}
+                                  </Label>
+                                  <InputText
+                                    keyfilter="num"
+                                    id={field.columnName}
+                                    value={formData[field.columnName] || ""}
+                                    onChange={(e) =>
+                                      handleInputChange(
+                                        field.columnName,
+                                        Number(e.target.value)
+                                      )
+                                    }
+                                  />
+                                  {errors[field.columnName] && (
+                                    <span
+                                      className={dynamicFieldsStyles.errorMsg}
+                                    >
+                                      {errors[field.columnName]}
+                                    </span>
                                   )}
-                                </Label>
-                                <InputText
-                                  keyfilter="num"
-                                  id={field.columnName}
-                                  value={formData[field.columnName] || ""}
-                                  onChange={(e) =>
-                                    handleInputChange(
-                                      field.columnName,
-                                      Number(e.target.value)
-                                    )
-                                  }
-                                />
-                                {errors[field.columnName] && (
-                                  <span
-                                    className={dynamicFieldsStyles.errorMsg}
-                                  >
-                                    {errors[field.columnName]}
-                                  </span>
-                                )}
-                              </div>
-                            ))}
+                                </div>
+                              ))}
 
-                          {fields
-                            .filter((f) => f.columnType === "Choice")
-                            .map((field) => (
-                              <div
-                                key={field.id}
-                                className={dynamicFieldsStyles.inputField}
-                              >
-                                <Label className={dynamicFieldsStyles.label}>
-                                  {field.columnDisplayName}
-                                  {field?.isRequired && (
-                                    <span className="required">*</span>
+                            {fields
+                              .filter((f) => f.columnType === "Choice")
+                              .map((field) => (
+                                <div
+                                  key={field.id}
+                                  className={dynamicFieldsStyles.inputField}
+                                >
+                                  <Label className={dynamicFieldsStyles.label}>
+                                    {field.columnDisplayName}
+                                    {field?.isRequired && (
+                                      <span className="required">*</span>
+                                    )}
+                                  </Label>
+                                  <Dropdown
+                                    value={formData[field.columnName]}
+                                    options={field.choices}
+                                    onChange={(e) =>
+                                      handleInputChange(
+                                        field.columnName,
+                                        e.value
+                                      )
+                                    }
+                                    placeholder={field.columnName}
+                                    filter
+                                    showClear
+                                    className="w-full md:w-14rem"
+                                  />
+                                  {errors[field.columnName] && (
+                                    <span
+                                      className={dynamicFieldsStyles.errorMsg}
+                                    >
+                                      {errors[field.columnName]}
+                                    </span>
                                   )}
-                                </Label>
-                                <Dropdown
-                                  value={formData[field.columnName]}
-                                  options={field.choices}
-                                  onChange={(e) =>
-                                    handleInputChange(field.columnName, e.value)
-                                  }
-                                  placeholder={field.columnName}
-                                  filter
-                                  showClear
-                                  className="w-full md:w-14rem"
-                                />
-                                {errors[field.columnName] && (
-                                  <span
-                                    className={dynamicFieldsStyles.errorMsg}
-                                  >
-                                    {errors[field.columnName]}
-                                  </span>
-                                )}
-                              </div>
-                            ))}
+                                </div>
+                              ))}
 
-                          {fields
-                            .filter((f) => f.columnType === "YesorNo")
-                            .map((field) => (
-                              <div
-                                key={field.id}
-                                className={dynamicFieldsStyles.inputField}
-                              >
-                                <Label className={dynamicFieldsStyles.label}>
-                                  {field.columnDisplayName}
-                                  {field?.isRequired && (
-                                    <span className="required">*</span>
+                            {fields
+                              .filter((f) => f.columnType === "YesorNo")
+                              .map((field) => (
+                                <div
+                                  key={field.id}
+                                  className={dynamicFieldsStyles.inputField}
+                                >
+                                  <Label className={dynamicFieldsStyles.label}>
+                                    {field.columnDisplayName}
+                                    {field?.isRequired && (
+                                      <span className="required">*</span>
+                                    )}
+                                  </Label>
+                                  <Checkbox
+                                    checked={formData[field.columnName]}
+                                    onChange={(e) =>
+                                      handleInputChange(
+                                        field.columnName,
+                                        e.checked
+                                      )
+                                    }
+                                    style={{ height: "30px", width: "32px" }}
+                                  />
+                                  {errors[field.columnName] && (
+                                    <span
+                                      className={dynamicFieldsStyles.errorMsg}
+                                    >
+                                      {errors[field.columnName]}
+                                    </span>
                                   )}
-                                </Label>
-                                <Checkbox
-                                  checked={formData[field.columnName]}
-                                  onChange={(e) =>
-                                    handleInputChange(
-                                      field.columnName,
-                                      e.checked
-                                    )
-                                  }
-                                  style={{ height: "30px", width: "32px" }}
-                                />
-                                {errors[field.columnName] && (
-                                  <span
-                                    className={dynamicFieldsStyles.errorMsg}
-                                  >
-                                    {errors[field.columnName]}
-                                  </span>
-                                )}
-                              </div>
-                            ))}
+                                </div>
+                              ))}
 
-                          {fields
-                            .filter(
-                              (f) =>
-                                f.columnType === "Person" ||
-                                f.columnType === "PersonMulti"
-                            )
-                            .map((field) => (
-                              <div
-                                key={field.id}
-                                className={dynamicFieldsStyles.inputField}
-                              >
-                                <Label className={dynamicFieldsStyles.label}>
-                                  {field.columnDisplayName}
-                                  {field?.isRequired && (
-                                    <span className="required">*</span>
-                                  )}
-                                </Label>
-                                <PeoplePicker
-                                  context={context}
-                                  personSelectionLimit={
-                                    field.columnType === "Person" ? 1 : 5
-                                  }
-                                  defaultSelectedUsers={
-                                    field.columnType === "Person"
-                                      ? [formData[`${field.columnName}Id`]]
-                                      : formData[`${field.columnName}Id`]
-                                          ?.results
-                                  }
-                                  onChange={(e: any) => {
-                                    handleInputChange(
-                                      `${field.columnName}Id`,
+                            {fields
+                              .filter(
+                                (f) =>
+                                  f.columnType === "Person" ||
+                                  f.columnType === "PersonMulti"
+                              )
+                              .map((field) => (
+                                <div
+                                  key={field.id}
+                                  className={dynamicFieldsStyles.inputField}
+                                >
+                                  <Label className={dynamicFieldsStyles.label}>
+                                    {field.columnDisplayName}
+                                    {field?.isRequired && (
+                                      <span className="required">*</span>
+                                    )}
+                                  </Label>
+                                  <PeoplePicker
+                                    context={context}
+                                    personSelectionLimit={
+                                      field.columnType === "Person" ? 1 : 5
+                                    }
+                                    defaultSelectedUsers={
                                       field.columnType === "Person"
-                                        ? Number(e[0]?.id) || null
-                                        : {
-                                            results: e.map(
-                                              (person) => person?.id
-                                            ),
-                                          }
-                                    );
-                                  }}
-                                  showtooltip
-                                  tooltipMessage="Search and select persons here"
-                                  ensureUser
-                                  principalTypes={[PrincipalType.User]}
-                                  resolveDelay={1000}
-                                />
-                                {errors[`${field.columnName}Id`] && (
-                                  <span
-                                    className={dynamicFieldsStyles.errorMsg}
-                                  >
-                                    {errors[`${field.columnName}Id`]}
-                                  </span>
-                                )}
-                              </div>
-                            ))}
-
-                          {fields
-                            .filter(
-                              (f) =>
-                                f.columnType === "Date" ||
-                                f.columnType === "DateTime"
-                            )
-                            .map((field) => (
-                              <div
-                                key={field.id}
-                                className={dynamicFieldsStyles.inputField}
-                              >
-                                <Label className={dynamicFieldsStyles.label}>
-                                  {field.columnDisplayName}
-                                  {field?.isRequired && (
-                                    <span className="required">*</span>
+                                        ? [formData[`${field.columnName}Id`]]
+                                        : formData[`${field.columnName}Id`]
+                                            ?.results
+                                    }
+                                    onChange={(e: any) => {
+                                      handleInputChange(
+                                        `${field.columnName}Id`,
+                                        field.columnType === "Person"
+                                          ? Number(e[0]?.id) || null
+                                          : {
+                                              results: e.map(
+                                                (person) => person?.id
+                                              ),
+                                            }
+                                      );
+                                    }}
+                                    showtooltip
+                                    tooltipMessage="Search and select persons here"
+                                    ensureUser
+                                    principalTypes={[PrincipalType.User]}
+                                    resolveDelay={1000}
+                                  />
+                                  {errors[`${field.columnName}Id`] && (
+                                    <span
+                                      className={dynamicFieldsStyles.errorMsg}
+                                    >
+                                      {errors[`${field.columnName}Id`]}
+                                    </span>
                                   )}
-                                </Label>
-                                <Calendar
-                                  value={
-                                    formData[field.columnName]
-                                      ? new Date(formData[field.columnName])
-                                      : null
-                                  }
-                                  onChange={(e) =>
-                                    handleInputChange(
-                                      field.columnName,
-                                      field.columnType === "DateTime"
-                                        ? e?.value?.toLocaleString()
-                                        : e?.value?.toLocaleDateString("en-US")
-                                    )
-                                  }
-                                  showTime={field.columnType === "DateTime"}
-                                  hourFormat="12"
-                                  dateFormat="dd/mm/yy"
-                                  showIcon
-                                />
-                                {errors[field.columnName] && (
-                                  <span
-                                    className={dynamicFieldsStyles.errorMsg}
-                                  >
-                                    {errors[field.columnName]}
-                                  </span>
-                                )}
-                              </div>
-                            ))}
-                        </div>
+                                </div>
+                              ))}
 
-                        <div className={dynamicFieldsStyles.multilineFields}>
-                          {fields
-                            .filter((f) => f.columnType === "Multiline")
-                            .map((field) => (
-                              <div
-                                key={field.id}
-                                className={dynamicFieldsStyles.inputField}
-                              >
-                                <Label className={dynamicFieldsStyles.label}>
-                                  {field.columnDisplayName}
-                                  {field?.isRequired && (
-                                    <span className="required">*</span>
+                            {fields
+                              .filter(
+                                (f) =>
+                                  f.columnType === "Date" ||
+                                  f.columnType === "DateTime"
+                              )
+                              .map((field) => (
+                                <div
+                                  key={field.id}
+                                  className={dynamicFieldsStyles.inputField}
+                                >
+                                  <Label className={dynamicFieldsStyles.label}>
+                                    {field.columnDisplayName}
+                                    {field?.isRequired && (
+                                      <span className="required">*</span>
+                                    )}
+                                  </Label>
+                                  <Calendar
+                                    value={
+                                      formData[field.columnName]
+                                        ? new Date(formData[field.columnName])
+                                        : null
+                                    }
+                                    onChange={(e) =>
+                                      handleInputChange(
+                                        field.columnName,
+                                        field.columnType === "DateTime"
+                                          ? e?.value?.toLocaleString()
+                                          : e?.value?.toLocaleDateString(
+                                              "en-US"
+                                            )
+                                      )
+                                    }
+                                    showTime={field.columnType === "DateTime"}
+                                    hourFormat="12"
+                                    dateFormat="dd/mm/yy"
+                                    showIcon
+                                  />
+                                  {errors[field.columnName] && (
+                                    <span
+                                      className={dynamicFieldsStyles.errorMsg}
+                                    >
+                                      {errors[field.columnName]}
+                                    </span>
                                   )}
-                                </Label>
-                                <InputTextarea
-                                  id={field.columnName}
-                                  autoResize
-                                  value={formData[field.columnName] || ""}
-                                  onChange={(e) =>
-                                    handleInputChange(
-                                      field.columnName,
-                                      e.target.value
-                                    )
-                                  }
-                                  rows={3}
-                                  style={{ height: "80px" }}
-                                />
-                                {errors[field.columnName] && (
-                                  <span
-                                    className={dynamicFieldsStyles.errorMsg}
-                                  >
-                                    {errors[field.columnName]}
-                                  </span>
-                                )}
-                              </div>
-                            ))}
+                                </div>
+                              ))}
+                          </div>
+
+                          <div className={dynamicFieldsStyles.multilineFields}>
+                            {fields
+                              .filter((f) => f.columnType === "Multiline")
+                              .map((field) => (
+                                <div
+                                  key={field.id}
+                                  className={dynamicFieldsStyles.inputField}
+                                >
+                                  <Label className={dynamicFieldsStyles.label}>
+                                    {field.columnDisplayName}
+                                    {field?.isRequired && (
+                                      <span className="required">*</span>
+                                    )}
+                                  </Label>
+                                  <InputTextarea
+                                    id={field.columnName}
+                                    autoResize
+                                    value={formData[field.columnName] || ""}
+                                    onChange={(e) =>
+                                      handleInputChange(
+                                        field.columnName,
+                                        e.target.value
+                                      )
+                                    }
+                                    rows={3}
+                                    style={{ height: "80px" }}
+                                  />
+                                  {errors[field.columnName] && (
+                                    <span
+                                      className={dynamicFieldsStyles.errorMsg}
+                                    >
+                                      {errors[field.columnName]}
+                                    </span>
+                                  )}
+                                </div>
+                              ))}
+                          </div>
                         </div>
-                      </div>
-                    </AccordionTab>
-                  )
-                )}
-              </Accordion>
-            </>
-          )}
-        </div>
-        {dynamicFields.length > 0 && (
+                      </AccordionTab>
+                    )
+                  )}
+                </Accordion>
+              </>
+            )}
+          </div>
+        )}
+        {dynamicFields.length > 0 && Ok && (
           <div className={`${dynamicFieldsStyles.sideBarButtonContainer}`}>
             <>
               <Button
@@ -952,6 +1085,7 @@ const AddRequestsFields = ({
     setDynamicRequestsSideBarVisible(false);
     setErrors({});
     setFormData({});
+    setOk(false);
   };
 
   useEffect(() => {
@@ -969,7 +1103,7 @@ const AddRequestsFields = ({
       ...prev,
       AddRequestsDashBoardContent: DynamicRequestsFieldsSideBarContent(),
     }));
-  }, [dynamicFields, formData, errors, selectedCategory, files]);
+  }, [dynamicFields, formData, errors, selectedCategory, files, Ok]);
 
   return (
     <>

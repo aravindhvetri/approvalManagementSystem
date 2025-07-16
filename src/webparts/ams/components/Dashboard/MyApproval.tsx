@@ -311,13 +311,7 @@ const MyApprovalPage = ({
           </div> */}
           <div className="customDataTableCardContainer">
             <div className={dashboardStyles.profile_header_content}>
-              <h2
-                style={{
-                  lineHeight: "2.25rem",
-                }}
-              >
-                My Approval
-              </h2>
+              <h2>My Approval</h2>
               <p>
                 Review and take action on requests waiting for your approval
               </p>

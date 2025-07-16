@@ -968,9 +968,9 @@ const EmailContainer = ({
         className={EmailContainerStyles.EmailContainer}
         style={
           selectedEmail == "existing"
-            ? { height: "342px" }
+            ? { height: "474px" }
             : selectedEmail == "custom" || categoryClickingID !== null
-            ? { height: "285px" }
+            ? { height: "414px" }
             : {}
         }
       >

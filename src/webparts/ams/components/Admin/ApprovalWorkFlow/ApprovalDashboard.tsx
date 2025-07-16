@@ -290,13 +290,7 @@ const ApprovalDashboard = ({
           <div className="customDataTableCardContainer">
             <div className="profile_header_content">
               <div>
-                <h2
-                  style={{
-                    lineHeight: "2.25rem",
-                  }}
-                >
-                  Approval Config
-                </h2>
+                <h2>Approval Config</h2>
                 <p>
                   Configure approval stages and rules for processing requests
                 </p>

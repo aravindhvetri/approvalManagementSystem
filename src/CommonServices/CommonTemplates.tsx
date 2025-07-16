@@ -245,8 +245,8 @@ export const customHeader = (title, description) => (
     <div>
       <h1
         style={{
-          fontSize: "1.875rem",
-          lineHeight: "2.25rem",
+          fontSize: "20px",
+          fontWeight: "600",
         }}
       >
         {title}
@@ -270,32 +270,38 @@ export const RightSidebar = ({
         className="CustomSideBarContainer"
         position="right"
         header={
-          activeTabViewBar == 2
-            ? customHeader(
-                "Category Workflow",
-                "Configure your category workflow for the request process"
-              )
-            : activeTabViewBar == 3
-            ? customHeader(
-                "Approval Workflow",
-                "Configure your approval workflow for the approval process"
-              )
-            : activeTabViewBar == 4
-            ? customHeader(
-                "Email Workflow",
-                "Configure your email workflow for the notification process"
-              )
-            : activeTabViewBar == 0
+          activeTabViewBar == 0
             ? customHeader(
                 "Request Details",
                 "Configure your request for the approval"
               )
-            : activeTabViewBar == 1
-            ? customHeader(
-                "Approval Summary",
-                "Track the status of all your assigned requests in one place"
-              )
             : ""
+          // activeTabViewBar == 2
+          //   ? customHeader(
+          //       "Category Workflow",
+          //       "Configure your category workflow for the request process"
+          //     )
+          //   : activeTabViewBar == 3
+          //   ? customHeader(
+          //       "Approval Workflow",
+          //       "Configure your approval workflow for the approval process"
+          //     )
+          //   : activeTabViewBar == 4
+          //   ? customHeader(
+          //       "Email Workflow",
+          //       "Configure your email workflow for the notification process"
+          //     )
+          //   : activeTabViewBar == 0
+          //   ? customHeader(
+          //       "Request Details",
+          //       "Configure your request for the approval"
+          //     )
+          //   : activeTabViewBar == 1
+          //   ? customHeader(
+          //       "Approval Summary",
+          //       "Track the status of all your assigned requests in one place"
+          //     )
+          //   : ""
         }
         onHide={onHide}
       >
@@ -412,6 +418,101 @@ export const multiplePeoplePickerTemplate = (users: IPeoplePickerDetails[]) => {
                   (item, index, self) =>
                     index === self.findIndex((t) => t.email === item.email)
                 ).length - 2}
+                <div className={styles.AllPersona}></div>
+              </div>
+            </TooltipHost>
+          ) : null}
+        </div>
+      ) : (
+        ""
+      )}
+    </>
+  );
+};
+
+//Maxmimum five members show PeplePicker Template:
+export const maxFiveMultiplePeoplePickerTemplate = (
+  users: IPeoplePickerDetails[]
+) => {
+  return (
+    <>
+      {users?.length ? (
+        <div
+          className="user-selector-group"
+          style={{
+            display: "flex",
+            alignItems: "center",
+          }}
+        >
+          {users.map((value, index) => {
+            if (index < 5) {
+              return (
+                <Persona
+                  styles={{
+                    root: {
+                      cursor: "pointer",
+                      margin: "0 !important;",
+                      ".ms-Persona-details": {
+                        display: "none",
+                      },
+                    },
+                  }}
+                  imageUrl={
+                    "/_layouts/15/userphoto.aspx?size=S&username=" + value.email
+                  }
+                  title={value.name}
+                  size={PersonaSize.size32}
+                />
+              );
+            }
+          })}
+
+          {users.filter(
+            (item, index, self) =>
+              index === self.findIndex((t) => t.email === item.email)
+          ).length > 5 ? (
+            <TooltipHost
+              className="all-member-users"
+              content={
+                <ul style={{ margin: 10, padding: 0 }}>
+                  {users
+                    .filter(
+                      (item, index, self) =>
+                        index === self.findIndex((t) => t.email === item.email)
+                    )
+                    .map((DName: any) => {
+                      return (
+                        <li style={{ listStyleType: "none" }}>
+                          <div style={{ display: "flex" }}>
+                            <Persona
+                              showOverflowTooltip
+                              size={PersonaSize.size24}
+                              presence={PersonaPresence.none}
+                              showInitialsUntilImageLoads={true}
+                              imageUrl={
+                                "/_layouts/15/userphoto.aspx?size=S&username=" +
+                                `${DName.email}`
+                              }
+                            />
+                            <Label style={{ marginLeft: 10, fontSize: 12 }}>
+                              {DName.name}
+                            </Label>
+                          </div>
+                        </li>
+                      );
+                    })}
+                </ul>
+              }
+              delay={TooltipDelay.zero}
+              directionalHint={DirectionalHint.bottomCenter}
+              styles={{ root: { display: "inline-block" } }}
+            >
+              <div className={styles.Personas}>
+                +
+                {users.filter(
+                  (item, index, self) =>
+                    index === self.findIndex((t) => t.email === item.email)
+                ).length - 5}
                 <div className={styles.AllPersona}></div>
               </div>
             </TooltipHost>
@@ -644,4 +745,36 @@ export const deleteConfirmationPopup = (deleModal, setDelModal, delFunc) => {
       </div>
     </Dialog>
   );
+};
+
+//Get Attachment File Icons:
+export const getFileIcon = (name: string) => {
+  const extension = name.split(".").pop()?.toLowerCase();
+  switch (extension) {
+    case "pdf":
+      return <img src={require("../webparts/ams/assets/pdf.png")} />;
+    case "doc":
+    case "docx":
+      return <img src={require("../webparts/ams/assets/word.png")} />;
+    case "xls":
+    case "xlsx":
+      return <img src={require("../webparts/ams/assets/excel.png")} />;
+    case "png":
+    case "jpg":
+    case "jpeg":
+      return <img src={require("../webparts/ams/assets/img.png")} />;
+    case "txt":
+      return <img src={require("../webparts/ams/assets/txt.png")} />;
+    case "xml":
+      return <img src={require("../webparts/ams/assets/xml.png")} />;
+    case "ppt":
+    case "pptx":
+      return <img src={require("../webparts/ams/assets/ppt.png")} />;
+    case "csv":
+      return <img src={require("../webparts/ams/assets/csv.png")} />;
+    case "gif":
+      return <img src={require("../webparts/ams/assets/gif.png")} />;
+    default:
+      return <img src={require("../webparts/ams/assets/file.png")} />;
+  }
 };

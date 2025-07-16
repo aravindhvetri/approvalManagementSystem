@@ -217,7 +217,8 @@ const WorkflowActionButtons = ({
   const onApprovalClick = async () => {
     const isSignatureRequired = signatureFieldConfig?.isMandatory === true;
     const isSignatureEmpty = !approvalDetails?.signature;
-    if (isSignatureRequired && isSignatureEmpty && showSignatureByStage) {
+    console.log(showSignatureByStage, "showSignatureByStage");
+    if (isSignatureEmpty && showSignatureByStage) {
       setApproverDescriptionErrMsg("* Signature is mandatory");
       return;
     }
@@ -238,6 +239,12 @@ const WorkflowActionButtons = ({
     const isCommentEmpty = !approvalDetails?.comments.trim();
     const isSignatureRequired = signatureFieldConfig?.isMandatory === true;
     const isSignatureEmpty = !approvalDetails?.signature;
+    console.log(
+      isSignatureEmpty,
+      "isSignatureEmpty" + isSignatureRequired,
+      "isSignatureRequired" + showSignatureByStage,
+      "showSignatureByStage"
+    );
 
     let errorMessage = "";
 
@@ -245,7 +252,7 @@ const WorkflowActionButtons = ({
       errorMessage += "* Approver description is mandatory for rejection";
     }
 
-    if (isSignatureRequired && isSignatureEmpty && showSignatureByStage) {
+    if (isSignatureEmpty && showSignatureByStage) {
       errorMessage += errorMessage
         ? " and signature is mandatory"
         : "* Signature is mandatory";
