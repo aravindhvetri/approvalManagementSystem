@@ -29,7 +29,6 @@ import { InputTextarea } from "primereact/inputtextarea";
 import { Button } from "primereact/button";
 import { Label } from "office-ui-fabric-react";
 import { FileUpload } from "primereact/fileupload";
-import { Tag } from "primereact/tag";
 import { GiCancel } from "react-icons/gi";
 import { Toast } from "primereact/toast";
 import { Dropdown } from "primereact/dropdown";
@@ -38,7 +37,6 @@ import { sp } from "@pnp/sp/presets/all";
 import moment from "moment";
 import { Accordion, AccordionTab } from "primereact/accordion";
 import { FaCodePullRequest } from "react-icons/fa6";
-import { IoCloudUploadOutline } from "react-icons/io5";
 //Styles Imports:
 import dynamicFieldsStyles from "./RequestsFields.module.scss";
 import "../../../../External/style.css";
