@@ -81,7 +81,6 @@ const CategoryConfig = ({
     useState<IApproverSignatureFeildConfig>({
       ...Config.approverSignatureFieldConfig,
     });
-  console.log("approverSignatureDetails", approverSignatureDetails);
   const [actionsBooleans, setActionsBooleans] = useState<IActionBooleans>({
     ...Config.InitialActionsBooleans,
   });
