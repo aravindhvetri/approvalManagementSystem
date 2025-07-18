@@ -5,24 +5,29 @@ import { useState, useEffect } from "react";
 import SPServices from "../../../../../CommonServices/SPServices";
 import { Config } from "../../../../../CommonServices/Config";
 import {
+  IApproverSignatureFeildConfig,
   IFinalSubmitDetails,
   INextStageFromCategorySideBar,
   IPeoplePickerDetails,
 } from "../../../../../CommonServices/interface";
 //Prime React Imports:
 import { Dropdown } from "primereact/dropdown";
-import { Persona, PersonaSize } from "@fluentui/react";
-import { MdAppRegistration } from "react-icons/md";
+import { Accordion, AccordionTab } from "primereact/accordion";
+import { FaUsersViewfinder } from "react-icons/fa6";
 //Styles Imports:
 import ExistingApproverStyles from "./CategoryConfig.module.scss";
 import {
   multiplePeoplePickerTemplate,
   peoplePickerTemplate,
 } from "../../../../../CommonServices/CommonTemplates";
+import { Label } from "office-ui-fabric-react";
+import { Checkbox } from "primereact/checkbox";
 
 const ExistingApprover = ({
   setApproverSignatureDetails,
+  approverSignatureDetails,
   setExisitingApproverSideBarVisible,
+  actionBooleans,
   category,
   setFinalSubmit,
 }) => {
@@ -202,48 +207,82 @@ const ExistingApprover = ({
           ""
         )}
       </div>
-      <div className={`${ExistingApproverStyles.approversContainer}`}>
-        {approvalStageConfigDetails
-          .sort((a, b) => a.stage - b.stage)
-          .map((stageData) => (
-            <div
-              key={stageData.stage}
-              className={`${ExistingApproverStyles.stageSection}`}
-            >
-              <div>
-                <div className={ExistingApproverStyles.stageHeader}>
+      <div
+        className={`${ExistingApproverStyles.approversContainer} approversAccordion`}
+      >
+        <Accordion multiple activeIndex={null}>
+          {approvalStageConfigDetails
+            .sort((a, b) => a.stage - b.stage)
+            .map((stageData) => (
+              <AccordionTab
+                key={stageData.stage}
+                header={`Stage ${stageData.stage}`}
+              >
+                <div
+                  key={stageData.stage}
+                  className={`${ExistingApproverStyles.stageSection}`}
+                >
                   <div>
-                    <MdAppRegistration />
+                    <div className={ExistingApproverStyles.stageHeader}>
+                      <div>
+                        <FaUsersViewfinder />
+                      </div>
+                      <div>
+                        <h3>Stage {stageData.stage} approvers</h3>
+                      </div>
+                    </div>
+                    <div
+                      className={`${ExistingApproverStyles.approvalMessage}`}
+                    >
+                      {stageData.approvalProcess === 1
+                        ? "Anyone can approve"
+                        : "Everyone should approve"}
+                    </div>
                   </div>
-                  <div>
-                    <h3>Stage {stageData.stage} approver</h3>
+                  <div className={`${ExistingApproverStyles.approversList}`}>
+                    <div>
+                      <div>
+                        <Label className={`${ExistingApproverStyles.label}`}>
+                          Is Approver Signature Mandatory?
+                        </Label>
+                        <Checkbox
+                          onChange={(e) => {
+                            const stageKey = `Stage ${stageData.stage}`;
+                            setApproverSignatureDetails((prev) => {
+                              const isChecked = e.checked;
+                              let updatedViewStages = [...prev.ViewStages];
+
+                              if (isChecked) {
+                                if (!updatedViewStages.includes(stageKey)) {
+                                  updatedViewStages.push(stageKey);
+                                }
+                              } else {
+                                updatedViewStages = updatedViewStages.filter(
+                                  (s) => s !== stageKey
+                                );
+                              }
+
+                              return {
+                                ...prev,
+                                ViewStages: updatedViewStages,
+                              };
+                            });
+                          }}
+                          checked={approverSignatureDetails.ViewStages.includes(
+                            `Stage ${stageData.stage}`
+                          )}
+                          disabled={actionBooleans.isView}
+                        />
+                      </div>
+                    </div>
+                    {stageData?.approver.length > 1
+                      ? multiplePeoplePickerTemplate(stageData?.approver)
+                      : peoplePickerTemplate(stageData?.approver[0])}
                   </div>
                 </div>
-                <div className={`${ExistingApproverStyles.approvalMessage}`}>
-                  {stageData.approvalProcess === 1
-                    ? "Anyone can approve"
-                    : "Everyone should approve"}
-                </div>
-              </div>
-              <div className={`${ExistingApproverStyles.approversList}`}>
-                {/* {stageData.approver.map((user: IPeoplePickerDetails) => (
-                  <div
-                    key={user.id}
-                    className={`${ExistingApproverStyles.approversChip}`}
-                  >
-                    <Persona
-                      text={user.name}
-                      size={PersonaSize.size24}
-                      imageUrl={`/_layouts/15/userphoto.aspx?size=L&username=${user.email}`}
-                    />
-                  </div>
-                ))} */}
-                {stageData?.approver.length > 1
-                  ? multiplePeoplePickerTemplate(stageData?.approver)
-                  : peoplePickerTemplate(stageData?.approver[0])}
-              </div>
-            </div>
-          ))}
+              </AccordionTab>
+            ))}
+        </Accordion>
       </div>
     </>
   );

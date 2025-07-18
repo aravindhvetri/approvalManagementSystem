@@ -52,7 +52,7 @@
   }
   .approverSection {
     display: block;
-    width: 100%;
+    width: 50%;
     margin-top: 10px;
   }
   .labelHeader {
@@ -86,16 +86,15 @@
 }
 
 .formFieldContainer {
-  height: 420px;
-  margin-bottom: 20px;
+  height: 510px;
   overflow: auto;
 }
 
 .RequestFormContainer {
-  height: 294px;
+  height: 474px;
   overflow: auto;
-  margin-bottom: 20px;
-  padding: 0px 70px 0px 70px;
+  margin-bottom: 12px;
+  padding: 0px 30px 0px 30px;
 }
 
 .attachmentContainer {
@@ -120,6 +119,7 @@
   display: flex;
   justify-content: space-between;
   gap: 3%;
+  margin-top: 10px;
   width: 100%;
 }
 
@@ -134,13 +134,15 @@
 .filterHeader {
   width: 100%;
   display: flex;
-  margin-bottom: 20px;
+  margin-top: 80px;
   justify-content: center;
   .filterHeaderContainer {
-    padding: 6px;
-    width: 60%;
+    width: 64%;
     border-radius: 6px;
     text-align: center;
+    label {
+      padding: 0px !important;
+    }
   }
   .filterdropdown {
     width: 50%;
@@ -169,4 +171,10 @@
   transition: ease-in-out;
   transition-timing-function: linear;
   transition-duration: 0.5s;
+}
+.dropDownContainer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
 }

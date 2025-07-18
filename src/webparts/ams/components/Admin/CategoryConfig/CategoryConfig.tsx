@@ -60,11 +60,6 @@ const CategoryConfig = ({
   setCategorySideBarVisible,
 }) => {
   //state variables:
-  const stepItems = [
-    { label: "Category Config" },
-    { label: "Dynamic Fields" },
-    { label: "Email Config" },
-  ];
   const steps = ["Category Config", "Dynamic Fields", "Email Config"];
   const [activeStep, setActiveStep] = useState(0);
   const [delModal, setDelModal] = useState<IDelModal>({
@@ -355,6 +350,45 @@ const CategoryConfig = ({
       }
     }
   };
+
+  //Approver Configuration:
+  const ApproverConfiguration = (e: any) => {
+    const selected = e.value;
+
+    setSelectedApprover(selected);
+    setValidateError((prev) => ({
+      ...prev,
+      signatureShowStages: "",
+    }));
+    setApproverSignatureDetails({
+      ...Config.approverSignatureFieldConfig,
+    });
+    setApprovalSignStage([]);
+
+    if (selected === "existing") {
+      setFinalSubmit((prev: IFinalSubmitDetails) => ({
+        ...prev,
+        categoryConfig: {
+          ...prev.categoryConfig,
+          customApprover: {
+            ...Config.ApprovalConfigDefaultDetails,
+          },
+        },
+      }));
+      sessionStorage.removeItem("approvalFlowDetails");
+    } else if (selected === "custom") {
+      setFinalSubmit((prev: IFinalSubmitDetails) => ({
+        ...prev,
+        categoryConfig: {
+          ...prev.categoryConfig,
+          ExistingApprover: null,
+        },
+      }));
+      sessionStorage.removeItem("selectedFlow");
+      sessionStorage.removeItem("selectedFlowID");
+    }
+  };
+
   //ApprovalStageConfig Details Patch:
   const addApprovalStageConfigDetails = (
     parentId: number,
@@ -398,15 +432,15 @@ const CategoryConfig = ({
       validateError.digit = "";
     }
     //Signature stages
-    if (approverSignatureDetails?.ViewStages.length === 0) {
-      validateError.signatureShowStages =
-        "Atleast one stage is required to shows signature field";
-      isValid = false;
-    } else {
-      validateError.signatureShowStages = "";
-    }
+    // if (approverSignatureDetails?.ViewStages.length === 0) {
+    //   validateError.signatureShowStages =
+    //     "Atleast one stage is required to shows signature field";
+    //   isValid = false;
+    // } else {
+    //   validateError.signatureShowStages = "";
+    // }
+    // Approver validation
     if (!actionsBooleans?.isEdit && !actionsBooleans?.isView) {
-      // Approver validation
       if (selectedApprover === "") {
         validateError.approversSelected =
           "Approval flow is mandatory for approval process";
@@ -440,69 +474,10 @@ const CategoryConfig = ({
           if (!tempRunfunction) {
             isValid = false;
           }
-          //   const approvalFlowDetails = sessionStorage.getItem(
-          //     "approvalFlowDetails"
-          //   );
-          //   if (!approvalFlowDetails) {
-          //     validateError.approversSelected =
-          //       "Please configure custom approver flow";
-          //     isValid = false;
-          //   } else {
-          //     try {
-          //       const parsedDetails = JSON.parse(approvalFlowDetails);
-          //       const { apprvalFlowName, totalStages, rejectionFlow, stages } =
-          //         parsedDetails;
-          //       if (!apprvalFlowName || !rejectionFlow) {
-          //         // validateError.approversSelected =
-          //         //   "Incomplete custom approver configuration";
-          //         toast.current.show({
-          //           severity: "warn",
-          //           summary: "Warning",
-          //           content: (prop) =>
-          //             toastNotify({
-          //               iconName: "pi-exclamation-triangle",
-          //               ClsName: "toast-imgcontainer-warning",
-          //               type: "Warning",
-          //               msg: "Incomplete custom approver configuration",
-          //             }),
-          //           life: 3000,
-          //         });
-          //         isValid = false;
-          //       } else if (
-          //         !totalStages ||
-          //         stages.length === 0 ||
-          //         stages.some(
-          //           (stage: any) =>
-          //             !stage.approvalProcess || stage.approver.length === 0
-          //         )
-          //       ) {
-          //         // validateError.approversSelected =
-          //         //   "No stages found in custom approver configuration";
-          //         toast.current.show({
-          //           severity: "warn",
-          //           summary: "Warning",
-          //           content: (prop) =>
-          //             toastNotify({
-          //               iconName: "pi-exclamation-triangle",
-          //               ClsName: "toast-imgcontainer-warning",
-          //               type: "Warning",
-          //               msg: "Each stage must include both an approver and a process. Please complete the custom approver configuration.",
-          //             }),
-          //           life: 3000,
-          //         });
-          //         isValid = false;
-          //       } else {
-          //         validateError.approversSelected = "";
-          //       }
-          //     } catch (err) {
-          //       validateError.approversSelected =
-          //         "Error reading custom approver configuration";
-          //       isValid = false;
-          //     }
-          //   }
         }
       }
     }
+
     // Update the validation error state
     setValidateError({ ...validateError });
 
@@ -585,14 +560,6 @@ const CategoryConfig = ({
   const categoryConfigSideBarContents = () => {
     return (
       <>
-        {/* <Steps
-          model={stepItems}
-          activeIndex={activeStep}
-          onSelect={(e) => setActiveStep(e.index)}
-          readOnly={true}
-          className="customSteps"
-          style={{ paddingBottom: "30px" }}
-        /> */}
         <div className="profile_header_content">
           <div>
             <h2>
@@ -611,35 +578,41 @@ const CategoryConfig = ({
                 : "Set up a new category and the entire workflows for the future request."}
             </p>
           </div>
-        </div>
-        <div className="custom-steps-wrapper">
-          {steps.map((label, index) => (
-            <div className="custom-step" key={index}>
-              <div
-                className={`step-circle ${
-                  index < activeStep
-                    ? "completed"
-                    : index === activeStep
-                    ? "active"
-                    : ""
-                }`}
-              >
-                {index < activeStep ? <FaCheck size={10} /> : index + 1}
-              </div>
-              {/* <div className="step-label">{label}</div> */}
-              {index !== steps.length - 1 && (
+          <div className="custom-steps-wrapper">
+            {steps.map((label, index) => (
+              <div className="custom-step" key={index}>
                 <div
-                  className={`step-line ${
-                    index < activeStep ? "completed" : ""
+                  className={`step-circle ${
+                    index < activeStep
+                      ? "completed"
+                      : index === activeStep
+                      ? "active"
+                      : ""
                   }`}
-                />
-              )}
-            </div>
-          ))}
+                >
+                  {index < activeStep ? <FaCheck size={10} /> : index + 1}
+                </div>
+                {/* <div className="step-label">{label}</div> */}
+                {index !== steps.length - 1 && (
+                  <div
+                    className={`step-line ${
+                      index < activeStep ? "completed" : ""
+                    }`}
+                  />
+                )}
+              </div>
+            ))}
+          </div>
         </div>
 
         <div>
-          <div className={categoryConfigStyles.categoryConfigFields}>
+          <div
+            className={`${categoryConfigStyles.categoryConfigFields} ${
+              activeStep == 1 || activeStep == 2
+                ? categoryConfigStyles.categoryConfigFieldsDynamicSectionsHeight
+                : ""
+            }`}
+          >
             {nextStageFromCategory.ApproverSection ? (
               <div className={categoryConfigStyles.categoryConfigChild}>
                 {nextStageFromCategory.dynamicSectionWithField ||
@@ -653,7 +626,7 @@ const CategoryConfig = ({
                       </div>
                       <div>Workflow Information</div>
                     </div>
-
+                    <h3 className="overAllHeading ">Basic Information</h3>
                     <div className={`${categoryConfigStyles.inputDiv}`}>
                       <div className={`${categoryConfigStyles.inputChildDiv}`}>
                         <Label className={`${categoryConfigStyles.label}`}>
@@ -706,23 +679,6 @@ const CategoryConfig = ({
                         <Label className={`${categoryConfigStyles.label}`}>
                           Number of digits_RequestId
                           <span className="required">*</span>
-                          <span>
-                            {requestInput?.format && requestInput?.digit ? (
-                              <small
-                                style={{ fontSize: "10px" }}
-                                className={categoryConfigStyles.labelNote}
-                              >
-                                {`Note : Request Id Format will be like: ${
-                                  requestInput.format
-                                }-${String(1).padStart(
-                                  Number(requestInput.digit),
-                                  "0"
-                                )}`}
-                              </small>
-                            ) : (
-                              ""
-                            )}
-                          </span>
                         </Label>
 
                         <InputText
@@ -756,73 +712,64 @@ const CategoryConfig = ({
                             </span>
                           </div>
                         )}
+                        <div className={categoryConfigStyles.labelNote}>
+                          <span>
+                            {requestInput?.format && requestInput?.digit ? (
+                              <small style={{ fontSize: "10px" }}>
+                                {`Note : Request Id Format will be like: ${
+                                  requestInput.format
+                                }-${String(1).padStart(
+                                  Number(requestInput.digit),
+                                  "0"
+                                )}`}
+                              </small>
+                            ) : (
+                              ""
+                            )}
+                          </span>
+                        </div>
                       </div>
-                      <div className={`${categoryConfigStyles.inputChildDiv}`}>
-                        {!(
-                          nextStageFromCategory.dynamicSectionWithField ||
-                          nextStageFromCategory.EmailTemplateSection
-                        ) &&
-                          approvalSignStage.length > 0 && (
-                            <div
-                              className={`${categoryConfigStyles.approverSignatureDetailContainer}`}
-                            >
-                              <div style={{ width: "50%" }}>
-                                <Label
-                                  className={`${categoryConfigStyles.label}`}
-                                >
-                                  Is Approver Signature Mandatory?
-                                </Label>
-                                <Checkbox
-                                  onChange={(e) => {
-                                    setApproverSignatureDetails(
-                                      (
-                                        prev: IApproverSignatureFeildConfig
-                                      ) => ({
-                                        ...prev,
-                                        isMandatory: e.checked,
-                                      })
-                                    );
-                                  }}
-                                  checked={approverSignatureDetails.isMandatory}
-                                  disabled={actionsBooleans.isView}
-                                ></Checkbox>
+
+                      {!nextStageFromCategory.dynamicSectionWithField &&
+                        !nextStageFromCategory.EmailTemplateSection &&
+                        !actionsBooleans?.isEdit &&
+                        !actionsBooleans?.isView && (
+                          <div
+                            className={`${categoryConfigStyles.inputChildDiv}`}
+                          >
+                            <>
+                              <Label
+                                className={`${categoryConfigStyles.label}`}
+                              >
+                                Approver Selection
+                                <span className="required">*</span>
+                              </Label>
+                              <div
+                                className={categoryConfigStyles.radioContainer}
+                              >
+                                <div className={categoryConfigStyles.radioDiv}>
+                                  <Dropdown
+                                    value={selectedApprover}
+                                    options={Config?.approverOptions}
+                                    onChange={(e) => {
+                                      ApproverConfiguration(e);
+                                    }}
+                                    placeholder="Select approver type"
+                                  />
+                                </div>
                               </div>
-                              <div style={{ width: "50%" }}>
-                                <Label
-                                  className={`${categoryConfigStyles.label}`}
-                                >
-                                  Stages signature field shows on
-                                  <span className="required">*</span>
-                                </Label>
-                                <MultiSelect
-                                  onChange={(e) => {
-                                    setApproverSignatureDetails(
-                                      (
-                                        prev: IApproverSignatureFeildConfig
-                                      ) => ({
-                                        ...prev,
-                                        ViewStages: e.value,
-                                      })
-                                    );
-                                  }}
-                                  value={approverSignatureDetails?.ViewStages}
-                                  options={approvalSignStage}
-                                  optionLabel="value"
-                                  disabled={actionsBooleans.isView}
-                                />
-                                {validateError &&
-                                  approverSignatureDetails?.ViewStages
-                                    .length === 0 && (
-                                    <div>
-                                      <span className="errorMsg">
-                                        {validateError?.signatureShowStages}
-                                      </span>
-                                    </div>
-                                  )}
-                              </div>
-                            </div>
-                          )}
-                      </div>
+                              <>
+                                {validateError && !selectedApprover && (
+                                  <div>
+                                    <span className="errorMsg">
+                                      {validateError?.approversSelected}
+                                    </span>
+                                  </div>
+                                )}
+                              </>
+                            </>
+                          </div>
+                        )}
                     </div>
                   </>
                 )}
@@ -838,96 +785,13 @@ const CategoryConfig = ({
                   : categoryConfigStyles?.notApproverSection
               }`}
             >
-              {!nextStageFromCategory.dynamicSectionWithField &&
-                !nextStageFromCategory.EmailTemplateSection &&
-                !actionsBooleans?.isEdit &&
-                !actionsBooleans?.isView && (
-                  <>
-                    <div className={`${categoryConfigStyles.radioContainer}`}>
-                      <div className={`${categoryConfigStyles.radioDiv}`}>
-                        <RadioButton
-                          inputId="existing"
-                          name="approver"
-                          value="existing"
-                          onChange={(e) => {
-                            setValidateError((prev) => ({
-                              ...prev,
-                              signatureShowStages: "",
-                            }));
-                            setFinalSubmit((prev: IFinalSubmitDetails) => ({
-                              ...prev,
-                              categoryConfig: {
-                                ...prev.categoryConfig,
-                                customApprover: {
-                                  ...Config.ApprovalConfigDefaultDetails,
-                                },
-                              },
-                            }));
-                            setApproverSignatureDetails({
-                              ...Config.approverSignatureFieldConfig,
-                            });
-                            setApprovalSignStage([]);
-                            sessionStorage.removeItem("approvalFlowDetails");
-                            setSelectedApprover(e?.value);
-                          }}
-                          checked={selectedApprover === "existing"}
-                        />
-                        <label
-                          style={{ cursor: "pointer" }}
-                          className="radioDivLabel"
-                          htmlFor="existing"
-                        >
-                          Existing approver
-                        </label>
-                      </div>
-                      <div className={`${categoryConfigStyles.radioDiv}`}>
-                        <RadioButton
-                          inputId="custom"
-                          name="approver"
-                          value="custom"
-                          onChange={(e) => {
-                            setValidateError((prev) => ({
-                              ...prev,
-                              signatureShowStages: "",
-                            }));
-                            setFinalSubmit((prev: IFinalSubmitDetails) => ({
-                              ...prev,
-                              categoryConfig: {
-                                ...prev.categoryConfig,
-                                ExistingApprover: null,
-                              },
-                            }));
-                            setApproverSignatureDetails({
-                              ...Config.approverSignatureFieldConfig,
-                            });
-                            setApprovalSignStage([]);
-                            sessionStorage.removeItem("selectedFlow");
-                            sessionStorage.removeItem("selectedFlowID");
-                            setSelectedApprover(e?.value);
-                          }}
-                          checked={selectedApprover === "custom"}
-                        />
-                        <label
-                          style={{ cursor: "pointer" }}
-                          className="radioDivLabel"
-                          htmlFor="custom"
-                        >
-                          Custom approver
-                        </label>
-                      </div>
-                    </div>
-                    <>
-                      {validateError && !selectedApprover && (
-                        <div>
-                          <span className="errorMsg">
-                            {validateError?.approversSelected}
-                          </span>
-                        </div>
-                      )}
-                    </>
-                  </>
-                )}
               <div>
+                {(selectedApprover !== "" ||
+                  actionsBooleans?.isView ||
+                  actionsBooleans?.isEdit) &&
+                  activeStep == 0 && (
+                    <h3 className="overAllHeading">Approvers Information</h3>
+                  )}
                 <div
                   className={
                     categoryConfigStyles?.ExistingCustomApproverContainer
@@ -938,7 +802,9 @@ const CategoryConfig = ({
                   activeStep == 0 ? (
                     <ExistingApprover
                       setApproverSignatureDetails={setApproverSignatureDetails}
+                      approverSignatureDetails={approverSignatureDetails}
                       setFinalSubmit={setFinalSubmit}
+                      actionBooleans={actionsBooleans}
                       setExisitingApproverSideBarVisible={
                         setCategorySideBarVisible
                       }
@@ -955,6 +821,7 @@ const CategoryConfig = ({
                       activeStep == 0) ? (
                     <CustomApprover
                       setApproverSignatureDetails={setApproverSignatureDetails}
+                      approverSignatureDetails={approverSignatureDetails}
                       categoryClickingID={selectedCategoryId}
                       runValidationFunction={childRef}
                       actionBooleans={actionsBooleans}
@@ -1150,46 +1017,10 @@ const CategoryConfig = ({
         <Loader />
       ) : (
         <>
-          {/* <div className="customDataTableContainer">
-            <DataTable
-              globalFilter={selectedCategory?.name}
-              paginator
-              rows={5}
-              value={categoryDetails}
-              tableStyle={{ minWidth: "50rem" }}
-              emptyMessage={
-                <>
-                  <p style={{ textAlign: "center" }}>No Records Found</p>
-                </>
-              }
-            >
-              <Column
-                style={{ width: "40%" }}
-                field="category"
-                header="Category"
-              ></Column>
-              <Column
-                style={{ width: "40%" }}
-                field="requestIdFormat"
-                header="Request Id Format"
-              ></Column>
-              <Column
-                style={{ width: "20%" }}
-                field="Action"
-                body={renderActionColumn}
-              ></Column>
-            </DataTable>
-          </div> */}
           <div className="customDataTableCardContainer">
             <div className="profile_header_content">
               <div>
-                <h2
-                  style={{
-                    lineHeight: "2.25rem",
-                  }}
-                >
-                  Category Workflows
-                </h2>
+                <h2>Category Workflows</h2>
                 <p>
                   Configure WorkFlows and define their structure for request
                   management

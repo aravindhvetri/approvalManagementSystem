@@ -3,6 +3,7 @@
   @include heading;
 }
 .FlowButtonsContainer {
+  margin-top: 10px;
   display: flex;
   justify-content: space-between;
   width: 100%;
@@ -31,6 +32,13 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
+      margin-bottom: 10px;
+      .sectionInputContainer {
+        display: flex;
+        gap: 12px;
+        align-items: center;
+        width: 242px;
+      }
       .deleteIcon {
         font-size: 16px;
         cursor: pointer;
@@ -51,8 +59,7 @@
 }
 
 .container {
-  margin-bottom: 14px;
-  height: 344px;
+  height: 484px;
   overflow: auto;
   .sectionHeader {
     display: flex;
@@ -81,13 +88,12 @@
   border-radius: 5px;
   cursor: pointer;
   align-items: center;
-  margin-left: 30px;
+  margin-left: 2px;
 }
 
 .sectionInput {
   width: 100%;
   padding: 8px;
-  margin-bottom: 10px;
   border: 1px solid #dee2e6;
   border-radius: 5px;
 }
@@ -123,7 +129,7 @@
 .dialogButtons {
   display: flex;
   justify-content: flex-end;
-  margin-top: 15px;
+  margin-top: 10px;
   gap: 12px;
 }
 
@@ -160,11 +166,10 @@
   display: flex;
   align-items: center;
   gap: 10px;
-  margin-top: 10px;
-
   .choiceInput {
     flex: 1;
     padding: 8px;
+    width: 200px;
     border: 1px solid #ccc;
     border-radius: 4px;
     font-size: 14px;
@@ -182,13 +187,6 @@
     &:hover {
       background-color: #005fa3;
     }
-  }
-}
-.columnNameContainer {
-  width: 100%;
-  padding-top: 10px;
-  .columnNameInput {
-    width: 100%;
   }
 }
 .label {
@@ -265,15 +263,87 @@
   gap: 12px;
   align-items: center;
   justify-content: space-between;
-  background-color: #000000ba;
-  color: white;
+  background-color: #e3e3e3;
+  color: black;
   padding: 4px;
   border-radius: 2px;
   font-size: 13px;
 }
 
 .deleteChoiceBtn {
-  color: white;
+  color: #000000a1;
   font-size: 18px;
   cursor: pointer;
+}
+
+.fieldItem {
+  background-color: #f9f9f9;
+  border: 1px solid #ddd;
+  padding: 10px;
+  display: flex;
+  border-radius: 2px;
+  margin-bottom: 15px;
+  justify-content: space-between;
+
+  .fieldDetail {
+    margin: 0;
+    .DetailName {
+      font-size: 12px;
+    }
+  }
+
+  .fieldValue {
+    font-weight: 400;
+    font-size: 12px;
+    color: #555;
+    margin-top: 6px;
+  }
+
+  .stageTag {
+    background: #444;
+    color: white;
+    padding: 0.25rem 0.5rem;
+    border-radius: 2px;
+    margin-right: 0.5rem;
+    display: inline-block;
+  }
+}
+
+.fieldActions {
+  display: flex;
+  gap: 10px;
+  height: fit-content;
+}
+
+.inlineFieldForm {
+  border-top: 1px dashed #ccc;
+  padding-top: 4px;
+  display: flex;
+  flex-wrap: wrap;
+  width: 100%;
+  gap: 10px;
+
+  .columnNameContainer {
+    display: flex;
+    width: 30%;
+    flex-direction: column;
+    .columnNameInput {
+      width: 100%;
+    }
+    label {
+      font-weight: 400;
+      font-size: 13px;
+    }
+
+    input,
+    .p-dropdown,
+    .p-multiselect {
+      width: 100%;
+    }
+  }
+}
+.addFieldContainer {
+  padding-bottom: 10px;
+  margin-bottom: 10px;
+  border-bottom: 1px dashed #ccc;
 }

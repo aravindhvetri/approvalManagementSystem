@@ -278,3 +278,9 @@ export interface IDelModal {
   isOpen: boolean;
   id: number;
 }
+
+//Approvers Config DropDown Details:
+export interface IApproverOptions {
+  label: string;
+  value: string;
+}

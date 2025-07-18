@@ -105,10 +105,26 @@ $darkblue: #353862;
 }
 //multiPeoplepicker Section Style:
 .Persona {
-  width: 30px;
-  height: 30px;
-  background-color: var(--liteGreen);
-  color: var(--green);
+  width: 26px;
+  height: 26px;
+  background-color: var(--green);
+  color: var(--liteGreen);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 50%;
+  font-size: 13px;
+  .AllPersona {
+    visibility: visible;
+  }
+}
+
+//FiveMultiPeoplepicker Section Style:
+.Personas {
+  width: 26px;
+  height: 26px;
+  background-color: $black;
+  color: $white;
   display: flex;
   justify-content: center;
   align-items: center;

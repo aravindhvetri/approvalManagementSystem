@@ -55,6 +55,7 @@ const RequestsFields = ({
   setDynamicRequestsSideBarVisible,
   setShowLoader,
 }) => {
+  console.log(navigateFrom, "navigateForm");
   const toast = useRef(null);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const sigCanvas = useRef<SignatureCanvas>(null);
@@ -607,7 +608,16 @@ const RequestsFields = ({
               </p>
             </div>
           </div>
-          <div className={dynamicFieldsStyles.formFieldContainer}>
+          <div
+            style={
+              navigateFrom == "MyRequest"
+                ? { height: "480px" }
+                : navigateFrom == "MyApproval"
+                ? { height: "510px" }
+                : {}
+            }
+            className={dynamicFieldsStyles.formFieldContainer}
+          >
             {Object.entries(groupedFields).map(
               ([sectionName, fields]: [string, ISectionColumnsConfig[]]) => (
                 <div
@@ -1217,8 +1227,9 @@ const RequestsFields = ({
 
   //DownLoad File Function:
   const downloadFile = (file) => {
+    console.log(file, "file");
     const anchortag = document.createElement("a");
-    anchortag.setAttribute("href", file?.ulr);
+    anchortag.setAttribute("href", file?.ulr ? file?.ulr : file?.objectURL);
     anchortag.setAttribute("target", "_blank");
     anchortag.setAttribute("download", "");
     anchortag.click();

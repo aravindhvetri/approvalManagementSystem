@@ -6,8 +6,8 @@ import SPServices from "../../../../../../../CommonServices/SPServices";
 import { Config } from "../../../../../../../CommonServices/Config";
 import ExistingEmailstyles from "./ExisitingEmail.module.scss";
 import { Label } from "office-ui-fabric-react";
-import { IFinalSubmitDetails } from "../../../../../../../CommonServices/interface";
-import { set } from "@microsoft/sp-lodash-subset";
+import "../../../../../../../External/style.css";
+import { Button } from "primereact/button";
 
 const ExistingEmail = ({ ExisitingEmailData }) => {
   //State Variables:
@@ -15,7 +15,7 @@ const ExistingEmail = ({ ExisitingEmailData }) => {
   const [selectedDropValues, setSelectedDropValues] = useState<any>([]);
   const [templateData, setTemplateData] = useState([]);
   const [selectedEmailBody, setSelectedEmailBody] = useState("");
-  console.log(selectedEmailBody, "selectedEmailBody");
+  const previewImage: string = require("../../../../../assets/preview.png");
 
   const getEmailTemplateConfigDetails = () => {
     SPServices.SPReadItems({
@@ -53,8 +53,12 @@ const ExistingEmail = ({ ExisitingEmailData }) => {
     );
     setSelectedDropValues(updatedValues);
     ExisitingEmailData(updatedValues);
-    setSelectedEmailBody(process);
     sessionStorage.setItem("selectedDropValues", JSON.stringify(updatedValues));
+  };
+
+  //set Previews content:
+  const previewEmailBody = (process: any) => {
+    setSelectedEmailBody(process);
     sessionStorage.setItem("selectedEmailBody", JSON.stringify(process));
   };
 
@@ -89,7 +93,7 @@ const ExistingEmail = ({ ExisitingEmailData }) => {
 
     return (
       <div className={ExistingEmailstyles.emailBodyPreview}>
-        <Label className={ExistingEmailstyles.bodyLabel}>
+        <Label className="overAllHeading">
           {selectedEmailBody} Email Content Preview :
         </Label>
         <div dangerouslySetInnerHTML={{ __html: selectedTemplate.EmailBody }} />
@@ -128,25 +132,44 @@ const ExistingEmail = ({ ExisitingEmailData }) => {
   }, []);
 
   return (
-    <div className={ExistingEmailstyles.existingEmailSection}>
-      <div className={ExistingEmailstyles.existingEmailContainer}>
-        {selectedDropValues.map((item: any) => (
-          <div key={item.process} className={ExistingEmailstyles.emailRow}>
-            <Label className={ExistingEmailstyles.label}>{item.process}</Label>
-            <div className={ExistingEmailstyles.dropDownContainer}>
-              <Dropdown
-                value={item.value || null}
-                options={getTemplateNameOptions}
-                onChange={(e) => handleFlowChange(item.process, e.value)}
-                placeholder="Enter here"
-                className={ExistingEmailstyles.dropDown}
-              />
+    <>
+      <div className={ExistingEmailstyles.existingEmailSection}>
+        <div className={ExistingEmailstyles.existingEmailContainer}>
+          {selectedDropValues.map((item: any) => (
+            <div key={item.process} className={ExistingEmailstyles.emailRow}>
+              <div className={ExistingEmailstyles.LabelContainer}>
+                <Label className={ExistingEmailstyles.label}>
+                  {item.process}
+                </Label>
+              </div>
+              <div className={ExistingEmailstyles.dropDownContainer}>
+                <Dropdown
+                  value={item.value || null}
+                  options={getTemplateNameOptions}
+                  onChange={(e) => handleFlowChange(item.process, e.value)}
+                  placeholder="Enter here"
+                  className={ExistingEmailstyles.dropDown}
+                />
+                {item.value && (
+                  <div className={`${ExistingEmailstyles.image}`}>
+                    <Button
+                      label="Preview"
+                      onClick={() => previewEmailBody(item?.process)}
+                      className={`modernButton ${
+                        selectedEmailBody === item.process
+                          ? "activePreviewButton"
+                          : ""
+                      }`}
+                    />
+                  </div>
+                )}
+              </div>
             </div>
-          </div>
-        ))}
+          ))}
+        </div>
       </div>
       {renderEmailBodyPreview()}
-    </div>
+    </>
   );
 };
 

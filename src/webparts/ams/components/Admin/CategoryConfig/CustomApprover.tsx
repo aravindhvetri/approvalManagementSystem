@@ -5,7 +5,9 @@ import { useState, useEffect, useImperativeHandle } from "react";
 import { Button } from "primereact/button";
 import { InputText } from "primereact/inputtext";
 import { Dropdown } from "primereact/dropdown";
-import { FaRegTrashAlt } from "react-icons/fa";
+import { Accordion, AccordionTab } from "primereact/accordion";
+import { LuPlus } from "react-icons/lu";
+import { RiDeleteBinLine } from "react-icons/ri";
 import {
   PeoplePicker,
   PrincipalType,
@@ -26,6 +28,7 @@ import {
 import { Config } from "../../../../../CommonServices/Config";
 import SPServices from "../../../../../CommonServices/SPServices";
 import {
+  maxFiveMultiplePeoplePickerTemplate,
   multiplePeoplePickerTemplate,
   notesContainerDetails,
   notesContainerDetailsSingleLine,
@@ -34,9 +37,11 @@ import {
 import { DataTable } from "primereact/datatable";
 import { MdAppRegistration } from "react-icons/md";
 import { Column } from "primereact/column";
+import { Checkbox } from "primereact/checkbox";
 
 const CustomApprover = ({
   setApproverSignatureDetails,
+  approverSignatureDetails,
   categoryClickingID,
   actionBooleans,
   runValidationFunction,
@@ -45,11 +50,13 @@ const CustomApprover = ({
   setCustomApproverSideBarVisible,
   setFinalSubmit,
 }) => {
+  console.log(approverSignatureDetails, "approverSignatureDetails");
   //state Variables:
   const [approvalFlowDetails, setApprovalFlowDetails] =
     useState<IApprovalDetailsPatch>({
       ...Config.ApprovalConfigDefaultDetails,
     });
+  console.log(approvalFlowDetails?.stages?.length, "approvalFlowDetailsLength");
   const [validation, setValidation] = useState<IApprovalFlowValidation>({
     ...Config.ApprovalFlowValidation,
   });
@@ -60,6 +67,8 @@ const CustomApprover = ({
   const [approvalType, setApprovalType] = useState<IDropdownDetails>({
     ...Config.initialConfigDrop,
   });
+  const [activeIndex, setActiveIndex] = useState<any>(0);
+  console.log(activeIndex, "activeIndex");
   const [selectedStage, setSelectedStage] = useState({});
   const notes = [
     {
@@ -102,44 +111,6 @@ const CustomApprover = ({
       return [];
     }
   };
-  // //ApprovalConfig Details Patch
-  // const addApprovalConfigDetails = (addData: IApprovalDetailsPatch) => {
-  //   SPServices.SPAddItem({
-  //     Listname: Config.ListNames.ApprovalConfig,
-  //     RequestJSON: {
-  //       ApprovalFlowName: addData?.apprvalFlowName,
-  //       TotalStages: addData?.totalStages,
-  //       RejectionFlow: addData?.rejectionFlow,
-  //     },
-  //   })
-  //     .then(async (res: any) => {
-  //       await addData?.stages?.forEach((stage) =>
-  //         addApprovalStageConfigDetails(res?.data.ID, stage)
-  //       );
-  //       setApprovalFlowDetails({ ...Config.ApprovalConfigDefaultDetails });
-  //       setCustomApproverSideBarVisible(false);
-  //     })
-  //     .catch((err) => console.log("addApprovalConfigDetails error", err));
-  // };
-
-  // //ApprovalStageConfig Details Patch
-  // const addApprovalStageConfigDetails = (
-  //   parentId: number,
-  //   stage: IApprovalStages
-  // ) => {
-  //   const tempApprovers = stage?.approver?.map((e) => e.id);
-  //   SPServices.SPAddItem({
-  //     Listname: Config.ListNames.ApprovalStageConfig,
-  //     RequestJSON: {
-  //       ParentApprovalId: parentId,
-  //       Stage: stage?.stage,
-  //       ApprovalProcess: stage?.approvalProcess,
-  //       ApproverId: { results: tempApprovers },
-  //     },
-  //   })
-  //     .then((res: any) => {})
-  //     .catch((err) => console.log("addApprovalStageConfigDetails error", err));
-  // };
 
   //onChange handle
   const onChangeHandle = (key, value) => {
@@ -282,6 +253,7 @@ const CustomApprover = ({
     if (!validation?.approvalConfigValidation && !validation?.stageValidation) {
       if (action === "addStage") {
         addStage();
+        return true;
       } else if (action === "next") {
         return true;
       }
@@ -359,18 +331,23 @@ const CustomApprover = ({
   };
   //Render Rejection Name:
   const renderRejectionName = (data) => {
+    console.log("renderRejectionName data", data);
     return (
-      <div className="categoryName">
-        <>
-          <div className="categoryNameTag">
-            {data === 1
-              ? "Anyone can approve"
-              : data === 2
-              ? "Everyone should approve"
-              : ""}
+      <>
+        {data !== null && (
+          <div className="categoryName">
+            <>
+              <div className="categoryNameTag">
+                {data === 1
+                  ? "Anyone can approve"
+                  : data === 2
+                  ? "Everyone should approve"
+                  : ""}
+              </div>
+            </>
           </div>
-        </>
-      </div>
+        )}
+      </>
     );
   };
   //Render Approvers column
@@ -379,7 +356,7 @@ const CustomApprover = ({
     return (
       <div>
         {approvers.length > 1
-          ? multiplePeoplePickerTemplate(approvers)
+          ? maxFiveMultiplePeoplePickerTemplate(approvers)
           : peoplePickerTemplate(approvers[0])}
       </div>
     );
@@ -498,125 +475,6 @@ const CustomApprover = ({
 
   return (
     <>
-      {/* <div className={`${CustomApproverStyles.topSection}`}>
-      {actionBooleans?.isEdit && (
-        <div>{notesContainerDetails("ⓘ Info", notes)}</div>
-      )}
-      <div className={`${CustomApproverStyles.topSection}`}>
-        <div className={`${CustomApproverStyles.nameDiv}`}>
-          <Label className={`${CustomApproverStyles.label}`}>
-            Name<span className="required">*</span>
-          </Label>
-          <InputText
-            value={approvalFlowDetails?.apprvalFlowName}
-            onChange={(e) => onChangeHandle("apprvalFlowName", e.target.value)}
-            placeholder="Workflow Name"
-            style={{ width: "100%" }}
-            disabled={actionBooleans?.isEdit || actionBooleans?.isView}
-          />
-        </div>
-        <div className={`${CustomApproverStyles.rejectDiv}`}>
-          <Label className={`${CustomApproverStyles.label}`}>
-            Rejection Process<span className="required">*</span>
-          </Label>
-          <Dropdown
-            options={rejectionFlowChoice?.rejectionFlowDrop}
-            value={rejectionFlowChoice?.rejectionFlowDrop.find(
-              (e) => e?.name === approvalFlowDetails?.rejectionFlow
-            )}
-            optionLabel="name"
-            onChange={(e) => onChangeHandle("rejectionFlow", e.value?.name)}
-            placeholder="Select Reject Type"
-            style={{ width: "100%" }}
-            disabled={actionBooleans?.isEdit || actionBooleans?.isView}
-          />
-        </div>
-      </div>
-      <div>
-        <span className="errorMsg">{validation?.approvalConfigValidation}</span>
-      </div>
-      {approvalFlowDetails?.stages?.map(function (stage, stageIndex) {
-        return (
-          <>
-            <div key={stageIndex} style={{ marginTop: "20px" }}>
-              <h4 className={`${CustomApproverStyles.label}`}>
-                Stage {stage.stage} Approver<span className="required">*</span>
-              </h4>
-              <div className={`${CustomApproverStyles.stage}`}>
-                <div>
-                  <Label className={`${CustomApproverStyles.label}`}>
-                    People
-                  </Label>
-                  <PeoplePicker
-                    context={context}
-                    personSelectionLimit={3}
-                    disabled={actionBooleans?.isEdit || actionBooleans?.isView}
-                    groupName={""}
-                    showtooltip={true}
-                    ensureUser={true}
-                    defaultSelectedUsers={approvalFlowDetails?.stages[
-                      stageIndex
-                    ].approver.map((approver) => approver.email)}
-                    onChange={(items) =>
-                      updateStage(stageIndex, "approver", items)
-                    }
-                    principalTypes={[PrincipalType.User]}
-                    resolveDelay={1000}
-                  />
-                </div>
-                <div>
-                  <Label className={`${CustomApproverStyles.label}`}>
-                    Type
-                  </Label>
-                  <Dropdown
-                    value={approvalType?.approvalFlowType.find(
-                      (e) =>
-                        e?.id ===
-                        approvalFlowDetails?.stages[stageIndex].approvalProcess
-                    )}
-                    disabled={actionBooleans?.isEdit || actionBooleans?.isView}
-                    options={approvalType?.approvalFlowType}
-                    optionLabel="name"
-                    onChange={(e) =>
-                      updateStage(stageIndex, "approvalProcess", e.value?.id)
-                    }
-                    placeholder="Select Type of Workflow"
-                    style={{ marginTop: "0.5rem" }}
-                  />
-                </div>
-                {!(actionBooleans?.isEdit || actionBooleans?.isView) ? (
-                  <div className={`${CustomApproverStyles.deleteDiv}`}>
-                    <FaRegTrashAlt onClick={() => removeStage(stageIndex)} />
-                  </div>
-                ) : (
-                  ""
-                )}
-              </div>
-            </div>
-            {validation?.stageErrIndex.some((e) => e === stageIndex) && (
-              <div>
-                <span className="errorMsg">{validation?.stageValidation}</span>
-              </div>
-            )}
-          </>
-        );
-      })}
-      {!(actionBooleans?.isEdit || actionBooleans?.isView) ? (
-        <div className={`${CustomApproverStyles.addStageButton}`}>
-          <Button
-            style={{ padding: "5px" }}
-            icon="pi pi-plus"
-            className="p-button-success"
-            onClick={() => validRequiredField("addStage")}
-          />
-        </div>
-      ) : (
-        ""
-      )}
-
-      {actionBooleans?.isEdit && (
-        <div>{notesContainerDetails("ⓘ Info", notes)}</div>
-      )} */}
       {actionBooleans?.isEdit && (
         <div>{notesContainerDetailsSingleLine("ⓘ Info", notes)}</div>
       )}
@@ -655,124 +513,162 @@ const CustomApprover = ({
             style={{ width: "100%" }}
           />
         </div>
+        <div className={`${ApprovalWorkFlowStyles.addStageButton}`}>
+          <Button
+            visible={!(actionBooleans?.isEdit || actionBooleans?.isView)}
+            icon={<LuPlus className="modernBtnIcon" />}
+            className="modernButton"
+            label="Add Stage"
+            onClick={async () => {
+              const isValid = await validRequiredField("addStage");
+              if (isValid) {
+                setActiveIndex(approvalFlowDetails?.stages?.length - 1);
+              }
+            }}
+          />
+        </div>
       </div>
-      <div>
-        <span className="errorMsg">{validation?.approvalConfigValidation}</span>
-      </div>
-      <div className={`${ApprovalWorkFlowStyles.approvalConfigContainer}`}>
-        <div className={`${ApprovalWorkFlowStyles.approvalSubContainer}`}>
-          <div className={`${ApprovalWorkFlowStyles.approvalStagesContainer}`}>
-            <Label className={`${ApprovalWorkFlowStyles.label}`}>
-              Approval Stages
-            </Label>
-            {stagesDataTable()}
-            <div className={`${ApprovalWorkFlowStyles.addStageButton}`}>
-              <Button
-                style={{ width: "100%", display: "flow" }}
-                visible={!(actionBooleans?.isEdit || actionBooleans?.isView)}
-                className="modernButton"
-                label="Add Stage"
-                onClick={() => {
-                  validRequiredField("addStage");
-                }}
-              />
-            </div>
-          </div>
-          <div className={`${ApprovalWorkFlowStyles.stageConfigContainer}`}>
-            <Label className={`${ApprovalWorkFlowStyles.label}`}>
-              Stage Configuration
-            </Label>
-            <div className={`${ApprovalWorkFlowStyles.stageFormContainer}`}>
-              <div className={`${ApprovalWorkFlowStyles.deleteStageButton}`}>
-                <Label
-                  className={`${ApprovalWorkFlowStyles.stageConfigHeader}`}
-                >
-                  {`Stage ${selectedStage?.["stage"]}`}
-                </Label>
-                {approvalFlowDetails?.stages.length > 1 && (
-                  <Button
-                    icon="pi pi-trash"
-                    label="Remove"
-                    visible={
-                      !(actionBooleans?.isEdit || actionBooleans?.isView)
-                    }
-                    className="modernButton"
-                    onClick={() => {
-                      removeStage(
-                        approvalFlowDetails?.stages.findIndex(
-                          (e) => e.stage === selectedStage?.["stage"]
-                        )
-                      );
-                    }}
-                  />
+
+      <span className="errorMsg">{validation?.approvalConfigValidation}</span>
+
+      <div className="approversAccordion">
+        <Accordion
+          activeIndex={activeIndex}
+          onTabChange={(e) => setActiveIndex(e.index)}
+        >
+          {approvalFlowDetails?.stages?.map((stage, index) => (
+            <AccordionTab
+              key={index}
+              header={
+                <div className={ApprovalWorkFlowStyles.stageHeaderWrap}>
+                  <div className={ApprovalWorkFlowStyles.stageLeftHeader}>
+                    <div>{`Stage ${stage?.stage} approval`}</div>
+                  </div>
+
+                  <div className={ApprovalWorkFlowStyles.stageRightHeader}>
+                    <div>{renderRejectionName(stage?.approvalProcess)}</div>
+                    <div className="requestCardAccordionBody">
+                      {renderApproversColumn(stage)}
+                    </div>
+                    <div>
+                      {approvalFlowDetails?.stages.length > 1 &&
+                        !(actionBooleans?.isEdit || actionBooleans?.isView) && (
+                          <div className="actionIconLayer">
+                            <RiDeleteBinLine
+                              onClick={() => removeStage(index)}
+                            />
+                          </div>
+                        )}
+                    </div>
+                  </div>
+                </div>
+              }
+            >
+              <div className={`${ApprovalWorkFlowStyles.stageFormContainer}`}>
+                <div className={`${ApprovalWorkFlowStyles.deleteStageButton}`}>
+                  <Label
+                    className={`${ApprovalWorkFlowStyles.stageConfigHeader}`}
+                  >
+                    {`Stage ${stage?.stage}`}
+                  </Label>
+                </div>
+                <div className={`${ApprovalWorkFlowStyles.stageForm}`}>
+                  <div className="accordionPeoplePicker">
+                    <Label className={ApprovalWorkFlowStyles.label}>
+                      People<span className="required">*</span>
+                    </Label>
+                    <PeoplePicker
+                      context={context}
+                      personSelectionLimit={7}
+                      groupName={""}
+                      showtooltip={true}
+                      tooltipMessage="Search and select persons here"
+                      disabled={
+                        actionBooleans?.isEdit || actionBooleans?.isView
+                      }
+                      ensureUser={true}
+                      defaultSelectedUsers={stage?.approver.map(
+                        (approver) => approver.email
+                      )}
+                      onChange={async (items) => {
+                        await updateStage(index, "approver", items);
+                        setValidation({ ...Config.ApprovalFlowValidation });
+                      }}
+                      principalTypes={[PrincipalType.User]}
+                      resolveDelay={1000}
+                    />
+                  </div>
+                  <div className="accordionDropDown">
+                    <Label className={ApprovalWorkFlowStyles.label}>
+                      Type<span className="required">*</span>
+                    </Label>
+                    <Dropdown
+                      width={"100%"}
+                      disabled={
+                        actionBooleans?.isEdit || actionBooleans?.isView
+                      }
+                      value={approvalType?.approvalFlowType.find(
+                        (e) => e?.id === stage?.approvalProcess
+                      )}
+                      options={approvalType?.approvalFlowType}
+                      optionLabel="name"
+                      onChange={async (e) => {
+                        await updateStage(
+                          index,
+                          "approvalProcess",
+                          e.value?.id
+                        );
+                        setValidation({ ...Config.ApprovalFlowValidation });
+                      }}
+                      placeholder="Select Type of Workflow"
+                      style={{ marginTop: "0.5rem" }}
+                    />
+                  </div>
+                  <div>
+                    <Label className={`${ApprovalWorkFlowStyles.label}`}>
+                      Is Approver Signature Mandatory?
+                    </Label>
+                    <Checkbox
+                      onChange={(e) => {
+                        const stageKey = `Stage ${stage?.stage}`;
+                        setApproverSignatureDetails((prev) => {
+                          const isChecked = e.checked;
+                          let updatedViewStages = [...prev.ViewStages];
+
+                          if (isChecked) {
+                            if (!updatedViewStages.includes(stageKey)) {
+                              updatedViewStages.push(stageKey);
+                            }
+                          } else {
+                            updatedViewStages = updatedViewStages.filter(
+                              (s) => s !== stageKey
+                            );
+                          }
+
+                          return {
+                            ...prev,
+                            ViewStages: updatedViewStages,
+                          };
+                        });
+                      }}
+                      checked={approverSignatureDetails.ViewStages.includes(
+                        `Stage ${stage?.stage}`
+                      )}
+                      disabled={actionBooleans.isView}
+                    />
+                  </div>
+                </div>
+                {validation?.stageErrIndex.includes(index) && (
+                  <div style={{ marginTop: "0.5rem" }}>
+                    <span className="errorMsg">
+                      {validation?.stageValidation}
+                    </span>
+                  </div>
                 )}
               </div>
-              <div>
-                <Label className={`${ApprovalWorkFlowStyles.label}`}>
-                  People<span className="required">*</span>
-                </Label>
-                <PeoplePicker
-                  context={context}
-                  personSelectionLimit={3}
-                  groupName={""}
-                  showtooltip={true}
-                  tooltipMessage="Search and select persons here"
-                  disabled={actionBooleans?.isEdit || actionBooleans?.isView}
-                  ensureUser={true}
-                  defaultSelectedUsers={approvalFlowDetails?.stages[
-                    approvalFlowDetails?.stages.findIndex(
-                      (e) => e.stage === selectedStage?.["stage"]
-                    )
-                  ]?.approver.map((approver) => approver.email)}
-                  onChange={async (items) => {
-                    await updateStage(
-                      approvalFlowDetails?.stages.findIndex(
-                        (e) => e.stage === selectedStage?.["stage"]
-                      ),
-                      "approver",
-                      items
-                    );
-                    setValidation({ ...Config.ApprovalFlowValidation });
-                  }}
-                  principalTypes={[PrincipalType.User]}
-                  resolveDelay={1000}
-                />
-              </div>
-              <div>
-                <Label className={`${ApprovalWorkFlowStyles.label}`}>
-                  Type<span className="required">*</span>
-                </Label>
-                <Dropdown
-                  width={"100%"}
-                  disabled={actionBooleans?.isEdit || actionBooleans?.isView}
-                  value={approvalType?.approvalFlowType.find(
-                    (e) =>
-                      e?.id ===
-                      approvalFlowDetails?.stages[
-                        approvalFlowDetails?.stages.findIndex(
-                          (e) => e.stage === selectedStage?.["stage"]
-                        )
-                      ]?.approvalProcess
-                  )}
-                  options={approvalType?.approvalFlowType}
-                  optionLabel="name"
-                  onChange={async (e) => {
-                    await updateStage(
-                      approvalFlowDetails?.stages.findIndex(
-                        (e) => e.stage === selectedStage?.["stage"]
-                      ),
-                      "approvalProcess",
-                      e.value?.id
-                    );
-                    setValidation({ ...Config.ApprovalFlowValidation });
-                  }}
-                  placeholder="Select Type of Workflow"
-                  style={{ marginTop: "0.5rem" }}
-                />
-              </div>
-            </div>
-          </div>
-        </div>
+            </AccordionTab>
+          ))}
+        </Accordion>
       </div>
     </>
   );

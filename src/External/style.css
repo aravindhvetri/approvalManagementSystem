@@ -287,7 +287,7 @@ div[data-automationid="SiteHeader"] {
 .CustomSideBarContainer {
   width: 100%;
   box-shadow: var(--sideBarBoxShadow);
-  padding: 26px;
+  padding: 12px 24px;
 }
 .p-sidebar-content {
   border: 1px solid #e4e4e7;
@@ -367,6 +367,17 @@ input::placeholder {
   color: #9b757d;
   font-size: 13px;
 }
+.actionIconLayer {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #fff;
+  padding: 4px 5px;
+  border-radius: 6px;
+  box-shadow: -1px 2px 13px -8px #000;
+  cursor: pointer;
+  color: #000;
+}
 /* Toast Common Styles: .............................................*/
 .toastContainer {
   display: flex;
@@ -415,8 +426,8 @@ input::placeholder {
 }
 /*MultiPeoplePicker Common Styles..........................................*/
 .user-selector-group .ms-Image {
-  width: 30px !important;
-  height: 30px !important;
+  width: 26px !important;
+  height: 26px !important;
 }
 .displayText {
   width: 100%;
@@ -433,7 +444,7 @@ input::placeholder {
 .workFlowHeaderContainer {
   display: flex;
   gap: 6px;
-  font-size: 18px;
+  font-size: 16px;
   letter-spacing: 1px;
   align-items: center;
   font-weight: 500;
@@ -466,8 +477,8 @@ input::placeholder {
 
 .p-tabview-nav-link {
   font-size: 14px;
-  font-weight: 500;
-  color: #979a9a;
+  font-weight: 400;
+  color: black;
   padding: 10px 86.2px;
   border: none;
   background-color: transparent;
@@ -585,6 +596,10 @@ li.p-highlight .p-tabview-nav-link {
 }
 .ms-BasePicker-text:hover {
   border: 1px solid var(--InputBoxLiteGreen) !important;
+}
+.ms-BasePicker-text {
+  min-height: 34px;
+  border-radius: 3px;
 }
 .ms-BasePicker-text::after {
   border: 1px solid var(--green);
@@ -737,15 +752,13 @@ li.p-highlight .p-tabview-nav-link {
   display: flex;
   justify-content: space-between;
   position: relative;
-  margin-bottom: 20px;
-  width: 30%;
+  width: 20%;
 }
 
 .custom-step {
   display: flex;
   align-items: center;
   position: relative;
-  flex: 1;
 }
 
 .step-circle {
@@ -782,8 +795,7 @@ li.p-highlight .p-tabview-nav-link {
 .step-line {
   position: absolute;
   top: 15px;
-  left: -3%;
-  width: 64%;
+  width: 80px;
   height: 3px;
   background-color: #dee2e6;
   z-index: 0;
@@ -857,7 +869,7 @@ li.p-highlight .p-tabview-nav-link {
 /* Data Card Body styles......................................... */
 .profile_header_content {
   padding: 0px;
-  margin-bottom: 16px;
+  margin-bottom: 20px;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -865,6 +877,8 @@ li.p-highlight .p-tabview-nav-link {
 .profile_header_content h2 {
   margin: 0;
   padding: 0;
+  font-weight: 600;
+  font-size: 17px;
 }
 .profile_header_content h1 {
   margin: 0;
@@ -900,6 +914,14 @@ li.p-highlight .p-tabview-nav-link {
   color: var(--dataTableBodyTextColor);
   font-size: 12px;
 }
+.requestCardAccordionBody {
+  display: flex;
+  justify-content: end;
+  gap: 12px;
+  align-items: center;
+  color: var(--dataTableBodyTextColor);
+  font-size: 12px;
+}
 .requestCardHeader {
   width: 80%;
 }
@@ -924,6 +946,7 @@ li.p-highlight .p-tabview-nav-link {
   display: flex;
   align-items: center;
   gap: 20px;
+  padding-bottom: 10px;
 }
 .requestIdTitle {
   display: flex;
@@ -942,7 +965,7 @@ li.p-highlight .p-tabview-nav-link {
 .categoryName {
   display: flex;
   gap: 6px;
-  padding-top: 8px;
+
   font-size: 13px;
   color: var(--dataTableBodyTextColor);
   letter-spacing: 1px;
@@ -966,7 +989,6 @@ li.p-highlight .p-tabview-nav-link {
   display: inline-block;
   background-color: var(--liteGreen);
   color: black;
-  margin-left: 10px;
   letter-spacing: 0.5px;
 }
 
@@ -982,6 +1004,18 @@ li.p-highlight .p-tabview-nav-link {
   gap: 6px;
   color: #000000c2;
   font-weight: 500;
+  padding: 6px 15px 6px 15px;
+  font-size: 13px;
+  border: 1px solid #dee2e6;
+  border-radius: 5px;
+  cursor: pointer;
+  align-items: center;
+}
+
+.activePreviewButton {
+  background-color: #86a9a9;
+  color: white;
+  font-weight: 400;
   padding: 6px 15px 6px 15px;
   font-size: 13px;
   border: 1px solid #dee2e6;
@@ -1007,13 +1041,15 @@ li.p-highlight .p-tabview-nav-link {
   border: 1px solid transparent;
   font-weight: 400;
   letter-spacing: 0.5px;
+  padding: 0.8rem 0.75rem;
+  height: 42px;
 }
 .p-accordion .p-highlight .p-accordion-header-link {
-  background: #0000008c;
-  color: white;
+  background: #e3e3e3;
+  color: black;
 }
 .p-accordion-tab {
-  margin-bottom: 12px;
+  margin: 10px 0px 10px 0px;
 }
 .p-accordion
   .p-accordion-header
@@ -1021,6 +1057,13 @@ li.p-highlight .p-tabview-nav-link {
   .p-accordion-toggle-icon {
   width: 10px;
   height: 10px;
+}
+.p-accordion .p-accordion-content {
+  padding: 14px !important;
+}
+
+.approversAccordion .p-highlight .displayText {
+  color: black;
 }
 
 /*Delete Confirmation popup styles......................................... */
@@ -1125,4 +1168,59 @@ li.p-highlight .p-tabview-nav-link {
 }
 .p-dialog {
   border: 1px solid transparent;
+}
+
+/*accordion PeoplePicker Common Styles .................................*/
+
+.accordionPeoplePicker .ms-BasePicker-text {
+  width: 500px;
+}
+.accordionDropDown .p-dropdown {
+  width: 300px;
+}
+
+.requestCardAccordionBody .ms-Persona-imageArea {
+  width: 26px;
+  height: 26px;
+}
+
+/*new attachment design common styles .........................*/
+.dragAndDropAttachmentContainer .p-fileupload .p-fileupload-buttonbar {
+  background: transparent;
+  border: 1px solid transparent;
+  display: flex;
+  justify-content: start;
+  padding: 6px !important;
+}
+.dragAndDropAttachmentContainer .p-fileupload .p-fileupload-buttonbar button {
+  display: none;
+}
+.dragAndDropBtn .p-button {
+  background-color: white;
+  display: flex;
+  width: 110px;
+  gap: 1px;
+  color: #000000c2;
+  font-weight: 500;
+  /* padding: 6px 15px 6px 15px; */
+  font-size: 12px;
+  border: 1px solid #dee2e6;
+  border-radius: 5px;
+  cursor: pointer;
+  align-items: center;
+}
+.dragAndDropBtn .p-button .p-icon {
+  width: 12px;
+  height: 12px;
+}
+.dragAndDropBtn .p-fileupload .p-fileupload-buttonbar .p-button {
+  margin-right: 0px;
+}
+.dragAndDropAttachmentContainer .p-fileupload .p-fileupload-content {
+  padding: 0px !important;
+  border: 2px dashed #dee2e6 !important;
+  height: 100px;
+}
+.OkCheckingContainer .p-fileupload .p-fileupload-content {
+  display: none !important;
 }

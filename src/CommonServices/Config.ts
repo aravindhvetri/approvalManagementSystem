@@ -3,6 +3,7 @@ import {
   IActionBooleans,
   IApprovalDetailsPatch,
   IApprovalFlowValidation,
+  IApproverOptions,
   IApproverSignatureFeildConfig,
   ICardDataCountDetails,
   ICategoryDraft,
@@ -317,4 +318,14 @@ export namespace Config {
     isOpen: false,
     id: null,
   };
+
+  //Approvers Config DropDown Details:
+  export const approverOptions: IApproverOptions[] = [
+    { label: "Existing approver", value: "existing" },
+    { label: "Custom approver", value: "custom" },
+  ];
+
+  //Toast common Messages:
+  export const ToastCommonMessage =
+    "Please cancel or save the currently open field form before proceeding to the next action";
 }

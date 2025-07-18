@@ -166,14 +166,6 @@ const Header = ({ context, currentPage }) => {
 
     if (isAdmin) {
       TemptabContent.push(
-        // {
-        //   id: 1,
-        //   name: "All Request",
-        // },
-        // {
-        //   id: 4,
-        //   name: "Workflows",
-        // }
         {
           id: 3,
           name: "Category Workflows",
@@ -225,20 +217,6 @@ const Header = ({ context, currentPage }) => {
   const headerFilters = () => {
     return (
       <>
-        {/* {(activeTabViewBar === 2 || activeTabViewBar === 0) && (
-          <Dropdown
-            value={selectedCategory}
-            options={categoryFilterValue.categoryDrop}
-            onChange={(e) => {
-              setSelectedCategory(e.value);
-            }}
-            showClear
-            filter
-            optionLabel="name"
-            placeholder="Category"
-            className="w-full md:w-14rem"
-          />
-        )} */}
         {isAdmin && (
           <div className="addNewCustomWorkflowButton">
             <Button
@@ -267,28 +245,6 @@ const Header = ({ context, currentPage }) => {
             // icon={<LuBadgePlus />}
           />
         </div>
-        {/* {activeTabViewBar !== 1 && (
-          <div className="addNewButton">
-            <Button
-              label="Add new"
-              onClick={async () => {
-                openSidebar();
-              }}
-              icon={<LuBadgePlus />}
-            />
-          </div>
-        )} */}
-        {/* {activeTabViewBar === 1 && (
-          <div className={headerStyles.searchFilter}>
-            <InputText
-              style={{ width: "100%" }}
-              type="Search"
-              value={globelSearchValue}
-              placeholder="Search here..."
-              onChange={(e) => setGlobelSearchValue(e.target.value)}
-            />
-          </div>
-        )} */}
       </>
     );
   };
@@ -327,8 +283,8 @@ const Header = ({ context, currentPage }) => {
           <div className={headerStyles.profile_header_content}>
             <h1
               style={{
-                fontSize: "1.875rem",
-                lineHeight: "2.25rem",
+                fontSize: "20px",
+                fontWeight: "600",
               }}
             >
               Approval Hub
@@ -337,12 +293,6 @@ const Header = ({ context, currentPage }) => {
           </div>
 
           <div className={headerStyles.profile_header_Icons}>
-            {/* <div className={headerStyles.notifyBell}>
-              <IoMdNotificationsOutline />
-            </div>
-            <Persona
-              imageUrl={`/_layouts/15/userphoto.aspx?size=S&username=${userDetails.email}`}
-            /> */}
             {headerFilters()}
           </div>
         </div>
@@ -385,9 +335,6 @@ const Header = ({ context, currentPage }) => {
             }
           ></RightSidebar>
         </div>
-        {/* <div className={headerStyles.filter_header_pageName}>
-          {activeTabViewBar === 3 && workFlowsTabViewBar()}
-        </div> */}
       </div>
       <div>
         {activeTabViewBar === 0 || activeTabViewBar === 1 ? (

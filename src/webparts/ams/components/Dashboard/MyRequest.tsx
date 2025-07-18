@@ -290,7 +290,8 @@ const MyRequestPage = ({
             <div className={dashboardStyles.profile_header_content}>
               <h2
                 style={{
-                  lineHeight: "2.25rem",
+                  fontWeight: "600",
+                  fontSize: "17px",
                 }}
               >
                 My Requests
