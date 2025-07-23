@@ -125,7 +125,7 @@ export const cardStatusTemplate = (status: string) => {
           alignItems: "center",
         }}
       >
-        {getIcons(status)}
+        {/* {getIcons(status)} */}
       </div>
       <div>{status}</div>
     </div>
@@ -246,7 +246,8 @@ export const customHeader = (title, description) => (
       <h1
         style={{
           fontSize: "20px",
-          fontWeight: "600",
+          fontWeight: "500",
+          paddingBottom: "8px",
         }}
       >
         {title}
@@ -667,37 +668,40 @@ export const showCard = (cardDetails: ICardDetails) => {
     switch (title) {
       case "Total Requests":
         return "total";
-      case "Pending Requests":
+      case "Pending":
         return "pending";
-      case "Approved Requests":
+      case "Approved":
         return "approved";
-      case "Rejected Requests":
+      case "Rejected":
         return "rejected";
       default:
         return "default";
     }
   };
+  const statusClass = getStatusData(cardDetails?.cardTitle);
   return (
-    //Old code:
-    // <Card className="custom-card">
-    //   <div className={styles.cardHeader}>
-    //     <span className="card-title">{cardDetails?.cardTitle}</span>
-    //     <span className={styles.cardIcon}>{cardDetails?.icon}</span>
-    //   </div>
-    //   <div className={styles.cardCount}>{cardDetails?.cardContent}</div>
-    // </Card>
-
-    //New code:
     <Card
-      className="p-card"
+      className={`${styles.cardContainer}`}
       data-status={getStatusData(cardDetails?.cardTitle)}
-      style={{ position: "relative" }}
     >
-      <div className={styles.cardHeader}>
-        <span className="card-title">{cardDetails?.cardTitle}</span>
-        <span className={styles.cardIcon}>{cardDetails?.icon}</span>
+      <div className={`${styles.topTag} ${styles["topTag" + statusClass]}`} />
+
+      <div className={styles.cardContentWrapper}>
+        <div className={styles.cardHeader}>
+          <span
+            className={`${styles.cardIcon} ${
+              styles[getStatusData(cardDetails?.cardTitle)]
+            }`}
+          >
+            {cardDetails?.icon}
+          </span>
+          {cardDetails?.cardTitle === "Total Requests" && (
+            <span className={styles.badge}>+2 new</span>
+          )}
+        </div>
+        <span className={styles.cardTitle}>{cardDetails?.cardTitle}</span>
+        <div className={styles.cardCount}>{cardDetails?.cardContent}</div>
       </div>
-      <div className={styles.cardCount}>{cardDetails?.cardContent}</div>
     </Card>
   );
 };

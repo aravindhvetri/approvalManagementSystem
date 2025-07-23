@@ -25,8 +25,6 @@ import {
   showCard,
   tabViewBar,
 } from "../../../../CommonServices/CommonTemplates";
-import { Persona } from "office-ui-fabric-react";
-import { IoMdNotificationsOutline } from "react-icons/io";
 import "../../../../External/style.css";
 import headerStyles from "./Header.module.scss";
 import "./HeaderStyle.css";
@@ -35,10 +33,13 @@ import DashboardPage from "../Dashboard/DashboardPage";
 import { InputText } from "primereact/inputtext";
 import ApprovalConfig from "../ApprovalConfig/ApprovalConfig";
 //React icons imports:
-import { FaChartBar } from "react-icons/fa";
-import { FaRegClock } from "react-icons/fa";
-import { SiTicktick } from "react-icons/si";
-import { GiCancel } from "react-icons/gi";
+import { FiClock } from "react-icons/fi";
+import { PiNoteDuotone } from "react-icons/pi";
+import { IoMdCheckmarkCircleOutline } from "react-icons/io";
+import { MdOutlineDoNotDisturbAlt } from "react-icons/md";
+import { GoGitPullRequest } from "react-icons/go";
+import { AiOutlinePlusCircle } from "react-icons/ai";
+import { MdOutlineInsights } from "react-icons/md";
 
 const Header = ({ context, currentPage }) => {
   //UseStates
@@ -130,22 +131,22 @@ const Header = ({ context, currentPage }) => {
       {
         name: "Total Requests",
         count: tempTotalRequestCount,
-        icon: <FaChartBar />,
+        icon: <PiNoteDuotone />,
       },
       {
-        name: "Pending Requests",
+        name: "Pending",
         count: tempPendingRequestCount,
-        icon: <FaRegClock />,
+        icon: <FiClock />,
       },
       {
-        name: "Approved Requests",
+        name: "Approved",
         count: tempApprovedRequestCount,
-        icon: <SiTicktick />,
+        icon: <IoMdCheckmarkCircleOutline />,
       },
       {
-        name: "Rejected Requests",
+        name: "Rejected",
         count: tempRejecetedRequestCount,
-        icon: <GiCancel />,
+        icon: <MdOutlineDoNotDisturbAlt />,
       },
     ];
     await setCardDataCountDetails([...tempArr]);
@@ -218,32 +219,37 @@ const Header = ({ context, currentPage }) => {
     return (
       <>
         {isAdmin && (
-          <div className="addNewCustomWorkflowButton">
-            <Button
-              onClick={() => {
-                setSideBarVisible(true);
-                setActiveTabViewBar(2);
-              }}
-              label="Create Category Workflow"
-            />
+          <div
+            onClick={() => {
+              setSideBarVisible(true);
+              setActiveTabViewBar(2);
+            }}
+            className="addNewCustomWorkflowButton"
+          >
+            <div className="addNewCustomWorkflowIcon">
+              <GoGitPullRequest />
+            </div>
+            <span>New Category Workflow</span>
           </div>
         )}
 
-        <div className="addNewRequestButton">
-          <Button
-            onClick={() => {
-              setAddSideBarContentBooleans(
-                (prev: IRightSideBarContentsDetails) => ({
-                  ...prev,
-                  addRequestDetails: true,
-                })
-              );
-              setSideBarVisible(true);
-              setActiveTabViewBar(0);
-            }}
-            label="New Request"
-            // icon={<LuBadgePlus />}
-          />
+        <div
+          onClick={() => {
+            setAddSideBarContentBooleans(
+              (prev: IRightSideBarContentsDetails) => ({
+                ...prev,
+                addRequestDetails: true,
+              })
+            );
+            setSideBarVisible(true);
+            setActiveTabViewBar(0);
+          }}
+          className="addNewCustomWorkflowButton addNewRequestButton"
+        >
+          <div className="addNewCustomWorkflowIcon">
+            <AiOutlinePlusCircle />
+          </div>
+          <span>New Request</span>
         </div>
       </>
     );
@@ -281,22 +287,24 @@ const Header = ({ context, currentPage }) => {
       <div className="headerContainer">
         <div className={headerStyles.profile_header_container}>
           <div className={headerStyles.profile_header_content}>
-            <h1
-              style={{
-                fontSize: "20px",
-                fontWeight: "600",
-              }}
-            >
-              Approval Hub
-            </h1>
+            <h1>Approval Hub</h1>
             <p>Manage and track approval workflows across your organization</p>
           </div>
-
-          <div className={headerStyles.profile_header_Icons}>
-            {headerFilters()}
+          <div>
+            <div className={headerStyles.profile_header_user}>
+              <div className={headerStyles.profile_name}>
+                Hello {userDetails?.name}
+              </div>
+              <div className={headerStyles.profile_Image}>
+                <img
+                  src={`/_layouts/15/userphoto.aspx?size=L&username=${loginUser}`}
+                  alt="User profile photo"
+                ></img>
+              </div>
+            </div>
           </div>
         </div>
-        {(activeTabViewBar === 1 || activeTabViewBar === 0) && (
+        {/* {(activeTabViewBar === 1 || activeTabViewBar === 0) && (
           <div className={headerStyles.cardDetails_container}>
             {cardDataCountDetails?.map((e) =>
               showCard({
@@ -306,7 +314,27 @@ const Header = ({ context, currentPage }) => {
               })
             )}
           </div>
-        )}
+        )} */}
+        <div className={headerStyles.header_title_container}>
+          <div style={{ fontSize: "20px" }}>
+            <MdOutlineInsights />
+          </div>
+          <div>More insights</div>
+        </div>
+        <div className={headerStyles.header_container}>
+          <div className={headerStyles.cardDetails_container}>
+            {cardDataCountDetails?.map((e) =>
+              showCard({
+                cardTitle: e?.name,
+                cardContent: e?.count.toString(),
+                icon: e?.icon,
+              })
+            )}
+          </div>
+          <div className={headerStyles.profile_header_Icons}>
+            {headerFilters()}
+          </div>
+        </div>
 
         <div className={headerStyles.filter_header_container}>
           <div className={headerStyles.filter_header_pageName}>

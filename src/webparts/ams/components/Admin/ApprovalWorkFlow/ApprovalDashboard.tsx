@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 //Styles import
 import "../../../../../External/commonStyles.module.scss";
 import "../../../../../External/style.css";
+import approvalWorkFlowStyles from "./ApprovalWorkFlow.module.scss";
 //Common Service imports
 import SPServices from "../../../../../CommonServices/SPServices";
 import { Config } from "../../../../../CommonServices/Config";
@@ -28,6 +29,7 @@ import { LuWorkflow } from "react-icons/lu";
 import { LuBadgePlus } from "react-icons/lu";
 import { Dialog } from "primereact/dialog";
 import { RiDeleteBinLine } from "react-icons/ri";
+import { Label } from "office-ui-fabric-react";
 
 const ApprovalDashboard = ({
   setApprovalSideBarContent,
@@ -199,18 +201,24 @@ const ApprovalDashboard = ({
   //Render Category Name:
   const renderCategoryName = (rowData) => {
     return (
-      <div className="categoryName">
+      <>
         {rowData?.categoryName?.length > 0 && (
-          <>
-            Linked categories for this approval -
-            {rowData.categoryName.map((e, index) => (
-              <div key={index} className="categoryTag">
-                {e?.Category}
-              </div>
-            ))}
-          </>
+          <Label className={approvalWorkFlowStyles.categoryLabel}>
+            Linked categories for this approval :
+          </Label>
         )}
-      </div>
+        <div className="categoryName">
+          {rowData?.categoryName?.length > 0 && (
+            <>
+              {rowData.categoryName.map((e, index) => (
+                <div key={index} className="categoryTag">
+                  {e?.Category}
+                </div>
+              ))}
+            </>
+          )}
+        </div>
+      </>
     );
   };
 
@@ -318,21 +326,24 @@ const ApprovalDashboard = ({
                 body={(rowData) => (
                   <div className="requestCard">
                     <div className="requestCardHeader">
-                      <div className="requestId">
+                      <div
+                        style={{ paddingBottom: "4px" }}
+                        className="requestId"
+                      >
                         <h3 className="requestIdTitle">
-                          <LuWorkflow style={{ fontSize: "24px" }} />
+                          <LuWorkflow style={{ fontSize: "20px" }} />
                           {rowData.apprvalFlowName}
                         </h3>
-                        <span>{renderRejectionFlowColumn(rowData)}</span>
-                      </div>
-                      <div className="requestIdDetails">
-                        <p className="requestIdpara">
-                          Total Stages - {rowData?.totalStages}
-                        </p>
+                        <div className="requestIdDetails">
+                          <p className="requestIdpara">
+                            Total Stages - {rowData?.totalStages}
+                          </p>
+                        </div>
                       </div>
                       {renderCategoryName(rowData)}
                     </div>
                     <div className="requestCardBody">
+                      <span>{renderRejectionFlowColumn(rowData)}</span>
                       {renderApproversColumn(rowData)}
                       {renderActionColumn(rowData)}
                     </div>

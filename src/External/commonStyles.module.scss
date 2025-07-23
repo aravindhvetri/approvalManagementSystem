@@ -1,32 +1,24 @@
 //Theme Colors:
-$green: #979a9a;
-$liteGreen: #ecf0f1;
-$sideNavBgColor: #f9f9f9;
+$color-primary: #0286c9;
+$color-secondary: #0aa5ec;
+$color-dark: #272634;
+$color-dark-lighter: #333947;
+$color-light: #eef0f2;
+$black: #000000;
 $white: #ffffff;
-$black: #202735;
-$sideNavBodyTextColor: #7c8098;
-$darkblue: #353862;
 
 //Using Styles For Normal CssFile:
 :root {
-  --dataTableHeaderBgColor: #f3f4f6;
-  --dataTableHeaderTextColor: black;
-  --dataTableHeaderFontSize: 12px;
-  --dataTableHeaderFontWeight: 500;
-  --dataTableHeaderBorderRadius: 4px;
-  --dataTableBodyTextColor: #7c8098;
-  --dataTableHeaderPadding: 10px 20px;
-  --dataTableBodyPadding: 6px 20px;
-  --dataTableWholePadding: 10px;
-  --sideBarBoxShadow: -4px 4px 10px rgba(255, 255, 255, 0.5);
-  --green: #979a9a;
-  --red: #ff0000;
-  --liteRed: #fbc8c8;
-  --InputBoxLiteGreen: #d0d3d4;
-  --liteGreen: #ecf0f1;
-  --fontSizebig: 14px;
-  --liteGrayBackgorund: #f9f9f9;
-  --borderColor: #ebebed;
+  --color-primary: #0286c9;
+  --color-secondary: #0aa5ec;
+  --color-dark: #272634;
+  --color-dark-lighter: #333947;
+  --color-light: #eef0f2;
+  --white: #ffffff;
+  --black: #000000;
+  --red: #f56365;
+  --liteRed: #f5b2b2;
+  --inputBorderColor: #0aa5ec5e;
 }
 
 //sideNavSection Selectable ButtonModel styles:
@@ -37,7 +29,7 @@ $darkblue: #353862;
   border-radius: 10px;
   padding: 10px 16px 10px 16px;
   font-size: 14px;
-  background-color: $green;
+  background-color: $color-primary;
   color: $white;
   font-weight: 600;
   margin-bottom: 20px;
@@ -66,9 +58,9 @@ $darkblue: #353862;
     transition: transform 0.4s ease-in-out;
   }
   &:hover {
-    background-color: $liteGreen;
+    background-color: $color-secondary;
     transform: scale(1.08);
-    color: $green;
+    color: $color-primary;
     img {
       transform: scale(1.1);
     }
@@ -81,39 +73,36 @@ $darkblue: #353862;
   justify-content: center;
   padding: 6px 12px 6px 12px;
   border-radius: 8px;
-  gap: 6px;
-  font-weight: 600;
+  font-weight: 500;
   font-size: 12px;
 }
 
 .cardStatusItem {
   display: flex;
   align-items: center;
-  padding: 6px 20px 6px 20px;
-  border-radius: 30px;
-  gap: 6px;
-  font-weight: 500;
+  padding: 6px 12px 6px 12px;
+  border-radius: 50px;
+  // gap: 6px;
   font-size: 12px;
-  letter-spacing: 1px;
 }
 
 //sideBar Header Style:
 @mixin sideBarHeader {
   font-size: 16px;
-  color: $green;
+  color: $color-primary;
   font-weight: 500;
 }
 //multiPeoplepicker Section Style:
 .Persona {
   width: 26px;
   height: 26px;
-  background-color: var(--green);
-  color: var(--liteGreen);
+  background-color: var(--color-primary);
+  color: $white;
   display: flex;
   justify-content: center;
   align-items: center;
   border-radius: 50%;
-  font-size: 13px;
+  font-size: 11px;
   .AllPersona {
     visibility: visible;
   }
@@ -123,13 +112,13 @@ $darkblue: #353862;
 .Personas {
   width: 26px;
   height: 26px;
-  background-color: $black;
+  background-color: var(--color-primary);
   color: $white;
   display: flex;
   justify-content: center;
   align-items: center;
   border-radius: 50%;
-  font-size: 13px;
+  font-size: 11px;
   .AllPersona {
     visibility: visible;
   }
@@ -137,7 +126,7 @@ $darkblue: #353862;
 
 //Label Common Style:
 @mixin label {
-  color: black;
+  color: var(--black);
   padding-bottom: 8px;
   font-weight: 400;
   letter-spacing: 0.5px;
@@ -145,25 +134,92 @@ $darkblue: #353862;
 
 //heading Common Style:
 @mixin heading {
-  color: var(--green);
+  color: var(--color-primary);
   font-size: 15px;
   font-weight: 600;
   padding-bottom: 20px;
 }
 
 //Card  Common Style:
-.cardHeader {
-  justify-content: space-between;
-  padding-bottom: 4px;
-  display: flex;
-  font-size: 16px;
-  font-weight: 600;
-  .cardIcon {
-    font-size: 25px;
-    color: #898c9ea3;
-  }
+.cardContainer {
+  position: relative;
+  padding: 10px;
+  border-radius: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
 }
+
+.topTag {
+  position: absolute;
+  top: -12px;
+  left: 6px;
+  height: 25px;
+  width: 16%;
+  border-bottom-left-radius: 6px;
+  border-bottom-right-radius: 6px;
+}
+
+.cardContentWrapper {
+  padding-top: 0.5rem;
+}
+
+.cardHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 0px 16px 0px;
+}
+
+.cardIcon {
+  font-size: 28px;
+}
+
+.cardTitle {
+  font-weight: 500;
+  font-size: 14px;
+  color: #626774;
+}
+
 .cardCount {
   font-size: 24px;
   font-weight: 600;
+  padding-top: 4px;
+}
+
+.badge {
+  background-color: #fdbb5c;
+  color: var(--black);
+  font-size: 0.75rem;
+  padding: 2px 8px;
+  border-radius: 10px;
+  margin-left: auto;
+}
+
+/* Colors for both topTag and cardIcon */
+.total {
+  color: #90959f;
+}
+
+.pending {
+  color: #6ddccf;
+}
+
+.approved {
+  color: var(--color-secondary);
+}
+
+.rejected {
+  color: #ec91ac;
+}
+
+.topTagtotal {
+  background-color: #fdbb5c !important;
+}
+.topTagpending {
+  background-color: #6ddccf !important;
+}
+.topTagapproved {
+  background-color: var(--color-secondary) !important;
+}
+.topTagrejected {
+  background-color: #ec91ac !important;
 }

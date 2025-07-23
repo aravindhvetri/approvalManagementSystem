@@ -307,18 +307,24 @@ const EmailWorkFlow = ({
   //Render Category Name:
   const renderCategoryName = (rowData) => {
     return (
-      <div className="categoryName">
+      <>
         {rowData?.usedCategories?.length > 0 && (
-          <>
-            Linked categories for this email -
-            {rowData.usedCategories.map((e, index) => (
-              <div key={index} className="categoryTag">
-                {e}
-              </div>
-            ))}
-          </>
+          <Label className={EmailWorkFlowStyles.categoryLabel}>
+            Linked categories for this email:
+          </Label>
         )}
-      </div>
+        <div className="categoryName">
+          {rowData?.usedCategories?.length > 0 && (
+            <>
+              {rowData.usedCategories.map((e, index) => (
+                <div key={index} className="categoryTag">
+                  {e}
+                </div>
+              ))}
+            </>
+          )}
+        </div>
+      </>
     );
   };
 
@@ -530,9 +536,12 @@ const EmailWorkFlow = ({
                 body={(rowData) => (
                   <div className="requestCard">
                     <div className="requestCardHeader">
-                      <div className="requestId">
+                      <div
+                        style={{ paddingBottom: "4px" }}
+                        className="requestId"
+                      >
                         <h3 className="requestIdTitle">
-                          <MdMarkEmailRead style={{ fontSize: "24px" }} />
+                          <MdMarkEmailRead style={{ fontSize: "20px" }} />
                           {rowData.templateName}
                         </h3>
                       </div>

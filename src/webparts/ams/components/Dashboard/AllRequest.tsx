@@ -327,7 +327,7 @@ const AllRequestPage = ({
                     <div className={dashboardStyles.requestCardHeader}>
                       <div className={dashboardStyles.requestId}>
                         <h3 className={dashboardStyles.requestIdTitle}>
-                          <RiGitPullRequestLine style={{ fontSize: "24px" }} />
+                          <RiGitPullRequestLine style={{ fontSize: "20px" }} />
                           {rowData.category}
                         </h3>
                         <span>{renderStatusColumn(rowData)}</span>

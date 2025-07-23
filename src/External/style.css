@@ -1,4 +1,54 @@
-/* Common WebPart FullWidth and CanvasZone Default Code */
+/*font families.................................................*/
+@font-face {
+  font-family: "interBlack";
+  src: url(../External/fonts/Inter_18pt-Black.ttf);
+}
+@font-face {
+  font-family: "interSemiBold";
+  src: url(../External/fonts/Inter_18pt-SemiBold.ttf);
+}
+@font-face {
+  font-family: "interLight";
+  src: url(../External/fonts/Inter_18pt-Light.ttf);
+}
+@font-face {
+  font-family: "interMedium";
+  src: url(../External/fonts/Inter_18pt-Medium.ttf);
+}
+@font-face {
+  font-family: "interBold";
+  src: url(../External/fonts/Inter_18pt-Bold.ttf);
+}
+@font-face {
+  font-family: "interRegular";
+  src: url(../External/fonts/Inter_24pt-Regular.ttf);
+}
+@font-face {
+  font-family: "merriweatherBlack";
+  src: url(../External/fonts/Merriweather_24pt-Black.ttf);
+}
+@font-face {
+  font-family: "merriweatherSemiBold";
+  src: url(../External/fonts/Merriweather_36pt-SemiBold.ttf);
+}
+@font-face {
+  font-family: "merriweatherLight";
+  src: url(../External/fonts/Merriweather_24pt-Light.ttf);
+}
+@font-face {
+  font-family: "merriweatherBold";
+  src: url(../External/fonts/Merriweather_36pt-Bold.ttf);
+}
+@font-face {
+  font-family: "merriweatherMedium";
+  src: url(../External/fonts/Merriweather_24pt-Medium.ttf);
+}
+@font-face {
+  font-family: "merriweatherRegular";
+  src: url(../External/fonts/Merriweather_24pt-Regular.ttf);
+}
+/* Common WebPart FullWidth and CanvasZone Default Code .....................*/
+
 /* .fc-theme-standard .fc-scrollgrid {
   border: none !important;
 }
@@ -14,6 +64,9 @@
 #workbenchPageContent > div > div > div {
   padding: 0px !important;
 } */
+* {
+  font-family: "interRegular", sans-serif;
+}
 #workbenchPageContent {
   max-width: 100%;
 }
@@ -56,14 +109,14 @@ div[data-automationid="SiteHeader"] {
 }
 .p-inputtext {
   padding: 8px;
-  font-size: var(--dataTableHeaderFontSize);
-  border: 1px solid var(--InputBoxLiteGreen);
+  font-size: 12px;
+  border: 1px solid var(--inputBorderColor);
 }
 .p-inputtext:enabled:focus {
   box-shadow: none;
 }
 .p-inputtext:enabled:focus {
-  border-color: var(--green);
+  border-color: var(--color-secondary);
 }
 /*........................................................*/
 
@@ -100,7 +153,7 @@ div[data-automationid="SiteHeader"] {
 .customDataTableContainer .p-datatable .p-datatable-thead > tr > th {
   /* background-color: var(--dataTableHeaderBgColor); */
   padding: var(--dataTableWholePadding);
-  font-size: var(--dataTableHeaderFontSize);
+  font-size: 12px;
   color: var(--dataTableHeaderTextColor);
   border: none;
   /* border-radius: var(--dataTableHeaderBorderRadius); */
@@ -108,8 +161,8 @@ div[data-automationid="SiteHeader"] {
   letter-spacing: 0.5px;
 }
 .customDataTableContainer .p-datatable .p-datatable-tbody > tr > td {
-  color: var(--dataTableBodyTextColor);
-  font-size: var(--dataTableHeaderFontSize);
+  color: var(--color-dark);
+  font-size: 12px;
   padding: var(--dataTableWholePadding);
   border: 1px solid #dee2e6a8;
   border-width: 0 0 1px 0;
@@ -117,29 +170,26 @@ div[data-automationid="SiteHeader"] {
 .customActionMenu .p-button {
   background: transparent;
   border: transparent;
-  color: var(--dataTableBodyTextColor);
+  color: var(--color-primary);
 }
 .customActionMenu .pi {
-  font-size: var(--dataTableHeaderFontSize);
+  font-size: 14px;
 }
 .customView .pi-eye,
 .customView .p-menuitem-text {
-  font-size: var(--dataTableHeaderFontSize);
-  color: #40afff;
-  font-weight: var(--dataTableHeaderFontWeight);
+  font-size: 12px;
+  color: var(--color-primary);
 }
 .customEdit .pi-file-edit,
 .customEdit .p-menuitem-text {
-  font-size: var(--dataTableHeaderFontSize);
-  color: #16a34a;
-  font-weight: var(--dataTableHeaderFontWeight);
+  font-size: 12px;
+  color: var(--color-primary);
 }
 
 .customDelete .pi-trash,
 .customDelete .p-menuitem-text {
-  font-size: var(--dataTableHeaderFontSize);
+  font-size: 12px;
   color: #a31618;
-  font-weight: var(--dataTableHeaderFontWeight);
 }
 /*.....................................................................*/
 
@@ -150,40 +200,40 @@ div[data-automationid="SiteHeader"] {
 }
 
 .p-dropdown {
-  border: 1px solid var(--InputBoxLiteGreen);
+  border: 1px solid var(--inputBorderColor);
   box-shadow: none;
   padding: 2px;
   margin: 0 !important;
   width: 100%;
 }
 .p-dropdown:focus-within {
-  border-color: var(--green);
+  border-color: var(--color-secondary);
 }
 .p-dropdown-items-wrapper {
-  font-size: var(--dataTableHeaderFontSize);
+  font-size: 12px;
 }
 
 .p-placeholder {
-  color: var(--dataTableBodyTextColor);
+  color: var(--color-dark);
   font-weight: calc(var(--dataTableHeaderFontWeight)-100);
-  font-size: var(--dataTableHeaderFontSize);
+  font-size: 12px;
 }
 .p-dropdown-trigger-icon {
-  color: var(--green);
+  color: var(--color-primary);
   height: 13px;
   width: 13px;
 }
 .p-dropdown-item.p-highlight {
-  background: var(--green);
-  color: var(--dataTableHeaderBgColor);
+  background: var(--color-secondary);
+  color: var(--white);
 }
 .p-dropdown .p-inputtext {
-  font-size: var(--dataTableHeaderFontSize);
+  font-size: 12px;
   border: 0px;
   padding: 5px;
 }
 .p-dropdown .p-dropdown-clear-icon {
-  color: #3b63a5;
+  color: var(--color-primary);
   border: 0px;
   top: 62%;
   height: 9px;
@@ -201,8 +251,7 @@ div[data-automationid="SiteHeader"] {
 }
 
 .addNewButton .p-button-label {
-  font-size: var(--fontSizebig);
-  font-weight: calc(var(--dataTableHeaderFontWeight)-100);
+  font-size: 12px;
 }
 
 .addNewButton .p-button-icon {
@@ -211,15 +260,15 @@ div[data-automationid="SiteHeader"] {
 }
 
 .addNewButton .p-button {
-  background-color: var(--green);
+  background-color: var(--color-primary);
   gap: 6px;
-  color: var(--dataTableHeaderBgColor);
+  color: var(--white);
   border: 0;
   height: 32px;
 }
 .addNewButton .p-button:hover {
-  background-color: var(--liteGreen);
-  color: var(--green);
+  background-color: var(--color-secondary);
+  color: var(--black);
   gap: 5px;
   border: 0;
   height: 32px;
@@ -229,11 +278,11 @@ div[data-automationid="SiteHeader"] {
 }
 
 .addFileButton .p-button {
-  background-color: white;
+  background-color: var(--white);
   display: flex;
   width: 110px;
   gap: 1px;
-  color: #000000c2;
+  color: var(--black);
   font-weight: 500;
   /* padding: 6px 15px 6px 15px; */
   font-size: 12px;
@@ -247,21 +296,43 @@ div[data-automationid="SiteHeader"] {
   height: 12px;
 }
 
-.addNewCustomWorkflowButton .p-button {
-  width: 100%;
-}
-
-.addNewCustomWorkflowButton .p-button-label {
+.addNewCustomWorkflowButton span {
   font-size: 14px;
-  font-weight: 500;
+}
+.addNewCustomWorkflowIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  padding-bottom: 12px;
 }
 
-.addNewCustomWorkflowButton .p-button {
-  background-color: #323130;
+.addNewRequestButton {
+  background: linear-gradient(
+    to bottom,
+    var(--color-light),
+    #0aa5ec2e
+  ) !important;
+  border: 2px dashed var(--color-secondary) !important;
+  color: var(--color-primary) !important;
+}
+
+.addNewCustomWorkflowButton {
+  background: linear-gradient(
+    to bottom,
+    var(--color-secondary),
+    var(--color-primary)
+  );
+  cursor: pointer;
   gap: 6px;
-  color: white;
+  color: var(--white);
   border: 0;
-  height: 40px;
+  padding: 24px;
+  width: 130px;
+  height: 150px;
+  border-radius: 20px;
+  text-align: center;
+  line-height: 24px;
 }
 
 .addNewRequestButton .p-button {
@@ -276,7 +347,7 @@ div[data-automationid="SiteHeader"] {
 .addNewRequestButton .p-button {
   background-color: transparent;
   gap: 6px;
-  color: black;
+  color: var(--black);
   border: 0;
   height: 40px;
   border: 1px solid #00000042;
@@ -286,7 +357,7 @@ div[data-automationid="SiteHeader"] {
 
 .CustomSideBarContainer {
   width: 100%;
-  box-shadow: var(--sideBarBoxShadow);
+  box-shadow: var(--color-light);
   padding: 12px 24px;
 }
 .p-sidebar-content {
@@ -299,26 +370,26 @@ div[data-automationid="SiteHeader"] {
   padding: 0px 0px 10px 0px;
 }
 .customButtonWrapper .pi {
-  font-size: var(--dataTableHeaderFontSize);
+  font-size: 14px;
 }
 /*Common Styles buttons with etc ......................................*/
 .customCancelButton {
-  background-color: var(--dataTableBodyTextColor);
-  color: white;
+  background-color: var(--color-light);
+  color: var(--color-dark);
   padding: 6px 12px 6px 12px;
-  border: transparent;
+  border: 1px solid var(--color-light);
   font-size: 14px;
 }
 .customSubmitButton {
-  background-color: var(--green);
-  color: white;
+  background-color: var(--color-secondary);
+  color: var(--white);
   padding: 6px 12px 6px 12px;
   border: transparent;
   font-size: 14px;
 }
 .customRejectButton {
   background-color: var(--red);
-  color: white;
+  color: var(--white);
   padding: 6px 12px 6px 12px;
   border: transparent;
   font-size: 14px;
@@ -326,19 +397,20 @@ div[data-automationid="SiteHeader"] {
 .customSubmitButton .pi,
 .customCancelButton .pi,
 .customRejectButton .pi {
-  font-size: var(--dataTableHeaderFontSize);
+  font-size: 12px;
 }
 .customRejectButton:hover {
   background-color: var(--liteRed);
   color: var(--red);
 }
 .customSubmitButton:hover {
-  background-color: var(--liteGreen);
-  color: var(--green);
+  background-color: var(--color-light);
+  color: var(--color-dark);
 }
 .customCancelButton:hover {
-  background-color: #7c809838;
-  color: var(--dataTableBodyTextColor);
+  background-color: var(--color-secondary);
+  color: var(--white);
+  border: 1px solid var(--white);
 }
 .error_message {
   color: #d81b1b;
@@ -371,12 +443,12 @@ input::placeholder {
   display: flex;
   justify-content: center;
   align-items: center;
-  background: #fff;
+  background: var(--white);
   padding: 4px 5px;
   border-radius: 6px;
   box-shadow: -1px 2px 13px -8px #000;
   cursor: pointer;
-  color: #000;
+  color: var(--black);
 }
 /* Toast Common Styles: .............................................*/
 .toastContainer {
@@ -388,7 +460,7 @@ input::placeholder {
 .toastContainer i {
   font-size: 1.2rem;
   font-weight: 600;
-  color: #fff;
+  color: var(--white);
 }
 .toast-Heading {
   font-size: 16px;
@@ -405,7 +477,7 @@ input::placeholder {
 
 .p-toast .p-toast-message .p-toast-icon-close {
   margin-top: 6px;
-  color: black;
+  color: var(--black);
 }
 .toast-imgcontainer-success {
   padding: 10px;
@@ -422,7 +494,7 @@ input::placeholder {
   border: none;
   box-shadow: rgb(0 0 0 / 25%) 0px 13px 27px -5px,
     rgb(0 0 0 / 30%) 0px 8px 16px -8px;
-  color: black;
+  color: var(--black);
 }
 /*MultiPeoplePicker Common Styles..........................................*/
 .user-selector-group .ms-Image {
@@ -434,7 +506,7 @@ input::placeholder {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  color: var(--dataTableBodyTextColor);
+  color: var(--color-dark);
   font-size: 13px;
 }
 .user-selector-group .ms-Persona {
@@ -461,35 +533,39 @@ input::placeholder {
   padding: 0;
   margin: 0;
   height: 100%;
-  background: #ecf0f1;
   border: none;
   box-shadow: none;
 }
 
 .p-tabview-nav {
-  border: none;
-  background-color: #ecf0f1;
+  border: 1px solid #ecf0f1;
+  background-color: var(--color-light);
+  /* background: linear-gradient(to right, #bdd6c138, #bdd6c138); */
   display: flex;
   justify-content: space-between;
-  padding: 3px;
-  border-radius: 5px;
+  padding: 4px;
+  border-radius: 30px;
 }
 
 .p-tabview-nav-link {
   font-size: 14px;
   font-weight: 400;
-  color: black;
-  padding: 10px 86.2px;
+  color: var(--color-dark);
+  padding: 10px 30px;
   border: none;
   background-color: transparent;
-  transition: background-color 0.4s ease-in-out, color 0.4s ease-in-out;
 }
-
+.p-tabview-nav-link:hover {
+  color: var(--color-primary);
+}
 li.p-highlight .p-tabview-nav-link {
-  font-weight: 600;
-  color: var(--dataTableHeaderTextColor);
-  background-color: white;
-  border-radius: 5px;
+  color: var(--white);
+  background: linear-gradient(
+    to right,
+    var(--color-secondary),
+    var(--color-primary)
+  );
+  border-radius: 30px;
 }
 
 .p-tabview-selected {
@@ -498,18 +574,17 @@ li.p-highlight .p-tabview-nav-link {
 
 .p-tabview-panels {
   padding: 0;
-  background: white;
+  background: var(--white);
 }
 
 /* Required Fields........................ */
 .required {
-  color: red;
+  color: var(--red);
   margin-left: 4px;
 }
 .errorMsg {
-  color: #ef250f;
+  color: var(--red);
   font-size: 12px;
-  font-weight: 600;
 }
 
 /* Editor Quill styles.................... */
@@ -518,20 +593,20 @@ li.p-highlight .p-tabview-nav-link {
 }
 .ql-toolbar.ql-snow {
   background-color: #f3f3f3e8;
-  border: 1px solid var(--InputBoxLiteGreen) !important;
+  border: 1px solid var(--color-light) !important;
 }
 .ql-toolbar.ql-snow:active {
-  border-color: var(--green);
+  border-color: var(--color-primary);
 }
 .quill .ql-container {
   height: 85%;
 }
 .ql-container.ql-snow {
   border: 0px 1px 1px 1px;
-  border-color: var(--InputBoxLiteGreen) !important;
+  border-color: var(--color-light) !important;
 }
 .ql-container.ql-snow:active {
-  border-color: var(--green);
+  border-color: var(--color-primary);
 }
 
 /* Info notes styles...................... */
@@ -539,11 +614,11 @@ li.p-highlight .p-tabview-nav-link {
 .notesContainer {
   width: 100%;
   padding: 18px;
-  border: 1px solid var(--borderColor);
+  border: 1px solid var(--color-light);
   border-radius: 4px;
   margin-bottom: 8px;
   h1 {
-    font-size: var(--fontSizebig);
+    font-size: 14px;
     font-family: "Courier New", Courier, monospace;
     color: orangered;
     margin: 0;
@@ -579,11 +654,11 @@ li.p-highlight .p-tabview-nav-link {
 }
 /* Common Styles for the RadioButtons.......................................... */
 .p-radiobutton.p-highlight .p-radiobutton-box {
-  border-color: var(--green);
-  background-color: var(--green);
+  border-color: var(--color-dark);
+  background-color: var(--color-dark);
 }
 .p-radiobutton .p-radiobutton-box {
-  border: 2px solid var(--green);
+  border: 2px solid var(--color-dark);
 }
 /* People Picker styles.............................................. */
 .ms-PeoplePicker {
@@ -591,47 +666,46 @@ li.p-highlight .p-tabview-nav-link {
   margin: 0;
 }
 .ms-BasePicker-text {
-  font-size: var(--dataTableHeaderFontSize);
-  border: 1px solid var(--InputBoxLiteGreen);
+  font-size: 12px;
+  border: 1px solid var(--inputBorderColor);
 }
 .ms-BasePicker-text:hover {
-  border: 1px solid var(--InputBoxLiteGreen) !important;
+  border: 1px solid var(--inputBorderColor) !important;
 }
 .ms-BasePicker-text {
   min-height: 34px;
   border-radius: 3px;
 }
 .ms-BasePicker-text::after {
-  border: 1px solid var(--green);
+  border: 1px solid var(--color-primary);
   box-shadow: none;
 }
 
 /* Custom Common styles for the Paginators */
 .p-paginator .p-paginator-pages .p-paginator-page {
-  background-color: var(--liteGreen);
-  border-color: var(--liteGreen);
-  color: var(--green);
+  background-color: #0e0c0c29;
+  color: var(--black);
   border-radius: 50%;
   height: 30px;
   width: 30px;
   margin: 0px 10px 0 10px;
-  font-size: var(--dataTableHeaderFontSize);
+  font-size: 12px;
   min-width: 0;
 }
 .p-datatable .p-paginator-bottom {
   border-width: 0;
 }
 .p-paginator .p-paginator-pages .p-paginator-page.p-highlight {
-  background: var(--green);
-  border-color: var(--green);
-  color: white;
+  background: var(--color-primary);
+  border-color: transparent;
+  color: var(--white);
   border-radius: 50%;
 }
 .p-paginator .p-paginator-first,
 .p-paginator .p-paginator-prev,
 .p-paginator .p-paginator-next,
 .p-paginator .p-paginator-last {
-  color: var(--green);
+  color: var(--color-primary);
   border: 1px solid transparent;
   margin: 0px 5px 0 5px;
 }
@@ -639,7 +713,7 @@ li.p-highlight .p-tabview-nav-link {
 .p-paginator .p-paginator-prev:not(.p-disabled):not(.p-highlight):hover,
 .p-paginator .p-paginator-next:not(.p-disabled):not(.p-highlight):hover,
 .p-paginator .p-paginator-last:not(.p-disabled):not(.p-highlight):hover {
-  background-color: #dcfce757;
+  background-color: var(--color-light);
 }
 
 /* Custom styles for the heading */
@@ -647,7 +721,7 @@ li.p-highlight .p-tabview-nav-link {
   margin: 0;
   padding-bottom: 16px;
   font-size: 14px;
-  color: black;
+  color: var(--black);
   font-weight: 500;
   letter-spacing: 1px;
   text-decoration: underline;
@@ -661,9 +735,9 @@ li.p-highlight .p-tabview-nav-link {
   border: 0 !important;
 }
 .p-datepicker-trigger {
-  background-color: var(--green);
+  background-color: var(--color-secondary);
   border: 0 !important;
-  color: var(--liteGreen);
+  color: var(--white);
 }
 .p-calendar:not(.p-calendar-disabled).p-focus > .p-inputtext {
   box-shadow: none !important;
@@ -673,18 +747,18 @@ li.p-highlight .p-tabview-nav-link {
 .p-checkbox .p-checkbox-box {
   width: 100%;
   height: 100%;
-  border: 1px solid var(--InputBoxLiteGreen) !important;
+  border: 2px solid var(--color-dark) !important;
 }
 .p-checkbox.p-highlight .p-checkbox-box {
-  background-color: var(--green) !important;
+  background-color: var(--color-dark) !important;
 }
 .p-checkbox.p-highlight .p-checkbox-box:hover {
-  background-color: var(--green) !important;
+  background-color: var(--color-primary) !important;
 }
 
 /* MultiSelect design........... */
 .p-multiselect {
-  border: 1px solid var(--InputBoxLiteGreen);
+  border: 1px solid var(--color-secondary);
   box-shadow: none;
   height: 32px;
   width: 100%;
@@ -692,22 +766,27 @@ li.p-highlight .p-tabview-nav-link {
   padding: 0px !important;
 }
 .p-multiselect:focus-within {
-  border-color: var(--green);
+  border-color: var(--color-primary);
 }
 .p-multiselect-label {
-  font-size: var(--dataTableHeaderFontSize);
+  font-size: 12px;
 }
 .p-multiselect-trigger-icon {
-  color: var(--green);
+  color: var(--color-primary);
   height: 13px;
   width: 13px;
 }
+.p-multiselect-item {
+  font-size: 12px !important;
+}
+
 .p-multiselect-item.p-highlight {
-  background: var(--green);
-  color: var(--dataTableHeaderBgColor);
+  font-size: 12px;
+  background: var(--color-light);
+  color: var(--color-dark);
 }
 .p-multiselect .p-inputtext {
-  font-size: var(--dataTableHeaderFontSize);
+  font-size: 12px;
   border: 0px;
 }
 
@@ -716,22 +795,22 @@ li.p-highlight .p-tabview-nav-link {
   width: 30%;
 }
 .p-steps .p-steps-item.p-highlight .p-steps-number {
-  background-color: var(--green);
+  background-color: var(--color-primary);
 }
 .p-steps .p-steps-item .p-menuitem-link .p-steps-number {
   font-size: 12px;
   border-radius: 50%;
-  border: 1px solid var(--green);
+  border: 1px solid var(--color-primary);
 }
 .p-steps .p-steps-item.p-highlight .p-steps-title {
-  color: var(--green);
+  color: var(--color-primary);
   font-weight: 600;
   font-size: 14px;
 }
 .p-steps .p-disabled .p-steps-number {
-  background-color: var(--liteGreen);
-  color: var(--green);
-  border: 1px solid var(--liteGreen) !important;
+  background-color: var(--color-secondary);
+  color: var(--color-primary);
+  border: 1px solid var(--color-secondary) !important;
 }
 .p-steps .p-disabled .p-steps-title {
   font-size: 14px;
@@ -745,7 +824,7 @@ li.p-highlight .p-tabview-nav-link {
 }
 
 .p-steps .p-steps-item.p-highlight::before {
-  border-top: 3px solid var(--green);
+  border-top: 3px solid var(--color-primary);
 }
 
 .custom-steps-wrapper {
@@ -766,7 +845,7 @@ li.p-highlight .p-tabview-nav-link {
   height: 34px;
   border-radius: 50%;
   background-color: #f3f3f3;
-  color: var(--green);
+  color: var(--color-primary);
   font-size: 12px;
   display: flex;
   align-items: center;
@@ -775,14 +854,14 @@ li.p-highlight .p-tabview-nav-link {
 }
 
 .step-circle.completed {
-  background-color: black;
-  color: white;
+  background-color: var(--color-primary);
+  color: var(--white);
 }
 
 .step-circle.active {
-  background-color: black;
-  color: white;
-  border-color: black;
+  background-color: var(--color-primary);
+  color: var(--white);
+  border-color: var(--color-primary);
 }
 
 .step-label {
@@ -803,7 +882,7 @@ li.p-highlight .p-tabview-nav-link {
 }
 
 .step-line.completed {
-  background-color: black;
+  background-color: var(--color-primary);
 }
 
 /* Data Card Styles......................................... */
@@ -811,12 +890,12 @@ li.p-highlight .p-tabview-nav-link {
   position: relative;
   overflow: hidden;
   height: 100%;
-  width: 25%;
-  border-left: 4px solid #b4b5c1;
+  width: 20%;
   border-radius: 10px;
+  border: 1px solid var(--color-light);
 }
 .p-card .p-card-body {
-  padding: 14px;
+  padding: 6px;
   height: 100%;
   width: 100%;
   position: relative;
@@ -829,43 +908,6 @@ li.p-highlight .p-tabview-nav-link {
 .p-card .p-card-content {
   padding: 0;
 }
-.p-card::before {
-  content: "";
-  position: absolute;
-  top: 50%;
-  right: 38px;
-  width: 0;
-  height: 0;
-  /* background-color: #b29d9a; */
-  border-radius: 2px;
-  transform: translate(-50%, -50%);
-  transition: width 0.4s ease, height 0.4s ease;
-  z-index: 0;
-}
-.p-card:hover::before {
-  width: 204px;
-  height: 92px;
-}
-.p-card:hover {
-  color: white;
-}
-
-.p-card[data-status="total"]:hover::before {
-  background-color: #9a9d9d;
-}
-
-.p-card[data-status="pending"]:hover::before {
-  background-color: #2a6d9c;
-}
-
-.p-card[data-status="approved"]:hover::before {
-  background-color: #16a34a;
-}
-
-.p-card[data-status="rejected"]:hover::before {
-  background-color: #b23d3f;
-}
-
 /* Data Card Body styles......................................... */
 .profile_header_content {
   padding: 0px;
@@ -876,20 +918,22 @@ li.p-highlight .p-tabview-nav-link {
 }
 .profile_header_content h2 {
   margin: 0;
-  padding: 0;
-  font-weight: 600;
-  font-size: 17px;
+  padding: 0px 0px 8px 0px;
+  font-size: 16px;
+  padding-bottom: 10px;
+  font-weight: 500;
 }
 .profile_header_content h1 {
   margin: 0;
   padding: 0;
+  font-family: "merriweatherBold";
 }
 .profile_header_content p {
-  padding: 6px 0 0 0px;
+  /* padding: 6px 0 0 0px; */
   margin: 0;
-  color: var(--dataTableBodyTextColor);
+  color: var(--color-dark);
+  font-family: "interMedium";
   font-size: 14px;
-  font-weight: 400;
 }
 .requestCard {
   background-color: #fff;
@@ -906,12 +950,12 @@ li.p-highlight .p-tabview-nav-link {
 }
 
 .requestCardBody {
-  width: 20%;
+  width: 26%;
   display: flex;
   justify-content: end;
   gap: 12px;
-  align-items: center;
-  color: var(--dataTableBodyTextColor);
+  align-items: flex-start;
+  color: var(--color-dark);
   font-size: 12px;
 }
 .requestCardAccordionBody {
@@ -919,7 +963,7 @@ li.p-highlight .p-tabview-nav-link {
   justify-content: end;
   gap: 12px;
   align-items: center;
-  color: var(--dataTableBodyTextColor);
+  color: var(--color-dark);
   font-size: 12px;
 }
 .requestCardHeader {
@@ -928,17 +972,16 @@ li.p-highlight .p-tabview-nav-link {
 .requestIdDetails {
   display: flex;
   gap: 18px;
-  padding-top: 16px;
 }
 .requestIdDetails p {
   margin: 0;
   padding: 0;
+  font-family: "interMedium";
 }
 .requestIdpara {
-  font-size: 13px;
-  font-weight: 450;
-  letter-spacing: 1px;
-  color: var(--dataTableBodyTextColor);
+  font-size: 12px;
+  letter-spacing: 0.5px;
+  color: var(--color-dark);
   display: flex;
   gap: 4px;
 }
@@ -952,33 +995,32 @@ li.p-highlight .p-tabview-nav-link {
   display: flex;
   align-items: center;
   gap: 4px;
+  font-weight: 500;
 }
 .requestId h3 {
   margin: 0;
   padding: 0;
   font-size: 14px;
-  font-weight: 500;
-  letter-spacing: 1px;
+  letter-spacing: 0.5px;
 }
 
 /*CategoryName Div styles......................................... */
 .categoryName {
   display: flex;
   gap: 6px;
-
   font-size: 13px;
-  color: var(--dataTableBodyTextColor);
-  letter-spacing: 1px;
+  color: var(--color-dark);
   align-items: center;
   flex-wrap: wrap;
   width: 100%;
 }
 .categoryTag {
   font-size: 12px;
-  color: white;
-  background-color: #000000b8;
+  color: var(--white);
+  background-color: var(--color-secondary);
   padding: 4px 10px 5px 10px;
   border-radius: 2px;
+  font-family: "interLight";
 }
 /* For Specific place category name */
 .categoryNameTag {
@@ -987,8 +1029,8 @@ li.p-highlight .p-tabview-nav-link {
   font-weight: 400;
   padding: 5px;
   display: inline-block;
-  background-color: var(--liteGreen);
-  color: black;
+  background-color: var(--color-secondary);
+  color: var(--white);
   letter-spacing: 0.5px;
 }
 
@@ -998,11 +1040,15 @@ li.p-highlight .p-tabview-nav-link {
   font-size: 16px;
 }
 
+.p-button.p-button-icon-only {
+  padding: 0px !important;
+}
+
 .modernButton {
-  background-color: white;
+  background-color: var(--white);
   display: flex;
   gap: 6px;
-  color: #000000c2;
+  color: var(--black);
   font-weight: 500;
   padding: 6px 15px 6px 15px;
   font-size: 13px;
@@ -1013,8 +1059,8 @@ li.p-highlight .p-tabview-nav-link {
 }
 
 .activePreviewButton {
-  background-color: #86a9a9;
-  color: white;
+  background-color: var(--color-primary);
+  color: var(--white);
   font-weight: 400;
   padding: 6px 15px 6px 15px;
   font-size: 13px;
@@ -1027,16 +1073,16 @@ li.p-highlight .p-tabview-nav-link {
 .radioDivLabel {
   padding: 0 50px 0 10px;
   font-size: 14px;
-  color: black;
+  color: var(--color-dark);
   font-weight: 400;
   letter-spacing: 0.5px;
 }
 
 /*Accordion styles......................................... */
 .p-accordion .p-accordion-header .p-accordion-header-link {
-  border-bottom: 1px solid var(--borderColor) !important;
+  border-bottom: 1px solid var(--color-light) !important;
   font-size: 14px;
-  background: white;
+  background: var(--white);
   border-radius: 4px;
   border: 1px solid transparent;
   font-weight: 400;
@@ -1046,7 +1092,7 @@ li.p-highlight .p-tabview-nav-link {
 }
 .p-accordion .p-highlight .p-accordion-header-link {
   background: #e3e3e3;
-  color: black;
+  color: var(--black);
 }
 .p-accordion-tab {
   margin: 10px 0px 10px 0px;
@@ -1063,7 +1109,7 @@ li.p-highlight .p-tabview-nav-link {
 }
 
 .approversAccordion .p-highlight .displayText {
-  color: black;
+  color: var(--black);
 }
 
 /*Delete Confirmation popup styles......................................... */
@@ -1103,7 +1149,7 @@ li.p-highlight .p-tabview-nav-link {
 }
 .modalIconContainer svg {
   font-size: 1.6rem !important;
-  color: #fff;
+  color: var(--white);
 }
 .modal-content {
   display: flex;
@@ -1141,8 +1187,8 @@ li.p-highlight .p-tabview-nav-link {
   gap: 10px;
 }
 .cancel-btn {
-  background-color: var(--dataTableBodyTextColor);
-  color: white;
+  background-color: var(--color-dark);
+  color: var(--white);
   border: none;
   border-radius: 3px;
   padding: 0.5rem 1.5rem;
@@ -1150,8 +1196,8 @@ li.p-highlight .p-tabview-nav-link {
   font-size: 0.875rem;
 }
 .submit-btn {
-  background-color: var(--green);
-  color: white;
+  background-color: var(--color-primary);
+  color: var(--white);
   border: none;
   border-radius: 3px;
   height: 32px;
@@ -1196,7 +1242,7 @@ li.p-highlight .p-tabview-nav-link {
   display: none;
 }
 .dragAndDropBtn .p-button {
-  background-color: white;
+  background-color: var(--white);
   display: flex;
   width: 110px;
   gap: 1px;

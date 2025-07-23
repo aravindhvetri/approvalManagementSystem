@@ -29,14 +29,13 @@ import categoryConfigStyles from "./CategoryConfig.module.scss";
 //primeReact Imports:
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
-import { RadioButton } from "primereact/radiobutton";
+import { BiCategory } from "react-icons/bi";
 import { Toast } from "primereact/toast";
 import { InputText } from "primereact/inputtext";
 import { Label } from "office-ui-fabric-react";
 import ExistingApprover from "./ExistingApprover";
 import CustomApprover from "./CustomApprover";
 import { Button } from "primereact/button";
-import { Steps } from "primereact/steps";
 import { BiSolidCategory } from "react-icons/bi";
 import { FaCheck } from "react-icons/fa";
 import { LuWorkflow } from "react-icons/lu";
@@ -45,10 +44,7 @@ import { RiDeleteBinLine } from "react-icons/ri";
 import DynamicSectionWithField from "./DynamicSectionWithField/DynamicSectionWithField";
 import EmailContainer from "./EmailTemplate/EmailContainer";
 import Loader from "../../Loader/Loader";
-import { set } from "@microsoft/sp-lodash-subset";
-import { Checkbox } from "primereact/checkbox";
 import { Dropdown } from "primereact/dropdown";
-import { MultiSelect } from "primereact/multiselect";
 import { Dialog } from "primereact/dialog";
 
 const CategoryConfig = ({
@@ -1042,12 +1038,15 @@ const CategoryConfig = ({
                     <div className="requestCardHeader">
                       <div className="requestId">
                         <h3 className="requestIdTitle">
-                          <BiSolidCategory style={{ fontSize: "24px" }} />
+                          <BiCategory style={{ fontSize: "20px" }} />
                           {rowData.category}
                         </h3>
                         {/* <span>{renderStatusColumn(rowData)}</span> */}
                       </div>
-                      <div className="requestIdDetails">
+                      <div
+                        style={{ paddingTop: "6px" }}
+                        className="requestIdDetails"
+                      >
                         <p className="requestIdpara">
                           Request Id Format - {rowData.requestIdFormat}
                         </p>

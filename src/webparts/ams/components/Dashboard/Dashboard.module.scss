@@ -1,6 +1,6 @@
 @import "../../../../External/commonStyles.module.scss";
 .highlightedRequestId {
-  color: $darkblue !important;
+  color: $color-dark !important;
   font-weight: 700;
 }
 .profile_header_content {
@@ -8,16 +8,16 @@
   margin-bottom: 16px;
   h2 {
     margin: 0;
-    padding: 0;
-    font-weight: 600;
-    font-size: 17px;
+    padding: 0px 0px 8px 0px;
+    font-size: 16px;
+    font-weight: 500;
   }
   p {
     padding: 6px 0 10px 0px;
     margin: 0;
-    color: var(--dataTableBodyTextColor);
+    color: var(--color-dark);
+    font-family: "interMedium";
     font-size: 14px;
-    font-weight: 400;
   }
 }
 .requestCard {
@@ -35,34 +35,32 @@
       display: flex;
       align-items: center;
       gap: 20px;
+      p {
+        margin: 0;
+        padding: 0;
+        font-family: "interMedium";
+      }
       .requestIdTitle {
         display: flex;
         align-items: center;
         gap: 4px;
+        font-weight: 500;
       }
       h3 {
         margin: 0;
         padding: 0;
         font-size: 14px;
-        font-weight: 500;
-        letter-spacing: 1px;
+        letter-spacing: 0.5px;
       }
     }
     .requestIdDetails {
       display: flex;
       gap: 18px;
-      padding-top: 16px;
+      padding-top: 14px;
       p {
         margin: 0;
         padding: 0;
-      }
-      .requestIdpara {
-        font-size: 13px;
-        font-weight: 450;
-        letter-spacing: 1px;
-        color: var(--dataTableBodyTextColor);
-        display: flex;
-        gap: 4px;
+        font-family: "interMedium";
       }
     }
   }
@@ -71,8 +69,21 @@
     display: flex;
     justify-content: end;
     gap: 12px;
-    align-items: center;
-    color: var(--dataTableBodyTextColor);
+    align-items: flex-start;
+    color: var(--color-dark);
     font-size: 12px;
   }
+  .requestIdpara {
+    font-size: 12px;
+    letter-spacing: 1px;
+    color: var(--color-dark);
+    display: flex;
+    gap: 4px;
+  }
+}
+.label {
+  font-size: 13px;
+  color: var(--color-dark);
+  letter-spacing: 0.5px;
+  padding: 6px 0px 0px 0px;
 }

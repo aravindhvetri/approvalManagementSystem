@@ -1,12 +1,12 @@
 .InputSwitch .p-inputswitch-slider {
-  border: 1px solid black;
+  border: 1px solid var(--color-light);
 }
 .InputSwitch .p-inputswitch-slider {
   border-radius: 20px !important;
-  background: transparent;
+  background: var(--color-light);
 }
 .InputSwitch .p-inputswitch-slider:before {
-  background: black;
+  background: var(--white);
   border-radius: 50%;
   width: 17px;
   height: 17px;
@@ -14,10 +14,10 @@
   margin-top: -8.6px;
 }
 .InputSwitch.p-highlight .p-inputswitch-slider {
-  background-color: black !important;
+  background-color: var(--color-secondary) !important;
 }
 .InputSwitch.p-highlight .p-inputswitch-slider:before {
-  background: white !important;
+  background: var(--white) !important;
 }
 .InputSwitch {
   width: 43px;
