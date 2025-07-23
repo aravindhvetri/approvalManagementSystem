@@ -25,6 +25,7 @@ import {
 } from "../../../../CommonServices/interface";
 import RequestsFields from "../DynamicsRequests/RequestsFields";
 import Loader from "../Loader/Loader";
+import { Label } from "office-ui-fabric-react";
 
 const MyApprovalPage = ({
   setCurrentTableDataForDataCard,
@@ -330,23 +331,26 @@ const MyApprovalPage = ({
                   <div className={dashboardStyles.requestCard}>
                     <div className={dashboardStyles.requestCardHeader}>
                       <div className={dashboardStyles.requestId}>
-                        <h3 className={dashboardStyles.requestIdTitle}>
-                          <RiGitPullRequestLine style={{ fontSize: "24px" }} />
-                          {rowData.category}
-                        </h3>
-                        <span>{renderStatusColumn(rowData)}</span>
-                      </div>
-                      <div className={dashboardStyles.requestIdDetails}>
                         <p className={dashboardStyles.requestIdpara}>
                           {rowData.requestId}
                         </p>
+                        <h3 className={dashboardStyles.requestIdTitle}>
+                          <RiGitPullRequestLine style={{ fontSize: "20px" }} />
+                          {rowData.category}
+                        </h3>
+                      </div>
+                      <Label className={dashboardStyles.label}>Email</Label>
+                      <div
+                        style={{ paddingTop: "4px" }}
+                        className={dashboardStyles.requestIdDetails}
+                      >
                         <p className={dashboardStyles.requestIdpara}>
-                          <IoIosMail style={{ fontSize: "18px" }} /> Email -{" "}
                           {rowData?.author?.email}
                         </p>
                       </div>
                     </div>
                     <div className={dashboardStyles.requestCardBody}>
+                      <span>{renderStatusColumn(rowData)}</span>
                       {peoplePickerTemplate(rowData?.author)}
                       {renderActionColumn(rowData)}
                     </div>

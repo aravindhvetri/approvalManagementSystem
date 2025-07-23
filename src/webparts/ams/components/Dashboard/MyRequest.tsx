@@ -288,14 +288,7 @@ const MyRequestPage = ({
           </div> */}
           <div className="customDataTableCardContainer">
             <div className={dashboardStyles.profile_header_content}>
-              <h2
-                style={{
-                  fontWeight: "600",
-                  fontSize: "17px",
-                }}
-              >
-                My Requests
-              </h2>
+              <h2>My Requests</h2>
               <p>View and manage requests you've submitted</p>
             </div>
             <DataTable
@@ -312,16 +305,15 @@ const MyRequestPage = ({
                   <div className={dashboardStyles.requestCard}>
                     <div className={dashboardStyles.requestCardHeader}>
                       <div className={dashboardStyles.requestId}>
-                        <h3 className={dashboardStyles.requestIdTitle}>
-                          <RiGitPullRequestLine style={{ fontSize: "24px" }} />
-                          {rowData.category}
-                        </h3>
-                        <span>{renderStatusColumn(rowData)}</span>
-                      </div>
-                      <div className={dashboardStyles.requestIdDetails}>
                         <p className={dashboardStyles.requestIdpara}>
                           {rowData.requestId}
                         </p>
+                        <h3 className={dashboardStyles.requestIdTitle}>
+                          <RiGitPullRequestLine style={{ fontSize: "20px" }} />
+                          {rowData.category}
+                        </h3>
+                      </div>
+                      <div className={dashboardStyles.requestIdDetails}>
                         <p className={dashboardStyles.requestIdpara}>
                           <MdUpdate style={{ fontSize: "18px" }} /> Submitted{" "}
                           {moment(rowData.createdDate).format("DD/MM/YYYY")}
@@ -329,6 +321,7 @@ const MyRequestPage = ({
                       </div>
                     </div>
                     <div className={dashboardStyles.requestCardBody}>
+                      <span>{renderStatusColumn(rowData)}</span>
                       {renderActionColumn(rowData)}
                     </div>
                   </div>

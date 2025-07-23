@@ -100,7 +100,7 @@
 
 .addFieldButton {
   background-color: transparent;
-  color: var(--green);
+  color: var(--color-primary);
   border: none;
   font-size: 14px;
   font-weight: 600;
@@ -300,8 +300,8 @@
   }
 
   .stageTag {
-    background: #444;
-    color: white;
+    background: var(--color-secondary);
+    color: var(--white);
     padding: 0.25rem 0.5rem;
     border-radius: 2px;
     margin-right: 0.5rem;

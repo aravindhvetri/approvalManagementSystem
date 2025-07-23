@@ -59,8 +59,8 @@
     width: max-content;
     font-weight: bold;
     font-size: 13px;
-    color: var(--green);
-    border-bottom: 2px solid var(--green);
+    color: var(--color-primary);
+    border-bottom: 2px solid var(--color-primary);
   }
 }
 
@@ -157,7 +157,7 @@
 
 .signatureUploadButton {
   display: inline-block;
-  background-color: var(--green);
+  background-color: var(--color-primary);
   color: white;
   padding: 5px;
   font-size: 12px;
@@ -166,8 +166,8 @@
   font-weight: 400;
 }
 .signatureUploadButton:hover {
-  background-color: var(--liteGreen);
-  color: var(--green);
+  background-color: var(--color-secondary);
+  color: var(--color-primary);
   transition: ease-in-out;
   transition-timing-function: linear;
   transition-duration: 0.5s;

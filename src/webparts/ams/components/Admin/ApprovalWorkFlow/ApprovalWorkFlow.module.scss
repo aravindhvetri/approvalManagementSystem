@@ -6,7 +6,7 @@
 .mainApprovalContainer {
   box-sizing: border-box;
   padding: 4px 20px;
-  height: 520px;
+  height: 518px;
   overflow: auto;
 }
 .approvalConfigContainer {
@@ -74,4 +74,10 @@
 .addStageButton {
   width: 100%;
   margin: 20px 0px 20px 0px;
+}
+.categoryLabel {
+  font-size: 13px;
+  color: var(--color-dark);
+  letter-spacing: 0.5px;
+  padding-bottom: 6px;
 }

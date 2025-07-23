@@ -8,7 +8,7 @@
   width: 100%;
 }
 .requestCardBody {
-  padding-right: 8px;
+  padding-right: 0px;
 }
 .p-datatable .p-datatable-tbody > tr.p-highlight {
   background-color: transparent !important;
@@ -25,21 +25,22 @@
 /* Stage button style.................. */
 .customAddStageButton {
   background-color: transparent;
-  color: var(--green);
+  color: var(--color-primary);
   padding: 6px 12px 6px 12px;
   border: 1px solid var(--InputBoxLiteGreen);
   font-size: 14px;
 }
 .customAddStageButton:hover {
-  background-color: var(--green);
-  color: var(--liteGreen);
+  background-color: var(--color-primary);
+  color: var(--color-secondary);
 }
 /* Button style.............. */
 /* .modernButton {
   gap: 0px;
 } */
 .modernButton:hover {
-  background-color: var(--liteGreen);
+  background-color: var(--color-secondary);
+  color: var(--white);
 }
 .pi {
   font-size: 12px;

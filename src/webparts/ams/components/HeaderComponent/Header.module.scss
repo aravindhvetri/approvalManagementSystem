@@ -5,10 +5,10 @@
   box-sizing: border-box;
   justify-content: space-between;
   align-items: center;
-  // gap: 10px;
+
   height: 60px;
   background-color: transparent;
-  padding: 10px 0px 10px 0px;
+  margin: 10px 0;
   label {
     color: $black;
     font-size: var(--fontSizebig);
@@ -16,7 +16,9 @@
     width: 75%;
   }
   .filter_header_pageName {
-    width: 100%;
+    // width: 74%;
+    margin-right: auto;
+    margin-left: auto;
   }
   .searchFilter {
     width: 46%;
@@ -32,6 +34,26 @@
   padding: 0px;
   background-color: $white;
   width: 100%;
+  .profile_header_user {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    .profile_name {
+      color: var(--color-dark);
+      font-size: 14px;
+      font-family: "interMedium";
+    }
+    .profile_Image {
+      width: 40px;
+      height: 40px;
+      img {
+        width: 100%;
+        height: 100%;
+        border-radius: 50%;
+        object-fit: cover;
+      }
+    }
+  }
   .profile_header_content {
     padding: 0px;
     height: 100%;
@@ -40,41 +62,36 @@
   h1 {
     margin: 0;
     padding: 0;
+    font-family: "merriweatherBold";
+    font-size: 20px;
+    font-weight: 500;
   }
   p {
     padding: 6px 0 10px 0px;
     margin: 0;
-    color: var(--dataTableBodyTextColor);
+    color: var(--color-dark);
+    font-family: "interMedium";
     font-size: 14px;
-    font-weight: 400;
   }
   label {
     font-size: calc(var(--fontSizebig) +2);
     font-weight: var(--dataTableHeaderFontWeight);
-    color: $green;
+    color: $color-primary;
     padding-top: 10px;
-  }
-  .profile_header_Icons {
-    padding: 0px;
-    display: flex;
-    gap: 6px;
-    align-items: center;
-    justify-content: end;
-    width: 40%;
   }
   .notifyBell {
     display: flex;
     align-items: center;
     justify-content: center;
     border-radius: 10px;
-    background-color: $liteGreen;
+    background-color: $color-secondary;
     width: 35px;
     height: 35px;
 
     svg {
       width: 20px;
       height: 20px;
-      color: $green;
+      color: $color-primary;
     }
     .personaImage {
       border-radius: 10px;
@@ -85,10 +102,28 @@
 }
 //Card styles
 .cardDetails_container {
-  width: 100%;
   display: flex;
+  width: 60%;
   align-items: center;
-  justify-content: space-between;
   gap: 2%;
   margin: 10px 0px 10px 0px;
+}
+.header_container {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+}
+.profile_header_Icons {
+  padding: 0px;
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  justify-content: end;
+}
+.header_title_container {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #626774;
+  font-size: 16px;
 }
