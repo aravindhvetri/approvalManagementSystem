@@ -59,7 +59,7 @@
 }
 
 .container {
-  height: 484px;
+  height: 476px;
   overflow: auto;
   .sectionHeader {
     display: flex;
@@ -300,12 +300,13 @@
   }
 
   .stageTag {
-    background: var(--color-secondary);
-    color: var(--white);
+    color: var(--color-tags);
+    background-color: var(--color-bg-tags);
     padding: 0.25rem 0.5rem;
     border-radius: 2px;
     margin-right: 0.5rem;
     display: inline-block;
+    border: 1px solid #007bff2e;
   }
 }
 

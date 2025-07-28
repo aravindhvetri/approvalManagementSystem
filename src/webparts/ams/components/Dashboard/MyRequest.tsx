@@ -288,46 +288,53 @@ const MyRequestPage = ({
           </div> */}
           <div className="customDataTableCardContainer">
             <div className={dashboardStyles.profile_header_content}>
-              <h2>My Requests</h2>
+              <span>My requests</span>
               <p>View and manage requests you've submitted</p>
             </div>
-            <DataTable
-              value={requestsDetails}
-              paginator
-              rows={2}
-              className="custom-card-table"
-              emptyMessage={
-                <p style={{ textAlign: "center" }}>No Records Found</p>
-              }
-            >
-              <Column
-                body={(rowData) => (
-                  <div className={dashboardStyles.requestCard}>
-                    <div className={dashboardStyles.requestCardHeader}>
-                      <div className={dashboardStyles.requestId}>
-                        <p className={dashboardStyles.requestIdpara}>
-                          {rowData.requestId}
-                        </p>
-                        <h3 className={dashboardStyles.requestIdTitle}>
-                          <RiGitPullRequestLine style={{ fontSize: "20px" }} />
-                          {rowData.category}
-                        </h3>
+            <div className="allRecords">
+              <span style={{ fontFamily: "interSemiBold" }}>All requests</span>
+            </div>
+            <div className="dashboardDataTable">
+              <DataTable
+                value={requestsDetails}
+                paginator
+                rows={2}
+                className="custom-card-table"
+                emptyMessage={
+                  <p style={{ textAlign: "center" }}>No Records Found</p>
+                }
+              >
+                <Column
+                  body={(rowData) => (
+                    <div className={dashboardStyles.requestCard}>
+                      <div className={dashboardStyles.requestCardHeader}>
+                        <div className={dashboardStyles.requestId}>
+                          <p className={dashboardStyles.requestIdpara}>
+                            {rowData.requestId}
+                          </p>
+                          <h3 className={dashboardStyles.requestIdTitle}>
+                            <RiGitPullRequestLine
+                              style={{ fontSize: "20px" }}
+                            />
+                            {rowData.category}
+                          </h3>
+                        </div>
                       </div>
-                      <div className={dashboardStyles.requestIdDetails}>
-                        <p className={dashboardStyles.requestIdpara}>
-                          <MdUpdate style={{ fontSize: "18px" }} /> Submitted{" "}
-                          {moment(rowData.createdDate).format("DD/MM/YYYY")}
-                        </p>
+                      <div className={dashboardStyles.requestCardBody}>
+                        <div className={dashboardStyles.requestIdDetails}>
+                          <p className={dashboardStyles.requestIdpara}>
+                            {/* <MdUpdate style={{ fontSize: "18px" }} /> Submitted{" "} */}
+                            {moment(rowData.createdDate).format("DD/MM/YYYY")}
+                          </p>
+                        </div>
+                        <span>{renderStatusColumn(rowData)}</span>
+                        {renderActionColumn(rowData)}
                       </div>
                     </div>
-                    <div className={dashboardStyles.requestCardBody}>
-                      <span>{renderStatusColumn(rowData)}</span>
-                      {renderActionColumn(rowData)}
-                    </div>
-                  </div>
-                )}
-              />
-            </DataTable>
+                  )}
+                />
+              </DataTable>
+            </div>
           </div>
           {currentRecord && (
             <RequestsFields

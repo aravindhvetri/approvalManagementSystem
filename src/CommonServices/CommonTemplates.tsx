@@ -91,7 +91,7 @@ export const statusTemplate = (status: string) => {
         borderColor: getColors(status)?.borderColor,
       }}
     >
-      <div
+      {/* <div
         style={{
           fontSize: "16px",
           display: "flex",
@@ -100,7 +100,7 @@ export const statusTemplate = (status: string) => {
         }}
       >
         {getIcons(status)}
-      </div>
+      </div> */}
       <div>{status}</div>
     </div>
   );
@@ -169,8 +169,8 @@ const getColors = (status: string) => {
   };
   switch (status) {
     case "Pending":
-      colors.bgColor = "#eaf1f6";
-      colors.color = "#2a6d9c";
+      colors.bgColor = "#fbfcee";
+      colors.color = "#5daf14";
       break;
     case "Approved":
       colors.bgColor = "#e8f6ed";
@@ -270,40 +270,40 @@ export const RightSidebar = ({
         visible={visible}
         className="CustomSideBarContainer"
         position="right"
-        header={
-          activeTabViewBar == 0
-            ? customHeader(
-                "Request Details",
-                "Configure your request for the approval"
-              )
-            : ""
-          // activeTabViewBar == 2
-          //   ? customHeader(
-          //       "Category Workflow",
-          //       "Configure your category workflow for the request process"
-          //     )
-          //   : activeTabViewBar == 3
-          //   ? customHeader(
-          //       "Approval Workflow",
-          //       "Configure your approval workflow for the approval process"
-          //     )
-          //   : activeTabViewBar == 4
-          //   ? customHeader(
-          //       "Email Workflow",
-          //       "Configure your email workflow for the notification process"
-          //     )
-          //   : activeTabViewBar == 0
-          //   ? customHeader(
-          //       "Request Details",
-          //       "Configure your request for the approval"
-          //     )
-          //   : activeTabViewBar == 1
-          //   ? customHeader(
-          //       "Approval Summary",
-          //       "Track the status of all your assigned requests in one place"
-          //     )
-          //   : ""
-        }
+        // header={
+        //   activeTabViewBar == 0
+        //     ? customHeader(
+        //         "Request Details",
+        //         "Configure your request for the approval"
+        //       )
+        //     : ""
+        //   activeTabViewBar == 2
+        //     ? customHeader(
+        //         "Category Workflow",
+        //         "Configure your category workflow for the request process"
+        //       )
+        //     : activeTabViewBar == 3
+        //     ? customHeader(
+        //         "Approval Workflow",
+        //         "Configure your approval workflow for the approval process"
+        //       )
+        //     : activeTabViewBar == 4
+        //     ? customHeader(
+        //         "Email Workflow",
+        //         "Configure your email workflow for the notification process"
+        //       )
+        //     : activeTabViewBar == 0
+        //     ? customHeader(
+        //         "Request Details",
+        //         "Configure your request for the approval"
+        //       )
+        //     : activeTabViewBar == 1
+        //     ? customHeader(
+        //         "Approval Summary",
+        //         "Track the status of all your assigned requests in one place"
+        //       )
+        //     : ""
+        // }
         onHide={onHide}
       >
         {contents}

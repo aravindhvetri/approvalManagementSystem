@@ -122,10 +122,10 @@
   padding-bottom: 12px;
 }
 .categoryConfigFieldsDynamicSectionsHeight {
-  height: 560px !important;
+  height: 550px !important;
 }
 .categoryConfigFields {
-  height: 512px;
+  height: 504px;
   overflow: auto;
   padding: 0px 12px 0px 12px;
   .notApproverSection {
@@ -188,14 +188,17 @@
     .stageConfigContainer {
       width: 60%;
       height: fit-content;
+      border: 1px solid #eee;
+      border-radius: 6px;
       .stageFormContainer {
         width: 100%;
-        border: 1px solid var(--borderColor);
         border-radius: 6px;
-        padding: 8px;
+        padding: 10px 15px 15px 15px;
         .stageConfigHeader {
           @include label;
           font-weight: 500;
+          font-size: 14px !important;
+          color: var(--color-primary) !important;
         }
         .deleteStageButton {
           display: flex;

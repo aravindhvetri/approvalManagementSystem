@@ -558,14 +558,14 @@ const CategoryConfig = ({
       <>
         <div className="profile_header_content">
           <div>
-            <h2>
+            <span>
               {actionsBooleans.isView
                 ? "View"
                 : actionsBooleans.isEdit
                 ? "Edit"
                 : "Create"}{" "}
               Category Details
-            </h2>
+            </span>
             <p>
               {actionsBooleans.isView
                 ? "View the category details for your reference."
@@ -620,9 +620,11 @@ const CategoryConfig = ({
                       <div className="workFlowHeaderIcon">
                         <LuWorkflow />
                       </div>
-                      <div>Workflow Information</div>
+                      <div style={{ fontFamily: "interSemiBold" }}>
+                        Workflow Information
+                      </div>
                     </div>
-                    <h3 className="overAllHeading ">Basic Information</h3>
+                    <span className="overAllHeading ">Basic Information</span>
                     <div className={`${categoryConfigStyles.inputDiv}`}>
                       <div className={`${categoryConfigStyles.inputChildDiv}`}>
                         <Label className={`${categoryConfigStyles.label}`}>
@@ -786,7 +788,9 @@ const CategoryConfig = ({
                   actionsBooleans?.isView ||
                   actionsBooleans?.isEdit) &&
                   activeStep == 0 && (
-                    <h3 className="overAllHeading">Approvers Information</h3>
+                    <span className="overAllHeading">
+                      Approvers Information
+                    </span>
                   )}
                 <div
                   className={
@@ -1014,51 +1018,58 @@ const CategoryConfig = ({
       ) : (
         <>
           <div className="customDataTableCardContainer">
-            <div className="profile_header_content">
+            <div
+              style={{ borderBottom: "none", paddingBottom: "0px" }}
+              className="profile_header_content"
+            >
               <div>
-                <h2>Category Workflows</h2>
+                <span>Category workflows</span>
                 <p>
                   Configure WorkFlows and define their structure for request
                   management
                 </p>
               </div>
             </div>
-            <DataTable
-              value={categoryDetails}
-              paginator
-              rows={2}
-              className="custom-card-table"
-              emptyMessage={
-                <p style={{ textAlign: "center" }}>No Records Found</p>
-              }
-            >
-              <Column
-                body={(rowData) => (
-                  <div className="requestCard">
-                    <div className="requestCardHeader">
-                      <div className="requestId">
-                        <h3 className="requestIdTitle">
-                          <BiCategory style={{ fontSize: "20px" }} />
-                          {rowData.category}
-                        </h3>
-                        {/* <span>{renderStatusColumn(rowData)}</span> */}
+            <div className="allRecords">
+              <span style={{ fontFamily: "interSemiBold" }}>
+                All categories
+              </span>
+            </div>
+            <div className="dashboardDataTable">
+              <DataTable
+                value={categoryDetails}
+                paginator
+                rows={4}
+                className="custom-card-table"
+                emptyMessage={
+                  <p style={{ textAlign: "center" }}>No Records Found</p>
+                }
+              >
+                <Column
+                  body={(rowData) => (
+                    <div className="requestCard">
+                      <div className="requestCardHeader">
+                        <div className="requestId">
+                          <h3 className="requestIdTitle">
+                            <BiCategory style={{ fontSize: "20px" }} />
+                            {rowData.category}
+                          </h3>
+                          {/* <span>{renderStatusColumn(rowData)}</span> */}
+                        </div>
                       </div>
-                      <div
-                        style={{ paddingTop: "6px" }}
-                        className="requestIdDetails"
-                      >
-                        <p className="requestIdpara">
-                          Request Id Format - {rowData.requestIdFormat}
-                        </p>
+                      <div className="requestCardBody">
+                        <div className="requestIdDetails">
+                          <p className="requestIdpara">
+                            Request Id Format - {rowData.requestIdFormat}
+                          </p>
+                        </div>
+                        {renderActionColumn(rowData)}
                       </div>
                     </div>
-                    <div className="requestCardBody">
-                      {renderActionColumn(rowData)}
-                    </div>
-                  </div>
-                )}
-              />
-            </DataTable>
+                  )}
+                />
+              </DataTable>
+            </div>
           </div>
         </>
       )}

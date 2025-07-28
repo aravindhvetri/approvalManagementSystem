@@ -47,7 +47,7 @@
     .errorMsg {
       color: #ef250f;
       font-size: 12px;
-      font-weight: 600;
+      // font-weight: 600;
     }
   }
   .approverSection {
@@ -91,7 +91,7 @@
 }
 
 .RequestFormContainer {
-  height: 474px;
+  height: 508px;
   overflow: auto;
   margin-bottom: 12px;
   padding: 0px 30px 0px 30px;
@@ -103,16 +103,16 @@
 }
 .label {
   font-size: 12px;
-  color: black;
+  color: var(--color-dark);
   font-weight: 500;
-  letter-spacing: 0.5px;
+  font-family: "interMedium", sans-serif;
   h3 {
     margin: 0;
   }
 }
 .icon {
   font-size: 38px;
-  color: #82828f;
+  color: var(--color-primary);
   padding-bottom: 10px;
 }
 .sideBarButtonContainer {
@@ -157,7 +157,7 @@
 
 .signatureUploadButton {
   display: inline-block;
-  background-color: var(--color-primary);
+  background-color: var(--color-secondary);
   color: white;
   padding: 5px;
   font-size: 12px;
@@ -166,8 +166,8 @@
   font-weight: 400;
 }
 .signatureUploadButton:hover {
-  background-color: var(--color-secondary);
-  color: var(--color-primary);
+  background-color: var(--color-primary);
+  color: var(--color-white);
   transition: ease-in-out;
   transition-timing-function: linear;
   transition-duration: 0.5s;

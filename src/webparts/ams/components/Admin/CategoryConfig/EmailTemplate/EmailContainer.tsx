@@ -886,7 +886,7 @@ const EmailContainer = ({
         <div className="workFlowHeaderIcon">
           <MdOutlineEmail />
         </div>
-        <div>Email Notifications</div>
+        <div style={{ fontFamily: "interSemiBold" }}>Email Notifications</div>
         <div style={{ letterSpacing: "0" }}>
           {!(actionBooleans?.isView || actionBooleans?.isEdit) && (
             <div className={`${EmailContainerStyles.radioContainer}`}>
@@ -968,9 +968,9 @@ const EmailContainer = ({
         className={EmailContainerStyles.EmailContainer}
         style={
           selectedEmail == "existing"
-            ? { height: "474px" }
+            ? { height: "466px" }
             : selectedEmail == "custom" || categoryClickingID !== null
-            ? { height: "414px" }
+            ? { height: "406px" }
             : {}
         }
       >

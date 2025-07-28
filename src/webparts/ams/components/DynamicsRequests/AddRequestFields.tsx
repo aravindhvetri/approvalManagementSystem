@@ -577,20 +577,30 @@ const AddRequestsFields = ({
               <div
                 style={
                   Ok
-                    ? { justifyContent: "start", marginBottom: "0px" }
-                    : { justifyContent: "center", marginBottom: "6px" }
+                    ? {
+                        justifyContent: "start",
+                        marginBottom: "0px",
+                        borderBottom: "none",
+                        paddingBottom: "0px",
+                      }
+                    : {
+                        justifyContent: "center",
+                        marginBottom: "6px",
+                        borderBottom: "none",
+                        paddingBottom: "0px",
+                      }
                 }
                 className="profile_header_content"
               >
                 <div>
-                  <h3
+                  <span
                     style={{
                       fontSize: "18px",
-                      fontWeight: 500,
+                      fontFamily: "interSemiBold",
                     }}
                   >
                     Create Request
-                  </h3>
+                  </span>
                 </div>
               </div>
             </Label>
@@ -704,40 +714,52 @@ const AddRequestsFields = ({
                 )}
                 <div
                   style={{
-                    height: Ok && files?.length > 6 ? "86px" : Ok ? "auto" : "",
+                    height: Ok && files?.length > 6 ? "98px" : Ok ? "auto" : "",
                   }}
                   className={attachmentStyles.filesMasterDiv}
                 >
                   {files.length > 0 && (
-                    <div className={attachmentStyles.filesSection}>
-                      {files.map((file, index) => (
-                        <div
-                          style={Ok ? { width: "16%" } : {}}
-                          className={attachmentStyles.filesShowingContainer}
-                        >
-                          <div className={attachmentStyles.labelContainer}>
-                            <div className={attachmentStyles.filesIcons}>
+                    <>
+                      <div
+                        style={{
+                          padding: "4px 0px 0px 0px",
+                          textAlign: "start",
+                        }}
+                        className="allRecords"
+                      >
+                        <span style={{ fontFamily: "interSemiBold" }}>
+                          Selected files
+                        </span>
+                      </div>
+                      <div className={attachmentStyles.filesSection}>
+                        {files.map((file, index) => (
+                          <div
+                            style={Ok ? { width: "16%" } : {}}
+                            className={attachmentStyles.filesShowingContainer}
+                          >
+                            <div className={attachmentStyles.labelContainer}>
+                              {/* <div className={attachmentStyles.filesIcons}>
                               {getFileIcon(file?.name)}
+                            </div> */}
+                              <div
+                                title={file?.name}
+                                className={attachmentStyles.fileLabel}
+                                onClick={() => downloadFile(file)}
+                              >
+                                {file?.name.length > 27
+                                  ? `${file?.name.slice(0, 27)}...`
+                                  : file?.name}
+                              </div>
                             </div>
-                            <div
-                              title={file?.name}
-                              className={attachmentStyles.fileLabel}
-                              onClick={() => downloadFile(file)}
-                            >
-                              {file?.name.length > 25
-                                ? `${file?.name.slice(0, 25)}...`
-                                : file?.name}
+                            <div className={attachmentStyles.cancelIcon}>
+                              <GiCancel
+                                onClick={() => removeFile(file?.name)}
+                              />
                             </div>
                           </div>
-                          <div className={attachmentStyles.cancelIcon}>
-                            <GiCancel
-                              style={{ cursor: "pointer", color: "red" }}
-                              onClick={() => removeFile(file?.name)}
-                            />
-                          </div>
-                        </div>
-                      ))}
-                    </div>
+                        ))}
+                      </div>
+                    </>
                   )}
                 </div>
               </>
@@ -749,9 +771,9 @@ const AddRequestsFields = ({
             style={{
               height:
                 files?.length > 6
-                  ? "388px"
+                  ? "410px"
                   : files?.length >= 1
-                  ? "432px"
+                  ? "450px"
                   : undefined,
             }}
             className={dynamicFieldsStyles.RequestFormContainer}

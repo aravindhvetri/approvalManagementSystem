@@ -93,9 +93,9 @@ const ExistingEmail = ({ ExisitingEmailData }) => {
 
     return (
       <div className={ExistingEmailstyles.emailBodyPreview}>
-        <Label className="overAllHeading">
+        <span className="overAllHeading">
           {selectedEmailBody} Email Content Preview :
-        </Label>
+        </span>
         <div dangerouslySetInnerHTML={{ __html: selectedTemplate.EmailBody }} />
       </div>
     );

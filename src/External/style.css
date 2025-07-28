@@ -69,6 +69,7 @@
 }
 #workbenchPageContent {
   max-width: 100%;
+  margin: 0 !important;
 }
 .CanvasToolboxHint-plusButtonWrapper {
   display: none !important;
@@ -94,8 +95,8 @@ div[data-automationid="SiteHeader"] {
   max-width: 100% !important;
 }
 .ControlZone {
-  margin: 0px;
-  padding: 0px;
+  margin: 0px !important;
+  padding: 0px !important;
 }
 .spAppAndPropertyPanelContainer {
   padding: 0px;
@@ -116,11 +117,22 @@ div[data-automationid="SiteHeader"] {
   box-shadow: none;
 }
 .p-inputtext:enabled:focus {
-  border-color: var(--color-secondary);
+  border-color: var(--inputBorderColor);
 }
 /*........................................................*/
 
 /*Dashboard Common Styles (import Style from CommonStyles.module.scss)*/
+.dashboardDataTable .p-datatable-wrapper {
+  border: 1px solid var(--color-light);
+  padding: 6px 10px 0px 10px;
+  border-radius: 4px;
+}
+.allRecords {
+  font-size: 13px;
+  padding-bottom: 10px;
+  font-family: "interSemiBold", sans-serif;
+  color: #8a8d91;
+}
 .customDataTableContainer {
   /* box-shadow: -4px 4px 12px #f5f5f5, 4px 0px 6px #f5f5f5; */
   /* box-shadow: -4px 0px 6px #f5f5f5, 4px 0px 6px #f5f5f5,
@@ -131,9 +143,9 @@ div[data-automationid="SiteHeader"] {
   margin: 10px 0px 10px 0px;
 }
 .customDataTableCardContainer {
-  box-shadow: -4px 0px 6px #f5f5f5, /* left */ 4px 0px 6px #f5f5f5,
-    /* right */ 0px -4px 6px #f5f5f5, /* top */ 0px 4px 6px #f5f5f5; /* bottom */
-  padding: 10px;
+  /* box-shadow: -4px 0px 6px #f5f5f5,  4px 0px 6px #f5f5f5,
+     0px -4px 6px #f5f5f5,  0px 4px 6px #f5f5f5;  */
+  /* padding: 10px; */
   border-radius: 6px;
   margin-bottom: 10px;
   height: auto;
@@ -170,20 +182,23 @@ div[data-automationid="SiteHeader"] {
 .customActionMenu .p-button {
   background: transparent;
   border: transparent;
-  color: var(--color-primary);
+  color: var(--color-dark);
+}
+.p-menu .p-menuitem > .p-menuitem-content .p-menuitem-link {
+  background: var(--white);
 }
 .customActionMenu .pi {
-  font-size: 14px;
+  font-size: 12px;
 }
 .customView .pi-eye,
 .customView .p-menuitem-text {
   font-size: 12px;
-  color: var(--color-primary);
+  color: var(--color-dark);
 }
 .customEdit .pi-file-edit,
 .customEdit .p-menuitem-text {
   font-size: 12px;
-  color: var(--color-primary);
+  color: var(--color-dark);
 }
 
 .customDelete .pi-trash,
@@ -207,7 +222,7 @@ div[data-automationid="SiteHeader"] {
   width: 100%;
 }
 .p-dropdown:focus-within {
-  border-color: var(--color-secondary);
+  border-color: var(--inputBorderColor);
 }
 .p-dropdown-items-wrapper {
   font-size: 12px;
@@ -219,7 +234,7 @@ div[data-automationid="SiteHeader"] {
   font-size: 12px;
 }
 .p-dropdown-trigger-icon {
-  color: var(--color-primary);
+  color: var(--color-dark-lighter);
   height: 13px;
   width: 13px;
 }
@@ -250,6 +265,11 @@ div[data-automationid="SiteHeader"] {
   width: 100%;
 }
 
+.addNewButton span {
+  padding: 0 !important;
+  font-family: "interRegular" !important;
+}
+
 .addNewButton .p-button-label {
   font-size: 12px;
 }
@@ -267,9 +287,9 @@ div[data-automationid="SiteHeader"] {
   height: 32px;
 }
 .addNewButton .p-button:hover {
-  background-color: var(--color-secondary);
-  color: var(--black);
-  gap: 5px;
+  background-color: var(--color-light);
+  color: var(--color-dark);
+  gap: 6px;
   border: 0;
   height: 32px;
   /* transition: ease-in-out;
@@ -313,7 +333,7 @@ div[data-automationid="SiteHeader"] {
     var(--color-light),
     #0aa5ec2e
   ) !important;
-  border: 2px dashed var(--color-secondary) !important;
+  border: 1px solid #0aa5ec2e !important;
   color: var(--color-primary) !important;
 }
 
@@ -328,11 +348,15 @@ div[data-automationid="SiteHeader"] {
   color: var(--white);
   border: 0;
   padding: 24px;
-  width: 130px;
+  width: 115px;
   height: 150px;
   border-radius: 20px;
   text-align: center;
-  line-height: 24px;
+  line-height: 18px;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  justify-content: center;
 }
 
 .addNewRequestButton .p-button {
@@ -362,7 +386,7 @@ div[data-automationid="SiteHeader"] {
 }
 .p-sidebar-content {
   border: 1px solid #e4e4e7;
-  padding-top: 12px;
+  padding-top: 18px;
   border-radius: 8px;
   /* overflow: hidden; */
 }
@@ -401,11 +425,11 @@ div[data-automationid="SiteHeader"] {
 }
 .customRejectButton:hover {
   background-color: var(--liteRed);
-  color: var(--red);
+  color: var(--white);
 }
 .customSubmitButton:hover {
-  background-color: var(--color-light);
-  color: var(--color-dark);
+  background-color: var(--color-primary);
+  color: var(--white);
 }
 .customCancelButton:hover {
   background-color: var(--color-secondary);
@@ -517,9 +541,7 @@ input::placeholder {
   display: flex;
   gap: 6px;
   font-size: 16px;
-  letter-spacing: 1px;
   align-items: center;
-  font-weight: 500;
   padding-bottom: 12px;
 }
 .workFlowHeaderIcon {
@@ -539,7 +561,8 @@ input::placeholder {
 
 .p-tabview-nav {
   border: 1px solid #ecf0f1;
-  background-color: var(--color-light);
+  /* background-color: var(--color-light); */
+  background-color: #f6f6f6;
   /* background: linear-gradient(to right, #bdd6c138, #bdd6c138); */
   display: flex;
   justify-content: space-between;
@@ -677,8 +700,9 @@ li.p-highlight .p-tabview-nav-link {
   border-radius: 3px;
 }
 .ms-BasePicker-text::after {
-  border: 1px solid var(--color-primary);
+  border: 1px solid transparent;
   box-shadow: none;
+  /* background: #dadada2e; */
 }
 
 /* Custom Common styles for the Paginators */
@@ -696,7 +720,7 @@ li.p-highlight .p-tabview-nav-link {
   border-width: 0;
 }
 .p-paginator .p-paginator-pages .p-paginator-page.p-highlight {
-  background: var(--color-primary);
+  background: var(--color-dark);
   border-color: transparent;
   color: var(--white);
   border-radius: 50%;
@@ -705,9 +729,8 @@ li.p-highlight .p-tabview-nav-link {
 .p-paginator .p-paginator-prev,
 .p-paginator .p-paginator-next,
 .p-paginator .p-paginator-last {
-  color: var(--color-primary);
+  color: var(--color-dark);
   border: 1px solid transparent;
-  margin: 0px 5px 0 5px;
 }
 .p-paginator .p-paginator-first:not(.p-disabled):not(.p-highlight):hover,
 .p-paginator .p-paginator-prev:not(.p-disabled):not(.p-highlight):hover,
@@ -720,12 +743,12 @@ li.p-highlight .p-tabview-nav-link {
 .overAllHeading {
   margin: 0;
   padding-bottom: 16px;
-  font-size: 14px;
-  color: var(--black);
-  font-weight: 500;
-  letter-spacing: 1px;
+  display: block;
+  font-size: 13px;
+  color: #6c757d;
   text-decoration: underline;
   text-underline-offset: 8px;
+  font-family: "interSemiBold", sans-serif;
 }
 
 /* Date picker.................. */
@@ -758,7 +781,7 @@ li.p-highlight .p-tabview-nav-link {
 
 /* MultiSelect design........... */
 .p-multiselect {
-  border: 1px solid var(--color-secondary);
+  border: 1px solid var(--inputBorderColor);
   box-shadow: none;
   height: 32px;
   width: 100%;
@@ -766,13 +789,13 @@ li.p-highlight .p-tabview-nav-link {
   padding: 0px !important;
 }
 .p-multiselect:focus-within {
-  border-color: var(--color-primary);
+  border-color: var(--inputBorderColor);
 }
 .p-multiselect-label {
   font-size: 12px;
 }
 .p-multiselect-trigger-icon {
-  color: var(--color-primary);
+  color: var(--color-tags);
   height: 13px;
   width: 13px;
 }
@@ -911,17 +934,19 @@ li.p-highlight .p-tabview-nav-link {
 /* Data Card Body styles......................................... */
 .profile_header_content {
   padding: 0px;
-  margin-bottom: 20px;
+  margin-bottom: 15px;
+  padding-bottom: 15px;
   display: flex;
   justify-content: space-between;
   align-items: center;
+  border-bottom: 1px solid #eee;
 }
-.profile_header_content h2 {
+.profile_header_content span {
   margin: 0;
-  padding: 0px 0px 8px 0px;
-  font-size: 16px;
-  padding-bottom: 10px;
-  font-weight: 500;
+  padding: 0px 0px 4px 0px;
+  font-size: 17px;
+  display: block;
+  font-family: "interSemiBold";
 }
 .profile_header_content h1 {
   margin: 0;
@@ -931,30 +956,40 @@ li.p-highlight .p-tabview-nav-link {
 .profile_header_content p {
   /* padding: 6px 0 0 0px; */
   margin: 0;
-  color: var(--color-dark);
-  font-family: "interMedium";
-  font-size: 14px;
+  color: #8b979d;
+  font-family: "interRegular";
+  font-size: 13px;
+}
+.p-datatable-tbody tr:last-child td div {
+  border-bottom: none;
+}
+.p-datatable-tbody tr:last-child td div {
+  margin-bottom: 0px;
 }
 .requestCard {
-  background-color: #fff;
-  border-radius: 10px;
-  padding: 1rem;
-  box-shadow: -4px 4px 12px #f5f5f5, 4px 0px 6px #f5f5f5;
-  margin-bottom: 20px;
-  border: 2px solid #f4f4f5;
+  /* background-color: #fff; */
+  /* border-radius: 10px; */
+  margin-bottom: 6px;
+  padding: 6px 0 10px 8px;
+  border-bottom: 1px solid var(--color-light);
+  /* box-shadow: -4px 4px 12px #f5f5f5, 4px 0px 6px #f5f5f5; */
+  /* margin-bottom: 20px; */
+  /* border: 2px solid #f4f4f5; */
   display: flex;
+  align-items: center;
   width: 100%;
 }
+
 .apporverSection .p-inputtext {
   height: 100px !important;
 }
 
 .requestCardBody {
-  width: 26%;
+  width: 40%;
   display: flex;
   justify-content: end;
   gap: 12px;
-  align-items: flex-start;
+  align-items: center;
   color: var(--color-dark);
   font-size: 12px;
 }
@@ -980,30 +1015,35 @@ li.p-highlight .p-tabview-nav-link {
 }
 .requestIdpara {
   font-size: 12px;
-  letter-spacing: 0.5px;
-  color: var(--color-dark);
+  color: #717171;
   display: flex;
   gap: 4px;
+  align-items: center;
+  margin: 0;
+  font-family: "interSemiBold";
 }
 .requestId {
   display: flex;
   align-items: center;
   gap: 20px;
-  padding-bottom: 10px;
+  padding-bottom: 4px;
 }
 .requestIdTitle {
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 10px;
   font-weight: 500;
 }
 .requestId h3 {
   margin: 0;
   padding: 0;
   font-size: 14px;
-  letter-spacing: 0.5px;
+  font-family: "interMedium";
 }
-
+.requestId svg {
+  font-size: 18px;
+  color: #495057;
+}
 /*CategoryName Div styles......................................... */
 .categoryName {
   display: flex;
@@ -1016,21 +1056,23 @@ li.p-highlight .p-tabview-nav-link {
 }
 .categoryTag {
   font-size: 12px;
-  color: var(--white);
-  background-color: var(--color-secondary);
+  color: var(--color-tags);
+  background-color: var(--color-bg-tags);
   padding: 4px 10px 5px 10px;
-  border-radius: 2px;
-  font-family: "interLight";
+  border-radius: 6px;
+  border: 1px solid #007bff2e !important;
+  font-family: "interRegular";
 }
 /* For Specific place category name */
 .categoryNameTag {
   border-radius: 2px;
   font-size: 12px;
-  font-weight: 400;
+  font-family: "interRegular";
   padding: 5px;
   display: inline-block;
-  background-color: var(--color-secondary);
-  color: var(--white);
+  color: var(--color-tags);
+  background-color: var(--color-bg-tags);
+  border: 1px solid #007bff2e !important;
   letter-spacing: 0.5px;
 }
 
@@ -1038,6 +1080,15 @@ li.p-highlight .p-tabview-nav-link {
 
 .modernBtnIcon {
   font-size: 16px;
+}
+.labelHeading {
+  background-color: #f1f8ff;
+  color: #005b89 !important;
+  padding: 12px 0px 12px 0px;
+  border-radius: 6px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .p-button.p-button-icon-only {
@@ -1050,7 +1101,7 @@ li.p-highlight .p-tabview-nav-link {
   gap: 6px;
   color: var(--black);
   font-weight: 500;
-  padding: 6px 15px 6px 15px;
+  padding: 8px 15px 8px 15px;
   font-size: 13px;
   border: 1px solid #dee2e6;
   border-radius: 5px;
@@ -1062,7 +1113,7 @@ li.p-highlight .p-tabview-nav-link {
   background-color: var(--color-primary);
   color: var(--white);
   font-weight: 400;
-  padding: 6px 15px 6px 15px;
+  padding: 8px 15px 8px 15px;
   font-size: 13px;
   border: 1px solid #dee2e6;
   border-radius: 5px;
@@ -1269,4 +1320,22 @@ li.p-highlight .p-tabview-nav-link {
 }
 .OkCheckingContainer .p-fileupload .p-fileupload-content {
   display: none !important;
+}
+/*Approval History Table common styles .........................*/
+.ApprovalHistoryTable .p-datatable-wrapper {
+  padding: 20px;
+  font-size: 12px;
+  border: 1px solid var(--color-light);
+  border-radius: 6px;
+}
+.ApprovalHistoryTable .p-datatable .p-datatable-thead > tr > th {
+  color: #005b89;
+  background-color: #f1f8ff;
+  padding: 10px;
+  font-size: 13px;
+  font-weight: 500;
+}
+.ApprovalHistoryTable .p-datatable .p-datatable-tbody > tr > td {
+  padding: 8px;
+  color: var(--color-dark);
 }

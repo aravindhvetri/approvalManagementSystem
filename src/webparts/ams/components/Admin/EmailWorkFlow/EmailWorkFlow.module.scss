@@ -18,12 +18,13 @@
 .emailMainContainer {
   box-sizing: border-box;
   padding: 10px 20px;
-  height: 518px;
+  height: 510px;
   overflow: auto;
 }
 .categoryLabel {
-  font-size: 13px;
-  color: var(--color-dark);
-  letter-spacing: 0.5px;
-  padding-bottom: 6px;
+  font-size: 12px;
+  color: #717171;
+  font-weight: 400;
+  padding: 7px 0 6px 0;
+  font-family: "interRegular";
 }

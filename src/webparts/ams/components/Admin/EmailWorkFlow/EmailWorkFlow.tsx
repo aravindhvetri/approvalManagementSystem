@@ -340,13 +340,13 @@ const EmailWorkFlow = ({
       {showLoaderEmailWorkFlowSideBar ? <Loader /> : ""}
       <div className="profile_header_content">
         <div>
-          <h2>{`${
+          <span>{`${
             actionsBooleans.isEdit
               ? "Edit "
               : actionsBooleans.isView
               ? "View "
               : "Add "
-          }Email Workflow`}</h2>
+          }Email Workflow`}</span>
           <p>
             {actionsBooleans.isEdit
               ? "Modify the Email Workflow for category requests "
@@ -505,9 +505,12 @@ const EmailWorkFlow = ({
             </DataTable>
           </div> */}
           <div className="customDataTableCardContainer">
-            <div className="profile_header_content">
+            <div
+              style={{ borderBottom: "none", paddingBottom: "0px" }}
+              className="profile_header_content"
+            >
               <div>
-                <h2>Email Config</h2>
+                <span>Email Config</span>
                 <p>
                   Set up and manage email templates used in the request and
                   approval process
@@ -523,37 +526,42 @@ const EmailWorkFlow = ({
                 />
               </div>
             </div>
-            <DataTable
-              value={getEmailTemplateContent}
-              paginator
-              rows={3}
-              className="custom-card-table"
-              emptyMessage={
-                <p style={{ textAlign: "center" }}>No Records Found</p>
-              }
-            >
-              <Column
-                body={(rowData) => (
-                  <div className="requestCard">
-                    <div className="requestCardHeader">
-                      <div
-                        style={{ paddingBottom: "4px" }}
-                        className="requestId"
-                      >
-                        <h3 className="requestIdTitle">
-                          <MdMarkEmailRead style={{ fontSize: "20px" }} />
-                          {rowData.templateName}
-                        </h3>
+            <div className="allRecords">
+              <span style={{ fontFamily: "interSemiBold" }}>All templates</span>
+            </div>
+            <div className="dashboardDataTable">
+              <DataTable
+                value={getEmailTemplateContent}
+                paginator
+                rows={3}
+                className="custom-card-table"
+                emptyMessage={
+                  <p style={{ textAlign: "center" }}>No Records Found</p>
+                }
+              >
+                <Column
+                  body={(rowData) => (
+                    <div className="requestCard">
+                      <div className="requestCardHeader">
+                        <div
+                          style={{ paddingBottom: "4px" }}
+                          className="requestId"
+                        >
+                          <h3 className="requestIdTitle">
+                            <MdMarkEmailRead style={{ fontSize: "20px" }} />
+                            {rowData.templateName}
+                          </h3>
+                        </div>
+                        {renderCategoryName(rowData)}
                       </div>
-                      {renderCategoryName(rowData)}
+                      <div className="requestCardBody">
+                        {renderActionColumn(rowData)}
+                      </div>
                     </div>
-                    <div className="requestCardBody">
-                      {renderActionColumn(rowData)}
-                    </div>
-                  </div>
-                )}
-              />
-            </DataTable>
+                  )}
+                />
+              </DataTable>
+            </div>
           </div>
         </>
       )}

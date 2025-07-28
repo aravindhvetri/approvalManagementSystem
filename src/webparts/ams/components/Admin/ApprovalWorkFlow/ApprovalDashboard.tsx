@@ -296,9 +296,12 @@ const ApprovalDashboard = ({
             </DataTable>
           </div> */}
           <div className="customDataTableCardContainer">
-            <div className="profile_header_content">
+            <div
+              style={{ borderBottom: "none", paddingBottom: "0px" }}
+              className="profile_header_content"
+            >
               <div>
-                <h2>Approval Config</h2>
+                <span>Approval config</span>
                 <p>
                   Configure approval stages and rules for processing requests
                 </p>
@@ -313,44 +316,49 @@ const ApprovalDashboard = ({
                 />
               </div>
             </div>
-            <DataTable
-              value={approvalConfigDetails}
-              paginator
-              rows={2}
-              className="custom-card-table"
-              emptyMessage={
-                <p style={{ textAlign: "center" }}>No Records Found</p>
-              }
-            >
-              <Column
-                body={(rowData) => (
-                  <div className="requestCard">
-                    <div className="requestCardHeader">
-                      <div
-                        style={{ paddingBottom: "4px" }}
-                        className="requestId"
-                      >
-                        <h3 className="requestIdTitle">
-                          <LuWorkflow style={{ fontSize: "20px" }} />
-                          {rowData.apprvalFlowName}
-                        </h3>
+            <div className="allRecords">
+              <span style={{ fontFamily: "interSemiBold" }}>All records</span>
+            </div>
+            <div className="dashboardDataTable">
+              <DataTable
+                value={approvalConfigDetails}
+                paginator
+                rows={2}
+                className="custom-card-table"
+                emptyMessage={
+                  <p style={{ textAlign: "center" }}>No Records Found</p>
+                }
+              >
+                <Column
+                  body={(rowData) => (
+                    <div className="requestCard">
+                      <div className="requestCardHeader">
+                        <div
+                          style={{ paddingBottom: "4px" }}
+                          className="requestId"
+                        >
+                          <h3 className="requestIdTitle">
+                            <LuWorkflow style={{ fontSize: "20px" }} />
+                            {rowData.apprvalFlowName}
+                          </h3>
+                        </div>
+                        {renderCategoryName(rowData)}
+                      </div>
+                      <div className="requestCardBody">
                         <div className="requestIdDetails">
                           <p className="requestIdpara">
                             Total Stages - {rowData?.totalStages}
                           </p>
                         </div>
+                        <span>{renderRejectionFlowColumn(rowData)}</span>
+                        {renderApproversColumn(rowData)}
+                        {renderActionColumn(rowData)}
                       </div>
-                      {renderCategoryName(rowData)}
                     </div>
-                    <div className="requestCardBody">
-                      <span>{renderRejectionFlowColumn(rowData)}</span>
-                      {renderApproversColumn(rowData)}
-                      {renderActionColumn(rowData)}
-                    </div>
-                  </div>
-                )}
-              />
-            </DataTable>
+                  )}
+                />
+              </DataTable>
+            </div>
           </div>
         </>
       )}
