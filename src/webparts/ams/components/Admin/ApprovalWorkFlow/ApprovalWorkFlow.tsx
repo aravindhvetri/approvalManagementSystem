@@ -449,14 +449,16 @@ const ApprovalWorkFlow = ({
                 className="requestCardStage"
                 style={
                   selectedStage?.["stage"] === rowData?.stage
-                    ? { backgroundColor: "#f3f3f3bd", borderColor: "#0000005c" }
+                    ? {
+                        backgroundColor: "#f1f8ff",
+                      }
                     : {}
                 }
               >
                 <div className="requestCardHeader">
-                  <div className="requestId">
+                  <div style={{ paddingBottom: "10px" }} className="requestId">
                     <h3 className="requestIdTitle" style={{ fontSize: "13px" }}>
-                      <MdAppRegistration style={{ fontSize: "20px" }} />
+                      <MdAppRegistration style={{ fontSize: "18px" }} />
                       {`Stage ${rowData?.stage} approval`}
                     </h3>
                   </div>
@@ -494,9 +496,9 @@ const ApprovalWorkFlow = ({
       {showLoader ? <Loader /> : ""}
       <div className="profile_header_content">
         <div>
-          <h2>{`${
+          <span>{`${
             currentRec?.id === null ? "Add " : isEdit ? "Edit " : "View "
-          }Approval Workflow`}</h2>
+          }Approval Workflow`}</span>
           <p>
             {`${
               currentRec?.id === null
@@ -512,138 +514,56 @@ const ApprovalWorkFlow = ({
         {isEdit && currentRec?.id !== null && usedCategories.length > 0 && (
           <>{notesContainerDetailsSingleLine("⚠ Warning", warningNote)}</>
         )}
-        <div
-          className={`${ApprovalWorkFlowStyles.topSection}`}
-          style={{ marginBottom: "1rem" }}
-        >
-          <div className={`${ApprovalWorkFlowStyles.nameDiv}`}>
-            <Label className={`${ApprovalWorkFlowStyles.label}`}>
-              Name<span className="required">*</span>
-            </Label>
-            <InputText
-              disabled={!isEdit}
-              value={approvalFlowDetails?.apprvalFlowName}
-              onChange={(e) => {
-                onChangeHandle("apprvalFlowName", e.target.value);
-                setValidation({ ...Config.ApprovalFlowValidation });
-              }}
-              placeholder="Workflow Name"
-              style={{ width: "100%" }}
-            />
-          </div>
-          <div className={`${ApprovalWorkFlowStyles.rejectDiv}`}>
-            <Label className={`${ApprovalWorkFlowStyles.label}`}>
-              Rejection Process<span className="required">*</span>
-            </Label>
-            <Dropdown
-              disabled={!isEdit}
-              options={rejectionFlowChoice?.rejectionFlowDrop}
-              value={rejectionFlowChoice?.rejectionFlowDrop.find(
-                (e) => e?.name === approvalFlowDetails?.rejectionFlow
-              )}
-              optionLabel="name"
-              onChange={(e) => {
-                onChangeHandle("rejectionFlow", e.value?.name);
-                setValidation({ ...Config.ApprovalFlowValidation });
-              }}
-              placeholder="Select Reject Type"
-              style={{ width: "100%" }}
-            />
-          </div>
-        </div>
-        <div>
-          <span className="errorMsg">
-            {validation?.approvalConfigValidation}
-          </span>
-        </div>
         <div className={`${ApprovalWorkFlowStyles.approvalConfigContainer}`}>
           <div className={`${ApprovalWorkFlowStyles.approvalSubContainer}`}>
             <div
               className={`${ApprovalWorkFlowStyles.approvalStagesContainer}`}
             >
-              <Label className={`${ApprovalWorkFlowStyles.label}`}>
+              <div className={`${ApprovalWorkFlowStyles.topSection}`}>
+                <div className={`${ApprovalWorkFlowStyles.nameDiv}`}>
+                  <Label className={`${ApprovalWorkFlowStyles.label}`}>
+                    Name<span className="required">*</span>
+                  </Label>
+                  <InputText
+                    disabled={!isEdit}
+                    value={approvalFlowDetails?.apprvalFlowName}
+                    onChange={(e) => {
+                      onChangeHandle("apprvalFlowName", e.target.value);
+                      setValidation({ ...Config.ApprovalFlowValidation });
+                    }}
+                    placeholder="Workflow Name"
+                    style={{ width: "100%" }}
+                  />
+                </div>
+                <div className={`${ApprovalWorkFlowStyles.rejectDiv}`}>
+                  <Label className={`${ApprovalWorkFlowStyles.label}`}>
+                    Rejection Process<span className="required">*</span>
+                  </Label>
+                  <Dropdown
+                    disabled={!isEdit}
+                    options={rejectionFlowChoice?.rejectionFlowDrop}
+                    value={rejectionFlowChoice?.rejectionFlowDrop.find(
+                      (e) => e?.name === approvalFlowDetails?.rejectionFlow
+                    )}
+                    optionLabel="name"
+                    onChange={(e) => {
+                      onChangeHandle("rejectionFlow", e.value?.name);
+                      setValidation({ ...Config.ApprovalFlowValidation });
+                    }}
+                    placeholder="Select Reject Type"
+                    style={{ width: "100%" }}
+                  />
+                </div>
+              </div>
+              <div style={{ marginBottom: "14px" }}>
+                <span className="errorMsg">
+                  {validation?.approvalConfigValidation}
+                </span>
+              </div>
+              <Label className={`labelHeading ${ApprovalWorkFlowStyles.label}`}>
                 Approval Stages
               </Label>
               {stagesDataTable()}
-
-              {/* {approvalFlowDetails?.stages?.map(function (stage, stageIndex) {
-                return (
-                  <>
-                    <div key={stageIndex} style={{ marginTop: "20px" }}>
-                      <h4 className={`${ApprovalWorkFlowStyles.label}`}>
-                        Stage {stage.stage} Approver
-                        <span className="required">*</span>
-                      </h4>
-                      <div className={`${ApprovalWorkFlowStyles.stage}`}>
-                        <div>
-                          <Label className={`${ApprovalWorkFlowStyles.label}`}>
-                            People
-                          </Label>
-                          <PeoplePicker
-                            context={context}
-                            personSelectionLimit={3}
-                            groupName={""}
-                            showtooltip={true}
-                            disabled={!isEdit}
-                            ensureUser={true}
-                            defaultSelectedUsers={approvalFlowDetails?.stages[
-                              stageIndex
-                            ].approver.map((approver) => approver.email)}
-                            onChange={(items) =>
-                              updateStage(stageIndex, "approver", items)
-                            }
-                            principalTypes={[PrincipalType.User]}
-                            resolveDelay={1000}
-                          />
-                        </div>
-                        <div>
-                          <Label className={`${ApprovalWorkFlowStyles.label}`}>
-                            Type
-                          </Label>
-                          <Dropdown
-                            disabled={!isEdit}
-                            value={approvalType?.approvalFlowType.find(
-                              (e) =>
-                                e?.id ===
-                                approvalFlowDetails?.stages[stageIndex]
-                                  .approvalProcess
-                            )}
-                            options={approvalType?.approvalFlowType}
-                            optionLabel="name"
-                            onChange={(e) =>
-                              updateStage(
-                                stageIndex,
-                                "approvalProcess",
-                                e.value?.id
-                              )
-                            }
-                            placeholder="Select Type of Workflow"
-                            style={{ marginTop: "0.5rem" }}
-                          />
-                        </div>
-                        {isEdit && (
-                          <div
-                            className={`${ApprovalWorkFlowStyles.deleteDiv}`}
-                          >
-                            <FaRegTrashAlt
-                              onClick={() => removeStage(stageIndex)}
-                            />
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                    {validation?.stageErrIndex.some(
-                      (e) => e === stageIndex
-                    ) && (
-                      <div>
-                        <span className="errorMsg">
-                          {validation?.stageValidation}
-                        </span>
-                      </div>
-                    )}
-                  </>
-                );
-              })} */}
               <div className={`${ApprovalWorkFlowStyles.addStageButton}`}>
                 <Button
                   style={{ width: "100%", display: "flow" }}
@@ -657,7 +577,7 @@ const ApprovalWorkFlow = ({
               </div>
             </div>
             <div className={`${ApprovalWorkFlowStyles.stageConfigContainer}`}>
-              <Label className={`${ApprovalWorkFlowStyles.label}`}>
+              <Label className={`labelHeading ${ApprovalWorkFlowStyles.label}`}>
                 Stage Configuration
               </Label>
               <div className={`${ApprovalWorkFlowStyles.stageFormContainer}`}>

@@ -1199,7 +1199,7 @@ const DynamicSectionWithField = ({
         <div className="workFlowHeaderIcon">
           <AiOutlineAppstore />
         </div>
-        <div>Form Configuration</div>
+        <div style={{ fontFamily: "interSemiBold" }}>Form Configuration</div>
         {categoryClickingID === null &&
           sections[sections.length - 1]?.columns.length > 0 && (
             <Button
@@ -1207,7 +1207,7 @@ const DynamicSectionWithField = ({
               label="Add Section"
               onClick={addDynamicSection}
               className="modernButton"
-              style={{ marginLeft: "30px" }}
+              style={{ marginLeft: "30px", padding: "6px 14px 6px 14px" }}
             />
           )}
       </div>
@@ -1473,7 +1473,11 @@ const DynamicSectionWithField = ({
                     handleAddFieldFunc(sectionIndex);
                   }}
                   className="modernButton"
-                  style={{ marginTop: "10px", width: "18%" }}
+                  style={{
+                    marginTop: "10px",
+                    width: "17%",
+                    padding: "6px 15px 6px 15px",
+                  }}
                 />
               )}
             </div>

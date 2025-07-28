@@ -2,9 +2,10 @@
 
 .filNameTag {
   margin-right: 10px;
-  background-color: var(--color-secondary);
-  color: var(--color-primary);
+  background-color: #f2f2f2;
+  color: #363a3c;
   font-weight: 500;
+  padding: 5px 14px;
 }
 .fileList {
   display: flex;
@@ -12,7 +13,7 @@
   margin: 0px 10px 10px 0px;
 }
 .fileListContainer {
-  height: 190px;
+  height: 220px;
   overflow: auto;
   width: 410px;
 }
@@ -41,7 +42,7 @@
   .filesSection {
     display: flex;
     flex-wrap: wrap;
-    padding-top: 10px;
+    padding-top: 6px;
     gap: 10px;
     width: 100%;
     .filesShowingContainer {
@@ -49,8 +50,8 @@
       width: 24%;
       align-items: center;
       justify-content: space-between;
-      background-color: var(--color-secondary);
-      padding: 4px;
+      background-color: #b8d5f547;
+      padding: 8px 10px 8px 10px;
       border-radius: 4px;
       .labelContainer {
         display: flex;
@@ -67,7 +68,7 @@
         .fileLabel {
           font-size: 12px;
           font-weight: 500;
-          color: #5c5c5c;
+          color: var(--color-primary);
           cursor: pointer;
         }
       }
@@ -75,7 +76,8 @@
         font-size: 15px;
         display: flex;
         align-items: center;
-        color: #a30c0c;
+        color: var(--color-primary);
+        cursor: pointer;
       }
     }
   }

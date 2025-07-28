@@ -18,7 +18,9 @@ $white: #ffffff;
   --black: #000000;
   --red: #f56365;
   --liteRed: #f5b2b2;
-  --inputBorderColor: #0aa5ec5e;
+  --inputBorderColor: #6b728038;
+  --color-tags: #0057b5;
+  --color-bg-tags: #7fbafa1a;
 }
 
 //sideNavSection Selectable ButtonModel styles:
@@ -126,10 +128,11 @@ $white: #ffffff;
 
 //Label Common Style:
 @mixin label {
-  color: var(--black);
+  color: var(--color-dark);
   padding-bottom: 8px;
   font-weight: 400;
-  letter-spacing: 0.5px;
+  font-size: 13px;
+  font-family: "interMedium", sans-serif;
 }
 
 //heading Common Style:
@@ -174,15 +177,15 @@ $white: #ffffff;
 }
 
 .cardTitle {
-  font-weight: 500;
-  font-size: 14px;
-  color: #626774;
+  font-family: "interMedium";
+  font-size: 13px;
+  color: #6b7280;
 }
 
 .cardCount {
   font-size: 24px;
-  font-weight: 600;
-  padding-top: 4px;
+  font-family: "interBold";
+  padding-top: 7px;
 }
 
 .badge {
@@ -200,7 +203,7 @@ $white: #ffffff;
 }
 
 .pending {
-  color: #6ddccf;
+  color: #90959f;
 }
 
 .approved {

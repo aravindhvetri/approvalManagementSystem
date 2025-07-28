@@ -17,8 +17,27 @@
   }
   .filter_header_pageName {
     // width: 74%;
+    position: relative;
     margin-right: auto;
     margin-left: auto;
+    &::before,
+    &::after {
+      content: "";
+      position: absolute;
+      top: 50%;
+      width: 238px;
+      height: 1px;
+      background-color: #5a93cc38;
+      transform: translateY(-50%);
+    }
+
+    &::before {
+      left: -270px;
+    }
+
+    &::after {
+      right: -270px;
+    }
   }
   .searchFilter {
     width: 46%;
@@ -30,10 +49,12 @@
 .profile_header_container {
   @extend .filter_header_container;
   justify-content: space-between;
-  height: 70px;
-  padding: 0px;
-  background-color: $white;
+  height: auto;
+  padding: 12px 20px 17px 20px;
+  background-color: #eef0f29e;
+  border-radius: 6px;
   width: 100%;
+  margin: 0px 0px 12px 0px;
   .profile_header_user {
     display: flex;
     align-items: center;
@@ -44,8 +65,8 @@
       font-family: "interMedium";
     }
     .profile_Image {
-      width: 40px;
-      height: 40px;
+      width: 27px;
+      height: 27px;
       img {
         width: 100%;
         height: 100%;
@@ -59,19 +80,18 @@
     height: 100%;
     width: 60%;
   }
-  h1 {
+  span {
     margin: 0;
-    padding: 0;
-    font-family: "merriweatherBold";
+    padding: 0px;
+    font-family: "interSemiBold";
     font-size: 20px;
-    font-weight: 500;
   }
   p {
-    padding: 6px 0 10px 0px;
+    padding: 6px 0 0px 0px;
     margin: 0;
-    color: var(--color-dark);
-    font-family: "interMedium";
-    font-size: 14px;
+    color: #8b979d;
+    font-family: "interRegular";
+    font-size: 13px;
   }
   label {
     font-size: calc(var(--fontSizebig) +2);
@@ -106,7 +126,7 @@
   width: 60%;
   align-items: center;
   gap: 2%;
-  margin: 10px 0px 10px 0px;
+  margin: 10px 0px 0px 0px;
 }
 .header_container {
   display: flex;
@@ -116,7 +136,7 @@
 .profile_header_Icons {
   padding: 0px;
   display: flex;
-  gap: 6px;
+  gap: 12px;
   align-items: center;
   justify-content: end;
 }
@@ -124,6 +144,7 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  color: #626774;
+  color: #6b7280;
+  font-family: "interSemiBold";
   font-size: 16px;
 }

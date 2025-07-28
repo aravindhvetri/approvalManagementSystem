@@ -1,11 +1,12 @@
 /* Stage data table design........................ */
 .requestCardStage {
   background-color: #fff;
-  border-radius: 6px;
-  padding: 8px;
-  border: 1px solid var(--borderColor);
+  border-radius: 4px;
+  padding: 12px 20px 12px 20px;
+  border: 1px solid #007bff2e !important;
   display: flex;
   width: 100%;
+  margin-top: 14px;
 }
 .requestCardBody {
   padding-right: 0px;

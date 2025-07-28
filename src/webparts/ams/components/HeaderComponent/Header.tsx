@@ -229,7 +229,7 @@ const Header = ({ context, currentPage }) => {
             <div className="addNewCustomWorkflowIcon">
               <GoGitPullRequest />
             </div>
-            <span>New Category Workflow</span>
+            <span>New category workflow</span>
           </div>
         )}
 
@@ -249,7 +249,7 @@ const Header = ({ context, currentPage }) => {
           <div className="addNewCustomWorkflowIcon">
             <AiOutlinePlusCircle />
           </div>
-          <span>New Request</span>
+          <span>New request</span>
         </div>
       </>
     );
@@ -287,7 +287,7 @@ const Header = ({ context, currentPage }) => {
       <div className="headerContainer">
         <div className={headerStyles.profile_header_container}>
           <div className={headerStyles.profile_header_content}>
-            <h1>Approval Hub</h1>
+            <span>Approval Hub</span>
             <p>Manage and track approval workflows across your organization</p>
           </div>
           <div>
@@ -316,10 +316,17 @@ const Header = ({ context, currentPage }) => {
           </div>
         )} */}
         <div className={headerStyles.header_title_container}>
-          <div style={{ fontSize: "20px" }}>
+          <span style={{ fontSize: "16px" }}>
             <MdOutlineInsights />
-          </div>
-          <div>More insights</div>
+          </span>
+          <span
+            style={{
+              fontSize: "14px",
+              fontFamily: "'interSemiBold', sans-serif",
+            }}
+          >
+            More insights
+          </span>
         </div>
         <div className={headerStyles.header_container}>
           <div className={headerStyles.cardDetails_container}>

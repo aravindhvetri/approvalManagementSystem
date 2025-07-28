@@ -5,29 +5,32 @@
 }
 .profile_header_content {
   padding: 0px;
-  margin-bottom: 16px;
-  h2 {
+  margin-bottom: 20px;
+  span {
+    display: block;
     margin: 0;
-    padding: 0px 0px 8px 0px;
-    font-size: 16px;
-    font-weight: 500;
+    padding: 0px 0 4px 0px;
+    font-family: "interSemiBold";
+    font-size: 17px;
   }
   p {
-    padding: 6px 0 10px 0px;
+    // padding: 6px 0 10px 0px;
     margin: 0;
-    color: var(--color-dark);
-    font-family: "interMedium";
-    font-size: 14px;
+    color: #8b979d;
+    font-family: "interRegular";
+    font-size: 13px;
   }
 }
+
 .requestCard {
-  background-color: #fff;
-  border-radius: 10px;
-  padding: 1rem;
-  box-shadow: -4px 4px 12px #f5f5f5, 4px 0px 6px #f5f5f5;
-  margin-bottom: 20px;
-  border: 2px solid #f4f4f5;
+  margin-bottom: 6px;
+  padding: 6px 0 10px 8px;
+  border-bottom: 1px solid var(--color-light);
+  // box-shadow: -4px 4px 12px #f5f5f5, 4px 0px 6px #f5f5f5;
+  // margin-bottom: 20px;
+  // border: 2px solid #f4f4f5;
   display: flex;
+  align-items: center;
   width: 100%;
   .requestCardHeader {
     width: 80%;
@@ -38,19 +41,24 @@
       p {
         margin: 0;
         padding: 0;
-        font-family: "interMedium";
+        font-family: "interSemiBold";
+        color: #717171;
       }
       .requestIdTitle {
         display: flex;
         align-items: center;
-        gap: 4px;
+        gap: 10px;
         font-weight: 500;
       }
       h3 {
         margin: 0;
         padding: 0;
         font-size: 14px;
-        letter-spacing: 0.5px;
+        font-family: "interMedium";
+      }
+      svg {
+        font-size: 18px;
+        color: #495057;
       }
     }
     .requestIdDetails {
@@ -65,25 +73,25 @@
     }
   }
   .requestCardBody {
-    width: 20%;
+    width: 40%;
     display: flex;
     justify-content: end;
     gap: 12px;
-    align-items: flex-start;
+    align-items: center;
     color: var(--color-dark);
     font-size: 12px;
   }
   .requestIdpara {
     font-size: 12px;
-    letter-spacing: 1px;
-    color: var(--color-dark);
+    color: #717171;
     display: flex;
     gap: 4px;
+    margin: 0;
+    font-family: "interSemiBold";
   }
 }
 .label {
   font-size: 13px;
   color: var(--color-dark);
-  letter-spacing: 0.5px;
   padding: 6px 0px 0px 0px;
 }

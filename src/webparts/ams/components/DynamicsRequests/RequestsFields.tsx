@@ -598,9 +598,9 @@ const RequestsFields = ({
         <div className={dynamicFieldsStyles.formContainer}>
           <div className="profile_header_content">
             <div>
-              <h2>
+              <span>
                 {recordAction == "View" ? "View" : "Edit"} Request Details
-              </h2>
+              </span>
               <p>
                 {recordAction === "View"
                   ? "Review the submitted request and its approval flow."
@@ -611,7 +611,7 @@ const RequestsFields = ({
           <div
             style={
               navigateFrom == "MyRequest"
-                ? { height: "480px" }
+                ? { height: "510px" }
                 : navigateFrom == "MyApproval"
                 ? { height: "510px" }
                 : {}
@@ -624,7 +624,7 @@ const RequestsFields = ({
                   key={sectionName}
                   className={dynamicFieldsStyles.formsCotainer}
                 >
-                  <h3 className="overAllHeading">{sectionName}</h3>
+                  <span className="overAllHeading">{sectionName}</span>
                   <div className={dynamicFieldsStyles.singlelineFields}>
                     {fields
                       .filter((f) => f.columnType === "Singleline")
@@ -966,7 +966,7 @@ const RequestsFields = ({
             </div> */}
             {recordAction === "Edit" && navigateFrom === "MyApproval" && (
               <>
-                <Label className="overAllHeading">Approvers section</Label>
+                <span className="overAllHeading">Approvers section</span>
 
                 <div className={dynamicFieldsStyles.approverSectionContainer}>
                   <div
@@ -1062,11 +1062,16 @@ const RequestsFields = ({
             <>
               <div className={dynamicFieldsStyles.HistoryContainer}>
                 <div className={dynamicFieldsStyles.history}>
-                  <Label className="overAllHeading">Approval history</Label>
-                  <div className="customDataTableContainer">
+                  <span
+                    style={{ paddingBottom: "22px" }}
+                    className="overAllHeading"
+                  >
+                    Approval history
+                  </span>
+                  <div className="ApprovalHistoryTable">
                     <DataTable
                       paginator
-                      rows={5}
+                      rows={4}
                       sortField="itemID"
                       sortOrder={-1}
                       scrollable
@@ -1084,6 +1089,7 @@ const RequestsFields = ({
                       <Column field="stage" header="Stage"></Column>
                       <Column
                         field="approver"
+                        style={{ width: "30%" }}
                         header="Name"
                         body={(rowdata) =>
                           peoplePickerTemplate(rowdata?.approver)
@@ -1091,18 +1097,20 @@ const RequestsFields = ({
                       ></Column>
                       <Column
                         field="status"
-                        header="Action"
+                        header="Status"
                         body={renderStatusColumn}
-                        style={{ width: "10rem" }}
+                        style={{ width: "10%" }}
                       ></Column>
                       <Column
                         field="comments"
                         header="Comments"
+                        style={{ width: "30%" }}
                         body={renderCommentsColumn}
                       ></Column>
                       <Column
                         field="signature"
                         header="Sign"
+                        style={{ width: "30%" }}
                         body={renderSignatureColumn}
                       ></Column>
                     </DataTable>
@@ -1162,7 +1170,6 @@ const RequestsFields = ({
                                   onClick={() => downloadFile(file)}
                                   style={{
                                     cursor: "pointer",
-                                    textDecoration: "underline",
                                   }}
                                 >
                                   {file?.name ? file?.name : ""}
