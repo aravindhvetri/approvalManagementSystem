@@ -11,18 +11,21 @@
   }
   .FlowSideBarButtons {
     display: flex;
-    gap: 4%;
+    gap: 2%;
     width: 70%;
     justify-content: flex-end;
   }
 }
 .radioContainer {
   display: flex;
-  margin-left: 40px;
+  margin-left: 8px;
+  padding-bottom: 15px;
   .radioDiv {
     display: flex;
+    align-items: center;
+    justify-content: center;
     .radioDivLabel {
-      padding: 0 50px 0 10px;
+      padding: 0 50px 0 6px;
       color: #353862;
       font-weight: 500;
       font-size: 14px;
@@ -30,13 +33,14 @@
   }
 }
 .EmailContainer {
-  height: 466px;
+  height: 434px;
   overflow: auto;
   margin-bottom: 20px;
+  padding-right: 6px;
 }
 .tabViewContainer {
   height: 40px;
-  margin-bottom: 20px;
+  margin-bottom: 10px;
   width: 100%;
 }
 .modalHeader {

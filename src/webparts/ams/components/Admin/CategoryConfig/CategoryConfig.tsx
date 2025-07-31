@@ -631,7 +631,7 @@ const CategoryConfig = ({
                           Category<span className="required">*</span>
                         </Label>
                         <InputText
-                          className={`${categoryConfigStyles.input}`}
+                          className={`inputField ${categoryConfigStyles.input}`}
                           value={categoryInputs}
                           disabled={actionsBooleans.isView}
                           placeholder="Enter Category"
@@ -651,7 +651,7 @@ const CategoryConfig = ({
                           <span className="required">*</span>
                         </Label>
                         <InputText
-                          className={`${categoryConfigStyles.input}`}
+                          className={`inputField ${categoryConfigStyles.input}`}
                           value={requestInput?.format}
                           placeholder="Only alphabets allowed"
                           onChange={(e) => {
@@ -680,7 +680,7 @@ const CategoryConfig = ({
                         </Label>
 
                         <InputText
-                          className={`${categoryConfigStyles.input}`}
+                          className={`inputField ${categoryConfigStyles.input}`}
                           value={requestInput?.digit}
                           placeholder="Enter number of digits (e.g., 5)"
                           onChange={(e) => {
@@ -753,6 +753,7 @@ const CategoryConfig = ({
                                       ApproverConfiguration(e);
                                     }}
                                     placeholder="Select approver type"
+                                    className="inputField"
                                   />
                                 </div>
                               </div>
@@ -1019,7 +1020,11 @@ const CategoryConfig = ({
         <>
           <div className="customDataTableCardContainer">
             <div
-              style={{ borderBottom: "none", paddingBottom: "0px" }}
+              style={{
+                borderBottom: "none",
+                paddingBottom: "0px",
+                marginBottom: "25px",
+              }}
               className="profile_header_content"
             >
               <div>
@@ -1039,10 +1044,12 @@ const CategoryConfig = ({
               <DataTable
                 value={categoryDetails}
                 paginator
-                rows={4}
+                rows={3}
                 className="custom-card-table"
                 emptyMessage={
-                  <p style={{ textAlign: "center" }}>No Records Found</p>
+                  <p className="NoDatas" style={{ textAlign: "center" }}>
+                    No Records Found
+                  </p>
                 }
               >
                 <Column
@@ -1051,7 +1058,7 @@ const CategoryConfig = ({
                       <div className="requestCardHeader">
                         <div className="requestId">
                           <h3 className="requestIdTitle">
-                            <BiCategory style={{ fontSize: "20px" }} />
+                            <BiCategory style={{ fontSize: "18px" }} />
                             {rowData.category}
                           </h3>
                           {/* <span>{renderStatusColumn(rowData)}</span> */}

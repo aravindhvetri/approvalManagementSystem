@@ -78,14 +78,15 @@ const AttachmentUploader = ({ context, datas }) => {
           <ul style={{ listStyle: "none", padding: 0 }}>
             {files.map((file, index) => (
               <li className={attachmentStyles?.fileList} key={index}>
-                <Tag
-                  className={attachmentStyles.filNameTag}
-                  value={file.name}
-                />
-                <GiCancel
-                  style={{ cursor: "pointer", color: "red" }}
-                  onClick={() => removeFile(file.name)}
-                />
+                <div className={attachmentStyles.filNameTag}>
+                  <div>{file.name}</div>
+                  <div>
+                    <GiCancel
+                      style={{ cursor: "pointer", color: "#495057" }}
+                      onClick={() => removeFile(file.name)}
+                    />
+                  </div>
+                </div>
               </li>
             ))}
           </ul>

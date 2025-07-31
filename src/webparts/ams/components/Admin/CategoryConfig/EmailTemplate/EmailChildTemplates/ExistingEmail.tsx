@@ -71,11 +71,12 @@ const ExistingEmail = ({ ExisitingEmailData }) => {
             display: "flex",
             justifyContent: "center",
             alignItems: "center",
+            fontSize: "13px",
           }}
           className={ExistingEmailstyles.emailBodyPreview}
         >
           <Label className={ExistingEmailstyles.bodyLabel}>
-            No Email content found !
+            No email content found !
           </Label>
         </div>
       );

@@ -22,12 +22,12 @@
 }
 
 .labelNote {
-  width: 252px;
+  width: max-content;
   padding-top: 4px;
   small {
-    background: #000000bd;
-    color: white;
-    padding: 4px;
+    background: #7a6b6b;
+    color: var(--white);
+    padding: 5px 12px !important;
     border-radius: 3px;
     font-size: 12px;
   }
@@ -47,8 +47,8 @@
   }
   .RejectionDiv {
     min-width: 12%;
-    background-color: var(--color-secondary);
-    color: var(--white);
+    background-color: var(--color-bg-tags);
+    color: var(--color-tags);
     padding: 6px 14px 8px 14px;
     height: 33px;
     border-radius: 20px;
@@ -56,6 +56,7 @@
     font-size: 13px;
     display: flex;
     align-items: center;
+    border: 1px solid #007bff2e !important;
   }
 }
 .approversContainer {
@@ -78,8 +79,9 @@
       font-size: 12px;
       margin-bottom: 10px;
       display: inline-block;
-      background-color: var(--color-secondary);
-      color: var(--white);
+      background-color: var(--color-bg-tags);
+      color: var(--color-tags);
+      border: 1px solid #007bff2e !important;
     }
 
     .approversList {
@@ -174,7 +176,6 @@
   overflow: auto;
 }
 .approvalConfigContainer {
-  padding: 10px 0px 0px 0px;
   width: 100%;
   gap: 15px;
   .approvalSubContainer {
@@ -194,12 +195,6 @@
         width: 100%;
         border-radius: 6px;
         padding: 10px 15px 15px 15px;
-        .stageConfigHeader {
-          @include label;
-          font-weight: 500;
-          font-size: 14px !important;
-          color: var(--color-primary) !important;
-        }
         .deleteStageButton {
           display: flex;
           width: 100%;
@@ -273,4 +268,10 @@
   display: flex;
   width: 100%;
   gap: 20px;
+}
+.stageConfigHeader {
+  @include label;
+  font-family: "interSemiBold", sans-serif;
+  font-size: 14px !important;
+  color: var(--color-primary) !important;
 }

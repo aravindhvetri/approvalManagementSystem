@@ -1,69 +1,69 @@
 /*font families.................................................*/
 @font-face {
   font-family: "interBlack";
-  src: url(../External/fonts/Inter_18pt-Black.ttf);
+  src: url("../External/fonts/Inter_18pt-Black.ttf");
 }
 @font-face {
   font-family: "interSemiBold";
-  src: url(../External/fonts/Inter_18pt-SemiBold.ttf);
+  src: url("../External/fonts/Inter_18pt-SemiBold.ttf");
 }
 @font-face {
   font-family: "interLight";
-  src: url(../External/fonts/Inter_18pt-Light.ttf);
+  src: url("../External/fonts/Inter_18pt-Light.ttf");
 }
 @font-face {
   font-family: "interMedium";
-  src: url(../External/fonts/Inter_18pt-Medium.ttf);
+  src: url("../External/fonts/Inter_18pt-Medium.ttf");
 }
 @font-face {
   font-family: "interBold";
-  src: url(../External/fonts/Inter_18pt-Bold.ttf);
+  src: url("../External/fonts/Inter_18pt-Bold.ttf");
 }
 @font-face {
   font-family: "interRegular";
-  src: url(../External/fonts/Inter_24pt-Regular.ttf);
+  src: url("../External/fonts/Inter_24pt-Regular.ttf");
 }
 @font-face {
   font-family: "merriweatherBlack";
-  src: url(../External/fonts/Merriweather_24pt-Black.ttf);
+  src: url("../External/fonts/Merriweather_24pt-Black.ttf");
 }
 @font-face {
   font-family: "merriweatherSemiBold";
-  src: url(../External/fonts/Merriweather_36pt-SemiBold.ttf);
+  src: url("../External/fonts/Merriweather_36pt-SemiBold.ttf");
 }
 @font-face {
   font-family: "merriweatherLight";
-  src: url(../External/fonts/Merriweather_24pt-Light.ttf);
+  src: url("../External/fonts/Merriweather_24pt-Light.ttf");
 }
 @font-face {
   font-family: "merriweatherBold";
-  src: url(../External/fonts/Merriweather_36pt-Bold.ttf);
+  src: url("../External/fonts/Merriweather_36pt-Bold.ttf");
 }
 @font-face {
   font-family: "merriweatherMedium";
-  src: url(../External/fonts/Merriweather_24pt-Medium.ttf);
+  src: url("../External/fonts/Merriweather_24pt-Medium.ttf");
 }
 @font-face {
   font-family: "merriweatherRegular";
-  src: url(../External/fonts/Merriweather_24pt-Regular.ttf);
+  src: url("../External/fonts/Merriweather_24pt-Regular.ttf");
 }
 /* Common WebPart FullWidth and CanvasZone Default Code .....................*/
 
 /* .fc-theme-standard .fc-scrollgrid {
   border: none !important;
 }
+#workbenchPageContent > div > div > div {
+  padding: 0px !important;
+} */
 *::-webkit-scrollbar {
-  height: 8px;
-  width: 8px;
+  height: 3px;
+  width: 3px;
 }
 
 *::-webkit-scrollbar-thumb {
   border-radius: 10px;
   background-color: rgb(192, 192, 192);
 }
-#workbenchPageContent > div > div > div {
-  padding: 0px !important;
-} */
 * {
   font-family: "interRegular", sans-serif;
 }
@@ -112,12 +112,29 @@ div[data-automationid="SiteHeader"] {
   padding: 8px;
   font-size: 12px;
   border: 1px solid var(--inputBorderColor);
+  color: #1e2125;
 }
 .p-inputtext:enabled:focus {
   box-shadow: none;
 }
 .p-inputtext:enabled:focus {
   border-color: var(--inputBorderColor);
+}
+.inputField:disabled {
+  background-color: #e3e3e380;
+  border: none !important;
+}
+.inputField.p-disabled {
+  background-color: #e3e3e380;
+  border: none !important;
+}
+.inputField.p-calendar-disabled {
+  background-color: #e3e3e380;
+  border: none !important;
+}
+.ms-BasePicker-text:has(input[disabled]),
+.ms-BasePicker-text:has(button[disabled]) {
+  border: none !important;
 }
 /*........................................................*/
 
@@ -127,29 +144,31 @@ div[data-automationid="SiteHeader"] {
   padding: 6px 10px 0px 10px;
   border-radius: 4px;
 }
+.NoDatas {
+  font-size: 12px;
+  color: #adadad;
+}
+
 .allRecords {
   font-size: 13px;
   padding-bottom: 10px;
   font-family: "interSemiBold", sans-serif;
   color: #8a8d91;
 }
+
 .customDataTableContainer {
-  /* box-shadow: -4px 4px 12px #f5f5f5, 4px 0px 6px #f5f5f5; */
-  /* box-shadow: -4px 0px 6px #f5f5f5, 4px 0px 6px #f5f5f5,
-   0px -4px 6px #f5f5f5,  0px 4px 6px #f5f5f5; */
   border: 1px solid #e4e4e7;
   padding: 18px;
   border-radius: 5px;
   margin: 10px 0px 10px 0px;
 }
+
 .customDataTableCardContainer {
-  /* box-shadow: -4px 0px 6px #f5f5f5,  4px 0px 6px #f5f5f5,
-     0px -4px 6px #f5f5f5,  0px 4px 6px #f5f5f5;  */
-  /* padding: 10px; */
-  border-radius: 6px;
-  margin-bottom: 10px;
-  height: auto;
+  padding-right: 8px;
+  height: 302px;
+  overflow: auto;
 }
+
 .p-datatable-emptymessage {
   font-size: 14px;
   color: #979aa5;
@@ -158,12 +177,13 @@ div[data-automationid="SiteHeader"] {
   border: none !important;
   padding: 0;
 }
+
 .p-datatable .p-datatable-tbody > tr > td {
   border: none;
   padding: 0;
 }
+
 .customDataTableContainer .p-datatable .p-datatable-thead > tr > th {
-  /* background-color: var(--dataTableHeaderBgColor); */
   padding: var(--dataTableWholePadding);
   font-size: 12px;
   color: var(--dataTableHeaderTextColor);
@@ -172,6 +192,7 @@ div[data-automationid="SiteHeader"] {
   font-weight: var(--dataTableHeaderFontWeight);
   letter-spacing: 0.5px;
 }
+
 .customDataTableContainer .p-datatable .p-datatable-tbody > tr > td {
   color: var(--color-dark);
   font-size: 12px;
@@ -179,22 +200,27 @@ div[data-automationid="SiteHeader"] {
   border: 1px solid #dee2e6a8;
   border-width: 0 0 1px 0;
 }
+
 .customActionMenu .p-button {
   background: transparent;
   border: transparent;
   color: var(--color-dark);
 }
+
 .p-menu .p-menuitem > .p-menuitem-content .p-menuitem-link {
   background: var(--white);
 }
+
 .customActionMenu .pi {
   font-size: 12px;
 }
+
 .customView .pi-eye,
 .customView .p-menuitem-text {
   font-size: 12px;
   color: var(--color-dark);
 }
+
 .customEdit .pi-file-edit,
 .customEdit .p-menuitem-text {
   font-size: 12px;
@@ -208,7 +234,7 @@ div[data-automationid="SiteHeader"] {
 }
 /*.....................................................................*/
 
-/*Header Component common styles(import Style from CommonStyles.module.scss)*/
+/*Header Component common styles(import Style from CommonStyles.module.scss)............*/
 
 .headerContainer .p-dropdown {
   width: 40%;
@@ -229,7 +255,7 @@ div[data-automationid="SiteHeader"] {
 }
 
 .p-placeholder {
-  color: var(--color-dark);
+  color: #a2a2a2;
   font-weight: calc(var(--dataTableHeaderFontWeight)-100);
   font-size: 12px;
 }
@@ -258,9 +284,6 @@ div[data-automationid="SiteHeader"] {
   box-shadow: none;
 }
 
-/* .addNewButton {
-  width: 10%;
-} */
 .addNewButton .p-button {
   width: 100%;
 }
@@ -280,31 +303,27 @@ div[data-automationid="SiteHeader"] {
 }
 
 .addNewButton .p-button {
-  background-color: var(--color-primary);
+  background-color: #d8effa;
   gap: 6px;
-  color: var(--white);
+  color: var(--color-primary);
   border: 0;
   height: 32px;
 }
 .addNewButton .p-button:hover {
-  background-color: var(--color-light);
-  color: var(--color-dark);
+  background-color: var(--color-secondary);
+  color: var(--white);
   gap: 6px;
   border: 0;
   height: 32px;
-  /* transition: ease-in-out;
-  transition-timing-function: linear;
-  transition-duration: 0.5s; */
 }
 
 .addFileButton .p-button {
   background-color: var(--white);
   display: flex;
-  width: 110px;
+  width: max-content;
   gap: 1px;
   color: var(--black);
   font-weight: 500;
-  /* padding: 6px 15px 6px 15px; */
   font-size: 12px;
   border: 1px solid #dee2e6;
   border-radius: 5px;
@@ -319,6 +338,7 @@ div[data-automationid="SiteHeader"] {
 .addNewCustomWorkflowButton span {
   font-size: 14px;
 }
+
 .addNewCustomWorkflowIcon {
   display: flex;
   align-items: center;
@@ -396,6 +416,7 @@ div[data-automationid="SiteHeader"] {
 .customButtonWrapper .pi {
   font-size: 14px;
 }
+
 /*Common Styles buttons with etc ......................................*/
 .customCancelButton {
   background-color: var(--color-light);
@@ -424,18 +445,18 @@ div[data-automationid="SiteHeader"] {
   font-size: 12px;
 }
 .customRejectButton:hover {
-  background-color: var(--liteRed);
+  background-color: #ed3f3f;
   color: var(--white);
 }
 .customSubmitButton:hover {
   background-color: var(--color-primary);
   color: var(--white);
 }
-.customCancelButton:hover {
-  background-color: var(--color-secondary);
+/* .customCancelButton:hover {
+  background-color: var(--color-light);
   color: var(--white);
   border: 1px solid var(--white);
-}
+} */
 .error_message {
   color: #d81b1b;
   font-size: 12px;
@@ -444,36 +465,37 @@ div[data-automationid="SiteHeader"] {
   font-weight: 600;
 }
 .ms-BasePicker-text input::placeholder {
-  font-size: 13px;
-  color: #6c757d;
+  font-size: 12px;
+  color: #a2a2a2;
 }
 input::placeholder {
-  color: #9b757d;
-  font-size: 13px;
+  color: #a2a2a2;
+  font-size: 12px;
 }
 .p-placeholder {
-  color: #9b757d;
-  font-size: 13px;
+  color: #a2a2a2;
+  font-size: 12px;
 }
 .p-inputtextarea::placeholder {
-  color: #9b757d;
-  font-size: 13px;
+  color: #a2a2a2;
+  font-size: 12px;
 }
 .ms-BasePicker-text ::placeholder {
-  color: #9b757d;
-  font-size: 13px;
+  color: #a2a2a2;
+  font-size: 12px;
 }
 .actionIconLayer {
   display: flex;
   justify-content: center;
   align-items: center;
-  background: var(--white);
+  /* background: var(--white); */
   padding: 4px 5px;
   border-radius: 6px;
-  box-shadow: -1px 2px 13px -8px #000;
+  /* box-shadow: -1px 2px 13px -8px #000; */
   cursor: pointer;
   color: var(--black);
 }
+
 /* Toast Common Styles: .............................................*/
 .toastContainer {
   display: flex;
@@ -501,7 +523,7 @@ input::placeholder {
 
 .p-toast .p-toast-message .p-toast-icon-close {
   margin-top: 6px;
-  color: var(--black);
+  color: var(--white);
 }
 .toast-imgcontainer-success {
   padding: 10px;
@@ -514,12 +536,13 @@ input::placeholder {
   border-radius: 6px; */
 }
 .p-toast .p-toast-message.p-toast-message-warn {
-  background: #feb82f;
+  background: #f1c40f;
   border: none;
   box-shadow: rgb(0 0 0 / 25%) 0px 13px 27px -5px,
     rgb(0 0 0 / 30%) 0px 8px 16px -8px;
-  color: var(--black);
+  color: var(--white);
 }
+
 /*MultiPeoplePicker Common Styles..........................................*/
 .user-selector-group .ms-Image {
   width: 26px !important;
@@ -539,15 +562,15 @@ input::placeholder {
 }
 .workFlowHeaderContainer {
   display: flex;
-  gap: 6px;
-  font-size: 16px;
+  gap: 8px;
+  font-size: 15px;
   align-items: center;
   padding-bottom: 12px;
 }
 .workFlowHeaderIcon {
   display: flex;
   align-items: center;
-  font-size: 22px;
+  font-size: 18px;
 }
 
 /* Tabview Common Styles.................................................... */
@@ -568,6 +591,17 @@ input::placeholder {
   justify-content: space-between;
   padding: 4px;
   border-radius: 30px;
+}
+
+.emailTabViewContainer .p-tabview-nav {
+  justify-content: left !important;
+  background-color: transparent !important;
+  width: 644px;
+}
+
+.emailTabViewContainer .p-tabview-nav-link {
+  font-size: 13px;
+  padding: 7px 22px;
 }
 
 .p-tabview-nav-link {
@@ -606,7 +640,7 @@ li.p-highlight .p-tabview-nav-link {
   margin-left: 4px;
 }
 .errorMsg {
-  color: var(--red);
+  color: red;
   font-size: 12px;
 }
 
@@ -636,34 +670,32 @@ li.p-highlight .p-tabview-nav-link {
 
 .notesContainer {
   width: 100%;
-  padding: 18px;
-  border: 1px solid var(--color-light);
+  padding: 12px 24px 12px 24px;
   border-radius: 4px;
   margin-bottom: 8px;
-  h1 {
+  border-left: 6px solid #3b82f6;
+  border-radius: 6px;
+
+  span {
+    display: flex;
+    align-items: center;
+    gap: 6px;
     font-size: 14px;
-    font-family: "Courier New", Courier, monospace;
-    color: orangered;
+    font-family: "interSemiBold", sans-serif;
+    color: #3b82f6;
     margin: 0;
   }
 
   ul {
     margin: 0;
+    padding: 5px 15px;
     padding-top: 10px;
   }
 
   li {
-    list-style-type: none; /* Removes default numbering */
-    font-size: 14px;
-    font-family: "Gill Sans", "Gill Sans MT", Calibri, "Trebuchet MS",
-      sans-serif;
-    color: #34495e;
-  }
-
-  li::before {
-    content: "➱ "; /* Use any symbol */
-    color: #229954; /* Optional: Change color */
-    margin-right: 8px;
+    font-size: 13px;
+    font-family: "interRegular", sans-serif;
+    color: #3b82f6;
   }
 }
 .notesList {
@@ -676,12 +708,23 @@ li.p-highlight .p-tabview-nav-link {
   width: 32%;
 }
 /* Common Styles for the RadioButtons.......................................... */
+.p-radiobutton .p-radiobutton-box .p-radiobutton-icon {
+  background-color: var(--color-secondary);
+  width: 8px;
+  height: 8px;
+}
 .p-radiobutton.p-highlight .p-radiobutton-box {
-  border-color: var(--color-dark);
-  background-color: var(--color-dark);
+  border-color: var(--white);
+  background-color: var(--white);
+  border: 1px solid var(--color-dark);
 }
 .p-radiobutton .p-radiobutton-box {
-  border: 2px solid var(--color-dark);
+  border: 1px solid var(--color-dark);
+  width: 15px;
+  height: 15px;
+}
+.p-radiobutton {
+  align-items: center;
 }
 /* People Picker styles.............................................. */
 .ms-PeoplePicker {
@@ -705,7 +748,10 @@ li.p-highlight .p-tabview-nav-link {
   /* background: #dadada2e; */
 }
 
-/* Custom Common styles for the Paginators */
+/* Custom Common styles for the Paginators................................ */
+.p-paginator {
+  padding: 22px 0px 0px 0px !important;
+}
 .p-paginator .p-paginator-pages .p-paginator-page {
   background-color: #0e0c0c29;
   color: var(--black);
@@ -795,7 +841,7 @@ li.p-highlight .p-tabview-nav-link {
   font-size: 12px;
 }
 .p-multiselect-trigger-icon {
-  color: var(--color-tags);
+  color: var(--color-dark);
   height: 13px;
   width: 13px;
 }
@@ -867,8 +913,8 @@ li.p-highlight .p-tabview-nav-link {
   width: 34px;
   height: 34px;
   border-radius: 50%;
-  background-color: #f3f3f3;
-  color: var(--color-primary);
+  background-color: #55555520;
+  color: #555;
   font-size: 12px;
   display: flex;
   align-items: center;
@@ -967,14 +1013,9 @@ li.p-highlight .p-tabview-nav-link {
   margin-bottom: 0px;
 }
 .requestCard {
-  /* background-color: #fff; */
-  /* border-radius: 10px; */
   margin-bottom: 6px;
   padding: 6px 0 10px 8px;
   border-bottom: 1px solid var(--color-light);
-  /* box-shadow: -4px 4px 12px #f5f5f5, 4px 0px 6px #f5f5f5; */
-  /* margin-bottom: 20px; */
-  /* border: 2px solid #f4f4f5; */
   display: flex;
   align-items: center;
   width: 100%;
@@ -988,7 +1029,7 @@ li.p-highlight .p-tabview-nav-link {
   width: 40%;
   display: flex;
   justify-content: end;
-  gap: 12px;
+  gap: 18px;
   align-items: center;
   color: var(--color-dark);
   font-size: 12px;
@@ -1017,7 +1058,7 @@ li.p-highlight .p-tabview-nav-link {
   font-size: 12px;
   color: #717171;
   display: flex;
-  gap: 4px;
+  gap: 10px;
   align-items: center;
   margin: 0;
   font-family: "interSemiBold";
@@ -1041,7 +1082,7 @@ li.p-highlight .p-tabview-nav-link {
   font-family: "interMedium";
 }
 .requestId svg {
-  font-size: 18px;
+  font-size: 16px;
   color: #495057;
 }
 /*CategoryName Div styles......................................... */
@@ -1073,7 +1114,13 @@ li.p-highlight .p-tabview-nav-link {
   color: var(--color-tags);
   background-color: var(--color-bg-tags);
   border: 1px solid #007bff2e !important;
-  letter-spacing: 0.5px;
+}
+.categoryNameAnotherTag {
+  color: var(--white) !important;
+  background-color: #7a6b6b !important;
+  padding: 5px 12px !important;
+  border-radius: 5px !important;
+  border: none !important;
 }
 
 /* Modern Button Design with icon.................................*/
@@ -1142,7 +1189,7 @@ li.p-highlight .p-tabview-nav-link {
   height: 42px;
 }
 .p-accordion .p-highlight .p-accordion-header-link {
-  background: #e3e3e3;
+  background: #f1f1f1;
   color: var(--black);
 }
 .p-accordion-tab {
@@ -1165,7 +1212,7 @@ li.p-highlight .p-tabview-nav-link {
 
 /*Delete Confirmation popup styles......................................... */
 .modal-template .p-dialog-header {
-  padding: 10px 0px;
+  padding: "15px 0px";
 }
 
 .modal-template .p-dialog-content {
@@ -1183,7 +1230,7 @@ li.p-highlight .p-tabview-nav-link {
   display: none;
 }
 .modal-container {
-  padding: 14px 20px;
+  padding: 0px 20px 14px 20px;
 }
 .modalIconContainer {
   position: absolute;
@@ -1195,7 +1242,6 @@ li.p-highlight .p-tabview-nav-link {
   width: 44px;
   border-radius: 50%;
   right: 43%;
-  box-shadow: 10px 3px 30px 0px rgba(0, 0, 0, 0.75);
   background: #fd5252;
 }
 .modalIconContainer svg {
@@ -1228,7 +1274,7 @@ li.p-highlight .p-tabview-nav-link {
 .modal-header h3,
 .modal-header h4 {
   margin: 0;
-  border-bottom: 3px solid #0a1b39;
+  border-bottom: 1px solid #0a1b39;
   padding-bottom: 5px;
 }
 .modal-btn-section {
@@ -1238,8 +1284,8 @@ li.p-highlight .p-tabview-nav-link {
   gap: 10px;
 }
 .cancel-btn {
-  background-color: var(--color-dark);
-  color: var(--white);
+  background-color: var(--color-light);
+  color: var(--color-dark);
   border: none;
   border-radius: 3px;
   padding: 0.5rem 1.5rem;

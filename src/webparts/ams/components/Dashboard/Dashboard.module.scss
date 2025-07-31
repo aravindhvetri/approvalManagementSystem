@@ -5,7 +5,7 @@
 }
 .profile_header_content {
   padding: 0px;
-  margin-bottom: 20px;
+  margin-bottom: 25px;
   span {
     display: block;
     margin: 0;
@@ -57,7 +57,7 @@
         font-family: "interMedium";
       }
       svg {
-        font-size: 18px;
+        font-size: 16px;
         color: #495057;
       }
     }
@@ -76,7 +76,7 @@
     width: 40%;
     display: flex;
     justify-content: end;
-    gap: 12px;
+    gap: 18px;
     align-items: center;
     color: var(--color-dark);
     font-size: 12px;
@@ -85,7 +85,7 @@
     font-size: 12px;
     color: #717171;
     display: flex;
-    gap: 4px;
+    gap: 10px;
     margin: 0;
     font-family: "interSemiBold";
   }

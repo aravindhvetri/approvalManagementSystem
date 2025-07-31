@@ -337,7 +337,7 @@ const CustomApprover = ({
         {data !== null && (
           <div className="categoryName">
             <>
-              <div className="categoryNameTag">
+              <div className="categoryNameTag categoryNameAnotherTag">
                 {data === 1
                   ? "Anyone can approve"
                   : data === 2
@@ -374,7 +374,11 @@ const CustomApprover = ({
         onSelectionChange={(e) => {
           e.value && setSelectedStage(e.value);
         }}
-        emptyMessage={<p style={{ textAlign: "center" }}>No Records Found</p>}
+        emptyMessage={
+          <p className="NoDatas" style={{ textAlign: "center" }}>
+            No Records Found
+          </p>
+        }
       >
         <Column
           body={(rowData, row) => (
@@ -390,7 +394,7 @@ const CustomApprover = ({
                 <div className="requestCardHeader">
                   <div className="requestId">
                     <h3 className="requestIdTitle" style={{ fontSize: "13px" }}>
-                      <MdAppRegistration style={{ fontSize: "20px" }} />
+                      <MdAppRegistration style={{ fontSize: "18px" }} />
                       {`Stage ${rowData?.stage} approval`}
                     </h3>
                   </div>
@@ -476,7 +480,7 @@ const CustomApprover = ({
   return (
     <>
       {actionBooleans?.isEdit && (
-        <div>{notesContainerDetailsSingleLine("ⓘ Info", notes)}</div>
+        <div>{notesContainerDetails("Info", notes)}</div>
       )}
       <div className={`${ApprovalWorkFlowStyles.topSection}`}>
         <div className={`${ApprovalWorkFlowStyles.nameDiv}`}>
@@ -492,6 +496,7 @@ const CustomApprover = ({
             }}
             placeholder="Workflow Name"
             style={{ width: "100%" }}
+            className="inputField"
           />
         </div>
         <div className={`${ApprovalWorkFlowStyles.rejectDiv}`}>
@@ -511,6 +516,7 @@ const CustomApprover = ({
             }}
             placeholder="Select Reject Type"
             style={{ width: "100%" }}
+            className="inputField"
           />
         </div>
         <div className={`${ApprovalWorkFlowStyles.addStageButton}`}>
@@ -622,6 +628,7 @@ const CustomApprover = ({
                       }}
                       placeholder="Select Type of Workflow"
                       style={{ marginTop: "0.5rem" }}
+                      className="inputField"
                     />
                   </div>
                   <div>

@@ -1211,7 +1211,15 @@ const DynamicSectionWithField = ({
             />
           )}
       </div>
-      <div className={`${DynamicSectionWithFieldStyles.container} container`}>
+      <div
+        style={
+          categoryClickingID === null &&
+          sections[sections.length - 1]?.columns.length > 0
+            ? { height: "465px" }
+            : { height: "476px" }
+        }
+        className={`${DynamicSectionWithFieldStyles.container} container`}
+      >
         <div className={DynamicSectionWithFieldStyles.sectionWrapper}>
           {sections.map((section, sectionIndex) => (
             <div
@@ -1221,12 +1229,18 @@ const DynamicSectionWithField = ({
               {/* Section Name Input */}
               <div className={DynamicSectionWithFieldStyles.sectionlabelHeader}>
                 <div
+                  style={
+                    section?.isEditing
+                      ? { padding: 0 }
+                      : { padding: "1px 15px" }
+                  }
                   className={
                     DynamicSectionWithFieldStyles.sectionInputContainer
                   }
                 >
                   {section.isEditing ? (
                     <div
+                      style={{ padding: "6px" }}
                       className={
                         DynamicSectionWithFieldStyles.sectionInputContainer
                       }
@@ -1239,7 +1253,7 @@ const DynamicSectionWithField = ({
                           updatedSections[sectionIndex].name = e.target.value;
                           setSections(updatedSections);
                         }}
-                        className={DynamicSectionWithFieldStyles.sectionInput}
+                        className={`inputField${DynamicSectionWithFieldStyles.sectionInput}`}
                       />
                       <div className="actionIconLayer">
                         <IoCheckmark
@@ -1264,7 +1278,7 @@ const DynamicSectionWithField = ({
                             onClick={() => {
                               handleSectionNameEditFunc(sectionIndex);
                             }}
-                            style={{ cursor: "pointer" }}
+                            style={{ cursor: "pointer", color: "#272634" }}
                           />
                         </div>
                       )}
@@ -1274,10 +1288,16 @@ const DynamicSectionWithField = ({
                 <div>
                   {(actionBooleans?.isEdit || categoryClickingID === null) &&
                     sections?.length > 1 && (
-                      <LuTrash2
-                        className={DynamicSectionWithFieldStyles.deleteIcon}
+                      <Button
+                        icon={<LuTrash2 style={{ color: "red" }} />}
+                        label="Remove section"
                         onClick={() => {
                           handleDeleteSection(sectionIndex);
+                        }}
+                        className="modernButton"
+                        style={{
+                          padding: "6px 15px 6px 15px",
+                          gap: "10px",
                         }}
                       />
                     )}
@@ -1417,6 +1437,7 @@ const DynamicSectionWithField = ({
                               >
                                 <div className="actionIconLayer">
                                   <TbEdit
+                                    style={{ color: "#272634" }}
                                     onClick={() => {
                                       handleEditField(
                                         field,
@@ -1428,6 +1449,7 @@ const DynamicSectionWithField = ({
                                 </div>
                                 <div className="actionIconLayer">
                                   <LuTrash2
+                                    style={{ color: "red" }}
                                     onClick={() => {
                                       handleDeleteField(
                                         sectionIndex,
@@ -1474,7 +1496,6 @@ const DynamicSectionWithField = ({
                   }}
                   className="modernButton"
                   style={{
-                    marginTop: "10px",
                     width: "17%",
                     padding: "6px 15px 6px 15px",
                   }}

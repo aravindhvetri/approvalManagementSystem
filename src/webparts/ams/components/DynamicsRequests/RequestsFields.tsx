@@ -610,9 +610,13 @@ const RequestsFields = ({
           </div>
           <div
             style={
-              navigateFrom == "MyRequest"
+              navigateFrom === "MyRequest" && recordAction === "Edit"
+                ? { height: "502px" }
+                : navigateFrom === "MyRequest"
                 ? { height: "510px" }
-                : navigateFrom == "MyApproval"
+                : navigateFrom === "MyApproval" && recordAction === "Edit"
+                ? { height: "500px" }
+                : navigateFrom === "MyApproval"
                 ? { height: "510px" }
                 : {}
             }
@@ -657,6 +661,7 @@ const RequestsFields = ({
                                     navigateFrom === "MyRequest"
                                   )
                                 }
+                                className="inputField"
                               />
                               {errors[field.columnName] && (
                                 <span className={dynamicFieldsStyles.errorMsg}>
@@ -698,6 +703,7 @@ const RequestsFields = ({
                                     navigateFrom === "MyRequest"
                                   )
                                 }
+                                className="inputField"
                               />
                               {errors[field.columnName] && (
                                 <span className={dynamicFieldsStyles.errorMsg}>
@@ -813,6 +819,7 @@ const RequestsFields = ({
                                 hourFormat="12"
                                 dateFormat="dd/mm/yy"
                                 showIcon
+                                className="inputField"
                               />
                               {errors[field.columnName] && (
                                 <span className={dynamicFieldsStyles.errorMsg}>
@@ -896,7 +903,7 @@ const RequestsFields = ({
                                     navigateFrom === "MyRequest"
                                   )
                                 }
-                                className="w-full md:w-14rem"
+                                className="w-full md:w-14rem inputField"
                               />
                               {errors[field.columnName] && (
                                 <span className={dynamicFieldsStyles.errorMsg}>
@@ -941,6 +948,7 @@ const RequestsFields = ({
                                     navigateFrom === "MyRequest"
                                   )
                                 }
+                                className="inputField"
                                 rows={3}
                               />
                               {errors[field.columnName] && (
@@ -985,6 +993,7 @@ const RequestsFields = ({
                       onChange={(e) => {
                         getApprovalDetails("comments", e.target?.value || "");
                       }}
+                      className="inputField"
                       rows={3}
                     />
                   </div>
@@ -1000,28 +1009,34 @@ const RequestsFields = ({
                               )}
                             </Label>
                           </div>
-                          {approvalDetails?.signature && (
-                            <div>
-                              <Button
-                                label="Clear"
-                                className="customCancelButton"
-                                style={{
-                                  padding: "4px 14px",
-                                  fontSize: "12px",
-                                }}
-                                onClick={clear}
-                              />
-                            </div>
-                          )}
-                          <div style={{ padding: "4px" }}>
-                            <div>
+                          <div
+                            style={{
+                              display: "flex",
+                              alignItems: "center",
+                              gap: "5px",
+                            }}
+                          >
+                            {approvalDetails?.signature && (
+                              <div>
+                                <Button
+                                  label="Clear"
+                                  className="customCancelButton"
+                                  style={{
+                                    padding: "4px 14px",
+                                    fontSize: "12px",
+                                  }}
+                                  onClick={clear}
+                                />
+                              </div>
+                            )}
+                            <div style={{ padding: "4px" }}>
                               <Label
                                 htmlFor="signatureUpload"
                                 className={
                                   dynamicFieldsStyles.signatureUploadButton
                                 }
                               >
-                                Upload Signature Image
+                                Upload signature image
                               </Label>
                               <input
                                 id="signatureUpload"
@@ -1030,6 +1045,7 @@ const RequestsFields = ({
                                 onChange={handleImageUpload}
                                 ref={fileInputRef}
                                 style={{ display: "none" }}
+                                className="inputField"
                               />
                             </div>
                           </div>
@@ -1080,7 +1096,10 @@ const RequestsFields = ({
                       tableStyle={{ width: "100%" }}
                       emptyMessage={
                         <>
-                          <p style={{ textAlign: "center" }}>
+                          <p
+                            className="NoDatas"
+                            style={{ textAlign: "center" }}
+                          >
                             No Records Found
                           </p>
                         </>
@@ -1163,7 +1182,36 @@ const RequestsFields = ({
                             className={attachmentStyles?.fileList}
                             key={index}
                           >
-                            <Tag
+                            <div className={attachmentStyles.filNameTag}>
+                              <div
+                                onClick={() => downloadFile(file)}
+                                style={{
+                                  cursor: "pointer",
+                                }}
+                                title={file?.name}
+                              >
+                                {file?.name.length > 30
+                                  ? `${file?.name.slice(0, 30)}...`
+                                  : file?.name}
+                              </div>
+
+                              {recordAction === "Edit" &&
+                                (file?.objectURL ||
+                                  file?.authorEmail === loginUser) && (
+                                  <div
+                                    className={attachmentStyles.filesIconDiv}
+                                  >
+                                    <GiCancel
+                                      style={{
+                                        cursor: "pointer",
+                                        color: "#495057",
+                                      }}
+                                      onClick={() => removeFile(file?.name)}
+                                    />
+                                  </div>
+                                )}
+                            </div>
+                            {/* <Tag
                               className={attachmentStyles.filNameTag}
                               value={
                                 <span
@@ -1182,11 +1230,11 @@ const RequestsFields = ({
                                 <GiCancel
                                   style={{
                                     cursor: "pointer",
-                                    color: "red",
+                                    color: "#495057",
                                   }}
                                   onClick={() => removeFile(file?.name)}
                                 />
-                              )}
+                              )} */}
                           </li>
                         ))}
                       </ul>

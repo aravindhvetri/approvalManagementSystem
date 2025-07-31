@@ -42,32 +42,32 @@ $white: #ffffff;
   }
 }
 //sideNavSection UnSelectable ButtonModel styles:
-@mixin sideNavUnselectableButton {
-  display: flex;
-  gap: 18px;
-  align-items: center;
-  font-size: 12px;
-  padding: 10px 16px 10px 16px;
-  color: $sideNavBodyTextColor;
-  border-radius: 10px;
-  font-weight: 600;
-  margin-bottom: 20px;
-  cursor: pointer;
-  transition: transform 0.4s ease-in-out;
-  img {
-    width: 100%;
-    height: 100%;
-    transition: transform 0.4s ease-in-out;
-  }
-  &:hover {
-    background-color: $color-secondary;
-    transform: scale(1.08);
-    color: $color-primary;
-    img {
-      transform: scale(1.1);
-    }
-  }
-}
+// @mixin sideNavUnselectableButton {
+//   display: flex;
+//   gap: 18px;
+//   align-items: center;
+//   font-size: 12px;
+//   padding: 10px 16px 10px 16px;
+//   color: $sideNavBodyTextColor;
+//   border-radius: 10px;
+//   font-weight: 600;
+//   margin-bottom: 20px;
+//   cursor: pointer;
+//   transition: transform 0.4s ease-in-out;
+//   img {
+//     width: 100%;
+//     height: 100%;
+//     transition: transform 0.4s ease-in-out;
+//   }
+//   &:hover {
+//     background-color: $color-secondary;
+//     transform: scale(1.08);
+//     color: $color-primary;
+//     img {
+//       transform: scale(1.1);
+//     }
+//   }
+// }
 //common template is being used with the styles related to the status template.
 .statusItem {
   display: flex;
@@ -98,8 +98,9 @@ $white: #ffffff;
 .Persona {
   width: 26px;
   height: 26px;
-  background-color: var(--color-primary);
-  color: $white;
+  background-color: #55555520;
+  color: #555;
+  font-weight: 600;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -114,8 +115,9 @@ $white: #ffffff;
 .Personas {
   width: 26px;
   height: 26px;
-  background-color: var(--color-primary);
-  color: $white;
+  background-color: #55555520;
+  color: #555;
+  font-weight: 600;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -130,7 +132,7 @@ $white: #ffffff;
 @mixin label {
   color: var(--color-dark);
   padding-bottom: 8px;
-  font-weight: 400;
+  font-weight: 300;
   font-size: 13px;
   font-family: "interMedium", sans-serif;
 }

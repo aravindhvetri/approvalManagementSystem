@@ -10,7 +10,6 @@
   overflow: auto;
 }
 .approvalConfigContainer {
-  padding: 10px 0px 0px 0px;
   width: 100%;
   gap: 15px;
   .approvalSubContainer {
@@ -31,7 +30,8 @@
         padding: 13px 20px 20px 20px;
         .stageConfigHeader {
           @include label;
-          font-weight: 500;
+          font-weight: 0 !important;
+          font-family: "interSemiBold", sans-serif;
           font-size: 14px !important;
           color: var(--color-primary) !important;
           text-decoration: underline;
@@ -85,4 +85,11 @@
   font-weight: 400;
   padding: 7px 0 6px 0;
   font-family: "interRegular";
+}
+.totalStages {
+  background-color: #55555520;
+  color: #555;
+  font-weight: 600;
+  padding: 4px 6px;
+  border-radius: 4px;
 }

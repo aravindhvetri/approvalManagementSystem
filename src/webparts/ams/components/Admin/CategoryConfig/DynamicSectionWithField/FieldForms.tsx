@@ -35,7 +35,7 @@ const FieldForms = ({
             value={newField.name}
             onChange={(e) => setNewField({ ...newField, name: e.target.value })}
             placeholder="Enter name"
-            className={DynamicSectionWithFieldStyles.columnNameInput}
+            className={`${DynamicSectionWithFieldStyles.columnNameInput} inputField`}
             maxLength={25}
           />
           {isValidation && !newField?.name && (
@@ -61,7 +61,7 @@ const FieldForms = ({
             }}
             optionLabel="name"
             placeholder="Select Type"
-            className={DynamicSectionWithFieldStyles.columnNameInput}
+            className={`${DynamicSectionWithFieldStyles.columnNameInput} inputField`}
           />
           {isValidation && !newField?.type && (
             <span className="errorMsg">Field type is required</span>
@@ -82,7 +82,7 @@ const FieldForms = ({
             display="chip"
             onChange={(e) => setNewField({ ...newField, stages: e.value })}
             placeholder="Select Stages"
-            className={DynamicSectionWithFieldStyles.columnNameInput}
+            className={`${DynamicSectionWithFieldStyles.columnNameInput} inputField`}
           />
           {isValidation && newField?.stages.length == 0 && (
             <span className="errorMsg">Field stage is required</span>
@@ -103,7 +103,7 @@ const FieldForms = ({
                   if (e.key === "Enter") handleChoiceAdded();
                 }}
                 placeholder="Enter new choice"
-                className={DynamicSectionWithFieldStyles.choiceInput}
+                className={`${DynamicSectionWithFieldStyles.choiceInput} inputField`}
               />
               {choiceError && (
                 <span className="errorMsg">Choice cannot be empty</span>

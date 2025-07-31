@@ -318,7 +318,9 @@ const AllRequestPage = ({
               rows={2}
               className="custom-card-table"
               emptyMessage={
-                <p style={{ textAlign: "center" }}>No Records Found</p>
+                <p className="NoDatas" style={{ textAlign: "center" }}>
+                  No Records Found
+                </p>
               }
             >
               <Column
@@ -327,7 +329,7 @@ const AllRequestPage = ({
                     <div className={dashboardStyles.requestCardHeader}>
                       <div className={dashboardStyles.requestId}>
                         <h3 className={dashboardStyles.requestIdTitle}>
-                          <RiGitPullRequestLine style={{ fontSize: "20px" }} />
+                          <RiGitPullRequestLine style={{ fontSize: "18px" }} />
                           {rowData.category}
                         </h3>
                         <span>{renderStatusColumn(rowData)}</span>
