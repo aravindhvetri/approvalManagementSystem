@@ -10,7 +10,7 @@
   }
 }
 .navButtonInactiveContainer {
-  @include sideNavUnselectableButton;
+  // @include sideNavUnselectableButton;
   .iconSection {
     width: 20px;
     height: 20px;
@@ -23,7 +23,7 @@
   width: 100%;
   margin-bottom: 40px;
 
-  img{
+  img {
     width: 100%;
   }
 }

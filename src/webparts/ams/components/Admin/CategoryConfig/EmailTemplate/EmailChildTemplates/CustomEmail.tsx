@@ -245,8 +245,7 @@ const CustomEmail = ({
   return (
     <>
       <Toast ref={toast} />
-      {actionBooleans?.isEdit &&
-        notesContainerDetailsSingleLine("ⓘ Info", notes)}
+      {actionBooleans?.isEdit && notesContainerDetails("Info", notes)}
       <div>
         <div className={customEmailStyles.templateContainer}>
           <div className={customEmailStyles.fieldsContainer}>
@@ -268,7 +267,7 @@ const CustomEmail = ({
                   handleChange("templateName", e.target.value, getEmailStatus())
                 }
                 style={{ width: "38%" }}
-                className={customEmailStyles.input}
+                className={`${customEmailStyles.input} inputField`}
               />
               {/* {errors[index]?.templateName && (
                 <span className="errorMsg">{errors[index].templateName}</span>
@@ -300,7 +299,7 @@ const CustomEmail = ({
           </div>
           <div style={{ marginTop: "56px" }}>
             {!actionBooleans?.isView && !actionBooleans?.isEdit && (
-              <>{notesContainerDetails("ⓘ Info", infoNotes)}</>
+              <>{notesContainerDetails("Info", infoNotes)}</>
             )}
           </div>
         </div>

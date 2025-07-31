@@ -12,13 +12,23 @@
   }
   .FlowSideBarButtons {
     display: flex;
-    gap: 4%;
+    gap: 2%;
     width: 70%;
     justify-content: flex-end;
   }
 }
 
 .sectionWrapper {
+  position: relative;
+  &::after {
+    content: "";
+    position: absolute;
+    top: 0px;
+    bottom: 0px;
+    left: 49%;
+    width: 1px;
+    background-color: var(--color-light);
+  }
   display: flex;
   flex-wrap: wrap;
   width: 100%;
@@ -27,7 +37,8 @@
     display: flex;
     width: 48%;
     flex-direction: column;
-    padding-bottom: 20px;
+    padding: 14px 0px 20px 0px;
+    border-bottom: 1px solid var(--color-light);
     .sectionlabelHeader {
       display: flex;
       justify-content: space-between;
@@ -37,7 +48,9 @@
         display: flex;
         gap: 12px;
         align-items: center;
-        width: 242px;
+        background: #e0ebf8;
+        padding: 1px 15px;
+        border-radius: 4px;
       }
       .deleteIcon {
         font-size: 16px;
@@ -59,7 +72,7 @@
 }
 
 .container {
-  height: 476px;
+  height: 484px;
   overflow: auto;
   .sectionHeader {
     display: flex;
@@ -100,7 +113,7 @@
 
 .addFieldButton {
   background-color: transparent;
-  color: var(--color-primary);
+  color: var(--green);
   border: none;
   font-size: 14px;
   font-weight: 600;
@@ -277,36 +290,42 @@
 }
 
 .fieldItem {
-  background-color: #f9f9f9;
-  border: 1px solid #ddd;
-  padding: 10px;
+  background-color: var(--white);
+  border: 1px solid #eee;
+  padding: 8px 20px;
   display: flex;
-  border-radius: 2px;
+  border-radius: 10px;
   margin-bottom: 15px;
   justify-content: space-between;
 
   .fieldDetail {
     margin: 0;
+    width: 140px;
     .DetailName {
       font-size: 12px;
     }
   }
-
   .fieldValue {
     font-weight: 400;
     font-size: 12px;
     color: #555;
     margin-top: 6px;
+    overflow-x: auto;
+    white-space: nowrap;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
   }
-
+  .fieldValue::-webkit-scrollbar {
+    display: none;
+  }
   .stageTag {
     color: var(--color-tags);
     background-color: var(--color-bg-tags);
-    padding: 0.25rem 0.5rem;
+    padding: 4px 10px 5px 10px;
     border-radius: 2px;
-    margin-right: 0.5rem;
+    margin-right: 5px;
     display: inline-block;
-    border: 1px solid #007bff2e;
+    border: 1px solid #007bff2e !important;
   }
 }
 
@@ -314,6 +333,8 @@
   display: flex;
   gap: 10px;
   height: fit-content;
+  border-left: 1px solid #eeee;
+  border-bottom: 1px solid #eeee;
 }
 
 .inlineFieldForm {

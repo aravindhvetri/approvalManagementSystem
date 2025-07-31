@@ -358,7 +358,7 @@ const EmailWorkFlow = ({
       </div>
       <div className={EmailWorkFlowStyles.emailMainContainer}>
         {actionsBooleans.isEdit && usedCategories.length > 0 && (
-          <>{notesContainerDetailsSingleLine("⚠ Warning", warningNote)}</>
+          <>{notesContainerDetailsSingleLine("Warning", warningNote)}</>
         )}
         <div>
           <Label className={EmailWorkFlowStyles.label}>
@@ -373,6 +373,7 @@ const EmailWorkFlow = ({
             onChange={(e) => handleChange("templateName", e.target.value)}
             disabled={actionsBooleans.isView}
             style={{ width: "38%" }}
+            className="inputField"
           />
           <div>
             {isValidation && templateData?.templateName?.trim() === "" && (
@@ -413,7 +414,7 @@ const EmailWorkFlow = ({
         </div>
         <div style={{ marginTop: "20px" }}>
           {!actionsBooleans.isView && (
-            <>{notesContainerDetails("ⓘ Info", infoNotes)}</>
+            <>{notesContainerDetails("Info", infoNotes)}</>
           )}
         </div>
       </div>
@@ -506,11 +507,15 @@ const EmailWorkFlow = ({
           </div> */}
           <div className="customDataTableCardContainer">
             <div
-              style={{ borderBottom: "none", paddingBottom: "0px" }}
+              style={{
+                borderBottom: "none",
+                paddingBottom: "0px",
+                marginBottom: "25px",
+              }}
               className="profile_header_content"
             >
               <div>
-                <span>Email Config</span>
+                <span>Email config</span>
                 <p>
                   Set up and manage email templates used in the request and
                   approval process
@@ -536,7 +541,9 @@ const EmailWorkFlow = ({
                 rows={3}
                 className="custom-card-table"
                 emptyMessage={
-                  <p style={{ textAlign: "center" }}>No Records Found</p>
+                  <p className="NoDatas" style={{ textAlign: "center" }}>
+                    No Records Found
+                  </p>
                 }
               >
                 <Column
@@ -548,7 +555,7 @@ const EmailWorkFlow = ({
                           className="requestId"
                         >
                           <h3 className="requestIdTitle">
-                            <MdMarkEmailRead style={{ fontSize: "20px" }} />
+                            <MdMarkEmailRead style={{ fontSize: "18px" }} />
                             {rowData.templateName}
                           </h3>
                         </div>

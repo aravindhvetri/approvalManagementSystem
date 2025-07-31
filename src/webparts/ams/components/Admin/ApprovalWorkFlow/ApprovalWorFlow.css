@@ -22,6 +22,7 @@
 .notesContainer {
   margin-top: 0px;
   margin-bottom: 10px;
+  background-color: #dbeafeb3;
 }
 /* Stage button style.................. */
 .customAddStageButton {
@@ -39,10 +40,10 @@
 /* .modernButton {
   gap: 0px;
 } */
-.modernButton:hover {
+/* .modernButton:hover {
   background-color: var(--color-secondary);
   color: var(--white);
-}
+} */
 .pi {
   font-size: 12px;
 }

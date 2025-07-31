@@ -297,7 +297,11 @@ const ApprovalDashboard = ({
           </div> */}
           <div className="customDataTableCardContainer">
             <div
-              style={{ borderBottom: "none", paddingBottom: "0px" }}
+              style={{
+                borderBottom: "none",
+                paddingBottom: "0px",
+                marginBottom: "25px",
+              }}
               className="profile_header_content"
             >
               <div>
@@ -326,7 +330,9 @@ const ApprovalDashboard = ({
                 rows={2}
                 className="custom-card-table"
                 emptyMessage={
-                  <p style={{ textAlign: "center" }}>No Records Found</p>
+                  <p className="NoDatas" style={{ textAlign: "center" }}>
+                    No Records Found
+                  </p>
                 }
               >
                 <Column
@@ -338,7 +344,7 @@ const ApprovalDashboard = ({
                           className="requestId"
                         >
                           <h3 className="requestIdTitle">
-                            <LuWorkflow style={{ fontSize: "20px" }} />
+                            <LuWorkflow style={{ fontSize: "18px" }} />
                             {rowData.apprvalFlowName}
                           </h3>
                         </div>
@@ -347,7 +353,14 @@ const ApprovalDashboard = ({
                       <div className="requestCardBody">
                         <div className="requestIdDetails">
                           <p className="requestIdpara">
-                            Total Stages - {rowData?.totalStages}
+                            Total stages{" "}
+                            <span
+                              className={approvalWorkFlowStyles.totalStages}
+                            >
+                              {(rowData?.totalStages)
+                                .toString()
+                                .padStart(2, "0")}
+                            </span>
                           </p>
                         </div>
                         <span>{renderRejectionFlowColumn(rowData)}</span>

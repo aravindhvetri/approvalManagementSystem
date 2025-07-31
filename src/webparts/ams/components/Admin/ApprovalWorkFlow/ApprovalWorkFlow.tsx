@@ -436,11 +436,15 @@ const ApprovalWorkFlow = ({
         selectionMode="single"
         selection={selectedStage}
         scrollable
-        scrollHeight="242px"
+        scrollHeight="314px"
         onSelectionChange={(e) => {
           e.value && setSelectedStage(e.value);
         }}
-        emptyMessage={<p style={{ textAlign: "center" }}>No Records Found</p>}
+        emptyMessage={
+          <p className="NoDatas" style={{ textAlign: "center" }}>
+            No Records Found
+          </p>
+        }
       >
         <Column
           body={(rowData, row) => (
@@ -512,7 +516,7 @@ const ApprovalWorkFlow = ({
       </div>
       <div className={`${ApprovalWorkFlowStyles.mainApprovalContainer}`}>
         {isEdit && currentRec?.id !== null && usedCategories.length > 0 && (
-          <>{notesContainerDetailsSingleLine("⚠ Warning", warningNote)}</>
+          <>{notesContainerDetailsSingleLine("Warning", warningNote)}</>
         )}
         <div className={`${ApprovalWorkFlowStyles.approvalConfigContainer}`}>
           <div className={`${ApprovalWorkFlowStyles.approvalSubContainer}`}>
@@ -533,11 +537,12 @@ const ApprovalWorkFlow = ({
                     }}
                     placeholder="Workflow Name"
                     style={{ width: "100%" }}
+                    className="inputField"
                   />
                 </div>
                 <div className={`${ApprovalWorkFlowStyles.rejectDiv}`}>
                   <Label className={`${ApprovalWorkFlowStyles.label}`}>
-                    Rejection Process<span className="required">*</span>
+                    Rejection process<span className="required">*</span>
                   </Label>
                   <Dropdown
                     disabled={!isEdit}
@@ -552,6 +557,7 @@ const ApprovalWorkFlow = ({
                     }}
                     placeholder="Select Reject Type"
                     style={{ width: "100%" }}
+                    className="inputField"
                   />
                 </div>
               </div>
@@ -561,7 +567,7 @@ const ApprovalWorkFlow = ({
                 </span>
               </div>
               <Label className={`labelHeading ${ApprovalWorkFlowStyles.label}`}>
-                Approval Stages
+                Approval stages
               </Label>
               {stagesDataTable()}
               <div className={`${ApprovalWorkFlowStyles.addStageButton}`}>
@@ -578,7 +584,7 @@ const ApprovalWorkFlow = ({
             </div>
             <div className={`${ApprovalWorkFlowStyles.stageConfigContainer}`}>
               <Label className={`labelHeading ${ApprovalWorkFlowStyles.label}`}>
-                Stage Configuration
+                Stage configuration
               </Label>
               <div className={`${ApprovalWorkFlowStyles.stageFormContainer}`}>
                 <div className={`${ApprovalWorkFlowStyles.deleteStageButton}`}>
@@ -664,6 +670,7 @@ const ApprovalWorkFlow = ({
                     }}
                     placeholder="Select Type of Workflow"
                     style={{ marginTop: "0.5rem" }}
+                    className="inputField"
                   />
                 </div>
               </div>

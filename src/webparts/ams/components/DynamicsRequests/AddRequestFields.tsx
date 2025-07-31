@@ -618,11 +618,15 @@ const AddRequestsFields = ({
                 filter
                 optionLabel="name"
                 placeholder="Select category"
-                className="w-full md:w-14rem"
+                className="w-full md:w-14rem inputField"
               />
               {selectedCategory && Ok == false && (
                 <div>
-                  <Button onClick={() => setOk(true)} className="modernButton">
+                  <Button
+                    onClick={() => setOk(true)}
+                    style={{ background: "#0aa5ec", color: "white" }}
+                    className="modernButton"
+                  >
                     Ok
                   </Button>
                 </div>
@@ -738,9 +742,6 @@ const AddRequestsFields = ({
                             className={attachmentStyles.filesShowingContainer}
                           >
                             <div className={attachmentStyles.labelContainer}>
-                              {/* <div className={attachmentStyles.filesIcons}>
-                              {getFileIcon(file?.name)}
-                            </div> */}
                               <div
                                 title={file?.name}
                                 className={attachmentStyles.fileLabel}
@@ -811,6 +812,7 @@ const AddRequestsFields = ({
                                         e.target.value
                                       )
                                     }
+                                    className="inputField"
                                   />
                                   {errors[field.columnName] && (
                                     <span
@@ -845,6 +847,7 @@ const AddRequestsFields = ({
                                         Number(e.target.value)
                                       )
                                     }
+                                    className="inputField"
                                   />
                                   {errors[field.columnName] && (
                                     <span
@@ -881,7 +884,7 @@ const AddRequestsFields = ({
                                     placeholder={field.columnName}
                                     filter
                                     showClear
-                                    className="w-full md:w-14rem"
+                                    className="w-full md:w-14rem inputField"
                                   />
                                   {errors[field.columnName] && (
                                     <span
@@ -1019,6 +1022,7 @@ const AddRequestsFields = ({
                                     hourFormat="12"
                                     dateFormat="dd/mm/yy"
                                     showIcon
+                                    className="inputField"
                                   />
                                   {errors[field.columnName] && (
                                     <span

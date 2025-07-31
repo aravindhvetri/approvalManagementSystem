@@ -887,80 +887,82 @@ const EmailContainer = ({
           <MdOutlineEmail />
         </div>
         <div style={{ fontFamily: "interSemiBold" }}>Email Notifications</div>
-        <div style={{ letterSpacing: "0" }}>
-          {!(actionBooleans?.isView || actionBooleans?.isEdit) && (
-            <div className={`${EmailContainerStyles.radioContainer}`}>
-              <div className={`${EmailContainerStyles.radioDiv}`}>
-                <RadioButton
-                  inputId="existing"
-                  name="email"
-                  value="existing"
-                  onChange={(e) => {
-                    setSelectedEmail(e?.value);
-                    setExistingEmailData([]);
-                    setCustomEmailData([]);
-                    sessionStorage.removeItem("customTemplates");
-                  }}
-                  checked={selectedEmail === "existing"}
-                />
-                <label
-                  style={{ cursor: "pointer" }}
-                  className="radioDivLabel"
-                  htmlFor="existing"
-                  onClick={() => {
-                    setSelectedEmail("existing");
-                    setExistingEmailData([]);
-                    setCustomEmailData([]);
-                    sessionStorage.removeItem("customTemplates");
-                  }}
-                >
-                  Existing template
-                </label>
-              </div>
-              <div className={`${EmailContainerStyles.radioDiv}`}>
-                <RadioButton
-                  inputId="custom"
-                  name="email"
-                  value="custom"
-                  onChange={(e) => {
-                    setSelectedEmail(e?.value);
-                    setExistingEmailData([]);
-                    setCustomEmailData([]);
-                    sessionStorage.removeItem("selectedDropValues");
-                    sessionStorage.removeItem("selectedEmailBody");
-                  }}
-                  checked={selectedEmail === "custom"}
-                />
-                <label
-                  style={{ cursor: "pointer" }}
-                  className="radioDivLabel"
-                  onClick={() => {
-                    setSelectedEmail("custom");
-                    setExistingEmailData([]);
-                    setCustomEmailData([]);
-                    sessionStorage.removeItem("selectedDropValues");
-                    sessionStorage.removeItem("selectedEmailBody");
-                  }}
-                >
-                  Custom template
-                </label>
-              </div>
+      </div>
+      <div style={{ letterSpacing: "0" }}>
+        {!(actionBooleans?.isView || actionBooleans?.isEdit) && (
+          <div className={`${EmailContainerStyles.radioContainer}`}>
+            <div className={`${EmailContainerStyles.radioDiv}`}>
+              <RadioButton
+                inputId="existing"
+                name="email"
+                value="existing"
+                onChange={(e) => {
+                  setSelectedEmail(e?.value);
+                  setExistingEmailData([]);
+                  setCustomEmailData([]);
+                  sessionStorage.removeItem("customTemplates");
+                }}
+                checked={selectedEmail === "existing"}
+              />
+              <label
+                style={{ cursor: "pointer" }}
+                className="radioDivLabel"
+                htmlFor="existing"
+                onClick={() => {
+                  setSelectedEmail("existing");
+                  setExistingEmailData([]);
+                  setCustomEmailData([]);
+                  sessionStorage.removeItem("customTemplates");
+                }}
+              >
+                Existing template
+              </label>
+            </div>
+            <div className={`${EmailContainerStyles.radioDiv}`}>
+              <RadioButton
+                inputId="custom"
+                name="email"
+                value="custom"
+                onChange={(e) => {
+                  setSelectedEmail(e?.value);
+                  setExistingEmailData([]);
+                  setCustomEmailData([]);
+                  sessionStorage.removeItem("selectedDropValues");
+                  sessionStorage.removeItem("selectedEmailBody");
+                }}
+                checked={selectedEmail === "custom"}
+              />
+              <label
+                style={{ cursor: "pointer" }}
+                className="radioDivLabel"
+                onClick={() => {
+                  setSelectedEmail("custom");
+                  setExistingEmailData([]);
+                  setCustomEmailData([]);
+                  sessionStorage.removeItem("selectedDropValues");
+                  sessionStorage.removeItem("selectedEmailBody");
+                }}
+              >
+                Custom template
+              </label>
+            </div>
+          </div>
+        )}
+        {validateError &&
+          !selectedEmail &&
+          actionBooleans?.isView === false &&
+          actionBooleans?.isEdit === false && (
+            <div style={{ height: "0px", marginLeft: "40px" }}>
+              <span className="errorMsg">
+                {validateError?.emailTemplateSelected}
+              </span>
             </div>
           )}
-          {validateError &&
-            !selectedEmail &&
-            actionBooleans?.isView === false &&
-            actionBooleans?.isEdit === false && (
-              <div style={{ height: "0px", marginLeft: "40px" }}>
-                <span className="errorMsg">
-                  {validateError?.emailTemplateSelected}
-                </span>
-              </div>
-            )}
-        </div>
       </div>
       {(selectedEmail == "custom" || categoryClickingID !== null) && (
-        <div className={EmailContainerStyles.tabViewContainer}>
+        <div
+          className={`emailTabViewContainer ${EmailContainerStyles.tabViewContainer}`}
+        >
           {emailTabViewBar()}
         </div>
       )}
@@ -968,9 +970,13 @@ const EmailContainer = ({
         className={EmailContainerStyles.EmailContainer}
         style={
           selectedEmail == "existing"
-            ? { height: "466px" }
-            : selectedEmail == "custom" || categoryClickingID !== null
-            ? { height: "406px" }
+            ? { height: "434px" }
+            : selectedEmail == "custom" && categoryClickingID == null
+            ? { height: "384px" }
+            : actionBooleans?.isView || actionBooleans?.isEdit
+            ? {
+                height: "418px",
+              }
             : {}
         }
       >

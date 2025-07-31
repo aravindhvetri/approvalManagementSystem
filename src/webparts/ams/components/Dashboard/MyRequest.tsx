@@ -298,10 +298,12 @@ const MyRequestPage = ({
               <DataTable
                 value={requestsDetails}
                 paginator
-                rows={2}
+                rows={3}
                 className="custom-card-table"
                 emptyMessage={
-                  <p style={{ textAlign: "center" }}>No Records Found</p>
+                  <p className="NoDatas" style={{ textAlign: "center" }}>
+                    No Records Found
+                  </p>
                 }
               >
                 <Column
@@ -314,7 +316,7 @@ const MyRequestPage = ({
                           </p>
                           <h3 className={dashboardStyles.requestIdTitle}>
                             <RiGitPullRequestLine
-                              style={{ fontSize: "20px" }}
+                              style={{ fontSize: "18px" }}
                             />
                             {rowData.category}
                           </h3>

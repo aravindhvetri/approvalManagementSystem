@@ -23,18 +23,20 @@ import { FaRegCheckCircle } from "react-icons/fa";
 import { FaRegTimesCircle } from "react-icons/fa";
 import { LuClock9 } from "react-icons/lu";
 import { FaCheck } from "react-icons/fa6";
+import { AiOutlineInfoCircle } from "react-icons/ai";
+import { IoWarningOutline } from "react-icons/io5";
 //PrimeReact Imports:
 import { Menu } from "primereact/menu";
 import { Button } from "primereact/button";
 import { Sidebar } from "primereact/sidebar";
 import { TabView, TabPanel } from "primereact/tabview";
 import { Dialog } from "primereact/dialog";
+
 //Common Style Imports:
 import styles from "../External/commonStyles.module.scss";
 import "../External/style.css";
 import { sp } from "@pnp/sp/presets/all";
 import { Card } from "primereact/card";
-import { Config } from "./Config";
 
 //PeoplePicker Template:
 export const peoplePickerTemplate = (user: IPeoplePickerDetails) => {
@@ -169,8 +171,8 @@ const getColors = (status: string) => {
   };
   switch (status) {
     case "Pending":
-      colors.bgColor = "#fbfcee";
-      colors.color = "#5daf14";
+      colors.bgColor = "#f4f5e6";
+      colors.color = "#4a7524";
       break;
     case "Approved":
       colors.bgColor = "#e8f6ed";
@@ -555,7 +557,12 @@ export const generateRequestID = (value, count, char) => {
 export const notesContainerDetails = (header, data) => {
   return (
     <div className="notesContainer">
-      <h1>{header}</h1>
+      <span>
+        <span style={{ fontSize: "22px" }}>
+          <AiOutlineInfoCircle />
+        </span>
+        <span>{header}</span>
+      </span>
       <ul className="notesList">
         {data.map((e: any) => {
           return <li className="notesChild"> {e?.info}</li>;
@@ -568,11 +575,22 @@ export const notesContainerDetails = (header, data) => {
 //Notes Container
 export const notesContainerDetailsSingleLine = (header, data) => {
   return (
-    <div className="notesContainer">
-      <h1>{header}</h1>
+    <div
+      style={{
+        backgroundColor: "#fff2e2b3",
+        borderLeft: "6px solid #cc8925",
+      }}
+      className="notesContainer"
+    >
+      <span>
+        <span style={{ fontSize: "22px", color: "#cc8925" }}>
+          <IoWarningOutline />
+        </span>
+        <span style={{ color: "#cc8925" }}>{header}</span>
+      </span>
       <ul>
         {data.map((e: any) => {
-          return <li> {e?.info}</li>;
+          return <li style={{ color: "#cc8925" }}> {e?.info}</li>;
         })}
       </ul>
     </div>
@@ -664,6 +682,7 @@ export const getSpGroupMembers = async (groupName) => {
 
 //Show Card with details
 export const showCard = (cardDetails: ICardDetails) => {
+  console.log(cardDetails, " cardDetails");
   const getStatusData = (title: string) => {
     switch (title) {
       case "Total Requests":
