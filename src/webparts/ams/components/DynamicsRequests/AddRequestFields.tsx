@@ -327,7 +327,7 @@ const AddRequestsFields = ({
             ClsName: "toast-imgcontainer-warning",
             type: "Warning",
             msg: "Please complete all required fields.",
-            image: require("../../../../../src/webparts/ams/assets/giphy.gif"),
+            image: require("../../../../../src/webparts/ams/assets/warning.png"),
           }),
         life: 3000,
       });
@@ -523,7 +523,7 @@ const AddRequestsFields = ({
               ClsName: "toast-imgcontainer-warning",
               type: "Warning",
               msg: "Some file names already exist!",
-              image: require("../../../../../src/webparts/ams/assets/giphy.gif"),
+              image: require("../../../../../src/webparts/ams/assets/warning.png"),
             }),
           life: 3000,
         });

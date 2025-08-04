@@ -220,7 +220,7 @@ const EmailContainer = ({
                 ClsName: "toast-imgcontainer-warning",
                 type: "Warning",
                 msg: "Please select an existing email flow",
-                image: require("../../../../../../../src/webparts/ams/assets/giphy.gif"),
+                image: require("../../../../../../../src/webparts/ams/assets/warning.png"),
               }),
             life: 3000,
           });
@@ -241,7 +241,7 @@ const EmailContainer = ({
                     ClsName: "toast-imgcontainer-warning",
                     type: "Warning",
                     msg: "One or more email templates are missing in the flow",
-                    image: require("../../../../../../../src/webparts/ams/assets/giphy.gif"),
+                    image: require("../../../../../../../src/webparts/ams/assets/warning.png"),
                   }),
                 life: 3000,
               });
@@ -335,7 +335,7 @@ const EmailContainer = ({
                 ClsName: "toast-imgcontainer-warning",
                 type: "Warning",
                 msg: errorMsg,
-                image: require("../../../../../../../src/webparts/ams/assets/giphy.gif"),
+                image: require("../../../../../../../src/webparts/ams/assets/warning.png"),
               }),
             life: 3000,
           });

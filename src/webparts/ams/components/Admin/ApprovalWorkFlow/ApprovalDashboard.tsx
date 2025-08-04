@@ -326,7 +326,9 @@ const ApprovalDashboard = ({
             <div className="dashboardDataTable">
               <DataTable
                 value={approvalConfigDetails}
-                paginator
+                paginator={
+                  approvalConfigDetails && approvalConfigDetails?.length > 0
+                }
                 rows={2}
                 className="custom-card-table"
                 emptyMessage={

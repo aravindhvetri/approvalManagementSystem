@@ -131,7 +131,16 @@ div[data-automationid="SiteHeader"] {
 .inputField.p-calendar-disabled {
   background-color: #e3e3e380;
   border: none !important;
+  border-radius: 4px;
 }
+.inputField.p-calendar-disabled .p-disabled {
+  border: none;
+}
+.inputField.p-calendar-disabled button {
+  background: #f6f6f6;
+  color: #605858;
+}
+
 .ms-BasePicker-text:has(input[disabled]),
 .ms-BasePicker-text:has(button[disabled]) {
   border: none !important;
@@ -165,7 +174,7 @@ div[data-automationid="SiteHeader"] {
 
 .customDataTableCardContainer {
   padding-right: 8px;
-  height: 302px;
+  height: 300px;
   overflow: auto;
 }
 
@@ -517,12 +526,13 @@ input::placeholder {
   font-size: 13px;
 }
 .p-toast .p-toast-message .p-toast-message-content {
-  padding: 1rem;
-  letter-spacing: 0.5px;
+  padding: 16px;
+  gap: 6px;
 }
 
 .p-toast .p-toast-message .p-toast-icon-close {
-  margin-top: 6px;
+  width: 14px;
+  height: 14px;
   color: var(--white);
 }
 .toast-imgcontainer-success {
@@ -532,15 +542,49 @@ input::placeholder {
 }
 .toast-imgcontainer-warning {
   padding: 3px;
-  /* background-color: #feb82f;
-  border-radius: 6px; */
 }
+.toast-imgcontainer-warning img {
+  width: 30px !important;
+  height: 30px !important;
+}
+
+.p-toast .p-toast-message .p-toast-icon-close:hover {
+  background-color: transparent !important;
+}
+
 .p-toast .p-toast-message.p-toast-message-warn {
   background: #f1c40f;
   border: none;
-  box-shadow: rgb(0 0 0 / 25%) 0px 13px 27px -5px,
-    rgb(0 0 0 / 30%) 0px 8px 16px -8px;
   color: var(--white);
+}
+/* Animate toast content */
+.p-toast-message-content {
+  position: relative;
+  overflow: hidden;
+}
+
+/* Add the animated bottom line */
+.p-toast-message-content::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 5px;
+  width: 100%;
+  background: #ffffffb3; /* light line without visible color */
+  animation: slideLine 3s linear;
+}
+
+/* Smooth sliding animation */
+@keyframes slideLine {
+  0% {
+    transform: scaleX(0);
+    transform-origin: right;
+  }
+  100% {
+    transform: scaleX(1);
+    transform-origin: right;
+  }
 }
 
 /*MultiPeoplePicker Common Styles..........................................*/
@@ -750,7 +794,7 @@ li.p-highlight .p-tabview-nav-link {
 
 /* Custom Common styles for the Paginators................................ */
 .p-paginator {
-  padding: 22px 0px 0px 0px !important;
+  padding: 20px 0px 0px 0px !important;
 }
 .p-paginator .p-paginator-pages .p-paginator-page {
   background-color: #0e0c0c29;

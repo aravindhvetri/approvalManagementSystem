@@ -455,7 +455,7 @@ const CategoryConfig = ({
                   ClsName: "toast-imgcontainer-warning",
                   type: "Warning",
                   msg: "Please select an existing flow",
-                  image: require("../../../../../../src/webparts/ams/assets/giphy.gif"),
+                  image: require("../../../../../../src/webparts/ams/assets/warning.png"),
                 }),
               life: 3000,
             });
@@ -1043,7 +1043,7 @@ const CategoryConfig = ({
             <div className="dashboardDataTable">
               <DataTable
                 value={categoryDetails}
-                paginator
+                paginator={categoryDetails && categoryDetails?.length > 0}
                 rows={3}
                 className="custom-card-table"
                 emptyMessage={

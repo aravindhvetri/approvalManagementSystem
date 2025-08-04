@@ -48,7 +48,7 @@
         display: flex;
         gap: 12px;
         align-items: center;
-        background: #e0ebf8;
+        background: #d1dbe838;
         padding: 1px 15px;
         border-radius: 4px;
       }
@@ -292,7 +292,8 @@
 .fieldItem {
   background-color: var(--white);
   border: 1px solid #eee;
-  padding: 8px 20px;
+  // padding: 8px 20px;
+  padding: 8px 2px 6px 20px;
   display: flex;
   border-radius: 10px;
   margin-bottom: 15px;
@@ -312,11 +313,13 @@
     margin-top: 6px;
     overflow-x: auto;
     white-space: nowrap;
-    scrollbar-width: none;
+    // scrollbar-width: none;
     -ms-overflow-style: none;
+    padding-bottom: 2px;
   }
   .fieldValue::-webkit-scrollbar {
-    display: none;
+    // display: none;
+    height: 1px;
   }
   .stageTag {
     color: var(--color-tags);
@@ -331,7 +334,7 @@
 
 .fieldActions {
   display: flex;
-  gap: 10px;
+  gap: 6px;
   height: fit-content;
   border-left: 1px solid #eeee;
   border-bottom: 1px solid #eeee;
