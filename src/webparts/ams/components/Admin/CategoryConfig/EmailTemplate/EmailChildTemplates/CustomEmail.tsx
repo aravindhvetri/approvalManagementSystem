@@ -178,7 +178,7 @@ const CustomEmail = ({
             ClsName: "toast-imgcontainer-warning",
             type: "Warning",
             msg: "Template name already exists",
-            image: require("../../../../../../../../src/webparts/ams/assets/giphy.gif"),
+            image: require("../../../../../../../../src/webparts/ams/assets/warning.png"),
           }),
         life: 3000,
       });

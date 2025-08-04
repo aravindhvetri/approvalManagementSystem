@@ -323,7 +323,7 @@ const MyApprovalPage = ({
             <div className="dashboardDataTable">
               <DataTable
                 value={requestsDetails}
-                paginator
+                paginator={requestsDetails && requestsDetails?.length > 0}
                 rows={3}
                 className="custom-card-table"
                 emptyMessage={

@@ -496,7 +496,7 @@ const RequestsFields = ({
               ClsName: "toast-imgcontainer-warning",
               type: "Warning",
               msg: "Some file names already exist!",
-              image: require("../../../../../src/webparts/ams/assets/giphy.gif"),
+              image: require("../../../../../src/webparts/ams/assets/warning.png"),
             }),
           life: 3000,
         });
@@ -1086,7 +1086,10 @@ const RequestsFields = ({
                   </span>
                   <div className="ApprovalHistoryTable">
                     <DataTable
-                      paginator
+                      paginator={
+                        approvalHistoryDetails &&
+                        approvalHistoryDetails?.length > 0
+                      }
                       rows={4}
                       sortField="itemID"
                       sortOrder={-1}

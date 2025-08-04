@@ -314,7 +314,7 @@ const AllRequestPage = ({
             </div>
             <DataTable
               value={requestsDetails}
-              paginator
+              paginator={requestsDetails && requestsDetails?.length > 0}
               rows={2}
               className="custom-card-table"
               emptyMessage={

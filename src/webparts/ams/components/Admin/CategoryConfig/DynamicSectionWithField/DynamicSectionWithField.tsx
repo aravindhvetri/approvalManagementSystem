@@ -30,6 +30,7 @@ import SPServices from "../../../../../../CommonServices/SPServices";
 import { Toast } from "primereact/toast";
 import { IoCheckmark } from "react-icons/io5";
 import FieldForms from "./FieldForms";
+import { IoIosCheckmarkCircleOutline } from "react-icons/io";
 
 const DynamicSectionWithField = ({
   finalSubmit,
@@ -110,7 +111,7 @@ const DynamicSectionWithField = ({
             ClsName: "toast-imgcontainer-warning",
             type: "Warning",
             msg: "Please fill the current section before adding a new one.",
-            image: require("../../../../../../../src/webparts/ams/assets/giphy.gif"),
+            image: require("../../../../../../../src/webparts/ams/assets/warning.png"),
           }),
         life: 3000,
       });
@@ -140,7 +141,7 @@ const DynamicSectionWithField = ({
             ClsName: "toast-imgcontainer-warning",
             type: "Warning",
             msg: `${Config?.ToastCommonMessage}`,
-            image: require("../../../../../../../src/webparts/ams/assets/giphy.gif"),
+            image: require("../../../../../../../src/webparts/ams/assets/warning.png"),
           }),
         life: 3000,
       });
@@ -164,7 +165,7 @@ const DynamicSectionWithField = ({
             ClsName: "toast-imgcontainer-warning",
             type: "Warning",
             msg: `${Config?.ToastCommonMessage}`,
-            image: require("../../../../../../../src/webparts/ams/assets/giphy.gif"),
+            image: require("../../../../../../../src/webparts/ams/assets/warning.png"),
           }),
         life: 3000,
       });
@@ -194,7 +195,7 @@ const DynamicSectionWithField = ({
             ClsName: "toast-imgcontainer-warning",
             type: "Warning",
             msg: `${Config?.ToastCommonMessage}`,
-            image: require("../../../../../../../src/webparts/ams/assets/giphy.gif"),
+            image: require("../../../../../../../src/webparts/ams/assets/warning.png"),
           }),
         life: 3000,
       });
@@ -263,7 +264,7 @@ const DynamicSectionWithField = ({
             ClsName: "toast-imgcontainer-warning",
             type: "Warning",
             msg: `${Config?.ToastCommonMessage}`,
-            image: require("../../../../../../../src/webparts/ams/assets/giphy.gif"),
+            image: require("../../../../../../../src/webparts/ams/assets/warning.png"),
           }),
         life: 3000,
       });
@@ -318,7 +319,7 @@ const DynamicSectionWithField = ({
             ClsName: "toast-imgcontainer-warning",
             type: "Warning",
             msg: `${Config?.ToastCommonMessage}`,
-            image: require("../../../../../../../src/webparts/ams/assets/giphy.gif"),
+            image: require("../../../../../../../src/webparts/ams/assets/warning.png"),
           }),
         life: 3000,
       });
@@ -1003,7 +1004,7 @@ const DynamicSectionWithField = ({
             ClsName: "toast-imgcontainer-warning",
             type: "Warning",
             msg: `${Config?.ToastCommonMessage}`,
-            image: require("../../../../../../../src/webparts/ams/assets/giphy.gif"),
+            image: require("../../../../../../../src/webparts/ams/assets/warning.png"),
           }),
         life: 3000,
       });
@@ -1020,7 +1021,7 @@ const DynamicSectionWithField = ({
             ClsName: "toast-imgcontainer-warning",
             type: "Warning",
             msg: "Atleast one section is required",
-            image: require("../../../../../../../src/webparts/ams/assets/giphy.gif"),
+            image: require("../../../../../../../src/webparts/ams/assets/warning.png"),
           }),
         life: 3000,
       });
@@ -1037,7 +1038,7 @@ const DynamicSectionWithField = ({
               ClsName: "toast-imgcontainer-warning",
               type: "Warning",
               msg: "Please enter a current section name",
-              image: require("../../../../../../../src/webparts/ams/assets/giphy.gif"),
+              image: require("../../../../../../../src/webparts/ams/assets/warning.png"),
             }),
           life: 3000,
         });
@@ -1052,7 +1053,7 @@ const DynamicSectionWithField = ({
               ClsName: "toast-imgcontainer-warning",
               type: "Warning",
               msg: "Atleast one Field is required",
-              image: require("../../../../../../../src/webparts/ams/assets/giphy.gif"),
+              image: require("../../../../../../../src/webparts/ams/assets/warning.png"),
             }),
           life: 3000,
         });
@@ -1093,7 +1094,7 @@ const DynamicSectionWithField = ({
             ClsName: "toast-imgcontainer-warning",
             type: "Warning",
             msg: `${trimmedChoice} already exists`,
-            image: require("../../../../../../../src/webparts/ams/assets/giphy.gif"),
+            image: require("../../../../../../../src/webparts/ams/assets/warning.png"),
           }),
         life: 3000,
       });
@@ -1146,7 +1147,7 @@ const DynamicSectionWithField = ({
             ClsName: "toast-imgcontainer-warning",
             type: "Warning",
             msg: "Field name already exists",
-            image: require("../../../../../../../src/webparts/ams/assets/giphy.gif"),
+            image: require("../../../../../../../src/webparts/ams/assets/warning.png"),
           }),
         life: 3000,
       });
@@ -1240,7 +1241,7 @@ const DynamicSectionWithField = ({
                 >
                   {section.isEditing ? (
                     <div
-                      style={{ padding: "6px" }}
+                      style={{ padding: "6px", backgroundColor: "transparent" }}
                       className={
                         DynamicSectionWithFieldStyles.sectionInputContainer
                       }
@@ -1256,13 +1257,17 @@ const DynamicSectionWithField = ({
                         className={`inputField${DynamicSectionWithFieldStyles.sectionInput}`}
                       />
                       <div className="actionIconLayer">
-                        <IoCheckmark
+                        <IoIosCheckmarkCircleOutline
                           onClick={() => {
                             const updatedSections = [...sections];
                             updatedSections[sectionIndex].isEditing = false;
                             setSections(updatedSections);
                           }}
-                          style={{ cursor: "pointer", fontSize: "18px" }}
+                          style={{
+                            cursor: "pointer",
+                            fontSize: "20px",
+                            color: "#0286c9",
+                          }}
                         />
                       </div>
                     </div>
