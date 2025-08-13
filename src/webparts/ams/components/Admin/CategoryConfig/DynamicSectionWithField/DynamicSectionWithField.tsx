@@ -1052,7 +1052,7 @@ const DynamicSectionWithField = ({
               iconName: "pi-exclamation-triangle",
               ClsName: "toast-imgcontainer-warning",
               type: "Warning",
-              msg: "Atleast one Field is required",
+              msg: "Each section must have at least one required field.",
               image: require("../../../../../../../src/webparts/ams/assets/warning.png"),
             }),
           life: 3000,

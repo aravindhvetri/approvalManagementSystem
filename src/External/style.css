@@ -129,12 +129,13 @@ div[data-automationid="SiteHeader"] {
   border: none !important;
 }
 .inputField.p-calendar-disabled {
-  background-color: #e3e3e380;
+  /* background-color: #e3e3e380; */
   border: none !important;
   border-radius: 4px;
 }
 .inputField.p-calendar-disabled .p-disabled {
   border: none;
+  background-color: #e3e3e380;
 }
 .inputField.p-calendar-disabled button {
   background: #f6f6f6;
@@ -571,7 +572,7 @@ input::placeholder {
   left: 0;
   height: 5px;
   width: 100%;
-  background: #ffffffb3; /* light line without visible color */
+  background: #ffffffb3;
   animation: slideLine 3s linear;
 }
 
