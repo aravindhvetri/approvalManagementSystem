@@ -50,7 +50,7 @@ const AddRequestsFields = ({
   setDynamicRequestsSideBarVisible,
 }) => {
   const toast = useRef(null);
-  const [Ok, setOk] = useState<boolean>(false);
+  const [Ok, setOk] = useState<boolean>(true);
   const serverRelativeUrl = context?._pageContext?._site?.serverRelativeUrl;
   const [files, setFiles] = useState([]);
   const [dynamicFields, setDynamicFields] = useState<ISectionColumnsConfig[]>(
