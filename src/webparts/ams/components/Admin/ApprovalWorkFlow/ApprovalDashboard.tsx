@@ -30,6 +30,7 @@ import { LuBadgePlus } from "react-icons/lu";
 import { Dialog } from "primereact/dialog";
 import { RiDeleteBinLine } from "react-icons/ri";
 import { Label } from "office-ui-fabric-react";
+import { InputText } from "primereact/inputtext";
 
 const ApprovalDashboard = ({
   setApprovalSideBarContent,
@@ -44,6 +45,7 @@ const ApprovalDashboard = ({
   const [delModal, setDelModal] = useState<IDelModal>({
     ...Config.initialdelModal,
   });
+  const [searchTerm, setSearchTerm] = useState("");
   const [isEdit, setIsEdit] = useState<boolean>(true);
   const [currentRecord, setCurrentRecord] = useState<IApprovalConfigDetails>();
   const [showLoader, setShowLoader] = useState<boolean>(true);
@@ -241,9 +243,30 @@ const ApprovalDashboard = ({
   };
   //Render Action column
   const renderActionColumn = (rowData) => {
-    const menuModel = actionsWithIcons(rowData); // rowData pass panrom da
+    const menuModel = actionsWithIcons(rowData);
     return <ActionsMenu items={menuModel} />;
   };
+
+  //Filter records based on searchTerm
+  const filteredApprovalConfigs = approvalConfigDetails.filter((item: any) => {
+    if (!searchTerm) return true;
+    const lowerSearch = searchTerm.toLowerCase();
+
+    const searchableString = [
+      item?.apprvalFlowName,
+      item?.rejectionFlow,
+      item?.totalStages?.toString(),
+      ...(item?.categoryName?.map((e: any) => e?.Category) || []),
+      ...(item?.stages?.flatMap((stage: any) =>
+        stage?.approver?.map((appr: any) => `${appr?.name} ${appr?.email}`)
+      ) || []),
+    ]
+      .filter(Boolean) // remove undefined/null
+      .join(" ") // join everything into one string
+      .toLowerCase();
+
+    return searchableString.includes(lowerSearch);
+  });
 
   useEffect(() => {
     getApprovalConfig();
@@ -268,33 +291,6 @@ const ApprovalDashboard = ({
         <Loader />
       ) : (
         <>
-          {/* <div className="customDataTableContainer">
-            <DataTable
-              paginator
-              rows={5}
-              value={approvalConfigDetails}
-              tableStyle={{ minWidth: "50rem" }}
-              emptyMessage={
-                <>
-                  <p style={{ textAlign: "center" }}>No Records Found</p>
-                </>
-              }
-            >
-              <Column field="apprvalFlowName" header="name"></Column>
-              <Column
-                field="stages"
-                header="Approvers"
-                body={renderApproversColumn}
-              ></Column>
-              <Column
-                field="rejectionFlow"
-                body={renderRejectionFlowColumn}
-                style={{ width: "15rem" }}
-                header="Rejection flow"
-              ></Column>
-              <Column field="Action" body={renderActionColumn}></Column>
-            </DataTable>
-          </div> */}
           <div className="customDataTableCardContainer">
             <div
               style={{
@@ -310,14 +306,23 @@ const ApprovalDashboard = ({
                   Configure approval stages and rules for processing requests
                 </p>
               </div>
-              <div className="addNewButton">
-                <Button
-                  label="Add New"
-                  onClick={async () => {
-                    setApprovalSideBarVisible(true);
-                  }}
-                  icon={<LuBadgePlus />}
-                />
+              <div className={approvalWorkFlowStyles.searchContainer}>
+                <div className={approvalWorkFlowStyles.searchInput}>
+                  <InputText
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    placeholder="Search approval configurations"
+                  />
+                </div>
+                <div style={{ width: "30%" }} className="addNewButton">
+                  <Button
+                    label="Add new"
+                    onClick={async () => {
+                      setApprovalSideBarVisible(true);
+                    }}
+                    icon={<LuBadgePlus />}
+                  />
+                </div>
               </div>
             </div>
             <div className="allRecords">
@@ -325,11 +330,11 @@ const ApprovalDashboard = ({
             </div>
             <div className="dashboardDataTable">
               <DataTable
-                value={approvalConfigDetails}
+                value={filteredApprovalConfigs}
                 paginator={
-                  approvalConfigDetails && approvalConfigDetails?.length > 0
+                  filteredApprovalConfigs && filteredApprovalConfigs?.length > 0
                 }
-                rows={2}
+                rows={3}
                 className="custom-card-table"
                 emptyMessage={
                   <p className="NoDatas" style={{ textAlign: "center" }}>

@@ -47,7 +47,7 @@ const CustomEmail = ({
   //Notes
   const notes = [
     {
-      info: "You can able to edit Email templates only on Email Workflow",
+      info: "You can able to edit email templates only on email workflow",
     },
   ];
   const infoNotes = [
@@ -251,9 +251,9 @@ const CustomEmail = ({
           <div className={customEmailStyles.fieldsContainer}>
             <div className={customEmailStyles.fieldsContainerChild}>
               <Label className={customEmailStyles.label}>
-                Template Name<span className="required">* </span>
+                Template name<span className="required">* </span>
                 <span className="categoryNameTag">
-                  Template Name is considered as subject of the email
+                  Template name is considered as subject of the email
                 </span>
               </Label>
               <InputText

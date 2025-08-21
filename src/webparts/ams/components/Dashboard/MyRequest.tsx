@@ -26,6 +26,7 @@ import {
 import RequestsFields from "../DynamicsRequests/RequestsFields";
 import moment from "moment";
 import Loader from "../Loader/Loader";
+import { InputText } from "primereact/inputtext";
 
 const MyRequestPage = ({
   setCurrentTableDataForDataCard,
@@ -39,9 +40,8 @@ const MyRequestPage = ({
   const [requestsDetails, setRequestsDetails] = useState<IRequestHubDetails[]>(
     []
   );
-  //Record Action
+  const [searchTerm, setSearchTerm] = useState("");
   const [recordAction, setRecordAction] = useState<string>("");
-  // const [selectedCategoryId, setSelectedCategoryId] = useState<number>(null);
   const [currentRecord, setCurrentRecord] = useState<IRequestHubDetails>();
   const [navigateFrom, setNavigateFrom] = useState<string>("");
   const [showLoader, setShowLoader] = useState<boolean>(true);
@@ -208,6 +208,21 @@ const MyRequestPage = ({
     );
   };
 
+  //Filter records based on searchTerm
+  const filteredRequests = requestsDetails.filter((item) => {
+    if (!searchTerm) return true;
+    const lowerSearch = searchTerm.toLowerCase();
+    return (
+      item.requestId?.toLowerCase().includes(lowerSearch) ||
+      item.category?.toLowerCase().includes(lowerSearch) ||
+      item.status?.toLowerCase().includes(lowerSearch) ||
+      moment(item.createdDate)
+        .format("DD/MM/YYYY")
+        .toLowerCase()
+        .includes(lowerSearch)
+    );
+  });
+
   //Render Action Column:
   const renderActionColumn = (rowData: IRequestHubDetails) => {
     const menuModel = actionsWithIcons(rowData);
@@ -228,77 +243,28 @@ const MyRequestPage = ({
         <Loader />
       ) : (
         <>
-          {/* <div className="customDataTableContainer">
-            <DataTable
-              paginator
-              rows={5}
-              value={requestsDetails}
-              tableStyle={{ minWidth: "50rem" }}
-              emptyMessage={
-                <>
-                  <p style={{ textAlign: "center" }}>No Records Found</p>
-                </>
-              }
-            >
-              <Column
-                className={dashboardStyles.highlightedRequestId}
-                field="requestId"
-                header="Request id"
-              ></Column>
-              <Column field="category" header="Category"></Column>
-              <Column
-                field="createdDate"
-                body={(rowData) =>
-                  moment(rowData.createdDate).format("DD/MM/YYYY")
-                }
-                header="Request date"
-              ></Column>
-              <Column
-                hidden
-                field="approvalJson"
-                header="Current Stage"
-                body={(e) => renderStagelevelApproverColumns(e, 4)}
-              ></Column>
-              <Column
-                hidden
-                field="approvalJson"
-                header="Approvers"
-                body={(e) => renderStagelevelApproverColumns(e, 1)}
-              ></Column>
-              <Column
-                hidden
-                field="approvalJson"
-                header="Pending Approval"
-                body={(e) => renderStagelevelApproverColumns(e, 2)}
-              ></Column>
-              <Column
-                hidden
-                field="approvalJson"
-                header="Approved by"
-                body={(e) => renderStagelevelApproverColumns(e, 3)}
-              ></Column>
-              <Column
-                field="status"
-                header="Status"
-                body={renderStatusColumn}
-                style={{ width: "10rem" }}
-              ></Column>
-              <Column field="Action" body={renderActionColumn}></Column>
-            </DataTable>
-          </div> */}
           <div className="customDataTableCardContainer">
-            <div className={dashboardStyles.profile_header_content}>
-              <span>My requests</span>
-              <p>View and manage requests you've submitted</p>
+            <div className={dashboardStyles.searchContainer}>
+              <div className={dashboardStyles.profile_header_content}>
+                <span>My requests</span>
+                <p>View and manage requests you've submitted</p>
+              </div>
+              <div className={dashboardStyles.searchInput}>
+                <InputText
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  placeholder="Search requests"
+                />
+              </div>
             </div>
             <div className="allRecords">
               <span style={{ fontFamily: "interSemiBold" }}>All requests</span>
             </div>
             <div className="dashboardDataTable">
               <DataTable
-                value={requestsDetails}
-                paginator={requestsDetails && requestsDetails?.length > 0}
-                rows={3}
+                value={filteredRequests}
+                paginator={filteredRequests && filteredRequests?.length > 0}
+                rows={5}
                 className="custom-card-table"
                 emptyMessage={
                   <p className="NoDatas" style={{ textAlign: "center" }}>
@@ -325,7 +291,6 @@ const MyRequestPage = ({
                       <div className={dashboardStyles.requestCardBody}>
                         <div className={dashboardStyles.requestIdDetails}>
                           <p className={dashboardStyles.requestIdpara}>
-                            {/* <MdUpdate style={{ fontSize: "18px" }} /> Submitted{" "} */}
                             {moment(rowData.createdDate).format("DD/MM/YYYY")}
                           </p>
                         </div>
@@ -354,9 +319,6 @@ const MyRequestPage = ({
               setShowLoader={setShowLoader}
             />
           )}
-          {/* <div>
-            <AttachmentUploader context={context} />
-          </div> */}
         </>
       )}
     </>

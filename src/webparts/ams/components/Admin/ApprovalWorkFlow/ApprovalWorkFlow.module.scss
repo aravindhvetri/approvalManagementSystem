@@ -3,6 +3,17 @@
 .label {
   @include label;
 }
+.searchContainer {
+  display: flex;
+  gap: 12px;
+  width: 24%;
+  .searchInput {
+    width: 70%;
+    input {
+      width: 100%;
+    }
+  }
+}
 .mainApprovalContainer {
   box-sizing: border-box;
   padding: 4px 20px;

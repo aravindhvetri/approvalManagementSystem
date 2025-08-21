@@ -502,7 +502,7 @@ const ApprovalWorkFlow = ({
         <div>
           <span>{`${
             currentRec?.id === null ? "Add " : isEdit ? "Edit " : "View "
-          }Approval Workflow`}</span>
+          }approval workflow`}</span>
           <p>
             {`${
               currentRec?.id === null
@@ -575,7 +575,7 @@ const ApprovalWorkFlow = ({
                   style={{ width: "100%", display: "flow" }}
                   visible={isEdit}
                   className="modernButton"
-                  label="Add Stage"
+                  label="Add stage"
                   onClick={() => {
                     validRequiredField("addStage");
                   }}

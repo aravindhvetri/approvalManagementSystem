@@ -33,6 +33,7 @@ import EmailWorkFlowStyles from "./EmailWorkFlow.module.scss";
 import "./EmailWorkFlowStyle.css";
 import "../../../../../External/style.css";
 import Loader from "../../Loader/Loader";
+import approvalWorkFlowStyles from "../ApprovalWorkFlow/ApprovalWorkFlow.module.scss";
 import { Dialog } from "primereact/dialog";
 
 const EmailWorkFlow = ({
@@ -55,6 +56,7 @@ const EmailWorkFlow = ({
       ...Config?.EmailTemplateConfigDetails,
     }
   );
+  const [searchTerm, setSearchTerm] = useState("");
   const [isValidation, setValidation] = useState<boolean>(false);
   const infoNotes = [
     { info: " Enter [$ToPerson] for replace of approver name" },
@@ -346,13 +348,13 @@ const EmailWorkFlow = ({
               : actionsBooleans.isView
               ? "View "
               : "Add "
-          }Email Workflow`}</span>
+          }email workflow`}</span>
           <p>
             {actionsBooleans.isEdit
-              ? "Modify the Email Workflow for category requests "
+              ? "Modify the email workflow for category requests "
               : actionsBooleans.isView
-              ? "View the Email Workflow for category requests "
-              : "Set up a new Email Workflow for category requests "}
+              ? "View the email workflow for category requests "
+              : "Set up a new email workflow for category requests "}
           </p>
         </div>
       </div>
@@ -362,9 +364,9 @@ const EmailWorkFlow = ({
         )}
         <div>
           <Label className={EmailWorkFlowStyles.label}>
-            Template Name<span className="required">* </span>
+            Template name<span className="required">* </span>
             <span className="categoryNameTag">
-              Template Name is considered as subject of the email
+              Template name is considered as subject of the email
             </span>
           </Label>
           <InputText
@@ -461,6 +463,13 @@ const EmailWorkFlow = ({
     </>
   );
 
+  //Filter records based on searchTerm
+  const filteredRequests = getEmailTemplateContent.filter((item) => {
+    if (!searchTerm) return true;
+    const lowerSearch = searchTerm.toLowerCase();
+    return item?.templateName?.toLowerCase().includes(lowerSearch);
+  });
+
   useEffect(() => {
     getEmailTemplateContents();
   }, []);
@@ -483,28 +492,6 @@ const EmailWorkFlow = ({
         <Loader />
       ) : (
         <>
-          {/* <div className="customDataTableContainer">
-            <DataTable
-              paginator
-              rows={5}
-              value={getEmailTemplateContent}
-              tableStyle={{ minWidth: "50rem" }}
-              emptyMessage={
-                <p style={{ textAlign: "center" }}>No Records Found</p>
-              }
-            >
-              <Column
-                style={{ width: "80%" }}
-                field="templateName"
-                header="Template Name"
-              ></Column>
-              <Column
-                style={{ width: "20%" }}
-                field="Action"
-                body={renderActionColumn}
-              ></Column>
-            </DataTable>
-          </div> */}
           <div className="customDataTableCardContainer">
             <div
               style={{
@@ -521,14 +508,23 @@ const EmailWorkFlow = ({
                   approval process
                 </p>
               </div>
-              <div className="addNewButton">
-                <Button
-                  label="Add New"
-                  onClick={async () => {
-                    setEmailWorkFlowSideBarVisible(true);
-                  }}
-                  icon={<LuBadgePlus />}
-                />
+              <div className={approvalWorkFlowStyles.searchContainer}>
+                <div className={approvalWorkFlowStyles.searchInput}>
+                  <InputText
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    placeholder="Search email templates"
+                  />
+                </div>
+                <div style={{ width: "30%" }} className="addNewButton">
+                  <Button
+                    label="Add new"
+                    onClick={async () => {
+                      setEmailWorkFlowSideBarVisible(true);
+                    }}
+                    icon={<LuBadgePlus />}
+                  />
+                </div>
               </div>
             </div>
             <div className="allRecords">
@@ -536,10 +532,8 @@ const EmailWorkFlow = ({
             </div>
             <div className="dashboardDataTable">
               <DataTable
-                value={getEmailTemplateContent}
-                paginator={
-                  getEmailTemplateContent && getEmailTemplateContent?.length > 0
-                }
+                value={filteredRequests}
+                paginator={filteredRequests && filteredRequests?.length > 0}
                 rows={3}
                 className="custom-card-table"
                 emptyMessage={

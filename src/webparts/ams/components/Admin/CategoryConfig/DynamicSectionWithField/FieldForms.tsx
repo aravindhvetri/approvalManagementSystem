@@ -141,7 +141,7 @@ const FieldForms = ({
       {!(newField.type === "YesorNo") && (
         <div className={DynamicSectionWithFieldStyles.columnNameContainer}>
           <Label className={DynamicSectionWithFieldStyles.label}>
-            Is Require
+            Is require
           </Label>
           <InputSwitch
             checked={newField.required}

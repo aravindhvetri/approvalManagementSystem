@@ -1200,12 +1200,12 @@ const DynamicSectionWithField = ({
         <div className="workFlowHeaderIcon">
           <AiOutlineAppstore />
         </div>
-        <div style={{ fontFamily: "interSemiBold" }}>Form Configuration</div>
+        <div style={{ fontFamily: "interSemiBold" }}>Form configuration</div>
         {categoryClickingID === null &&
           sections[sections.length - 1]?.columns.length > 0 && (
             <Button
               icon={<LuPlus className="modernBtnIcon" />}
-              label="Add Section"
+              label="Add section"
               onClick={addDynamicSection}
               className="modernButton"
               style={{ marginLeft: "30px", padding: "6px 14px 6px 14px" }}
@@ -1495,7 +1495,7 @@ const DynamicSectionWithField = ({
               {(actionBooleans?.isEdit || categoryClickingID === null) && (
                 <Button
                   icon={<LuPlus />}
-                  label="Add Field"
+                  label="Add field"
                   onClick={() => {
                     handleAddFieldFunc(sectionIndex);
                   }}
