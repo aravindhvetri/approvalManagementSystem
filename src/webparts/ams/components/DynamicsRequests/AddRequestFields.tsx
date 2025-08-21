@@ -599,7 +599,7 @@ const AddRequestsFields = ({
                       fontFamily: "interSemiBold",
                     }}
                   >
-                    Create Request
+                    Create request
                   </span>
                 </div>
               </div>
@@ -649,7 +649,7 @@ const AddRequestsFields = ({
                     url="/api/upload"
                     multiple
                     maxFileSize={1000000}
-                    chooseLabel="File Upload"
+                    chooseLabel="File upload"
                     chooseOptions={{ icon: "pi pi-upload" }}
                     emptyTemplate={
                       <>
@@ -693,7 +693,7 @@ const AddRequestsFields = ({
                         margin: "auto",
                         paddingTop: "10px",
                       }}
-                      chooseLabel="File Upload"
+                      chooseLabel="File upload"
                       chooseOptions={{ icon: "pi pi-upload" }}
                       emptyTemplate={
                         <>
@@ -781,7 +781,7 @@ const AddRequestsFields = ({
           >
             {dynamicFields.length > 0 && (
               <>
-                <Accordion multiple activeIndex={null}>
+                <Accordion multiple activeIndex={[0]}>
                   {Object.entries(groupedFields).map(
                     (
                       [sectionName, fields]: [string, ISectionColumnsConfig[]],

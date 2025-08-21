@@ -687,11 +687,11 @@ export const showCard = (cardDetails: ICardDetails) => {
     switch (title) {
       case "Total Requests":
         return "total";
-      case "Pending":
+      case "Pending Requests":
         return "pending";
-      case "Approved":
+      case "Approved Requests":
         return "approved";
-      case "Rejected":
+      case "Rejected Requests":
         return "rejected";
       default:
         return "default";
@@ -706,7 +706,7 @@ export const showCard = (cardDetails: ICardDetails) => {
       <div className={`${styles.topTag} ${styles["topTag" + statusClass]}`} />
 
       <div className={styles.cardContentWrapper}>
-        <div className={styles.cardHeader}>
+        {/* <div className={styles.cardHeader}>
           <span
             className={`${styles.cardIcon} ${
               styles[getStatusData(cardDetails?.cardTitle)]
@@ -717,7 +717,7 @@ export const showCard = (cardDetails: ICardDetails) => {
           {cardDetails?.cardTitle === "Total Requests" && (
             <span className={styles.badge}>+2 new</span>
           )}
-        </div>
+        </div> */}
         <span className={styles.cardTitle}>{cardDetails?.cardTitle}</span>
         <div className={styles.cardCount}>{cardDetails?.cardContent}</div>
       </div>

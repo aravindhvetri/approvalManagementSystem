@@ -837,19 +837,19 @@ const EmailContainer = ({
     const TempApproveConfigTabContent: ITabviewDetails[] = [
       {
         id: 1,
-        name: "Approval Content",
+        name: "Approval content",
       },
       {
         id: 2,
-        name: "Rejection Content",
+        name: "Rejection content",
       },
       {
         id: 3,
-        name: "Resubmission Content",
+        name: "Resubmission content",
       },
       {
         id: 4,
-        name: "Submission Content",
+        name: "Submission content",
       },
     ];
     const tempApproveConfigTabView = tabViewBar(
@@ -886,7 +886,7 @@ const EmailContainer = ({
         <div className="workFlowHeaderIcon">
           <MdOutlineEmail />
         </div>
-        <div style={{ fontFamily: "interSemiBold" }}>Email Notifications</div>
+        <div style={{ fontFamily: "interSemiBold" }}>Email notifications</div>
       </div>
       <div style={{ letterSpacing: "0" }}>
         {!(actionBooleans?.isView || actionBooleans?.isEdit) && (

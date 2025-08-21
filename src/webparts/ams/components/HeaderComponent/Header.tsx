@@ -135,17 +135,17 @@ const Header = ({ context, currentPage }) => {
         icon: <PiNoteDuotone />,
       },
       {
-        name: "Pending",
+        name: "Pending Requests",
         count: tempPendingRequestCount,
         icon: <FiClock />,
       },
       {
-        name: "Approved",
+        name: "Approved Requests",
         count: tempApprovedRequestCount,
         icon: <IoMdCheckmarkCircleOutline />,
       },
       {
-        name: "Rejected",
+        name: "Rejected Requests",
         count: tempRejecetedRequestCount,
         icon: <MdOutlineDoNotDisturbAlt />,
       },
@@ -158,11 +158,11 @@ const Header = ({ context, currentPage }) => {
     const TemptabContent: ITabviewDetails[] = [
       {
         id: 1,
-        name: "My Request",
+        name: "My request",
       },
       {
         id: 2,
-        name: "My Approval",
+        name: "My approval",
       },
     ];
 
@@ -170,15 +170,15 @@ const Header = ({ context, currentPage }) => {
       TemptabContent.push(
         {
           id: 3,
-          name: "Category Workflows",
+          name: "Category workflows",
         },
         {
           id: 4,
-          name: "Approval Config",
+          name: "Approval config",
         },
         {
           id: 5,
-          name: "Email Config",
+          name: "Email config",
         }
       );
     }

@@ -148,23 +148,21 @@ $white: #ffffff;
 //Card  Common Style:
 .cardContainer {
   position: relative;
-  padding: 10px;
-  border-radius: 20px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  padding: 12px;
+  border-right: 1px solid var(--color-light);
 }
 
 .topTag {
   position: absolute;
-  top: -12px;
-  left: 6px;
-  height: 25px;
-  width: 16%;
-  border-bottom-left-radius: 6px;
-  border-bottom-right-radius: 6px;
+  top: 35px;
+  left: 48px;
+  height: 12px;
+  width: 12px;
+  border-radius: 50%;
 }
 
 .cardContentWrapper {
-  padding-top: 0.5rem;
+  padding-top: 0;
 }
 
 .cardHeader {

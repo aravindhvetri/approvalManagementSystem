@@ -599,7 +599,7 @@ const RequestsFields = ({
           <div className="profile_header_content">
             <div>
               <span>
-                {recordAction == "View" ? "View" : "Edit"} Request Details
+                {recordAction == "View" ? "View" : "Edit"} request details
               </span>
               <p>
                 {recordAction === "View"

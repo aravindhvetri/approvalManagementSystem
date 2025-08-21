@@ -56,6 +56,7 @@ const CustomApprover = ({
     useState<IApprovalDetailsPatch>({
       ...Config.ApprovalConfigDefaultDetails,
     });
+  console.log(approvalFlowDetails, "approvalFlowDetails");
   console.log(approvalFlowDetails?.stages?.length, "approvalFlowDetailsLength");
   const [validation, setValidation] = useState<IApprovalFlowValidation>({
     ...Config.ApprovalFlowValidation,
@@ -67,12 +68,13 @@ const CustomApprover = ({
   const [approvalType, setApprovalType] = useState<IDropdownDetails>({
     ...Config.initialConfigDrop,
   });
+
   const [activeIndex, setActiveIndex] = useState<any>(0);
   console.log(activeIndex, "activeIndex");
   const [selectedStage, setSelectedStage] = useState({});
   const notes = [
     {
-      info: "You can able to edit Approval process only on Approval Workflow",
+      info: "You can able to edit approval process only on approval workflow",
     },
   ];
   //Get rejectionFlowChoice Choices
@@ -501,7 +503,7 @@ const CustomApprover = ({
         </div>
         <div className={`${ApprovalWorkFlowStyles.rejectDiv}`}>
           <Label className={`${ApprovalWorkFlowStyles.label}`}>
-            Rejection Process<span className="required">*</span>
+            Rejection process<span className="required">*</span>
           </Label>
           <Dropdown
             disabled={actionBooleans?.isEdit || actionBooleans?.isView}
@@ -520,18 +522,21 @@ const CustomApprover = ({
           />
         </div>
         <div className={`${ApprovalWorkFlowStyles.addStageButton}`}>
-          <Button
-            visible={!(actionBooleans?.isEdit || actionBooleans?.isView)}
-            icon={<LuPlus className="modernBtnIcon" />}
-            className="modernButton"
-            label="Add Stage"
-            onClick={async () => {
-              const isValid = await validRequiredField("addStage");
-              if (isValid) {
-                setActiveIndex(approvalFlowDetails?.stages?.length - 1);
-              }
-            }}
-          />
+          {approvalFlowDetails?.stages[0]?.approver?.length > 0 &&
+            approvalFlowDetails?.stages[0]?.approvalProcess !== null && (
+              <Button
+                visible={!(actionBooleans?.isEdit || actionBooleans?.isView)}
+                icon={<LuPlus className="modernBtnIcon" />}
+                className="modernButton"
+                label="Add stage"
+                onClick={async () => {
+                  const isValid = await validRequiredField("addStage");
+                  if (isValid) {
+                    setActiveIndex(approvalFlowDetails?.stages?.length - 1);
+                  }
+                }}
+              />
+            )}
         </div>
       </div>
 
@@ -633,7 +638,7 @@ const CustomApprover = ({
                   </div>
                   <div>
                     <Label className={`${ApprovalWorkFlowStyles.label}`}>
-                      Is Approver Signature Mandatory?
+                      Is approver signature mandatory?
                     </Label>
                     <Checkbox
                       onChange={(e) => {

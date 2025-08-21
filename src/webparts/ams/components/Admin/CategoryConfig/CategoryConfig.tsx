@@ -26,6 +26,8 @@ import {
 //Styles Imports:
 import "../../../../../External/style.css";
 import categoryConfigStyles from "./CategoryConfig.module.scss";
+import dashboardStyles from "../../Dashboard/Dashboard.module.scss";
+
 //primeReact Imports:
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
@@ -61,6 +63,7 @@ const CategoryConfig = ({
   const [delModal, setDelModal] = useState<IDelModal>({
     ...Config.initialdelModal,
   });
+  const [searchTerm, setSearchTerm] = useState("");
   const toast = useRef<Toast>(null);
   const [categoryDetails, setCategoryDetails] = useState<ICategoryDetails[]>(
     []
@@ -564,7 +567,7 @@ const CategoryConfig = ({
                 : actionsBooleans.isEdit
                 ? "Edit"
                 : "Create"}{" "}
-              Category Details
+              category details
             </span>
             <p>
               {actionsBooleans.isView
@@ -621,10 +624,10 @@ const CategoryConfig = ({
                         <LuWorkflow />
                       </div>
                       <div style={{ fontFamily: "interSemiBold" }}>
-                        Workflow Information
+                        Workflow information
                       </div>
                     </div>
-                    <span className="overAllHeading ">Basic Information</span>
+                    <span className="overAllHeading ">Basic information</span>
                     <div className={`${categoryConfigStyles.inputDiv}`}>
                       <div className={`${categoryConfigStyles.inputChildDiv}`}>
                         <Label className={`${categoryConfigStyles.label}`}>
@@ -675,7 +678,7 @@ const CategoryConfig = ({
                       </div>
                       <div className={`${categoryConfigStyles.inputChildDiv}`}>
                         <Label className={`${categoryConfigStyles.label}`}>
-                          Number of digits_RequestId
+                          Number of digits_request Id
                           <span className="required">*</span>
                         </Label>
 
@@ -739,7 +742,7 @@ const CategoryConfig = ({
                               <Label
                                 className={`${categoryConfigStyles.label}`}
                               >
-                                Approver Selection
+                                Approver selection
                                 <span className="required">*</span>
                               </Label>
                               <div
@@ -790,7 +793,7 @@ const CategoryConfig = ({
                   actionsBooleans?.isEdit) &&
                   activeStep == 0 && (
                     <span className="overAllHeading">
-                      Approvers Information
+                      Approvers information
                     </span>
                   )}
                 <div
@@ -961,6 +964,16 @@ const CategoryConfig = ({
     };
   }, []);
 
+  //Filter records based on searchTerm
+  const filteredRequests = categoryDetails.filter((item) => {
+    if (!searchTerm) return true;
+    const lowerSearch = searchTerm.toLowerCase();
+    return (
+      item?.category?.toLowerCase().includes(lowerSearch) ||
+      item?.requestIdFormat?.toLowerCase().includes(lowerSearch)
+    );
+  });
+
   useEffect(() => {
     if (!ApprovalConfigSideBarVisible) {
       setValidateError({
@@ -1019,20 +1032,29 @@ const CategoryConfig = ({
       ) : (
         <>
           <div className="customDataTableCardContainer">
-            <div
-              style={{
-                borderBottom: "none",
-                paddingBottom: "0px",
-                marginBottom: "25px",
-              }}
-              className="profile_header_content"
-            >
-              <div>
-                <span>Category workflows</span>
-                <p>
-                  Configure WorkFlows and define their structure for request
-                  management
-                </p>
+            <div className={dashboardStyles.searchContainer}>
+              <div
+                style={{
+                  borderBottom: "none",
+                  paddingBottom: "0px",
+                  marginBottom: "25px",
+                }}
+                className="profile_header_content"
+              >
+                <div>
+                  <span>Category workflows</span>
+                  <p>
+                    Configure WorkFlows and define their structure for request
+                    management
+                  </p>
+                </div>
+              </div>
+              <div className={dashboardStyles.searchInput}>
+                <InputText
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  placeholder="Search categories"
+                />
               </div>
             </div>
             <div className="allRecords">
@@ -1042,9 +1064,9 @@ const CategoryConfig = ({
             </div>
             <div className="dashboardDataTable">
               <DataTable
-                value={categoryDetails}
-                paginator={categoryDetails && categoryDetails?.length > 0}
-                rows={3}
+                value={filteredRequests}
+                paginator={filteredRequests && filteredRequests?.length > 0}
+                rows={6}
                 className="custom-card-table"
                 emptyMessage={
                   <p className="NoDatas" style={{ textAlign: "center" }}>

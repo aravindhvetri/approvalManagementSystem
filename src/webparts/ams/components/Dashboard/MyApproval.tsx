@@ -26,6 +26,7 @@ import {
 import RequestsFields from "../DynamicsRequests/RequestsFields";
 import Loader from "../Loader/Loader";
 import { Label } from "office-ui-fabric-react";
+import { InputText } from "primereact/inputtext";
 
 const MyApprovalPage = ({
   setCurrentTableDataForDataCard,
@@ -42,11 +43,9 @@ const MyApprovalPage = ({
   const [requestsDetails, setRequestsDetails] = useState<IRequestHubDetails[]>(
     []
   );
-  //Record Action
+  const [searchTerm, setSearchTerm] = useState("");
   const [recordAction, setRecordAction] = useState<string>("");
   const [navigateFrom, setNavigateFrom] = useState<string>("");
-  //CategoryId
-  // const [selectedCategoryId, setSelectedCategoryId] = useState<number>(null);
   const [currentRecord, setCurrentRecord] = useState<IRequestHubDetails>();
   //Set Actions PopUp:
   const actionsWithIcons = (rowData: IRequestHubDetails) => [
@@ -235,6 +234,18 @@ const MyApprovalPage = ({
     return <ActionsMenu items={menuModel.filter((e) => e !== "")} />;
   };
 
+  //Filter records based on searchTerm
+  const filteredRequests = requestsDetails.filter((item) => {
+    if (!searchTerm) return true;
+    const lowerSearch = searchTerm.toLowerCase();
+    return (
+      item?.requestId?.toLowerCase().includes(lowerSearch) ||
+      item?.category?.toLowerCase().includes(lowerSearch) ||
+      item?.status?.toLowerCase().includes(lowerSearch) ||
+      item?.author?.name.toLowerCase().includes(lowerSearch)
+    );
+  });
+
   useEffect(() => {
     getRequestsHubDetails();
     setNavigateFrom("MyApproval");
@@ -249,82 +260,30 @@ const MyApprovalPage = ({
         <Loader />
       ) : (
         <>
-          {/* <div className="customDataTableContainer">
-            <DataTable
-              paginator
-              rows={5}
-              value={requestsDetails}
-              tableStyle={{ minWidth: "50rem" }}
-              emptyMessage={
-                <>
-                  <p style={{ textAlign: "center" }}>No Records Found</p>
-                </>
-              }
-            >
-              <Column
-                className={dashboardStyles.highlightedRequestId}
-                field="requestId"
-                header="Request id"
-              ></Column>
-              <Column field="category" header="Category"></Column>
-              <Column
-                hidden
-                field="approvalJson"
-                header="Current Stage"
-                body={(e) => renderStagelevelApproverColumns(e, 4)}
-              ></Column>
-              <Column
-                hidden
-                field="approvalJson"
-                header="Approvers"
-                body={(e) => renderStagelevelApproverColumns(e, 1)}
-              ></Column>
-              <Column
-                hidden
-                field="approvalJson"
-                header="Pending Approval"
-                body={(e) => renderStagelevelApproverColumns(e, 2)}
-              ></Column>
-              <Column
-                hidden
-                field="approvalJson"
-                header="Approved by"
-                body={(e) => renderStagelevelApproverColumns(e, 3)}
-              ></Column>
-              <Column
-                field="author"
-                header="User name"
-                body={(e) => peoplePickerTemplate(e?.author)}
-              ></Column>
-              <Column
-                field="author"
-                header="E mail"
-                body={(e) => e?.author?.email}
-              ></Column>
-              <Column
-                field="status"
-                header="Status"
-                body={renderStatusColumn}
-                style={{ width: "10rem" }}
-              ></Column>
-              <Column field="Action" body={renderActionColumn}></Column>
-            </DataTable>
-          </div> */}
           <div className="customDataTableCardContainer">
-            <div className={dashboardStyles.profile_header_content}>
-              <span>My approval</span>
-              <p>
-                Review and take action on requests waiting for your approval
-              </p>
+            <div className={dashboardStyles.searchContainer}>
+              <div className={dashboardStyles.profile_header_content}>
+                <span>My approval</span>
+                <p>
+                  Review and take action on requests waiting for your approval
+                </p>
+              </div>
+              <div className={dashboardStyles.searchInput}>
+                <InputText
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  placeholder="Search approvals"
+                />
+              </div>
             </div>
             <div className="allRecords">
               <span style={{ fontFamily: "interSemiBold" }}>All requests</span>
             </div>
             <div className="dashboardDataTable">
               <DataTable
-                value={requestsDetails}
-                paginator={requestsDetails && requestsDetails?.length > 0}
-                rows={3}
+                value={filteredRequests}
+                paginator={filteredRequests && filteredRequests?.length > 0}
+                rows={5}
                 className="custom-card-table"
                 emptyMessage={
                   <p className="NoDatas" style={{ textAlign: "center" }}>
@@ -349,14 +308,6 @@ const MyApprovalPage = ({
                         </div>
                       </div>
                       <div className={dashboardStyles.requestCardBody}>
-                        {/* <div className={dashboardStyles.requestIdDetails}>
-                        <p className={dashboardStyles.requestIdpara}>
-                          <span style={{ fontSize: "18px" }}>
-                            <IoIosMail />
-                          </span>
-                          {rowData?.author?.email}
-                        </p>
-                      </div> */}
                         <span>{renderStatusColumn(rowData)}</span>
                         {peoplePickerTemplate(rowData?.author)}
                         {renderActionColumn(rowData)}

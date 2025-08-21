@@ -3,9 +3,19 @@
   color: $color-dark !important;
   font-weight: 700;
 }
+.searchContainer {
+  display: flex;
+  justify-content: space-between;
+  .searchInput {
+    width: 16%;
+    input {
+      width: 100%;
+    }
+  }
+}
 .profile_header_content {
   padding: 0px;
-  margin-bottom: 25px;
+  margin-bottom: 20px;
   span {
     display: block;
     margin: 0;
