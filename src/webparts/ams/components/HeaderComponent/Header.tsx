@@ -65,7 +65,6 @@ const Header = ({ context, currentPage }) => {
     });
   const [activeTabView, setActiveTabView] = useState(0);
   const [currentTableData, setCurrentTableData] = useState([]);
-  console.log(currentTableData, "currentTableData");
   const [cardDataCountDetails, setCardDataCountDetails] = useState<
     ICardDataCountDetails[]
   >([Config.cardDataCountDetailsConfig]);

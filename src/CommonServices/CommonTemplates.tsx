@@ -682,7 +682,6 @@ export const getSpGroupMembers = async (groupName) => {
 
 //Show Card with details
 export const showCard = (cardDetails: ICardDetails) => {
-  console.log(cardDetails, " cardDetails");
   const getStatusData = (title: string) => {
     switch (title) {
       case "Total Requests":

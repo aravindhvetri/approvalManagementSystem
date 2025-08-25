@@ -27,6 +27,8 @@ import RequestsFields from "../DynamicsRequests/RequestsFields";
 import moment from "moment";
 import Loader from "../Loader/Loader";
 import { InputText } from "primereact/inputtext";
+import { IconField } from "primereact/iconfield";
+import { InputIcon } from "primereact/inputicon";
 
 const MyRequestPage = ({
   setCurrentTableDataForDataCard,
@@ -250,6 +252,18 @@ const MyRequestPage = ({
                 <p>View and manage requests you've submitted</p>
               </div>
               <div className={dashboardStyles.searchInput}>
+                {/* <IconField iconPosition="right">
+                  <InputIcon
+                    style={{ fontSize: "13px" }}
+                    className="pi pi-search"
+                  >
+                  </InputIcon>
+                  <InputText
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    placeholder="Search requests"
+                  />
+                </IconField> */}
                 <InputText
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
