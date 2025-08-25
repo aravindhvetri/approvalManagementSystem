@@ -379,7 +379,7 @@ const EmailWorkFlow = ({
           />
           <div>
             {isValidation && templateData?.templateName?.trim() === "" && (
-              <span className="errorMsg">Template Name is required</span>
+              <span className="errorMsg">Template name is required</span>
             )}
           </div>
 

@@ -114,6 +114,10 @@ div[data-automationid="SiteHeader"] {
   border: 1px solid var(--inputBorderColor);
   color: #1e2125;
 }
+.p-icon-field > .p-input-icon {
+  margin-top: 0;
+  top: 32%;
+}
 .p-inputtext:enabled:focus {
   box-shadow: none;
 }

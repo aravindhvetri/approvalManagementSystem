@@ -539,7 +539,6 @@ const AddRequestsFields = ({
 
   //DownLoad File Function:
   const downloadFile = (file) => {
-    console.log(file, "file");
     const anchortag = document.createElement("a");
     anchortag.setAttribute("href", file?.objectURL);
     anchortag.setAttribute("target", "_blank");
