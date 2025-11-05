@@ -1,26 +1,23 @@
-<?xml version="1.0" encoding="utf-8"?>
-<List xmlns:ows="Microsoft SharePoint" Title="ApprovalConfig" Direction="LTR" Url="Lists/ApprovalConfig" BaseType="0" Type="100">
+<List xmlns:ows="Microsoft SharePoint" Title="ApprovalConfig" EnableContentTypes="TRUE" FolderCreation="FALSE" Direction="$Resources:Direction;" Url="Lists/ApprovalConfig" BaseType="0"
+    xmlns="http://schemas.microsoft.com/sharepoint/">
     <MetaData>
         <Fields>
-            <Field ID="{5e0a8eb2-658a-4fef-bb0b-bb9af140037f}" Name="Title" DisplayName="$Resources:core,Title;" Type="Text" Required="FALSE" SourceID="http://schemas.microsoft.com/sharepoint/v3" StaticName="Title" MaxLength="255"/>
-            <Field ID="{670da46b-9cbe-45b7-a28f-a10d218ae2ab}" Name="Category" DisplayName="Category" Type="LookupMulti" Required="FALSE" List="Lists/CategoryConfig"  Group="SPFx Columns" ShowField="ID"/>
-            <Field ID="{72fe9cfe-b18f-4c8b-8f55-81dd93c1e59c}" Name="ApprovalFlowName" DisplayName="ApprovalFlowName" Type="Text" Required="FALSE" Group="SPFx Columns"/>
-            <Field 
-              ID="{943E7530-5E2B-4C02-8259-CCD93A9ECB18}" 
-              Name="RejectionFlow"
-              DisplayName="RejectionFlow"
-              Type="Choice"
-              Required="FALSE"
-              Group="SPFx Columns">
-              <CHOICES>
-                <CHOICE>Restart from first stage</CHOICE>
-                <CHOICE>Restart from rejected stage</CHOICE>
-                <CHOICE>Resubmission not allowed</CHOICE>
-              </CHOICES>
-            <Field/>
-            <Field ID="{b318cd56-db4c-45e5-b21b-f72a9cef61b3}" Name="IsDelete" DisplayName="IsDelete" Type="Boolean" Required="FALSE" Group="SPFx Columns"/>
-            <Field ID="{c40ebd18-ab99-4c20-ba8c-b30540eebe05}" Name="TotalStages" DisplayName="TotalStages" Type="Number" Required="FALSE" Group="SPFx Columns"/>
+            <Field Name="Title" DisplayName="$Resources:core,Title;" Type="Text" Required="FALSE" SourceID="http://schemas.microsoft.com/sharepoint/v3" StaticName="Title" MaxLength="255" ID="{7ba5cdbb-d19d-464e-87dd-d297e7e736a2}"/>
+            <Field ID="{e9027c7d-ee9e-448d-8932-a5c5ce37cd10}" Name="Category" DisplayName="Category" Type="Lookup" Mult="TRUE" Required="FALSE" Group="SPFx Columns" List="Lists/CategoryConfig" ShowField="ID" />
+            <Field ID="{4e2e7b11-8b74-4e84-8bfe-bb9b65624653}" Name="ApprovalFlowName" DisplayName="ApprovalFlowName" Type="Text" Required="FALSE" Group="SPFx Columns" />
+            <Field ID="{ec4465e1-c53c-45be-919c-9cdd42638aed}" Name="TotalStages" DisplayName="TotalStages" Type="Number" Required="FALSE" Decimals="0" Min="0" Group="SPFx Columns" />
+            <Field ID="{0df2a0cd-b23d-4976-9d3e-e0bf03af47a1}" Name="RejectionFlow" DisplayName="RejectionFlow" Type="Choice" Required="FALSE" Group="SPFx Columns">
+                <CHOICES>
+                    <CHOICE>Restart from first stage</CHOICE>
+                    <CHOICE>Restart from rejected stage</CHOICE>
+                    <CHOICE>Resubmission not allowed</CHOICE>
+                </CHOICES>
+            </Field>
+            <Field ID="{27153964-26de-420c-9e40-6d5256ee49e8}" Name="IsDelete" DisplayName="IsDelete" Type="Boolean" Required="FALSE" Group="SPFx Columns">
+                <Default>0</Default>
+            </Field>
         </Fields>
+
 
         <!-- Views Definition -->
         <Views>
@@ -32,11 +29,11 @@
 
                 <ViewFields>
                     <FieldRef Name="Title"/>
-                    <FieldRef Name="Category"/>
-                    <FieldRef Name="ApprovalFlowName"/>
-                    <FieldRef Name="RejectionFlow"/>
-                    <FieldRef Name="TotalStages"/>
-                    <FieldRef Name="IsDelete"/>
+                    <FieldRef Name="Category" />
+                    <FieldRef Name="ApprovalFlowName" />
+                    <FieldRef Name="TotalStages" />
+                    <FieldRef Name="RejectionFlow" />
+                    <FieldRef Name="IsDelete" />
                 </ViewFields>
                 <Query>
                     <OrderBy>

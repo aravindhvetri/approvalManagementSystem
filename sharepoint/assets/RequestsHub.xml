@@ -1,0 +1,53 @@
+<List xmlns:ows="Microsoft SharePoint" Title="RequestsHub" EnableContentTypes="TRUE" FolderCreation="FALSE" Direction="$Resources:Direction;" Url="Lists/RequestsHub" BaseType="0"
+    xmlns="http://schemas.microsoft.com/sharepoint/">
+    <MetaData>
+        <Fields>
+            <Field Name="Title" DisplayName="$Resources:core,Title;" Type="Text" Required="FALSE" SourceID="http://schemas.microsoft.com/sharepoint/v3" StaticName="Title" MaxLength="255" ID="{deac52b6-2d13-479b-be80-2c375a89e4d7}"/>
+            <Field ID="{38c4b75e-78ba-4cfd-b094-74f986624a05}" Name="RequestID" DisplayName="RequestID" Type="Text" Required="FALSE" Group="SPFx Columns" />
+            <Field ID="{f0a3aeb3-2882-4c67-8aa8-89c025961280}" Name="Category" DisplayName="Category" Type="Lookup" Required="FALSE" Group="SPFx Columns" List="Lists/CategoryConfig" ShowField="ID" />
+            <Field ID="{730591c0-a409-4a45-9362-be5f1ae5b804}" Name="ApprovalJson" DisplayName="ApprovalJson" Type="Note" Required="FALSE" Group="SPFx Columns" Rows="6" />
+            <Field ID="{c34db5da-f54f-4b1f-a1bb-fb26d64dfe09}" Name="Status" DisplayName="Status" Type="Choice" Required="FALSE" Group="SPFx Columns">
+                <CHOICES>
+                    <CHOICE>Approved</CHOICE>
+                    <CHOICE>Rejected</CHOICE>
+                    <CHOICE>Pending</CHOICE>
+                </CHOICES>
+            </Field>
+            <Field ID="{a68c9806-a279-437d-84f2-3ce674123ce4}" Name="IsDelete" DisplayName="IsDelete" Type="Boolean" Required="FALSE" Group="SPFx Columns">
+                <Default>0</Default>
+            </Field>
+        </Fields>
+
+        <!-- Views Definition -->
+        <Views>
+            <View BaseViewID="1" Type="HTML" WebPartZoneID="Main" DisplayName="$Resources:core,objectiv_schema_mwsidcamlidC24;" DefaultView="TRUE" MobileView="TRUE" MobileDefaultView="TRUE" SetupPath="pages\viewpage.aspx" ImageUrl="/_layouts/images/generic.png" Url="AllItems.aspx">
+                <XslLink Default="TRUE">main.xsl</XslLink>
+                <JSLink>clienttemplates.js</JSLink>
+                <RowLimit Paged="TRUE">30</RowLimit>
+                <Toolbar Type="Standard" />
+
+                <ViewFields>
+                    <FieldRef Name="Title"/>
+                    <FieldRef Name="RequestID" />
+                    <FieldRef Name="Category" />
+                    <FieldRef Name="ApprovalJson" />
+                    <FieldRef Name="Status" />
+                    <FieldRef Name="IsDelete" />
+                </ViewFields>
+                <Query>
+                    <OrderBy>
+                        <FieldRef Name="ID" />
+                    </OrderBy>
+                </Query>
+            </View>
+        </Views>
+
+        <!-- Forms Definition (Display, Edit, New) -->
+        <Forms>
+            <Form Type="DisplayForm" Url="DispForm.aspx" SetupPath="pages\form.aspx" WebPartZoneID="Main" />
+            <Form Type="EditForm" Url="EditForm.aspx" SetupPath="pages\form.aspx" WebPartZoneID="Main" />
+            <Form Type="NewForm" Url="NewForm.aspx" SetupPath="pages\form.aspx" WebPartZoneID="Main" />
+        </Forms>
+
+    </MetaData>
+</List>

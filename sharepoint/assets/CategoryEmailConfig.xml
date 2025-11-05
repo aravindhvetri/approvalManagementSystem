@@ -1,0 +1,49 @@
+<List xmlns:ows="Microsoft SharePoint" Title="CategoryEmailConfig" EnableContentTypes="TRUE" FolderCreation="FALSE" Direction="$Resources:Direction;" Url="Lists/CategoryEmailConfig" BaseType="0"
+    xmlns="http://schemas.microsoft.com/sharepoint/">
+    <MetaData>
+        <Fields>
+            <Field Name="Title" DisplayName="$Resources:core,Title;" Type="Text" Required="FALSE" SourceID="http://schemas.microsoft.com/sharepoint/v3" StaticName="Title" MaxLength="255" ID="{fbf5f837-95c3-49d5-baea-9907ef25e99e}"/>
+            <Field ID="{8d60ace0-95aa-412d-8335-728b0726dabd}" Name="Category" DisplayName="Category" Type="Lookup" Required="FALSE" Group="SPFx Columns" List="Lists/CategoryConfig" ShowField="ID" />
+            <Field ID="{823a7dfa-f874-4eb7-ba65-7e0ab48cad6c}" Name="Process" DisplayName="Process" Type="Choice" Required="FALSE" Group="SPFx Columns">
+                <CHOICES>
+                    <CHOICE>Approval</CHOICE>
+                    <CHOICE>ReSubmit</CHOICE>
+                    <CHOICE>Reject</CHOICE>
+                    <CHOICE>ReWork</CHOICE>
+                </CHOICES>
+            </Field>
+            <Field ID="{de42dc8e-66fb-437c-b604-b7a4788a803d}" Name="ParentTemplate" DisplayName="ParentTemplate" Type="Lookup" Required="FALSE" Group="SPFx Columns" List="Lists/EmailTemplateConfig" ShowField="ID" />
+        </Fields>
+
+
+        <!-- Views Definition -->
+        <Views>
+            <View BaseViewID="1" Type="HTML" WebPartZoneID="Main" DisplayName="$Resources:core,objectiv_schema_mwsidcamlidC24;" DefaultView="TRUE" MobileView="TRUE" MobileDefaultView="TRUE" SetupPath="pages\viewpage.aspx" ImageUrl="/_layouts/images/generic.png" Url="AllItems.aspx">
+                <XslLink Default="TRUE">main.xsl</XslLink>
+                <JSLink>clienttemplates.js</JSLink>
+                <RowLimit Paged="TRUE">30</RowLimit>
+                <Toolbar Type="Standard" />
+
+                <ViewFields>
+                    <FieldRef Name="Title"/>
+                    <FieldRef Name="Category" />
+                    <FieldRef Name="Process" />
+                    <FieldRef Name="ParentTemplate" />
+                </ViewFields>
+                <Query>
+                    <OrderBy>
+                        <FieldRef Name="ID" />
+                    </OrderBy>
+                </Query>
+            </View>
+        </Views>
+
+        <!-- Forms Definition (Display, Edit, New) -->
+        <Forms>
+            <Form Type="DisplayForm" Url="DispForm.aspx" SetupPath="pages\form.aspx" WebPartZoneID="Main" />
+            <Form Type="EditForm" Url="EditForm.aspx" SetupPath="pages\form.aspx" WebPartZoneID="Main" />
+            <Form Type="NewForm" Url="NewForm.aspx" SetupPath="pages\form.aspx" WebPartZoneID="Main" />
+        </Forms>
+
+    </MetaData>
+</List>

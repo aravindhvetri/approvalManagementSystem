@@ -1,0 +1,52 @@
+<List xmlns:ows="Microsoft SharePoint" Title="ApprovalHistory" EnableContentTypes="TRUE" FolderCreation="FALSE" Direction="$Resources:Direction;" Url="Lists/ApprovalHistory" BaseType="0"
+    xmlns="http://schemas.microsoft.com/sharepoint/">
+    <MetaData>
+        <Fields>
+            <Field Name="Title" DisplayName="$Resources:core,Title;" Type="Text" Required="FALSE" SourceID="http://schemas.microsoft.com/sharepoint/v3" StaticName="Title" MaxLength="255" ID="{0a4a69ef-0c32-4bce-9519-c114f8ed0c76}"/>
+            <Field ID="{4d587755-6cd8-454d-95d6-e6748c4a02e6}" Name="ParentID" DisplayName="ParentID" Type="Lookup" Required="FALSE" Group="SPFx Columns" List="Lists/RequestsHub" ShowField="ID" />
+            <Field ID="{c5603e18-2e68-4a2f-8c2b-f5c5bd7ae844}" Name="Stage" DisplayName="Stage" Type="Number" Required="FALSE" Decimals="0" Min="0" Group="SPFx Columns" />
+            <Field ID="{519c7380-658e-4a98-a929-d2366ddadc66}" Name="Approver" DisplayName="Approver" Type="User" Required="FALSE" UserSelectionMode="PeopleOnly" UserSelectionScope="0" Group="SPFx Columns" />
+            <Field ID="{e44e9d6b-6b18-446f-8ef8-c64d021fb670}" Name="Comments" DisplayName="Comments" Type="Note" Required="FALSE" Group="SPFx Columns" Rows="6" RichText="TRUE" />
+            <Field ID="{31de0683-6950-481a-9a95-0d0bc4d9b4e6}" Name="Status" DisplayName="Status" Type="Choice" Required="FALSE" Group="SPFx Columns">
+                <CHOICES>
+                    <CHOICE>Approved</CHOICE>
+                    <CHOICE>Rejected</CHOICE>
+                </CHOICES>
+            </Field>
+            <Field ID="{ea8e7432-3be3-4643-a76b-ad96d544cc4d}" Name="Signature" DisplayName="Signature" Type="Note" Required="FALSE" Group="SPFx Columns" Rows="6"/>
+        </Fields>
+
+
+        <!-- Views Definition -->
+        <Views>
+            <View BaseViewID="1" Type="HTML" WebPartZoneID="Main" DisplayName="$Resources:core,objectiv_schema_mwsidcamlidC24;" DefaultView="TRUE" MobileView="TRUE" MobileDefaultView="TRUE" SetupPath="pages\viewpage.aspx" ImageUrl="/_layouts/images/generic.png" Url="AllItems.aspx">
+                <XslLink Default="TRUE">main.xsl</XslLink>
+                <JSLink>clienttemplates.js</JSLink>
+                <RowLimit Paged="TRUE">30</RowLimit>
+                <Toolbar Type="Standard" />
+
+                <ViewFields>
+                    <FieldRef Name="Title"/>
+                    <FieldRef Name="ParentID" />
+                    <FieldRef Name="Stage" />
+                    <FieldRef Name="Approver" />
+                    <FieldRef Name="Comments" />
+                    <FieldRef Name="Status" />
+                </ViewFields>
+                <Query>
+                    <OrderBy>
+                        <FieldRef Name="ID" />
+                    </OrderBy>
+                </Query>
+            </View>
+        </Views>
+
+        <!-- Forms Definition (Display, Edit, New) -->
+        <Forms>
+            <Form Type="DisplayForm" Url="DispForm.aspx" SetupPath="pages\form.aspx" WebPartZoneID="Main" />
+            <Form Type="EditForm" Url="EditForm.aspx" SetupPath="pages\form.aspx" WebPartZoneID="Main" />
+            <Form Type="NewForm" Url="NewForm.aspx" SetupPath="pages\form.aspx" WebPartZoneID="Main" />
+        </Forms>
+
+    </MetaData>
+</List>
