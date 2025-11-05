@@ -1,0 +1,56 @@
+<List xmlns:ows="Microsoft SharePoint" Title="SectionColumnsConfig" EnableContentTypes="TRUE" FolderCreation="FALSE" Direction="$Resources:Direction;" Url="Lists/SectionColumnsConfig" BaseType="0"
+    xmlns="http://schemas.microsoft.com/sharepoint/">
+    <MetaData>
+        <Fields>
+            <Field Name="Title" DisplayName="$Resources:core,Title;" Type="Text" Required="FALSE" SourceID="http://schemas.microsoft.com/sharepoint/v3" StaticName="Title" MaxLength="255" ID="{28f9f415-91ef-4197-ba25-a31629967fcf}"/>
+            <Field ID="{1e410a2a-dc00-41a9-9a84-a7aa783276c1}" Name="ParentSection" DisplayName="ParentSection" Type="Lookup" Required="FALSE" Group="SPFx Columns" List="Lists/CategorySectionConfig" ShowField="ID" />
+            <Field ID="{272ed20a-402e-4a0a-b48b-1e3f36939851}" Name="ColumnInternalName" DisplayName="ColumnInternalName" Type="Text" Required="FALSE" Group="SPFx Columns" />
+            <Field ID="{b970e997-52ea-45a9-a095-136be335d79d}" Name="ColumnExternalName" DisplayName="ColumnExternalName" Type="Text" Required="FALSE" Group="SPFx Columns" />
+            <Field ID="{006a197c-2502-497f-acb9-35f1d823be80}" Name="ColumnType" DisplayName="ColumnType" Type="Text" Required="FALSE" Group="SPFx Columns" />
+            <Field ID="{4f441f12-df56-40e6-8ad1-0adf05beb8f3}" Name="IsRequired" DisplayName="IsRequired" Type="Boolean" Required="FALSE" Group="SPFx Columns">
+                <Default>0</Default>
+            </Field>
+            <Field ID="{3356e1e4-9b73-4809-a9d2-d51d311a27fe}" Name="ViewStage" DisplayName="ViewStage" Type="Note" Required="FALSE" Group="SPFx Columns" Rows="6" />
+            <Field ID="{84b2f193-3f85-41f6-80bf-2fcc7f9b37a0}" Name="ChoiceValues" DisplayName="ChoiceValues" Type="Note" Required="FALSE" Group="SPFx Columns" Rows="6" />
+            <Field ID="{c44cfdd8-82af-4737-adbb-f35aed708e4d}" Name="IsDelete" DisplayName="IsDelete" Type="Boolean" Required="FALSE"  Group="SPFx Columns">
+                <Default>0</Default>
+            </Field>
+        </Fields>
+
+
+        <!-- Views Definition -->
+        <Views>
+            <View BaseViewID="1" Type="HTML" WebPartZoneID="Main" DisplayName="$Resources:core,objectiv_schema_mwsidcamlidC24;" DefaultView="TRUE" MobileView="TRUE" MobileDefaultView="TRUE" SetupPath="pages\viewpage.aspx" ImageUrl="/_layouts/images/generic.png" Url="AllItems.aspx">
+                <XslLink Default="TRUE">main.xsl</XslLink>
+                <JSLink>clienttemplates.js</JSLink>
+                <RowLimit Paged="TRUE">30</RowLimit>
+                <Toolbar Type="Standard" />
+
+                <ViewFields>
+                    <FieldRef Name="Title"/>
+                    <FieldRef Name="ParentSection" />
+                    <FieldRef Name="ColumnInternalName" />
+                    <FieldRef Name="ColumnExternalName" />
+                    <FieldRef Name="ColumnType" />
+                    <FieldRef Name="IsRequired" />
+                    <FieldRef Name="ViewStage" />
+                    <FieldRef Name="ChoiceValues" />
+                    <FieldRef Name="IsDelete" />
+                </ViewFields>
+                <Query>
+                    <OrderBy>
+                        <FieldRef Name="ID" />
+                    </OrderBy>
+                </Query>
+            </View>
+        </Views>
+
+        <!-- Forms Definition (Display, Edit, New) -->
+        <Forms>
+            <Form Type="DisplayForm" Url="DispForm.aspx" SetupPath="pages\form.aspx" WebPartZoneID="Main" />
+            <Form Type="EditForm" Url="EditForm.aspx" SetupPath="pages\form.aspx" WebPartZoneID="Main" />
+            <Form Type="NewForm" Url="NewForm.aspx" SetupPath="pages\form.aspx" WebPartZoneID="Main" />
+        </Forms>
+
+    </MetaData>
+</List>

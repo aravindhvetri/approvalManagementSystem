@@ -33,7 +33,18 @@
         "version": "1.0.0.0",
         "assets": {
           "elementManifests": ["element.xml"],
-          "elementFiles": ["CategoryConfig.xml"]
+          "elementFiles": [
+            "CategoryConfig.xml",
+            "CategorySectionConfig.xml",
+            "SectionColumnsConfig.xml",
+            "EmailTemplateConfig.xml",
+            "CategoryEmailConfig.xml",
+            "RequestsHub.xml",
+            "ApprovalHistory.xml",
+            "ApprovalConfig.xml",
+            "ApprovalStageConfig.xml",
+            "AttachmentsLibrary.xml"
+          ]
         }
       }
     ]

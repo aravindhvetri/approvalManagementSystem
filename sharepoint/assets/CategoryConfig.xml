@@ -1,11 +1,25 @@
-<?xml version="1.0" encoding="utf-8"?>
-<List xmlns:ows="Microsoft SharePoint" Title="CategoryConfig" Direction="LTR" Url="Lists/CategoryConfig" BaseType="0" Type="100">
+<List xmlns:ows="Microsoft SharePoint" Title="CategoryConfig" EnableContentTypes="TRUE" FolderCreation="FALSE" Direction="$Resources:Direction;" Url="Lists/CategoryConfig" BaseType="0" Type="100"
+    xmlns="http://schemas.microsoft.com/sharepoint/">
     <MetaData>
         <Fields>
-            <Field ID="{f518f5a9-85da-4717-a27e-8a92d46df95d}" Name="Title" DisplayName="$Resources:core,Title;" Type="Text" Required="FALSE" SourceID="http://schemas.microsoft.com/sharepoint/v3" StaticName="Title" MaxLength="255"/>
-            <Field ID="{1b651164-c906-4241-8f96-56ca9dfa3da4}" Name="Category" DisplayName="Category" Type="Text" Required="FALSE" Group="SPFx Columns" />
-            <Field ID="{bce8a84e-270f-4800-b20b-3fbe66ed55b4}" Name="IsDelete" DisplayName="IsDelete" Type="Boolean" Required="FALSE" Group="SPFx Columns"/>
+            <Field Name="Title" DisplayName="$Resources:core,Title;" Type="Text" Required="FALSE" SourceID="http://schemas.microsoft.com/sharepoint/v3" StaticName="Title" MaxLength="255" ID="{fa2ae1a6-5440-4529-bb54-c28b7c5176e0}"/>
+            <Field ID="{bac77f0e-c86f-4ddd-beb6-a931f0e5d568}" Name="Category" DisplayName="Category" Type="Text" Required="FALSE" Group="SPFx Columns"/>
+            <Field ID="{6bc8e2fa-74e4-4f2c-a2cd-5b1a245d5770}" Name="RequestIdFormat" DisplayName="RequestIdFormat" Type="Text" Required="FALSE" Group="SPFx Columns"/>
+            <Field ID="{185cba55-9a28-4dd1-802b-84eca161298e}" Name="RequestIdDigits" DisplayName="RequestIdDigits" Type="Text" Required="FALSE" Group="SPFx Columns"/>
+
+            <Field ID="{c69d5e80-f8a2-4fbf-9aad-4bcc2344939b}" Name="IsApproverSignRequired" DisplayName="IsApproverSignRequired" Type="Boolean" Required="FALSE" Group="SPFx Columns">
+                <Default>0</Default>
+            </Field>
+            <Field ID="{607f07a6-4cf3-4f9d-9db4-7141bcba98ac}" Name="IsDraft" DisplayName="IsDraft" Type="Boolean" Required="FALSE" Group="SPFx Columns">
+                <Default>0</Default>
+            </Field>
+            <Field ID="{0153897b-c6cd-45e9-9d6f-695133d4195f}" Name="ViewApproverSignStages" DisplayName="ViewApproverSignStages" Type="Note" Required="FALSE" Group="SPFx Columns" Rows="6"/>
+            <Field ID="{92a6c56a-f607-4cc5-ba6e-285cd642f795}" Name="DraftedState" DisplayName="DraftedState" Type="Number" Required="FALSE" Decimals="0" Min="0" Group="SPFx Columns" />
+            <Field ID="{17d822f4-e1c2-450d-912f-14daf83a1e3a}" Name="IsDelete" DisplayName="IsDelete" Type="Boolean" Required="FALSE" Group="SPFx Columns">
+                <Default>0</Default>
+            </Field>
         </Fields>
+
 
         <!-- Views Definition -->
         <Views>
@@ -17,8 +31,14 @@
 
                 <ViewFields>
                     <FieldRef Name="Title"/>
-                    <FieldRef Name="Category"/>
-                    <FieldRef Name="IsDelete"/>
+                    <FieldRef Name="Category" />
+                    <FieldRef Name="RequestIdFormat" />
+                    <FieldRef Name="RequestIdDigits" />
+                    <FieldRef Name="IsApproverSignRequired" />
+                    <FieldRef Name="IsDraft" />
+                    <FieldRef Name="ViewApproverSignStages" />
+                    <FieldRef Name="DraftedState" />
+                    <FieldRef Name="IsDelete" />
                 </ViewFields>
                 <Query>
                     <OrderBy>

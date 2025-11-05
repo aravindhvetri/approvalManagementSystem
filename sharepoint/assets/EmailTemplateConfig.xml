@@ -1,0 +1,44 @@
+<List xmlns:ows="Microsoft SharePoint" Title="EmailTemplateConfig" EnableContentTypes="TRUE" FolderCreation="FALSE" Direction="$Resources:Direction;" Url="Lists/EmailTemplateConfig" BaseType="0"
+    xmlns="http://schemas.microsoft.com/sharepoint/">
+    <MetaData>
+        <Fields>
+            <Field Name="Title" DisplayName="$Resources:core,Title;" Type="Text" Required="FALSE" SourceID="http://schemas.microsoft.com/sharepoint/v3" StaticName="Title" MaxLength="255" ID="{29dc8c07-2c01-4e87-8098-cbf07a9fa6b1}"/>
+            <Field ID="{4ac1b159-c33e-47ca-b798-3b9199321177}" Name="TemplateName" DisplayName="TemplateName" Type="Text" Required="FALSE" Group="SPFx Columns" />
+            <Field ID="{db6ee507-0447-4878-b756-6daf4d7b42c7}" Name="EmailBody" DisplayName="EmailBody" Type="Note" Required="FALSE" Group="SPFx Columns" Rows="6" RichText="TRUE" />
+            <Field ID="{4ab8d7a3-8d66-49db-a86e-cb70813dacc6}" Name="IsDelete" DisplayName="IsDelete" Type="Boolean" Required="FALSE" Group="SPFx Columns">
+                <Default>0</Default>
+            </Field>
+        </Fields>
+
+
+        <!-- Views Definition -->
+        <Views>
+            <View BaseViewID="1" Type="HTML" WebPartZoneID="Main" DisplayName="$Resources:core,objectiv_schema_mwsidcamlidC24;" DefaultView="TRUE" MobileView="TRUE" MobileDefaultView="TRUE" SetupPath="pages\viewpage.aspx" ImageUrl="/_layouts/images/generic.png" Url="AllItems.aspx">
+                <XslLink Default="TRUE">main.xsl</XslLink>
+                <JSLink>clienttemplates.js</JSLink>
+                <RowLimit Paged="TRUE">30</RowLimit>
+                <Toolbar Type="Standard" />
+
+                <ViewFields>
+                    <FieldRef Name="Title"/>
+                    <FieldRef Name="TemplateName" />
+                    <FieldRef Name="EmailBody" />
+                    <FieldRef Name="IsDelete" />
+                </ViewFields>
+                <Query>
+                    <OrderBy>
+                        <FieldRef Name="ID" />
+                    </OrderBy>
+                </Query>
+            </View>
+        </Views>
+
+        <!-- Forms Definition (Display, Edit, New) -->
+        <Forms>
+            <Form Type="DisplayForm" Url="DispForm.aspx" SetupPath="pages\form.aspx" WebPartZoneID="Main" />
+            <Form Type="EditForm" Url="EditForm.aspx" SetupPath="pages\form.aspx" WebPartZoneID="Main" />
+            <Form Type="NewForm" Url="NewForm.aspx" SetupPath="pages\form.aspx" WebPartZoneID="Main" />
+        </Forms>
+
+    </MetaData>
+</List>

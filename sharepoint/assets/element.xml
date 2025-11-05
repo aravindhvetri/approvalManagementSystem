@@ -1,18 +1,30 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8" ?>
 <Elements xmlns="http://schemas.microsoft.com/sharepoint/">
-  <ListInstance 
-    FeatureId="00bfea71-de22-43b2-a848-c05709900100" 
-    Title="CategoryConfig" 
-    Description="CategoryConfig" 
-    TemplateType="100" 
-    Url="Lists/CategoryConfig" 
-    CustomSchema="CategoryConfig.xml" />
-
-  <!-- <ListInstance 
-    FeatureId="00bfea71-de22-43b2-a848-c05709900100" 
-    Title="ApprovalConfig" 
-    Description="ApprovalConfig" 
-    TemplateType="100" 
-    Url="Lists/ApprovalConfig" 
-    CustomSchema="ApprovalConfig.xml" /> -->
+    <!-- list creations -->
+    <ListInstance CustomSchema="CategoryConfig.xml" FeatureId="00bfea71-de22-43b2-a848-c05709900100" Title="CategoryConfig" Description="CategoryConfig" TemplateType="100" Url="Lists/CategoryConfig" />
+    <ListInstance CustomSchema="CategorySectionConfig.xml" FeatureId="00bfea71-de22-43b2-a848-c05709900100" Title="CategorySectionConfig" Description="CategorySectionConfig" TemplateType="100" Url="Lists/CategorySectionConfig" />
+    <ListInstance CustomSchema="SectionColumnsConfig.xml" FeatureId="00bfea71-de22-43b2-a848-c05709900100" Title="SectionColumnsConfig" Description="SectionColumnsConfig" TemplateType="100" Url="Lists/SectionColumnsConfig" />
+    <ListInstance CustomSchema="ApprovalConfig.xml" FeatureId="00bfea71-de22-43b2-a848-c05709900100" Title="ApprovalConfig" Description="ApprovalConfig" TemplateType="100" Url="Lists/ApprovalConfig" />
+    <ListInstance CustomSchema="ApprovalStageConfig.xml" FeatureId="00bfea71-de22-43b2-a848-c05709900100" Title="ApprovalStageConfig" Description="ApprovalStageConfig" TemplateType="100" Url="Lists/ApprovalStageConfig" />
+    <ListInstance CustomSchema="EmailTemplateConfig.xml" FeatureId="00bfea71-de22-43b2-a848-c05709900100" Title="EmailTemplateConfig" Description="EmailTemplateConfig" TemplateType="100" Url="Lists/EmailTemplateConfig" />
+    <ListInstance CustomSchema="CategoryEmailConfig.xml" FeatureId="00bfea71-de22-43b2-a848-c05709900100" Title="CategoryEmailConfig" Description="CategoryEmailConfig" TemplateType="100" Url="Lists/CategoryEmailConfig" />
+    <ListInstance CustomSchema="RequestsHub.xml" FeatureId="00bfea71-de22-43b2-a848-c05709900100" Title="RequestsHub" Description="RequestsHub" TemplateType="100" Url="Lists/RequestsHub" />
+    <ListInstance CustomSchema="ApprovalHistory.xml" FeatureId="00bfea71-de22-43b2-a848-c05709900100" Title="ApprovalHistory" Description="ApprovalHistory" TemplateType="100" Url="Lists/ApprovalHistory" />
+     <!-- library creations -->
+   <ListInstance CustomSchema="AttachmentsLibrary.xml" FeatureId="00bfea71-e717-4e80-aa17-d0c71b360101" Title="AttachmentsLibrary" Description="" TemplateType="101" Url="AttachmentsLibrary" Hidden="FALSE">
+       <Data>
+        <Rows>
+         <Row>
+          <Field Name="FSObjType">1</Field>
+          <Field Name="BaseName">Approvers</Field>
+          <Field Name="Title">Approvers</Field>
+         </Row>
+         <Row>
+          <Field Name="FSObjType">1</Field>
+          <Field Name="BaseName">Requestors</Field>
+          <Field Name="Title">Requestors</Field>
+         </Row>
+        </Rows>
+      </Data>
+    </ListInstance>
 </Elements>

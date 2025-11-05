@@ -1,0 +1,44 @@
+<List xmlns:ows="Microsoft SharePoint" Title="ApprovalConfig" EnableContentTypes="TRUE" FolderCreation="FALSE" Direction="$Resources:Direction;" Url="Lists/ApprovalConfig" BaseType="0"
+    xmlns="http://schemas.microsoft.com/sharepoint/">
+    <MetaData>
+        <Fields>
+            <Field Name="Title" DisplayName="$Resources:core,Title;" Type="Text" Required="FALSE" SourceID="http://schemas.microsoft.com/sharepoint/v3" StaticName="Title" MaxLength="255" ID="{dada371b-4c1f-437a-b293-6eb1c2278c90}"/>
+            <Field ID="{e0064a4b-cb3e-4146-bb32-78ceb0e2b09c}" Name="ParentApproval" DisplayName="ParentApproval" Type="Lookup" Required="FALSE" Group="SPFx Columns" List="Lists/ApprovalConfig" ShowField="ID" />
+            <Field ID="{530f84b0-20d3-44d1-b41d-0fc6fd694068}" Name="Stage" DisplayName="Stage" Type="Number" Required="FALSE" Decimals="0" Min="0" Group="SPFx Columns" />
+            <Field ID="{8a99dec6-6703-4cf3-9e18-c4ce73e64655}" Name="ApprovalProcess" DisplayName="ApprovalProcess" Type="Number" Required="FALSE" Decimals="0" Min="0" Group="SPFx Columns" />
+            <Field ID="{3a21b7e3-d18f-49c5-afb9-4dec90d20206}" Name="Approver" DisplayName="Approver" Type="UserMulti" Required="FALSE" UserSelectionMode="PeopleOnly" UserSelectionScope="0" Group="SPFx Columns" />
+        </Fields>
+
+
+        <!-- Views Definition -->
+        <Views>
+            <View BaseViewID="1" Type="HTML" WebPartZoneID="Main" DisplayName="$Resources:core,objectiv_schema_mwsidcamlidC24;" DefaultView="TRUE" MobileView="TRUE" MobileDefaultView="TRUE" SetupPath="pages\viewpage.aspx" ImageUrl="/_layouts/images/generic.png" Url="AllItems.aspx">
+                <XslLink Default="TRUE">main.xsl</XslLink>
+                <JSLink>clienttemplates.js</JSLink>
+                <RowLimit Paged="TRUE">30</RowLimit>
+                <Toolbar Type="Standard" />
+
+                <ViewFields>
+                    <FieldRef Name="Title"/>
+                    <FieldRef Name="ParentApproval" />
+                    <FieldRef Name="Stage" />
+                    <FieldRef Name="ApprovalProcess" />
+                    <FieldRef Name="Approver" />
+                </ViewFields>
+                <Query>
+                    <OrderBy>
+                        <FieldRef Name="ID" />
+                    </OrderBy>
+                </Query>
+            </View>
+        </Views>
+
+        <!-- Forms Definition (Display, Edit, New) -->
+        <Forms>
+            <Form Type="DisplayForm" Url="DispForm.aspx" SetupPath="pages\form.aspx" WebPartZoneID="Main" />
+            <Form Type="EditForm" Url="EditForm.aspx" SetupPath="pages\form.aspx" WebPartZoneID="Main" />
+            <Form Type="NewForm" Url="NewForm.aspx" SetupPath="pages\form.aspx" WebPartZoneID="Main" />
+        </Forms>
+
+    </MetaData>
+</List>
